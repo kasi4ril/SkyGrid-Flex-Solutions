@@ -519,7 +519,7 @@ export default function PublicShowroomPage() {
       </nav>
 
       {/* SECTION 1: HERO (Transparent, Photographic, and Immersive) */}
-      <section id="hero" className="relative min-h-[92vh] flex items-center justify-center overflow-hidden pt-12 pb-20">
+      <section id="hero" className="relative min-h-[calc(100vh-84px)] lg:h-[calc(100vh-84px)] flex flex-col justify-between overflow-hidden pt-2 pb-3 px-2 sm:px-4">
         {/* Slideshow Background */}
         <div className="absolute inset-0 z-0 bg-[#0B241B] overflow-hidden pointer-events-none" aria-hidden="true">
           {HERO_SLIDES.map((slide, index) => (
@@ -539,32 +539,32 @@ export default function PublicShowroomPage() {
           <div className="absolute inset-0 bg-[#123B2A]/20 mix-blend-multiply z-10" />
         </div>
 
-        {/* Hero Content */}
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
+        {/* Hero Content Container (Centered Vertically and Perfectly Fitted) */}
+        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-1 flex flex-col justify-between my-auto">
+          <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 items-center my-auto pt-2">
             
             {/* Left Headline & CTAs */}
-            <div className="lg:col-span-7 space-y-6 text-left">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#123B2A]/80 border border-[#19A89A]/40 text-[#19A89A] text-xs font-semibold backdrop-blur-md">
+            <div className="lg:col-span-7 space-y-3 sm:space-y-4 text-left">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#123B2A]/80 border border-[#19A89A]/40 text-[#19A89A] text-[11px] font-semibold backdrop-blur-md">
                 <span className="w-2 h-2 rounded-full bg-[#19A89A] animate-ping" />
                 <span>Smarter energy. Flexible payments. A brighter future.</span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-extrabold text-white tracking-tight leading-[1.12]">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white tracking-tight leading-[1.12]">
                 Power Your Life.<br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F5B82E] via-amber-300 to-[#19A89A]">
                   Pay at Your Pace.
                 </span>
               </h1>
 
-              <p className="text-base sm:text-lg text-[#F8FAF7]/85 max-w-2xl leading-relaxed">
+              <p className="text-xs sm:text-sm lg:text-base text-[#F8FAF7]/85 max-w-xl leading-relaxed">
                 Discover reliable solar energy for your home or business with flexible payment plans, intelligent energy monitoring, and support you can trust.
               </p>
 
-              <div className="flex flex-wrap items-center gap-4 pt-2">
+              <div className="flex flex-wrap items-center gap-3 pt-1">
                 <a
                   href="#calculator"
-                  className="px-7 py-3.5 rounded-xl font-heading font-bold text-sm text-[#0B241B] bg-[#F5B82E] hover:bg-amber-400 shadow-xl shadow-[#F5B82E]/25 transition-all hover:scale-105 flex items-center gap-2"
+                  className="px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl font-heading font-bold text-xs sm:text-sm text-[#0B241B] bg-[#F5B82E] hover:bg-amber-400 shadow-lg shadow-[#F5B82E]/25 transition-all hover:scale-105 flex items-center gap-2"
                 >
                   <span>Find Your Solar Plan</span>
                   <span>&rarr;</span>
@@ -572,7 +572,7 @@ export default function PublicShowroomPage() {
 
                 <a
                   href="#packages"
-                  className="px-6 py-3.5 rounded-xl font-heading font-semibold text-sm text-white bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md transition-all flex items-center gap-2"
+                  className="px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl font-heading font-semibold text-xs sm:text-sm text-white bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md transition-all flex items-center gap-2"
                 >
                   <span>Explore Solar Solutions</span>
                   <span className="text-[#19A89A]">✨</span>
@@ -580,96 +580,92 @@ export default function PublicShowroomPage() {
               </div>
 
               {/* Micro-Trust Pillars */}
-              <div className="pt-4 grid grid-cols-3 gap-4 border-t border-white/10 max-w-xl text-xs text-[#F8FAF7]/75">
-                <div className="flex items-center gap-2">
+              <div className="pt-2.5 grid grid-cols-3 gap-3 border-t border-white/10 max-w-lg text-[11px] text-[#F8FAF7]/75">
+                <div className="flex items-center gap-1.5">
                   <span className="text-[#19A89A]">⚡</span>
-                  <span>Tier-1 LiFePO4 6,000 Cycles</span>
+                  <span>Tier-1 LiFePO4</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   <span className="text-[#F5B82E]">💳</span>
-                  <span>12–36 Mo. Lease-to-Own</span>
+                  <span>12–36 Mo. Lease</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   <span className="text-[#19A89A]">📡</span>
-                  <span>24/7 AI-IoT Diagnostics</span>
+                  <span>AI-IoT Guard</span>
                 </div>
               </div>
             </div>
 
-            {/* Right: Floating Energy-Information Card */}
+            {/* Right: Reduced & Harmonised Floating Solar Sizing Sample Card */}
             <div className="lg:col-span-5 flex justify-center lg:justify-end">
-              <div className="w-full max-w-md bg-[#0B241B]/80 backdrop-blur-xl border border-white/15 rounded-3xl p-6 shadow-2xl relative">
+              <div className="w-full max-w-[320px] sm:max-w-[340px] bg-[#0B241B]/80 backdrop-blur-xl border border-white/15 rounded-2xl p-4 shadow-xl relative">
                 
                 {/* Header */}
-                <div className="flex items-center justify-between pb-4 border-b border-white/10">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-[#19A89A]/20 border border-[#19A89A]/30 flex items-center justify-center text-[#F5B82E]">
+                <div className="flex items-center justify-between pb-2.5 border-b border-white/10">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-[#19A89A]/20 border border-[#19A89A]/30 flex items-center justify-center text-[#F5B82E]">
                       ☀️
                     </div>
                     <div>
-                      <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-[#F8FAF7]">SOLAR SYSTEM</h3>
-                      <p className="text-[11px] text-[#F8FAF7]/60 font-mono">ID: GW-5000ES-NG94</p>
+                      <h3 className="font-heading font-bold text-[11px] uppercase tracking-wider text-[#F8FAF7]">SOLAR SYSTEM</h3>
+                      <p className="text-[9px] text-[#F8FAF7]/60 font-mono">GW-5000ES • 10.24kWh</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#19A89A]/15 border border-[#19A89A]/30 text-[#19A89A] text-xs font-semibold">
-                    <span className="w-2 h-2 rounded-full bg-[#19A89A] animate-pulse" />
+                  <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#19A89A]/15 border border-[#19A89A]/30 text-[#19A89A] text-[10px] font-semibold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#19A89A] animate-pulse" />
                     <span>Online</span>
                   </div>
                 </div>
 
-                {/* Metrics */}
-                <div className="grid grid-cols-2 gap-3 my-5">
-                  <div className="bg-black/30 p-3.5 rounded-2xl border border-white/5">
-                    <div className="flex items-center justify-between text-[#F8FAF7]/60 text-xs mb-1">
+                {/* Key System Metrics Grid (Compact 2x2) */}
+                <div className="grid grid-cols-2 gap-2 my-2.5">
+                  <div className="bg-black/30 p-2.5 rounded-xl border border-white/5">
+                    <div className="flex items-center justify-between text-[#F8FAF7]/60 text-[10px] mb-0.5">
                       <span>Solar generation</span>
                       <span className="text-[#F5B82E]">⚡</span>
                     </div>
-                    <div className="text-2xl font-heading font-extrabold text-white font-mono">2.4 <span className="text-xs font-normal text-[#F8FAF7]/60">kW</span></div>
-                    <div className="text-[10px] text-[#19A89A] mt-1">Peak irradiation</div>
+                    <div className="text-lg font-heading font-extrabold text-white font-mono">2.4 <span className="text-[10px] font-normal text-[#F8FAF7]/60">kW</span></div>
+                    <div className="text-[9px] text-[#19A89A] mt-0.5">Peak sun</div>
                   </div>
 
-                  <div className="bg-black/30 p-3.5 rounded-2xl border border-white/5">
-                    <div className="flex items-center justify-between text-[#F8FAF7]/60 text-xs mb-1">
+                  <div className="bg-black/30 p-2.5 rounded-xl border border-white/5">
+                    <div className="flex items-center justify-between text-[#F8FAF7]/60 text-[10px] mb-0.5">
                       <span>Battery charge</span>
                       <span className="text-[#19A89A]">🔋</span>
                     </div>
-                    <div className="text-2xl font-heading font-extrabold text-[#19A89A] font-mono">86<span className="text-xs font-normal text-[#F8FAF7]/60">%</span></div>
-                    <div className="w-full bg-white/10 rounded-full h-1.5 mt-2 overflow-hidden">
-                      <div className="bg-gradient-to-r from-[#19A89A] to-emerald-400 h-1.5 rounded-full" style={{ width: '86%' }} />
+                    <div className="text-lg font-heading font-extrabold text-[#19A89A] font-mono">86<span className="text-[10px] font-normal text-[#F8FAF7]/60">%</span></div>
+                    <div className="w-full bg-white/10 rounded-full h-1 mt-1.5 overflow-hidden">
+                      <div className="bg-gradient-to-r from-[#19A89A] to-emerald-400 h-1 rounded-full" style={{ width: '86%' }} />
                     </div>
                   </div>
 
-                  <div className="bg-black/30 p-3.5 rounded-2xl border border-white/5">
-                    <div className="flex items-center justify-between text-[#F8FAF7]/60 text-xs mb-1">
-                      <span>Today's energy</span>
+                  <div className="bg-black/30 p-2.5 rounded-xl border border-white/5">
+                    <div className="flex items-center justify-between text-[#F8FAF7]/60 text-[10px] mb-0.5">
+                      <span>Today's harvest</span>
                       <span className="text-[#F5B82E]">📈</span>
                     </div>
-                    <div className="text-2xl font-heading font-extrabold text-white font-mono">11.8 <span className="text-xs font-normal text-[#F8FAF7]/60">kWh</span></div>
-                    <div className="text-[10px] text-[#F8FAF7]/60 mt-1">Clean solar harvest</div>
+                    <div className="text-lg font-heading font-extrabold text-white font-mono">11.8 <span className="text-[10px] font-normal text-[#F8FAF7]/60">kWh</span></div>
+                    <div className="text-[9px] text-[#F8FAF7]/60 mt-0.5">Clean yield</div>
                   </div>
 
-                  <div className="bg-black/30 p-3.5 rounded-2xl border border-white/5">
-                    <div className="flex items-center justify-between text-[#F8FAF7]/60 text-xs mb-1">
+                  <div className="bg-black/30 p-2.5 rounded-xl border border-white/5">
+                    <div className="flex items-center justify-between text-[#F8FAF7]/60 text-[10px] mb-0.5">
                       <span>Current load</span>
                       <span className="text-emerald-400">🏠</span>
                     </div>
-                    <div className="text-2xl font-heading font-extrabold text-white font-mono">1.1 <span className="text-xs font-normal text-[#F8FAF7]/60">kW</span></div>
-                    <div className="text-[10px] text-emerald-400 mt-1">100% Solar powered</div>
+                    <div className="text-lg font-heading font-extrabold text-white font-mono">1.1 <span className="text-[10px] font-normal text-[#F8FAF7]/60">kW</span></div>
+                    <div className="text-[9px] text-emerald-400 mt-0.5">100% Solar</div>
                   </div>
                 </div>
 
-                {/* Status & Sample Notice */}
-                <div className="pt-3 border-t border-white/10 flex flex-col gap-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-[#F8FAF7]/70">Grid Status:</span>
-                    <span className="font-semibold text-[#F5B82E] font-mono">Islanded (Outage Protected)</span>
+                {/* Status & Sample Notice (Compact 1-line badge) */}
+                <div className="pt-2 border-t border-white/10 space-y-1.5">
+                  <div className="flex items-center justify-between text-[10px]">
+                    <span className="text-[#F8FAF7]/70">Grid: <strong className="text-[#F5B82E] font-mono font-normal">Islanded</strong></span>
+                    <span className="text-[#F8FAF7]/70">PAYGo: <strong className="text-[#19A89A] font-mono font-normal">24d Active</strong></span>
                   </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-[#F8FAF7]/70">PAYGo Token:</span>
-                    <span className="font-semibold text-[#19A89A] font-mono">24 Days Active</span>
-                  </div>
-                  <div className="mt-2 bg-[#123B2A]/60 border border-[#19A89A]/20 rounded-xl p-2.5 text-[10px] text-[#F8FAF7]/70 leading-relaxed">
-                    <span className="font-bold text-[#F5B82E]">ⓘ Sample data:</span> Illustrative demonstration values. Real-time telemetry connects via Shine GSM/WiFi IoT gateway.
+                  <div className="bg-[#123B2A]/50 border border-[#19A89A]/20 rounded-lg py-1 px-2 text-[9px] text-[#F8FAF7]/70 text-center">
+                    <span className="font-bold text-[#F5B82E]">ⓘ Sample Sizing Telemetry</span> • Demo values
                   </div>
                 </div>
 
@@ -678,15 +674,15 @@ export default function PublicShowroomPage() {
 
           </div>
 
-          {/* Slideshow Selector Buttons */}
-          <div className="mt-12 flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-white/10 text-xs text-[#F8FAF7]/80">
-            <div className="flex items-center gap-2">
-              <span className="text-[#F8FAF7]/50 uppercase tracking-widest text-[10px] font-semibold mr-1">Active Installation:</span>
+          {/* Slideshow Selector Buttons (Anchored at bottom of fold) */}
+          <div className="mt-2 sm:mt-3 pt-2 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs text-[#F8FAF7]/80">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <span className="text-[#F8FAF7]/50 uppercase tracking-widest text-[9px] font-semibold mr-1 hidden sm:inline">Active Installation:</span>
               {HERO_SLIDES.map((slide, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrentSlide(i)}
-                  className={`px-3 py-1.5 rounded-full transition-all text-xs ${
+                  className={`px-2.5 py-1 rounded-full transition-all text-[11px] ${
                     currentSlide === i
                       ? 'bg-[#F5B82E] text-[#0B241B] font-bold shadow-md'
                       : 'bg-white/10 text-[#F8FAF7]/80 hover:bg-white/20 font-medium'
@@ -697,13 +693,13 @@ export default function PublicShowroomPage() {
               ))}
             </div>
 
-            <div className="flex items-center gap-3">
-              <span className="text-[#F8FAF7]/70 italic text-[11px] hidden sm:inline">
+            <div className="flex items-center gap-2">
+              <span className="text-[#F8FAF7]/70 italic text-[10px] hidden md:inline">
                 {HERO_SLIDES[currentSlide].caption}
               </span>
               <button
                 onClick={() => setIsSlideshowPlaying(!isSlideshowPlaying)}
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"
+                className="w-6 h-6 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white text-xs"
               >
                 {isSlideshowPlaying ? '⏸' : '▶'}
               </button>
