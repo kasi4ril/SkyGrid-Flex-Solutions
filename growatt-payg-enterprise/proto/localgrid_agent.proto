@@ -1,0 +1,49 @@
+// proto/localgrid_agent.proto
+// Polyglot gRPC Contract: Golang Core Backend <-> Python LocalGridAgent (RAG + Read-Only LLM)
+syntax = "proto3";
+
+package skytron.payg.agent.v1;
+
+option go_package = "github.com/skytron-quantum/growatt-payg-enterprise/core-backend/internal/pb/agentv1";
+
+service LocalGridAgentService {
+  // QueryDiagnosticsAdvisor answers interactive customer questions by combining
+  // pgvector Growatt manual chunks with live VFS state.json, ledger_snap.json, and forecasts.
+  // Enforces strict read-only guardrails and physical hazard escalation.
+  rpc QueryDiagnosticsAdvisor (AdvisorQueryRequest) returns (AdvisorQueryResponse);
+
+  // GenerateDailyBriefing produces the $0-token deterministic 07:00 AM Morning Briefing
+  // or 06:00 PM Evening Battery Deficit Warning.
+  rpc GenerateDailyBriefing (DailyBriefingRequest) returns (DailyBriefingResponse);
+}
+
+message AdvisorQueryRequest {
+  string device_id = 1;
+  string contract_id = 2;
+  string model_sku = 3;
+  string customer_query = 4;
+}
+
+message AdvisorQueryResponse {
+  string device_id = 1;
+  string answer_markdown = 2;
+  bool safety_escalation_triggered = 3;
+  string escalation_ticket_ref = 4;
+  bool prompt_injection_blocked = 5;
+  repeated string cited_manual_sections = 6;
+  string generated_at_iso = 7;
+}
+
+message DailyBriefingRequest {
+  string device_id = 1;
+  string contract_id = 2;
+  string briefing_type = 3; // MORNING_0700 or EVENING_1800
+}
+
+message DailyBriefingResponse {
+  string device_id = 1;
+  string briefing_type = 2;
+  string headline = 3;
+  string body_text = 4;
+  double llm_token_cost_usd = 5; // Strictly 0.00 (deterministic template guardrail)
+}
