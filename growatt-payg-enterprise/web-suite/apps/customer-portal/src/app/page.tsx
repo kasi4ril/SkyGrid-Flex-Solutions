@@ -115,6 +115,33 @@ export default function CustomerPortalPage() {
   const [currentAccountKey, setCurrentAccountKey] = useState<string>('amina');
   const [activeTab, setActiveTab] = useState<'telemetry' | 'paygo' | 'hardware'>('telemetry');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+
+  React.useEffect(() => {
+    try {
+      const saved = localStorage.getItem('skygrid_theme');
+      if (saved === 'light' || saved === 'dark') {
+        setTheme(saved);
+        if (saved === 'light') document.documentElement.classList.add('light');
+        else document.documentElement.classList.remove('light');
+      }
+    } catch (e) {}
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    try {
+      localStorage.setItem('skygrid_theme', next);
+    } catch (e) {}
+    if (next === 'light') {
+      document.documentElement.classList.add('light');
+      document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
+    }
+  };
 
   const profile = DEMO_PROFILES[currentAccountKey] || DEMO_PROFILES.amina;
 
@@ -135,7 +162,7 @@ export default function CustomerPortalPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B241B] text-[#F8FAF7] p-4 sm:p-8 font-sans">
+    <div className={`min-h-screen p-4 sm:p-8 font-sans transition-colors duration-300 ${theme === 'light' ? 'bg-[#F8FAF7] text-[#17231D]' : 'bg-[#0B241B] text-[#F8FAF7]'}`}>
       <div className="max-w-6xl mx-auto space-y-6">
         
         {/* Developer Quick Switcher */}
@@ -173,7 +200,9 @@ export default function CustomerPortalPage() {
         </div>
 
         {/* Portal Container */}
-        <div className="bg-[#0B241B]/90 backdrop-blur-xl border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-8">
+        <div className={`backdrop-blur-xl border rounded-3xl p-6 sm:p-8 shadow-2xl space-y-8 transition-colors ${
+          theme === 'light' ? 'bg-white border-[#123B2A]/15 text-[#17231D]' : 'bg-[#0B241B]/90 border-white/15 text-white'
+        }`}>
           
           {/* Top Bar */}
           <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-white/10">
@@ -183,20 +212,29 @@ export default function CustomerPortalPage() {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="font-heading font-extrabold text-2xl text-white">{profile.name}</h1>
+                  <h1 className={`font-heading font-extrabold text-2xl ${theme === 'light' ? 'text-[#17231D]' : 'text-white'}`}>{profile.name}</h1>
                   <span className={`text-xs px-2.5 py-0.5 rounded-full border font-semibold font-mono ${profile.statusColor}`}>
                     {profile.statusLabel}
                   </span>
                 </div>
-                <p className="text-xs text-[#F8FAF7]/60 font-mono mt-0.5">
+                <p className="text-xs opacity-70 font-mono mt-0.5">
                   Device: {profile.deviceId} • {profile.location} • {profile.model}
                 </p>
               </div>
             </div>
 
-            <div className="bg-black/40 px-4 py-2 rounded-xl border border-white/10 text-right">
-              <span className="text-[10px] text-[#F8FAF7]/60 uppercase block">Active Power Balance</span>
-              <span className="text-lg font-heading font-bold text-[#F5B82E] font-mono">{profile.daysLeft} Days</span>
+            <div className="flex items-center gap-3">
+              <div className={`${theme === 'light' ? 'bg-[#F0F5F2]' : 'bg-black/40'} px-4 py-2 rounded-xl border border-white/10 text-right`}>
+                <span className="text-[10px] opacity-70 uppercase block">Active Power Balance</span>
+                <span className="text-lg font-heading font-bold text-[#F5B82E] font-mono">{profile.daysLeft} Days</span>
+              </div>
+              <button
+                onClick={toggleTheme}
+                aria-label="Toggle Theme"
+                className="px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all bg-white/10 hover:bg-white/20 border border-white/10"
+              >
+                <span>{theme === 'dark' ? '🌙 Dark' : '☀️ Light'}</span>
+              </button>
             </div>
           </div>
 
@@ -335,3 +373,4 @@ export default function CustomerPortalPage() {
     </div>
   );
 }
+

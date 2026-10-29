@@ -198,6 +198,33 @@ export default function PublicShowroomPage() {
   // Navigation & Scroll State
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('skygrid_theme');
+      if (saved === 'light' || saved === 'dark') {
+        setTheme(saved);
+        if (saved === 'light') document.documentElement.classList.add('light');
+        else document.documentElement.classList.remove('light');
+      }
+    } catch (e) {}
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    try {
+      localStorage.setItem('skygrid_theme', next);
+    } catch (e) {}
+    if (next === 'light') {
+      document.documentElement.classList.add('light');
+      document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
+    }
+  };
 
   // Hero Slideshow State
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -417,6 +444,13 @@ export default function PublicShowroomPage() {
           {/* Actions */}
           <div className="hidden sm:flex items-center gap-3">
             <button
+              onClick={toggleTheme}
+              aria-label="Toggle Theme"
+              className="px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all bg-white/5 hover:bg-white/10 border border-white/10 text-[#F8FAF7]/90 hover:text-white"
+            >
+              <span>{theme === 'dark' ? '🌙 Dark' : '☀️ Light'}</span>
+            </button>
+            <button
               onClick={() => setIsSignInModalOpen(true)}
               className="px-4 py-2 rounded-xl text-xs font-semibold text-[#F8FAF7]/90 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
             >
@@ -453,6 +487,14 @@ export default function PublicShowroomPage() {
               <a href="#faq" onClick={() => setIsMobileMenuOpen(false)} className="py-2 px-3 rounded-lg hover:bg-white/5">FAQ</a>
             </div>
             <div className="pt-4 flex flex-col gap-2">
+              <button
+                onClick={toggleTheme}
+                aria-label="Toggle Theme"
+                className="w-full py-2.5 px-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs font-semibold text-[#F8FAF7]/90"
+              >
+                <span>Switch Theme</span>
+                <span className="text-[#F5B82E] font-bold">{theme === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode'}</span>
+              </button>
               <button
                 onClick={() => {
                   setIsMobileMenuOpen(false);
