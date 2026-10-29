@@ -1,0 +1,68 @@
+// proto/forecasting.proto
+// Polyglot gRPC Contract: Golang Core Backend <-> Python Intelligence Engine
+syntax = "proto3";
+
+package skytron.payg.forecasting.v1;
+
+option go_package = "github.com/skytron-quantum/growatt-payg-enterprise/core-backend/internal/pb/forecastingv1";
+
+service ForecastingService {
+  // GenerateMultiHorizonForecast computes 24h, 7d, and 30d solar & load forecasts
+  // and atomically writes horizon_24h.json, horizon_7d.json, and horizon_30d.json to the POSIX VFS.
+  rpc GenerateMultiHorizonForecast (ForecastRequest) returns (ForecastResponse);
+
+  // EvaluateHarmattanSoiling compares theoretical GHI PV output against actual telemetry
+  // to detect >18% dust attenuation during Nigerian Harmattan months (Nov - Feb).
+  rpc EvaluateHarmattanSoiling (SoilingCheckRequest) returns (SoilingCheckResponse);
+}
+
+message ApplianceArchetypeItem {
+  string appliance_code = 1;
+  int32 rated_watts = 2;
+  int32 quantity = 3;
+  double daytime_hours = 4;
+  double nighttime_hours = 5;
+}
+
+message ForecastRequest {
+  string device_id = 1;
+  string contract_id = 2;
+  string model_sku = 3;
+  double gps_lat = 4;
+  double gps_lng = 5;
+  double pv_kwp_installed = 6;
+  double battery_kwh_installed = 7;
+  int32 days_since_install = 8; // <= 14 triggers Cold-Start Synthetic Engine; >= 15 triggers XGBoost/LightGBM
+  repeated ApplianceArchetypeItem cold_start_appliances = 9;
+}
+
+message ForecastResponse {
+  string device_id = 1;
+  string engine_mode = 2; // COLD_START_ARCHETYPE or XGBOOST_PERSONALIZED
+  string vfs_horizon_24h_path = 3;
+  string vfs_horizon_7d_path = 4;
+  string vfs_horizon_30d_path = 5;
+  bool harmattan_soiling_detected = 6;
+  double projected_30d_gen_fuel_saved_ngn = 7;
+  string generated_at_iso = 8;
+}
+
+message SoilingCheckRequest {
+  string device_id = 1;
+  double gps_lat = 2;
+  double gps_lng = 3;
+  double pv_kwp_installed = 4;
+  double observed_peak_pv_watts = 5;
+  double current_ghi_wm2 = 6;
+  double ambient_temp_c = 7;
+}
+
+message SoilingCheckResponse {
+  string device_id = 1;
+  double expected_clear_sky_watts = 2;
+  double observed_pv_watts = 3;
+  double performance_ratio_pct = 4;
+  double soiling_loss_pct = 5;
+  bool trigger_cleaning_alert = 6;
+  string advisory_message = 7;
+}

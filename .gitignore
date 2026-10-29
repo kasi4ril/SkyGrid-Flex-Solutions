@@ -1,0 +1,44 @@
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python Cache & Artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Go Binaries & Cache
+core-backend/bin/
+*.test
+*.out
+
+# Local Storage & Runtime VFS
+data/
+data/vfs/
+
+# Node.js & Web
+node_modules/
+.next/
+.turbo/
+.npm/
+
+# Environment Variables & Secrets (Keep .env.example)
+.env
+.env*.local
+!.env.example
+
+# IDE & OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
