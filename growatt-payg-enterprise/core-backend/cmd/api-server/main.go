@@ -48,6 +48,13 @@ func main() {
 	mux.HandleFunc("/api/v1/public/calculate-size", withCORS(publicHandler.HandleCalculateSize))
 	mux.HandleFunc("/api/v1/public/leads", withCORS(publicHandler.HandleCreateLead))
 
+	// Serve Interactive Solar Showroom at root /
+	staticDir := "./static"
+	if _, err := os.Stat(staticDir); os.IsNotExist(err) {
+		staticDir = "core-backend/static"
+	}
+	mux.Handle("/", http.FileServer(http.Dir(staticDir)))
+
 	srv := &http.Server{
 		Addr:         ":" + port,
 		Handler:      mux,

@@ -72,7 +72,11 @@ PIDS+=($!)
 echo "⚡ [3/4] Starting Core Go API Server on http://localhost:8080..."
 (
     cd "$ROOT_DIR/core-backend"
-    GOTOOLCHAIN=local CGO_ENABLED=0 GOCACHE=/tmp/go-build GOPATH=/tmp/go go run ./cmd/api-server/main.go
+    if [ -x "bin/api-server" ]; then
+        ./bin/api-server
+    else
+        GOTOOLCHAIN=local CGO_ENABLED=0 GOCACHE=/tmp/go-build GOPATH=/tmp/go go run ./cmd/api-server/main.go
+    fi
 ) > "$LOG_DIR/api-server.log" 2>&1 &
 PIDS+=($!)
 
@@ -80,13 +84,21 @@ PIDS+=($!)
 echo "📡 [4/4] Starting Background Workers (MQTT Gateway & Cron Scheduler)..."
 (
     cd "$ROOT_DIR/core-backend"
-    GOTOOLCHAIN=local CGO_ENABLED=0 GOCACHE=/tmp/go-build GOPATH=/tmp/go go run ./cmd/mqtt-gateway/main.go
+    if [ -x "bin/mqtt-gateway" ]; then
+        ./bin/mqtt-gateway
+    else
+        GOTOOLCHAIN=local CGO_ENABLED=0 GOCACHE=/tmp/go-build GOPATH=/tmp/go go run ./cmd/mqtt-gateway/main.go
+    fi
 ) > "$LOG_DIR/mqtt-gateway.log" 2>&1 &
 PIDS+=($!)
 
 (
     cd "$ROOT_DIR/core-backend"
-    GOTOOLCHAIN=local CGO_ENABLED=0 GOCACHE=/tmp/go-build GOPATH=/tmp/go go run ./cmd/cron-scheduler/main.go
+    if [ -x "bin/cron-scheduler" ]; then
+        ./bin/cron-scheduler
+    else
+        GOTOOLCHAIN=local CGO_ENABLED=0 GOCACHE=/tmp/go-build GOPATH=/tmp/go go run ./cmd/cron-scheduler/main.go
+    fi
 ) > "$LOG_DIR/cron-scheduler.log" 2>&1 &
 PIDS+=($!)
 
@@ -127,3 +139,4 @@ TAIL_PID=$!
 PIDS+=($TAIL_PID)
 
 wait
+

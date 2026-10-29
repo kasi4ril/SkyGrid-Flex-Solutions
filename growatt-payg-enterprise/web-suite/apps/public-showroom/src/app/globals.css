@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-forest: #123B2A;
+  --brand-dark: #0B241B;
+  --brand-amber: #F5B82E;
+  --brand-teal: #19A89A;
+  --brand-warm: #F8FAF7;
+  --brand-charcoal: #17231D;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--brand-dark);
+  color: var(--brand-warm);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}

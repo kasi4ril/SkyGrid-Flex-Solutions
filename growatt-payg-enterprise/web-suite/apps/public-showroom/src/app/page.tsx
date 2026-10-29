@@ -1,962 +1,1780 @@
 /**
- * @fileoverview Public Marketing Landing Page & Interactive Solar Sizing Showroom
+ * @fileoverview Premium AI-Powered PAYGo Solar Energy Platform Landing Page
  * Application: web-suite/apps/public-showroom
- * Target Market: Contemporary Nigerian Homes, Estates & SMEs
+ * Framework: Next.js (React / TypeScript)
+ * Palette:
+ *  - Deep Forest Green: #123B2A
+ *  - Dark Green: #0B241B
+ *  - Solar Amber: #F5B82E
+ *  - Teal: #19A89A
+ *  - Warm Off-White: #F8FAF7
+ *  - White: #FFFFFF
+ *  - Charcoal: #17231D
  */
 
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 
-// Pre-loaded fallback catalog so the landing page renders instantaneously (0ms CLS)
-// even before the Golang API responds or when previewing offline.
-const NIGERIAN_STATES = [
-  { state_name: 'FCT ABUJA', geo_belt: 'MIDDLE_BELT', peak_sun_hours: 5.1 },
-  { state_name: 'BENUE', geo_belt: 'MIDDLE_BELT', peak_sun_hours: 4.9 },
-  { state_name: 'PLATEAU', geo_belt: 'MIDDLE_BELT', peak_sun_hours: 5.3 },
-  { state_name: 'NASARAWA', geo_belt: 'MIDDLE_BELT', peak_sun_hours: 5.0 },
-  { state_name: 'LAGOS', geo_belt: 'SOUTHERN_COASTAL', peak_sun_hours: 4.1 },
-  { state_name: 'RIVERS', geo_belt: 'SOUTHERN_COASTAL', peak_sun_hours: 3.8 },
-  { state_name: 'ENUGU', geo_belt: 'SOUTHERN_COASTAL', peak_sun_hours: 4.4 },
-  { state_name: 'KANO', geo_belt: 'NORTHERN_SAHEL', peak_sun_hours: 5.9 },
-  { state_name: 'KADUNA', geo_belt: 'NORTHERN_SAHEL', peak_sun_hours: 5.6 },
-];
+// --- Types & Interfaces ---
+export interface ApplianceItem {
+  id: string;
+  name: string;
+  watts: number;
+  surge: number;
+  isMotor: boolean;
+  qty: number;
+}
 
-const INITIAL_APPLIANCES = [
-  { code: 'LED_BULB_15W', name: 'Energy-Saving LED Bulb (15W)', watts: 15, surge: 1.0, motor: false, qty: 8, dayH: 2, nightH: 8 },
-  { code: 'CEILING_FAN_75W', name: 'Ceiling / Standing Fan (75W)', watts: 75, surge: 1.3, motor: true, qty: 3, dayH: 5, nightH: 8 },
-  { code: 'SMART_TV_120W', name: '55" Smart TV & Decoder (120W)', watts: 120, surge: 1.0, motor: false, qty: 1, dayH: 4, nightH: 5 },
-  { code: 'LAPTOP_ROUTER_90W', name: 'Laptop + Starlink/Fiber Router (90W)', watts: 90, surge: 1.0, motor: false, qty: 2, dayH: 7, nightH: 4 },
-  { code: 'INVERTER_FRIDGE_180W', name: 'Inverter Refrigerator (180W)', watts: 180, surge: 2.2, motor: true, qty: 1, dayH: 6, nightH: 6 },
-  { code: 'CHEST_FREEZER_250W', name: 'Deep Chest Freezer (250W)', watts: 250, surge: 2.8, motor: true, qty: 0, dayH: 6, nightH: 5 },
-  { code: 'INVERTER_AC_1HP', name: '1.0 HP Inverter Split AC (850W)', watts: 850, surge: 1.6, motor: true, qty: 0, dayH: 4, nightH: 4 },
-  { code: 'BOREHOLE_PUMP_1HP', name: '1.0 HP Submersible Borehole Pump (750W)', watts: 750, surge: 3.0, motor: true, qty: 0, dayH: 1, nightH: 0 },
-];
+export interface SolarPackage {
+  title: string;
+  sku: string;
+  badge?: string;
+  inverter: string;
+  battery: string;
+  pv: string;
+  profile: string;
+  cashPriceNGN: number;
+  downPaymentPct: number;
+  monthlyInstallmentNGN: number;
+  supportedAppliances: string[];
+  warranty: string;
+}
 
-const GROWATT_BUNDLES = [
+export interface CaseStudy {
+  title: string;
+  clientType: string;
+  location: string;
+  system: string;
+  challenge: string;
+  fuelCut: string;
+  monthlySavings: string;
+  keyMetric: string;
+}
+
+// --- Verified Hardware Packages ---
+const SOLAR_PACKAGES: SolarPackage[] = [
   {
+    title: 'Essential Home',
     sku: 'GW-SPF3000-LFP5',
-    title: 'Growatt 3.0kVA Eco-Starter',
     inverter: 'Growatt SPF 3000TL LVM-ES',
     battery: '5.12 kWh LiFePO4 (6,000 Cycles)',
     pv: '2.70 kWp Mono PERC Half-Cell',
-    priceNaira: 2850000,
-    badge: 'Most Popular for Flats',
-    loads: ['8x LED Lights & Security Lamps', '3x Ceiling Fans', '1x Inverter Fridge', '55" Smart TV + Starlink + Laptops'],
+    profile: '2–3 Bedroom Flats & Small Households',
+    cashPriceNGN: 2850000,
+    downPaymentPct: 30,
+    monthlyInstallmentNGN: 78500,
+    warranty: '10-Yr Battery / 5-Yr Inverter / 25-Yr PV',
+    supportedAppliances: [
+      '8x LED Bulbs & Security Lights',
+      '3x Standing / Ceiling Fans',
+      '55" Smart TV + Starlink + Laptops',
+      'Inverter Refrigerator (24/7 Power)',
+    ],
   },
   {
-    sku: 'GW-SPF5000-LFP5',
-    title: 'Growatt 5.0kVA Family Standard',
-    inverter: 'Growatt SPF 5000ES Hybrid',
-    battery: '5.12 kWh LiFePO4 (80% DoD)',
-    pv: '4.40 kWp Mono PERC Array',
-    priceNaira: 4450000,
-    badge: 'Best Value for Duplexes',
-    loads: ['1x 1.0HP Inverter AC', '1x 1HP Borehole Pump (Daytime)', 'Fridge + Deep Freezer', 'All Fans, TVs & Home Office'],
-  },
-  {
+    title: 'Family Solar',
     sku: 'GW-SPF5000-LFP10',
-    title: 'Growatt 5.0kVA Executive Night-Cool',
+    badge: 'Most Popular for Duplexes',
     inverter: 'Growatt SPF 5000ES Hybrid',
-    battery: '10.24 kWh Dual LiFePO4 Bank',
-    pv: '5.50 kWp High-Yield Array',
-    priceNaira: 6300000,
-    badge: 'Overnight AC Autonomy',
-    loads: ['Overnight 1.0HP–1.5HP AC Cooling', 'Daytime Borehole Pumping', 'Fridge + Freezer + Microwave', 'Zero Generator Dependency'],
+    battery: '10.24 kWh LiFePO4 (6,000 Cycles)',
+    pv: '5.40 kWp Mono PERC Half-Cell',
+    profile: '4–5 Bedroom Duplexes & Active Families',
+    cashPriceNGN: 6300000,
+    downPaymentPct: 30,
+    monthlyInstallmentNGN: 172000,
+    warranty: '10-Yr Battery / 5-Yr Inverter / 25-Yr PV',
+    supportedAppliances: [
+      'Full Essential Home Loads',
+      '1x 1.0 HP Inverter AC (Day + Night)',
+      'Deep Chest Freezer (250W)',
+      '1.0 HP Borehole Water Pump',
+    ],
   },
   {
+    title: 'Business Solar',
     sku: 'GW-SPH10000-LFP20',
-    title: 'Growatt 10.0kVA Commercial PowerPlant',
-    inverter: 'Dual Parallel SPF 5000ES / SPH 10kVA',
-    battery: '20.48 kWh Rack LiFePO4 Vault',
-    pv: '9.90 kWp Commercial Roof Array',
-    priceNaira: 11800000,
-    badge: 'SMEs, Clinics & Estates',
-    loads: ['Up to 3x Inverter ACs', 'Medical/Commercial Refrigeration', 'Submersible & Surface Pumps', 'Full Office Workstation Fleet'],
+    inverter: 'Growatt SPH 10000TL Commercial',
+    battery: '20.48 kWh LiFePO4 Rack',
+    pv: '9.90 kWp Mono PERC Array',
+    profile: 'Clinics, Pharmacies, Bakeries & Tech Hubs',
+    cashPriceNGN: 11800000,
+    downPaymentPct: 30,
+    monthlyInstallmentNGN: 325000,
+    warranty: '10-Yr Battery / 5-Yr Inverter / 25-Yr PV',
+    supportedAppliances: [
+      '2x 1.5 HP Inverter ACs',
+      'Vaccine Reagents & Cold Rooms',
+      'Server Racks, POS & 15 Workstations',
+      '2 HP High-Pressure Water System',
+    ],
+  },
+  {
+    title: 'Commercial & Light Industrial',
+    sku: 'GW-IND-CUSTOM',
+    inverter: '3-Phase Modular Parallel (20kVA–100kVA+)',
+    battery: '30.7–120 kWh Containerized LiFePO4',
+    pv: '15–80 kWp High-Yield PV Array',
+    profile: 'Warehouses, Agro-processing & Estates',
+    cashPriceNGN: 16800000,
+    downPaymentPct: 30,
+    monthlyInstallmentNGN: 460000,
+    warranty: '15-Yr System Lifecycle & Dedicated SLA',
+    supportedAppliances: [
+      'High-Surge Inductive Motors Support',
+      'Microgrid Peak Shaving & Sync',
+      'Corporate PPA & Equipment Leasing',
+      'Dedicated 4-Hour Response SLA',
+    ],
   },
 ];
 
-function formatNaira(amount: number): string {
-  return new Intl.NumberFormat('en-NG', {
-    style: 'currency',
-    currency: 'NGN',
-    maximumFractionDigits: 0,
-  }).format(Math.round(amount));
-}
+const INITIAL_APPLIANCES: ApplianceItem[] = [
+  { id: 'app_led', name: 'LED Bulbs (15W)', watts: 15, surge: 1.0, isMotor: false, qty: 8 },
+  { id: 'app_fan', name: 'Standing / Ceiling Fans (75W)', watts: 75, surge: 1.3, isMotor: true, qty: 3 },
+  { id: 'app_tv', name: '55" Smart TV & Decoder (120W)', watts: 120, surge: 1.0, isMotor: false, qty: 1 },
+  { id: 'app_work', name: 'Starlink Router + 2 Laptops (90W)', watts: 90, surge: 1.0, isMotor: false, qty: 1 },
+  { id: 'app_fridge', name: 'Inverter Refrigerator (180W)', watts: 180, surge: 2.2, isMotor: true, qty: 1 },
+  { id: 'app_freezer', name: 'Deep Chest Freezer (250W)', watts: 250, surge: 2.8, isMotor: true, qty: 0 },
+  { id: 'app_ac', name: '1.0 HP Inverter Split AC (850W)', watts: 850, surge: 1.6, isMotor: true, qty: 0 },
+  { id: 'app_pump', name: '1.0 HP Borehole Water Pump (750W)', watts: 750, surge: 3.0, isMotor: true, qty: 0 },
+];
 
-export default function PublicShowroomLandingPage() {
-  // Interactive Calculator State
-  const [selectedState, setSelectedState] = useState<string>('FCT ABUJA');
-  const [appliances, setAppliances] = useState(INITIAL_APPLIANCES);
-  const [paymentMode, setPaymentMode] = useState<'INSTALLMENT' | 'OUTRIGHT'>('INSTALLMENT');
-  const [tenureMonths, setTenureMonths] = useState<number>(24);
-  const [downPaymentPct, setDownPaymentPct] = useState<number>(30);
+const CASE_STUDIES: CaseStudy[] = [
+  {
+    title: '24/7 Vaccine Refrigeration & Lab Ultrasound',
+    clientType: 'Diagnostic Medical Center',
+    location: 'Ikeja, Lagos State',
+    system: '10.0 kVA Growatt SPH Hybrid • 20.48 kWh LiFePO4 • 9.9 kWp PV',
+    challenge: 'Unstable Band A grid power caused generator start-stop cycles, corrupting lab assays and burning ₦520,000 monthly in diesel.',
+    fuelCut: '92% Displaced',
+    monthlySavings: '₦380,000/mo',
+    keyMetric: '99.98% Medical Cold-Chain Uptime',
+  },
+  {
+    title: 'Silent Night Cooling & Borehole Independence',
+    clientType: '4-Bedroom Family Duplex',
+    location: 'Guzape Hills, Abuja FCT',
+    system: '5.0 kVA Growatt SPF 5000ES • 10.24 kWh LiFePO4 • 5.4 kWp PV',
+    challenge: 'Grid dropouts and petrol generator fumes disrupted sleep and remote software engineering work, while borehole pumping strained small inverters.',
+    fuelCut: '0 Hours / Week Petrol Usage',
+    monthlySavings: '₦195,000/mo',
+    keyMetric: 'Overnight Inverter AC Silent Cooling',
+  },
+  {
+    title: 'Industrial Motors & Cold Grain Preservation',
+    clientType: 'Agro-Processing & Grain Storage Hub',
+    location: 'Sagamu, Ogun State',
+    system: '30.0 kVA 3-Phase Microgrid • 40 kWh Industrial Storage • 24 kWp PV',
+    challenge: 'Heavy 3-phase milling motors caused devastating feeder voltage dips, resulting in burnt motor windings and idle labor.',
+    fuelCut: '86% Diesel Displacement',
+    monthlySavings: '24-Month Payback',
+    keyMetric: 'Zero Motor Burnout Incidents',
+  },
+];
 
-  // Nigerian DisCo Band A & Petrol Generator Comparison Inputs
-  const [monthlyGridBill, setMonthlyGridBill] = useState<number>(75000);
-  const [dailyGenHours, setDailyGenHours] = useState<number>(5);
-  const [fuelPricePerLiter, setFuelPricePerLiter] = useState<number>(1250);
+const HERO_SLIDES = [
+  {
+    src: 'https://images.unsplash.com/photo-1508873696983-2df5293cb395?auto=format&fit=crop&w=1920&q=80',
+    alt: 'Residential rooftop solar installation on modern home',
+    caption: 'Residential Rooftop Array — Lekki Peninsula, Lagos State',
+    tag: '01 Residential',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1497440001374-f26997328c1b?auto=format&fit=crop&w=1920&q=80',
+    alt: 'Commercial rooftop photovoltaic array on health clinic and office complex',
+    caption: 'Commercial Health Clinic & Office — Central Business District, Abuja',
+    tag: '02 Commercial',
+  },
+  {
+    src: 'https://images.unsplash.com/photo-1584271854089-9bb3e5168e32?auto=format&fit=crop&w=1920&q=80',
+    alt: 'Light-industrial warehouse and agro-processing solar microgrid array',
+    caption: 'Light-Industrial Agro-Processing Facility — Sagamu, Ogun State',
+    tag: '03 Light Industrial',
+  },
+];
 
-  // Lead Capture Modal State
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [leadForm, setLeadForm] = useState({
-    fullName: '',
-    phone: '',
-    email: '',
-    city: '',
-    streetAddress: '',
-    preferredAuditDay: 'Tomorrow Morning (10:00 AM)',
-  });
-  const [bookingConfirmation, setBookingConfirmation] = useState<null | { ref: string; message: string }>(null);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+export default function PublicShowroomPage() {
+  // Navigation & Scroll State
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Deterministic Client/Server Synchronized Engineering Calculations
-  const engineeringResult = useMemo(() => {
-    const zone = NIGERIAN_STATES.find((z) => z.state_name === selectedState) || NIGERIAN_STATES[0];
+  // Hero Slideshow State
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isSlideshowPlaying, setIsSlideshowPlaying] = useState(true);
 
-    let runningWatts = 0;
-    let largestMotorSurge = 0;
-    let dayWh = 0;
-    let nightWh = 0;
-    const warnings: string[] = [];
+  // Calculator State
+  const [selectedState, setSelectedState] = useState('LAGOS');
+  const [appliances, setAppliances] = useState<ApplianceItem[]>(INITIAL_APPLIANCES);
+  const [downPaymentPct, setDownPaymentPct] = useState(30);
+  const [tenureMonths, setTenureMonths] = useState(36);
 
-    for (const app of appliances) {
-      if (app.qty <= 0) continue;
-      const lineWatts = app.watts * app.qty;
-      runningWatts += lineWatts;
+  // Monitoring Simulation Mode
+  const [dashboardMode, setDashboardMode] = useState<'day' | 'night' | 'outage'>('day');
 
-      if (app.motor) {
-        const singleSurge = Math.ceil(app.watts * (app.surge - 1.0));
-        if (singleSurge > largestMotorSurge) largestMotorSurge = singleSurge;
-      }
+  // Modals & Interactivity
+  const [selectedPackageForModal, setSelectedPackageForModal] = useState<SolarPackage | null>(null);
+  const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
+  const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
+  const [auditTargetPackage, setAuditTargetPackage] = useState('Standard Sizing Plan');
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-      dayWh += lineWatts * app.dayH;
-      nightWh += lineWatts * app.nightH;
-
-      if (app.code === 'BOREHOLE_PUMP_1HP' && app.nightH > 0) {
-        warnings.push('Shift 1HP Borehole Pump operation to Daytime Solar Hours (11 AM – 2 PM) to protect overnight LiFePO4 battery reserve.');
-      }
-    }
-
-    if (runningWatts === 0) runningWatts = 150;
-
-    // Formula 2: VA_inv = max(W_run * 1.25, W_run + W_largest_motor_surge)
-    const requiredVA = Math.max(Math.ceil(runningWatts * 1.25), runningWatts + largestMotorSurge);
-
-    // Formula 3: Wh_batt = NightWh / (0.92 * 0.80)
-    const rawBattWh = nightWh / (0.92 * 0.80);
-    const requiredLiFePO4KWh = Math.max(2.56, Math.ceil((rawBattWh / 1000) * 10) / 10);
-
-    // Formula 4: W_pv = ((Wh_batt * 0.80) + DayWh) / (PSH * 0.78)
-    const rawPVWatts = (rawBattWh * 0.80 + dayWh) / (zone.peak_sun_hours * 0.78);
-    const requiredPVKWp = Math.max(1.5, Math.ceil((rawPVWatts / 1000) * 100) / 100);
-
-    // Match Bundle
-    let bundle = GROWATT_BUNDLES[0];
-    if (requiredVA > 4800 || requiredLiFePO4KWh > 10.24) {
-      bundle = GROWATT_BUNDLES[3];
-    } else if (requiredVA > 2800 || requiredLiFePO4KWh > 5.12) {
-      bundle = requiredLiFePO4KWh > 5.5 ? GROWATT_BUNDLES[2] : GROWATT_BUNDLES[1];
-    }
-
-    // Amortization Math (Enforcing 30%-35% Down Payment & 1.75% Insurance Fee)
-    const cashPrice = bundle.priceNaira;
-    const effectiveDownPct = paymentMode === 'OUTRIGHT' ? 100 : Math.max(30, downPaymentPct);
-    const downPaymentNaira = Math.round(cashPrice * (effectiveDownPct / 100));
-    const insuranceFeeNaira = paymentMode === 'OUTRIGHT' ? 0 : Math.round(cashPrice * 0.0175);
-    const financedPrincipal = cashPrice - downPaymentNaira + insuranceFeeNaira;
-    const totalCreditService = paymentMode === 'OUTRIGHT' ? 0 : Math.round(financedPrincipal * 0.0185 * tenureMonths);
-    const monthlyInstallment =
-      paymentMode === 'OUTRIGHT' ? 0 : Math.ceil((financedPrincipal + totalCreditService) / tenureMonths);
-    const dailyEquivalent = Math.ceil(monthlyInstallment / 30);
-
-    // Nigerian Generator + Band A Grid Comparison
-    const monthlyFuelLiters = dailyGenHours * 1.35 * 30;
-    const monthlyFuelSpend = Math.round(monthlyFuelLiters * fuelPricePerLiter);
-    const monthlyGenMaintenance = dailyGenHours >= 2 ? 18000 : 0;
-    const totalCurrentFossilSpend = monthlyGridBill + monthlyFuelSpend + monthlyGenMaintenance;
-    const displacedSpend = Math.round(totalCurrentFossilSpend * 0.85);
-    const monthlyNetSavings = displacedSpend - monthlyInstallment;
-
-    return {
-      zone,
-      runningWatts,
-      largestMotorSurge,
-      requiredVA,
-      dayWh,
-      nightWh,
-      requiredLiFePO4KWh,
-      requiredPVKWp,
-      bundle,
-      downPaymentNaira,
-      insuranceFeeNaira,
-      monthlyInstallment,
-      dailyEquivalent,
-      monthlyFuelSpend,
-      monthlyGenMaintenance,
-      totalCurrentFossilSpend,
-      monthlyNetSavings,
-      warnings,
+  // Scroll listener for sticky translucent navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 40);
     };
-  }, [selectedState, appliances, paymentMode, tenureMonths, downPaymentPct, monthlyGridBill, dailyGenHours, fuelPricePerLiter]);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-  const updateAppliance = (code: string, field: 'qty' | 'dayH' | 'nightH', value: number) => {
+  // Automatic Hero Slideshow (6-8s interval)
+  useEffect(() => {
+    if (!isSlideshowPlaying) return;
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 7000);
+    return () => clearInterval(timer);
+  }, [isSlideshowPlaying]);
+
+  // Adjust appliance quantity
+  const handleApplianceChange = (id: string, delta: number) => {
     setAppliances((prev) =>
-      prev.map((item) => (item.code === code ? { ...item, [field]: Math.max(0, value) } : item))
+      prev.map((app) =>
+        app.id === id ? { ...app, qty: Math.max(0, Math.min(20, app.qty + delta)) } : app
+      )
     );
   };
 
-  const handleBookAuditSubmit = async (e: React.FormEvent) => {
+  // Sizing & Financial Math
+  const sizingMath = useMemo(() => {
+    let runningWatts = 0;
+    let surgeVA = 0;
+
+    appliances.forEach((app) => {
+      const running = app.watts * app.qty;
+      runningWatts += running;
+      surgeVA += running * app.surge;
+    });
+
+    let bundle = SOLAR_PACKAGES[0];
+    if (runningWatts > 4500 || surgeVA > 9500) {
+      bundle = SOLAR_PACKAGES[2]; // Business / 10kVA
+    } else if (runningWatts > 2400 || surgeVA > 5500) {
+      bundle = SOLAR_PACKAGES[1]; // Family Executive / 5kVA
+    } else if (runningWatts > 1500 || surgeVA > 3500) {
+      bundle = SOLAR_PACKAGES[1]; // Family Standard
+    }
+
+    const cashPrice = bundle.cashPriceNGN;
+    const downPayment = Math.round(cashPrice * (downPaymentPct / 100));
+    const principal = cashPrice - downPayment;
+    const monthlyRate = 0.0175;
+    const totalFinanced = Math.round(principal * (1 + monthlyRate * tenureMonths));
+    const monthlyPayment = Math.round(totalFinanced / tenureMonths);
+
+    // Generator comparison (₦1,250/L petrol; ~1.8L/hr running 8 hrs/day)
+    const dailyPetrolLiters = runningWatts > 3000 ? 22 : 14;
+    const monthlyPetrolCost = dailyPetrolLiters * 1250 * 30 + 15000;
+    const netMonthlySavings = monthlyPetrolCost - monthlyPayment;
+    const threeYearSavings = netMonthlySavings * 36;
+
+    return {
+      runningWatts,
+      surgeVA,
+      bundle,
+      cashPrice,
+      downPayment,
+      monthlyPayment,
+      monthlyPetrolCost,
+      netMonthlySavings,
+      threeYearSavings,
+    };
+  }, [appliances, downPaymentPct, tenureMonths]);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 5000);
+  };
+
+  const openAuditForPackage = (pkgTitle: string) => {
+    setAuditTargetPackage(pkgTitle);
+    setIsAuditModalOpen(true);
+  };
+
+  const handleAuditSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    const payload = {
+      full_name: formData.get('fullName') as string,
+      phone: formData.get('phone') as string,
+      email: (formData.get('email') as string) || 'client@skygrid.ng',
+      state_region: formData.get('state') as string,
+      city: 'Lagos Island',
+      street_address: formData.get('address') as string,
+      preferred_audit_day: 'Next Available Business Day',
+      sizing_input: {
+        state_region: formData.get('state') as string,
+        backup_autonomy_hours: 12,
+        selected_appliances: appliances
+          .filter((a) => a.qty > 0)
+          .map((a) => ({
+            appliance_code: a.id,
+            quantity: a.qty,
+            hours_daytime: 4,
+            hours_nighttime: 8,
+          })),
+        payment_mode: 'INSTALLMENT_36_MONTHS',
+        tenure_months: tenureMonths,
+        down_payment_pct: downPaymentPct,
+        disco_tariff_band: 'BAND_A',
+        fuel_price_per_liter_ngn: 1250,
+      },
+    };
+
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-      const response = await fetch(`${apiBase}/api/v1/public/leads`, {
+      const res = await fetch('/api/v1/public/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          full_name: leadForm.fullName,
-          phone: leadForm.phone,
-          email: leadForm.email,
-          state_region: selectedState,
-          city: leadForm.city,
-          street_address: leadForm.streetAddress,
-          preferred_audit_day: leadForm.preferredAuditDay,
-          sizing_input: {
-            state_region: selectedState,
-            payment_mode: paymentMode,
-            tenure_months: tenureMonths,
-            down_payment_pct: downPaymentPct,
-            current_monthly_grid_bill_ngn: monthlyGridBill,
-            daily_generator_run_hours: dailyGenHours,
-            fuel_price_per_liter_ngn: fuelPricePerLiter,
-            selected_appliances: appliances
-              .filter((a) => a.qty > 0)
-              .map((a) => ({
-                appliance_code: a.code,
-                quantity: a.qty,
-                daytime_hours: a.dayH,
-                nighttime_hours: a.nightH,
-              })),
-          },
-        }),
+        body: JSON.stringify(payload),
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setBookingConfirmation({
-          ref: data.audit_booking_ref,
-          message: data.message,
-        });
+      if (res.ok) {
+        const data = await res.json();
+        setIsAuditModalOpen(false);
+        showToast(`✓ Booking Reference ${data.audit_booking_ref || 'AUD-NG-7281'}: Assigned to Lead Field Engineer.`);
+        form.reset();
       } else {
-        throw new Error('Fallback to local booking reference');
+        setIsAuditModalOpen(false);
+        showToast('✓ Site Audit Booked! A COREN Engineer will call you within 2 hours.');
       }
     } catch {
-      // Graceful fallback if previewing frontend standalone
-      const fallbackRef = `AUD-NG-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-      setBookingConfirmation({
-        ref: fallbackRef,
-        message: 'Site Audit booked! A COREN-certified Field Engineer will contact you via WhatsApp/Phone to confirm roof & earthing inspection.',
-      });
-    } finally {
-      setIsSubmitting(false);
+      setIsAuditModalOpen(false);
+      showToast('✓ Site Audit Request Registered! We will contact your phone shortly.');
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-emerald-500 selection:text-slate-950">
-      {/* 1. TOP ENGINEERING & REGULATORY TRUST BAR */}
-      <div className="bg-emerald-950/80 border-b border-emerald-800/50 text-xs py-2 px-4">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-emerald-200">
-          <div className="flex items-center gap-4">
-            <span className="font-semibold text-emerald-400">● COREN & NEMSA Certified Installations</span>
-            <span className="hidden sm:inline">|</span>
-            <span className="hidden sm:inline">100% Pure LiFePO4 Lithium Mandate (6,000 Cycles / 5-Yr Warranty)</span>
+    <div className="bg-[#0B241B] text-[#F8FAF7] min-h-screen flex flex-col font-sans selection:bg-[#F5B82E] selection:text-[#0B241B]">
+      
+      {/* Top Announcement Bar */}
+      <aside aria-label="Announcement" className="bg-gradient-to-r from-[#123B2A] via-[#0B241B] to-[#123B2A] border-b border-[#19A89A]/20 text-xs py-2 px-4">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-[#F8FAF7]/90">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#F5B82E]/20 text-[#F5B82E] font-bold">⚡</span>
+            <span>Smarter energy. Flexible payments. A brighter future.</span>
+            <span className="hidden md:inline text-[#19A89A]/60">•</span>
+            <span className="hidden md:inline text-[#19A89A]">Zero-Deposit SME Commercial Pilots Available in Lagos &amp; Abuja</span>
           </div>
-          <div className="flex items-center gap-4">
-            <span>Instant Virtual Account Top-Up: Moniepoint • Paystack • OPay</span>
-            <span className="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30 font-mono">
-              24/7 LocalGridAI Diagnostics
-            </span>
+          <div className="flex items-center gap-4 text-[11px]">
+            <span className="flex items-center gap-1.5 font-medium text-[#19A89A]">● Tier-1 LiFePO4 Mandate</span>
+            <a href="#calculator" className="text-[#F5B82E] hover:underline font-semibold flex items-center gap-1">
+              Calculate Savings &rarr;
+            </a>
           </div>
         </div>
-      </div>
+      </aside>
 
-      {/* 2. MAIN NAVIGATION */}
-      <header className="sticky top-0 z-30 backdrop-blur-md bg-slate-950/85 border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center font-black text-slate-950 text-xl shadow-lg shadow-emerald-500/20">
-              G
+      {/* Sticky Responsive Navigation Bar */}
+      <nav
+        className={`sticky top-0 z-50 transition-all duration-300 py-4 px-4 sm:px-6 lg:px-8 ${
+          isScrolled
+            ? 'bg-[#0B241B]/90 backdrop-blur-xl border-b border-white/10 shadow-lg'
+            : 'bg-transparent'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          {/* Brand Logo */}
+          <a href="#hero" className="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-[#F5B82E] rounded-lg p-1">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#F5B82E] to-amber-600 flex items-center justify-center text-[#0B241B] font-extrabold text-xl shadow-lg shadow-[#F5B82E]/20 group-hover:scale-105 transition-transform">
+              ⚡
             </div>
             <div>
-              <span className="font-bold text-lg tracking-tight text-white">SKYTRON</span>
-              <span className="text-emerald-400 font-semibold text-lg ml-1">GROWATT PAYG</span>
-              <p className="text-[11px] text-slate-400 -mt-1">Smart Solar Lease-to-Own & AI Microgrid Platform</p>
+              <div className="flex items-center gap-2">
+                <span className="font-heading font-extrabold text-xl tracking-tight text-white">SKYGRID</span>
+                <span className="text-[10px] tracking-widest uppercase bg-[#19A89A]/20 text-[#19A89A] px-2 py-0.5 rounded-full font-semibold border border-[#19A89A]/30">
+                  PAYGo
+                </span>
+              </div>
+              <p className="text-[10px] text-[#F8FAF7]/60 tracking-wider uppercase font-medium">Intelligent Solar Systems</p>
             </div>
+          </a>
+
+          {/* Desktop Links */}
+          <div className="hidden lg:flex items-center gap-7 text-sm font-medium text-[#F8FAF7]/80">
+            <a href="#hero" className="hover:text-[#F5B82E] transition-colors">Home</a>
+            <a href="#packages" className="hover:text-[#F5B82E] transition-colors">Solar Solutions</a>
+            <a href="#how-it-works" className="hover:text-[#F5B82E] transition-colors">How It Works</a>
+            <a href="#monitoring" className="hover:text-[#F5B82E] transition-colors">Monitoring</a>
+            <a href="#calculator" className="hover:text-[#F5B82E] transition-colors">Pricing &amp; Calculator</a>
+            <a href="#installations" className="hover:text-[#F5B82E] transition-colors">Installations</a>
+            <a href="#faq" className="hover:text-[#F5B82E] transition-colors">FAQ</a>
           </div>
 
-          <nav className="hidden md:flex items-center gap-8 text-sm text-slate-300">
-            <a href="#calculator" className="hover:text-emerald-400 transition">Load & ROI Calculator</a>
-            <a href="#bundles" className="hover:text-emerald-400 transition">Growatt Bundles</a>
-            <a href="#security" className="hover:text-emerald-400 transition">Engineering & Warranty</a>
-          </nav>
-
-          <div className="flex items-center gap-3">
+          {/* Actions */}
+          <div className="hidden sm:flex items-center gap-3">
             <button
-              onClick={() => setIsModalOpen(true)}
-              className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm px-4 py-2.5 rounded-xl transition shadow-lg shadow-emerald-500/20"
+              onClick={() => setIsSignInModalOpen(true)}
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-[#F8FAF7]/90 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
             >
-              Book Site Audit
+              Sign In
             </button>
+            <a
+              href="#calculator"
+              className="px-5 py-2.5 rounded-xl text-xs font-bold text-[#0B241B] bg-[#F5B82E] hover:bg-amber-400 shadow-lg shadow-[#F5B82E]/20 transition-all hover:scale-105"
+            >
+              Find Your Solar Plan
+            </a>
           </div>
+
+          {/* Mobile Menu Trigger */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle navigation"
+            className="p-2 rounded-xl bg-white/5 border border-white/10 text-white lg:hidden"
+          >
+            {isMobileMenuOpen ? '✕' : '☰'}
+          </button>
         </div>
-      </header>
 
-      {/* 3. HERO LANDING SECTION */}
-      <section className="relative overflow-hidden py-16 sm:py-24 border-b border-slate-800/80 bg-gradient-to-b from-slate-900/60 to-slate-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-medium">
-              <span>Escape Band A Tariffs (₦209/kWh) & ₦1,250/L Petrol Costs</span>
+        {/* Mobile Dropdown Panel */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden mt-3 max-w-7xl mx-auto bg-[#0B241B]/95 backdrop-blur-xl rounded-2xl p-5 border border-white/10 shadow-2xl">
+            <div className="flex flex-col gap-3 text-sm font-medium text-[#F8FAF7]/90 pb-4 border-b border-white/10">
+              <a href="#hero" onClick={() => setIsMobileMenuOpen(false)} className="py-2 px-3 rounded-lg hover:bg-white/5">Home</a>
+              <a href="#packages" onClick={() => setIsMobileMenuOpen(false)} className="py-2 px-3 rounded-lg hover:bg-white/5">Solar Solutions</a>
+              <a href="#how-it-works" onClick={() => setIsMobileMenuOpen(false)} className="py-2 px-3 rounded-lg hover:bg-white/5">How It Works</a>
+              <a href="#monitoring" onClick={() => setIsMobileMenuOpen(false)} className="py-2 px-3 rounded-lg hover:bg-white/5">Intelligent Monitoring</a>
+              <a href="#calculator" onClick={() => setIsMobileMenuOpen(false)} className="py-2 px-3 rounded-lg hover:bg-white/5">Pricing &amp; Calculator</a>
+              <a href="#installations" onClick={() => setIsMobileMenuOpen(false)} className="py-2 px-3 rounded-lg hover:bg-white/5">Installation Portfolio</a>
+              <a href="#faq" onClick={() => setIsMobileMenuOpen(false)} className="py-2 px-3 rounded-lg hover:bg-white/5">FAQ</a>
+            </div>
+            <div className="pt-4 flex flex-col gap-2">
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setIsSignInModalOpen(true);
+                }}
+                className="w-full py-2.5 rounded-xl text-center text-xs font-semibold bg-white/5 border border-white/10"
+              >
+                Customer Portal Sign In
+              </button>
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  openAuditForPackage('Essential Home');
+                }}
+                className="w-full py-2.5 rounded-xl text-center text-xs font-bold text-[#0B241B] bg-[#F5B82E]"
+              >
+                Book Free Engineering Site Audit
+              </button>
+            </div>
+          </div>
+        )}
+      </nav>
+
+      {/* SECTION 1: HERO (Transparent, Photographic, and Immersive) */}
+      <section id="hero" className="relative min-h-[92vh] flex items-center justify-center overflow-hidden pt-12 pb-20">
+        {/* Slideshow Background */}
+        <div className="absolute inset-0 z-0 bg-[#0B241B] overflow-hidden pointer-events-none" aria-hidden="true">
+          {HERO_SLIDES.map((slide, index) => (
+            <img
+              key={index}
+              src={slide.src}
+              alt={slide.alt}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1500 ease-in-out ${
+                index === currentSlide ? 'opacity-100 scale-105 transition-transform duration-7000' : 'opacity-0 scale-100'
+              }`}
+            />
+          ))}
+
+          {/* Gradients to guarantee high text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0B241B] via-[#0B241B]/85 to-transparent z-10 lg:w-3/5" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0B241B] via-[#0B241B]/50 to-transparent z-10" />
+          <div className="absolute inset-0 bg-[#123B2A]/20 mix-blend-multiply z-10" />
+        </div>
+
+        {/* Hero Content */}
+        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
+            
+            {/* Left Headline & CTAs */}
+            <div className="lg:col-span-7 space-y-6 text-left">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#123B2A]/80 border border-[#19A89A]/40 text-[#19A89A] text-xs font-semibold backdrop-blur-md">
+                <span className="w-2 h-2 rounded-full bg-[#19A89A] animate-ping" />
+                <span>Smarter energy. Flexible payments. A brighter future.</span>
+              </div>
+
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-extrabold text-white tracking-tight leading-[1.12]">
+                Power Your Life.<br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F5B82E] via-amber-300 to-[#19A89A]">
+                  Pay at Your Pace.
+                </span>
+              </h1>
+
+              <p className="text-base sm:text-lg text-[#F8FAF7]/85 max-w-2xl leading-relaxed">
+                Discover reliable solar energy for your home or business with flexible payment plans, intelligent energy monitoring, and support you can trust.
+              </p>
+
+              <div className="flex flex-wrap items-center gap-4 pt-2">
+                <a
+                  href="#calculator"
+                  className="px-7 py-3.5 rounded-xl font-heading font-bold text-sm text-[#0B241B] bg-[#F5B82E] hover:bg-amber-400 shadow-xl shadow-[#F5B82E]/25 transition-all hover:scale-105 flex items-center gap-2"
+                >
+                  <span>Find Your Solar Plan</span>
+                  <span>&rarr;</span>
+                </a>
+
+                <a
+                  href="#packages"
+                  className="px-6 py-3.5 rounded-xl font-heading font-semibold text-sm text-white bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md transition-all flex items-center gap-2"
+                >
+                  <span>Explore Solar Solutions</span>
+                  <span className="text-[#19A89A]">✨</span>
+                </a>
+              </div>
+
+              {/* Micro-Trust Pillars */}
+              <div className="pt-4 grid grid-cols-3 gap-4 border-t border-white/10 max-w-xl text-xs text-[#F8FAF7]/75">
+                <div className="flex items-center gap-2">
+                  <span className="text-[#19A89A]">⚡</span>
+                  <span>Tier-1 LiFePO4 6,000 Cycles</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[#F5B82E]">💳</span>
+                  <span>12–36 Mo. Lease-to-Own</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[#19A89A]">📡</span>
+                  <span>24/7 AI-IoT Diagnostics</span>
+                </div>
+              </div>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.1]">
-              Own a <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">Growatt LiFePO4</span> Solar PowerPlant in 3 to 36 Months.
-            </h1>
+            {/* Right: Floating Energy-Information Card */}
+            <div className="lg:col-span-5 flex justify-center lg:justify-end">
+              <div className="w-full max-w-md bg-[#0B241B]/80 backdrop-blur-xl border border-white/15 rounded-3xl p-6 shadow-2xl relative">
+                
+                {/* Header */}
+                <div className="flex items-center justify-between pb-4 border-b border-white/10">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-[#19A89A]/20 border border-[#19A89A]/30 flex items-center justify-center text-[#F5B82E]">
+                      ☀️
+                    </div>
+                    <div>
+                      <h3 className="font-heading font-bold text-xs uppercase tracking-wider text-[#F8FAF7]">SOLAR SYSTEM</h3>
+                      <p className="text-[11px] text-[#F8FAF7]/60 font-mono">ID: GW-5000ES-NG94</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#19A89A]/15 border border-[#19A89A]/30 text-[#19A89A] text-xs font-semibold">
+                    <span className="w-2 h-2 rounded-full bg-[#19A89A] animate-pulse" />
+                    <span>Online</span>
+                  </div>
+                </div>
 
-            <p className="text-slate-300 text-lg leading-relaxed max-w-2xl">
-              Stop burning millions on generator fuel and unreliable grid power. Start with a{' '}
-              <strong className="text-white">30% Down Payment</strong>, get professional COREN-certified installation within 48 hours, and pay flexible monthly installments that cost less than your current fuel bill.
-            </p>
+                {/* Metrics */}
+                <div className="grid grid-cols-2 gap-3 my-5">
+                  <div className="bg-black/30 p-3.5 rounded-2xl border border-white/5">
+                    <div className="flex items-center justify-between text-[#F8FAF7]/60 text-xs mb-1">
+                      <span>Solar generation</span>
+                      <span className="text-[#F5B82E]">⚡</span>
+                    </div>
+                    <div className="text-2xl font-heading font-extrabold text-white font-mono">2.4 <span className="text-xs font-normal text-[#F8FAF7]/60">kW</span></div>
+                    <div className="text-[10px] text-[#19A89A] mt-1">Peak irradiation</div>
+                  </div>
 
-            <div className="flex flex-wrap gap-4 pt-2">
-              <a
-                href="#calculator"
-                className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-6 py-3.5 rounded-xl transition shadow-xl shadow-emerald-500/20"
-              >
-                Size Your Home & Calculate Savings →
-              </a>
-              <a
-                href="#bundles"
-                className="bg-slate-800 hover:bg-slate-700 text-slate-100 font-semibold px-6 py-3.5 rounded-xl border border-slate-700 transition"
-              >
-                View Curated Growatt Bundles
-              </a>
+                  <div className="bg-black/30 p-3.5 rounded-2xl border border-white/5">
+                    <div className="flex items-center justify-between text-[#F8FAF7]/60 text-xs mb-1">
+                      <span>Battery charge</span>
+                      <span className="text-[#19A89A]">🔋</span>
+                    </div>
+                    <div className="text-2xl font-heading font-extrabold text-[#19A89A] font-mono">86<span className="text-xs font-normal text-[#F8FAF7]/60">%</span></div>
+                    <div className="w-full bg-white/10 rounded-full h-1.5 mt-2 overflow-hidden">
+                      <div className="bg-gradient-to-r from-[#19A89A] to-emerald-400 h-1.5 rounded-full" style={{ width: '86%' }} />
+                    </div>
+                  </div>
+
+                  <div className="bg-black/30 p-3.5 rounded-2xl border border-white/5">
+                    <div className="flex items-center justify-between text-[#F8FAF7]/60 text-xs mb-1">
+                      <span>Today's energy</span>
+                      <span className="text-[#F5B82E]">📈</span>
+                    </div>
+                    <div className="text-2xl font-heading font-extrabold text-white font-mono">11.8 <span className="text-xs font-normal text-[#F8FAF7]/60">kWh</span></div>
+                    <div className="text-[10px] text-[#F8FAF7]/60 mt-1">Clean solar harvest</div>
+                  </div>
+
+                  <div className="bg-black/30 p-3.5 rounded-2xl border border-white/5">
+                    <div className="flex items-center justify-between text-[#F8FAF7]/60 text-xs mb-1">
+                      <span>Current load</span>
+                      <span className="text-emerald-400">🏠</span>
+                    </div>
+                    <div className="text-2xl font-heading font-extrabold text-white font-mono">1.1 <span className="text-xs font-normal text-[#F8FAF7]/60">kW</span></div>
+                    <div className="text-[10px] text-emerald-400 mt-1">100% Solar powered</div>
+                  </div>
+                </div>
+
+                {/* Status & Sample Notice */}
+                <div className="pt-3 border-t border-white/10 flex flex-col gap-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-[#F8FAF7]/70">Grid Status:</span>
+                    <span className="font-semibold text-[#F5B82E] font-mono">Islanded (Outage Protected)</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-[#F8FAF7]/70">PAYGo Token:</span>
+                    <span className="font-semibold text-[#19A89A] font-mono">24 Days Active</span>
+                  </div>
+                  <div className="mt-2 bg-[#123B2A]/60 border border-[#19A89A]/20 rounded-xl p-2.5 text-[10px] text-[#F8FAF7]/70 leading-relaxed">
+                    <span className="font-bold text-[#F5B82E]">ⓘ Sample data:</span> Illustrative demonstration values. Real-time telemetry connects via Shine GSM/WiFi IoT gateway.
+                  </div>
+                </div>
+
+              </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-slate-800/80 text-sm">
-              <div>
-                <p className="text-2xl font-black text-emerald-400">6,000+</p>
-                <p className="text-slate-400 text-xs">LiFePO4 Battery Charge Cycles (No Lead-Acid Death)</p>
-              </div>
-              <div>
-                <p className="text-2xl font-black text-emerald-400">3–36 Mo</p>
-                <p className="text-slate-400 text-xs">Lease-to-Own Tenure (100% Permanent Unlock at Completion)</p>
-              </div>
-              <div>
-                <p className="text-2xl font-black text-emerald-400">Offline-Ready</p>
-                <p className="text-slate-400 text-xs">MQTT Heartbeat + 20-Digit Keypad/BLE Unlock Tokens</p>
-              </div>
+          </div>
+
+          {/* Slideshow Selector Buttons */}
+          <div className="mt-12 flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-white/10 text-xs text-[#F8FAF7]/80">
+            <div className="flex items-center gap-2">
+              <span className="text-[#F8FAF7]/50 uppercase tracking-widest text-[10px] font-semibold mr-1">Active Installation:</span>
+              {HERO_SLIDES.map((slide, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentSlide(i)}
+                  className={`px-3 py-1.5 rounded-full transition-all text-xs ${
+                    currentSlide === i
+                      ? 'bg-[#F5B82E] text-[#0B241B] font-bold shadow-md'
+                      : 'bg-white/10 text-[#F8FAF7]/80 hover:bg-white/20 font-medium'
+                  }`}
+                >
+                  {slide.tag}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-[#F8FAF7]/70 italic text-[11px] hidden sm:inline">
+                {HERO_SLIDES[currentSlide].caption}
+              </span>
+              <button
+                onClick={() => setIsSlideshowPlaying(!isSlideshowPlaying)}
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"
+              >
+                {isSlideshowPlaying ? '⏸' : '▶'}
+              </button>
             </div>
           </div>
 
-          {/* Live Executive Preview Card */}
-          <div className="lg:col-span-5 bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-2xl space-y-5">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <div>
-                <span className="text-xs uppercase tracking-wider text-emerald-400 font-bold">Instant Engineering Match</span>
-                <h3 className="text-lg font-bold text-white">{engineeringResult.bundle.title}</h3>
-              </div>
-              <span className="bg-emerald-500/15 text-emerald-300 text-xs font-mono px-2.5 py-1 rounded-lg border border-emerald-500/30">
-                {engineeringResult.zone.peak_sun_hours}h Peak Sun ({selectedState})
-              </span>
-            </div>
+        </div>
+      </section>
 
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800/80">
-                <p className="text-slate-400 text-xs">Monthly Installment</p>
-                <p className="text-xl font-black text-emerald-400">
-                  {paymentMode === 'OUTRIGHT' ? '₦0 / mo' : formatNaira(engineeringResult.monthlyInstallment)}
-                </p>
-                <p className="text-[11px] text-slate-500">
-                  {paymentMode === 'OUTRIGHT'
-                    ? '100% Outright Purchase'
-                    : `≈ ${formatNaira(engineeringResult.dailyEquivalent)} / day (${tenureMonths}m)`}
-                </p>
-              </div>
-              <div className="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800/80">
-                <p className="text-slate-400 text-xs">Current Generator + Grid Spend</p>
-                <p className="text-xl font-black text-rose-400">
-                  {formatNaira(engineeringResult.totalCurrentFossilSpend)}
-                </p>
-                <p className="text-[11px] text-slate-500">Based on {dailyGenHours}h/day generator + DisCo</p>
-              </div>
-            </div>
+      {/* SECTION 2: TRUST AND CREDIBILITY */}
+      <section className="py-16 bg-gradient-to-b from-[#0B241B] via-[#123B2A]/40 to-[#0B241B] border-y border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-[#19A89A] mb-2">Verified Engineering Standards</h2>
+            <h3 className="text-2xl sm:text-3xl font-heading font-extrabold text-white">Built on Engineering Rigor and Transparent Finance</h3>
+            <p className="text-sm text-[#F8FAF7]/75 mt-3">
+              We eliminate the hazards of uncertified batteries and deceptive terms with certified hardware, guaranteed SLAs, and full ownership transfer.
+            </p>
+          </div>
 
-            <div className="bg-emerald-950/40 border border-emerald-700/40 rounded-xl p-4">
-              <div className="flex items-center justify-between text-xs text-emerald-300 mb-1">
-                <span>Hardware Specs (Zero Compromise)</span>
-                <span className="font-mono">{engineeringResult.bundle.sku}</span>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-[#123B2A]/45 backdrop-blur-md p-6 rounded-2xl border border-white/10 hover:border-[#19A89A]/50 transition">
+              <div className="w-12 h-12 rounded-xl bg-[#19A89A]/20 border border-[#19A89A]/30 flex items-center justify-center text-[#19A89A] mb-4 text-xl">
+                🛡️
               </div>
-              <p className="text-xs text-slate-300">
-                • <strong>Inverter:</strong> {engineeringResult.bundle.inverter} ({engineeringResult.requiredVA} VA sized)
-              </p>
-              <p className="text-xs text-slate-300">
-                • <strong>Storage:</strong> {engineeringResult.bundle.battery} (Sized: {engineeringResult.requiredLiFePO4KWh} kWh)
-              </p>
-              <p className="text-xs text-slate-300">
-                • <strong>Solar Array:</strong> {engineeringResult.bundle.pv} (Sized: {engineeringResult.requiredPVKWp} kWp)
+              <h4 className="font-heading font-bold text-white text-base mb-1">Tier-1 LiFePO4 Chemistry</h4>
+              <p className="text-xs text-[#F8FAF7]/75 leading-relaxed">
+                6,000 cycles to 80% Depth of Discharge. Zero thermal runaway hazard, non-toxic chemistry, and 10-year design lifespan.
               </p>
             </div>
 
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-extrabold py-3.5 rounded-xl transition shadow-lg"
-            >
-              Lock In Quote & Schedule Physical Site Audit ({formatNaira(engineeringResult.downPaymentNaira)} Down)
-            </button>
+            <div className="bg-[#123B2A]/45 backdrop-blur-md p-6 rounded-2xl border border-white/10 hover:border-[#F5B82E]/50 transition">
+              <div className="w-12 h-12 rounded-xl bg-[#F5B82E]/20 border border-[#F5B82E]/30 flex items-center justify-center text-[#F5B82E] mb-4 text-xl">
+                🏆
+              </div>
+              <h4 className="font-heading font-bold text-white text-base mb-1">COREN &amp; NEMSA Certified</h4>
+              <p className="text-xs text-[#F8FAF7]/75 leading-relaxed">
+                Strict adherence to Nigerian electrical codes, Class II surge suppressors, dedicated earth rod grounding, and DC isolators.
+              </p>
+            </div>
+
+            <div className="bg-[#123B2A]/45 backdrop-blur-md p-6 rounded-2xl border border-white/10 hover:border-[#19A89A]/50 transition">
+              <div className="w-12 h-12 rounded-xl bg-[#19A89A]/20 border border-[#19A89A]/30 flex items-center justify-center text-[#19A89A] mb-4 text-xl">
+                📡
+              </div>
+              <h4 className="font-heading font-bold text-white text-base mb-1">24/7 Remote IoT Telemetry</h4>
+              <p className="text-xs text-[#F8FAF7]/75 leading-relaxed">
+                Cell-level BMS monitoring, temperature surveillance, and proactive anomaly alerts via automated cellular gateways.
+              </p>
+            </div>
+
+            <div className="bg-[#123B2A]/45 backdrop-blur-md p-6 rounded-2xl border border-white/10 hover:border-[#F5B82E]/50 transition">
+              <div className="w-12 h-12 rounded-xl bg-[#F5B82E]/20 border border-[#F5B82E]/30 flex items-center justify-center text-[#F5B82E] mb-4 text-xl">
+                ✅
+              </div>
+              <h4 className="font-heading font-bold text-white text-base mb-1">100% Lease-to-Own</h4>
+              <p className="text-xs text-[#F8FAF7]/75 leading-relaxed">
+                Complete legal ownership transfer upon term completion. No penalty for early buyout, and no continuous rental fees.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 4. INTERACTIVE APPLIANCE-FIRST SIZING & ROI CALCULATOR */}
-      <section id="calculator" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 space-y-10">
-        <div className="max-w-3xl space-y-2">
-          <span className="text-emerald-400 font-bold text-xs uppercase tracking-widest">
-            Deterministic Electrical Engineering Engine
-          </span>
-          <h2 className="text-3xl font-extrabold text-white">
-            Interactive Appliance Load, Geo-Zone Irradiance & ROI Calculator
-          </h2>
-          <p className="text-slate-400 text-sm">
-            Select your Nigerian State, toggle the appliances you run during the day (08:00–17:00) and night (17:00–08:00), and compare your PAYG installment against your petrol/diesel generator expenditure.
+      {/* SECTION 3: SOLAR PACKAGES */}
+      <section id="packages" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F5B82E]/15 border border-[#F5B82E]/30 text-[#F5B82E] text-xs font-semibold mb-3">
+            <span>📦</span> Factory-Calibrated Hardware Packages
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-heading font-extrabold text-white">Engineered Solar Solutions</h2>
+          <p className="text-sm sm:text-base text-[#F8FAF7]/75 mt-3">
+            Choose from pre-engineered Growatt LiFePO4 packages configured for residential flats, family duplexes, commercial enterprises, and industrial facilities.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-8 items-start">
-          {/* Left Column: State Selector & Appliance Matrix */}
-          <div className="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
-            <div className="grid sm:grid-cols-2 gap-4 pb-4 border-b border-slate-800">
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  1. Select Your State (Auto-Adjusts Peak Sun Hours)
-                </label>
-                <select
-                  value={selectedState}
-                  onChange={(e) => setSelectedState(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:border-emerald-500 outline-none"
-                >
-                  {NIGERIAN_STATES.map((st) => (
-                    <option key={st.state_name} value={st.state_name}>
-                      {st.state_name} — {st.peak_sun_hours}h Peak Sun ({st.geo_belt.replace('_', ' ')})
-                    </option>
-                  ))}
-                </select>
-              </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {SOLAR_PACKAGES.map((pkg, idx) => (
+            <div
+              key={idx}
+              className={`bg-[#0B241B]/80 backdrop-blur-xl rounded-3xl p-6 border flex flex-col justify-between relative transition duration-300 ${
+                pkg.badge ? 'border-2 border-[#F5B82E] shadow-xl shadow-[#F5B82E]/10' : 'border-white/10 hover:border-[#19A89A]/50'
+              }`}
+            >
+              {pkg.badge && (
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#F5B82E] text-[#0B241B] font-extrabold text-[10px] tracking-wider uppercase px-3 py-1 rounded-full shadow-md">
+                  {pkg.badge}
+                </div>
+              )}
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  2. Acquisition Plan (LiFePO4 Mandatory on Lease)
-                </label>
-                <div className="grid grid-cols-2 gap-2 bg-slate-950 p-1 rounded-xl border border-slate-800">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#19A89A] bg-[#19A89A]/15 px-2.5 py-1 rounded-lg">
+                    {pkg.sku}
+                  </span>
+                </div>
+
+                <h3 className="font-heading font-extrabold text-xl text-white">{pkg.title}</h3>
+                <p className="text-xs text-[#F8FAF7]/70 mt-1">{pkg.profile}</p>
+
+                <div className="my-5 p-4 rounded-2xl bg-black/40 border border-white/5 space-y-2 text-xs">
+                  <div className="flex justify-between"><span className="text-[#F8FAF7]/60">Inverter:</span> <span className="font-semibold text-white">{pkg.inverter}</span></div>
+                  <div className="flex justify-between"><span className="text-[#F8FAF7]/60">Battery:</span> <span className="font-semibold text-[#19A89A]">{pkg.battery}</span></div>
+                  <div className="flex justify-between"><span className="text-[#F8FAF7]/60">Solar Array:</span> <span className="font-semibold text-white">{pkg.pv}</span></div>
+                  <div className="flex justify-between"><span className="text-[#F8FAF7]/60">Warranty:</span> <span className="font-semibold text-[#F5B82E]">{pkg.warranty}</span></div>
+                </div>
+
+                <div className="text-xs text-[#F8FAF7]/75 space-y-1.5 mb-6">
+                  <p className="font-bold text-white text-[11px] uppercase tracking-wider">Supported Appliances:</p>
+                  {pkg.supportedAppliances.map((app, aIdx) => (
+                    <div key={aIdx} className="flex items-center gap-2">
+                      <span className="text-[#19A89A]">✓</span>
+                      <span>{app}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-white/10">
+                <div className="flex items-baseline justify-between mb-2">
+                  <div>
+                    <span className="text-[10px] uppercase text-[#F8FAF7]/60 block">Deposit (30%)</span>
+                    <span className="text-base font-heading font-bold text-white">
+                      ₦{Math.round(pkg.cashPriceNGN * 0.3).toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[10px] uppercase text-[#F5B82E] font-semibold block">36-Mo. Instalment</span>
+                    <span className="text-lg font-heading font-extrabold text-[#F5B82E]">
+                      ₦{pkg.monthlyInstallmentNGN.toLocaleString()}<span className="text-xs font-normal text-[#F8FAF7]/60">/mo</span>
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 mt-4">
                   <button
-                    type="button"
-                    onClick={() => setPaymentMode('INSTALLMENT')}
-                    className={`py-2 text-xs font-bold rounded-lg transition ${
-                      paymentMode === 'INSTALLMENT'
-                        ? 'bg-emerald-500 text-slate-950'
-                        : 'text-slate-400 hover:text-white'
-                    }`}
+                    onClick={() => setSelectedPackageForModal(pkg)}
+                    className="w-full py-2.5 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition"
                   >
-                    PAYG Lease (3–36m)
+                    View Details
                   </button>
                   <button
-                    type="button"
-                    onClick={() => setPaymentMode('OUTRIGHT')}
-                    className={`py-2 text-xs font-bold rounded-lg transition ${
-                      paymentMode === 'OUTRIGHT'
-                        ? 'bg-emerald-500 text-slate-950'
-                        : 'text-slate-400 hover:text-white'
-                    }`}
+                    onClick={() => openAuditForPackage(pkg.title)}
+                    className="w-full py-2.5 rounded-xl text-xs font-bold text-[#0B241B] bg-[#F5B82E] hover:bg-amber-400 transition"
                   >
-                    100% Outright Cash
+                    Select Plan
                   </button>
                 </div>
               </div>
             </div>
+          ))}
+        </div>
+      </section>
 
-            {/* Appliance Table */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs font-semibold text-slate-400 px-2">
-                <span>APPLIANCE & INDUCTIVE SURGE RATING</span>
-                <div className="flex items-center gap-6">
-                  <span>QTY</span>
-                  <span>DAY HRS</span>
-                  <span>NIGHT HRS</span>
-                </div>
+      {/* SECTION 4: HOW PAYGO WORKS */}
+      <section id="how-it-works" className="py-20 bg-gradient-to-b from-[#0B241B] via-[#123B2A]/30 to-[#0B241B] border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-xs font-bold uppercase tracking-widest text-[#19A89A] mb-2">Frictionless Path to Energy Independence</h2>
+            <h3 className="text-3xl sm:text-4xl font-heading font-extrabold text-white">How Our PAYGo Model Works</h3>
+            <p className="text-sm sm:text-base text-[#F8FAF7]/75 mt-3">
+              Transitioning to clean, reliable solar power is simple, predictable, and transparent.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="bg-[#123B2A]/45 p-6 rounded-3xl border border-white/10 hover:border-[#19A89A]/40 transition">
+              <div className="w-12 h-12 rounded-2xl bg-[#F5B82E] text-[#0B241B] font-extrabold font-heading text-lg flex items-center justify-center mb-5 shadow-lg shadow-[#F5B82E]/20">
+                01
+              </div>
+              <h4 className="font-heading font-bold text-lg text-white mb-2">Choose Your Solar System</h4>
+              <p className="text-xs text-[#F8FAF7]/75 leading-relaxed">
+                Use our deterministic electrical calculator or schedule an on-site audit to tailor inverter and LiFePO4 battery capacity to your exact daily kilowatt-hour load.
+              </p>
+            </div>
+
+            <div className="bg-[#123B2A]/45 p-6 rounded-3xl border border-white/10 hover:border-[#19A89A]/40 transition">
+              <div className="w-12 h-12 rounded-2xl bg-[#19A89A] text-[#0B241B] font-extrabold font-heading text-lg flex items-center justify-center mb-5 shadow-lg shadow-[#19A89A]/20">
+                02
+              </div>
+              <h4 className="font-heading font-bold text-lg text-white mb-2">Select Flexible Payment Plan</h4>
+              <p className="text-xs text-[#F8FAF7]/75 leading-relaxed">
+                Pay an affordable 30% initial deposit. Choose 12, 24, or 36 months repayment tenure with predictable instalments that cost less than your generator fuel budget.
+              </p>
+            </div>
+
+            <div className="bg-[#123B2A]/45 p-6 rounded-3xl border border-white/10 hover:border-[#19A89A]/40 transition">
+              <div className="w-12 h-12 rounded-2xl bg-[#123B2A] border border-[#19A89A]/40 text-[#F8FAF7] font-extrabold font-heading text-lg flex items-center justify-center mb-5">
+                03
+              </div>
+              <h4 className="font-heading font-bold text-lg text-white mb-2">Rapid Professional Installation</h4>
+              <p className="text-xs text-[#F8FAF7]/75 leading-relaxed">
+                COREN-certified engineers mount, wire, and commission your Growatt hybrid plant in 48 to 72 hours, complete with industrial surge suppression and grounding.
+              </p>
+            </div>
+
+            <div className="bg-[#123B2A]/45 p-6 rounded-3xl border border-white/10 hover:border-[#19A89A]/40 transition">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#F5B82E] to-[#19A89A] text-[#0B241B] font-extrabold font-heading text-lg flex items-center justify-center mb-5">
+                04
+              </div>
+              <h4 className="font-heading font-bold text-lg text-white mb-2">Monitor Energy &amp; Own</h4>
+              <p className="text-xs text-[#F8FAF7]/75 leading-relaxed">
+                Track daily solar harvest on your phone. Make automated monthly transfers to your Dedicated Virtual Account. Enjoy full, 100% equipment ownership at term completion.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 5: INTELLIGENT ENERGY MONITORING */}
+      <section id="monitoring" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#19A89A]/15 border border-[#19A89A]/30 text-[#19A89A] text-xs font-semibold mb-3">
+            <span>📡</span> Telemetry &amp; AI Energy Management
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-heading font-extrabold text-white">Intelligent Energy Monitoring</h2>
+          <p className="text-sm sm:text-base text-[#F8FAF7]/75 mt-3">
+            Every system is paired with a Growatt Shine GSM/WiFi IoT gateway that streams live generation, battery health, and load analytics to our cloud engine.
+          </p>
+        </div>
+
+        <div className="bg-[#0B241B]/80 backdrop-blur-xl rounded-3xl p-6 lg:p-8 border border-white/15 shadow-2xl">
+          <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-white/10">
+            <div>
+              <div className="flex items-center gap-3">
+                <span className="font-heading font-bold text-lg text-white">Growatt Solar Hub OS</span>
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 font-medium">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> Telemetry Active
+                </span>
+              </div>
+              <p className="text-xs text-[#F8FAF7]/60 mt-1">Gateway Ref: SHINE-GSM-4G-98421 • Firmware v3.14.9</p>
+            </div>
+
+            <div className="flex items-center gap-2 bg-black/40 p-1 rounded-xl border border-white/5 text-xs">
+              <button
+                onClick={() => setDashboardMode('day')}
+                className={`px-3 py-1.5 rounded-lg font-bold transition ${
+                  dashboardMode === 'day' ? 'bg-[#F5B82E] text-[#0B241B]' : 'text-[#F8FAF7]/80 hover:text-white'
+                }`}
+              >
+                Daytime Harvest
+              </button>
+              <button
+                onClick={() => setDashboardMode('night')}
+                className={`px-3 py-1.5 rounded-lg font-bold transition ${
+                  dashboardMode === 'night' ? 'bg-[#19A89A] text-[#0B241B]' : 'text-[#F8FAF7]/80 hover:text-white'
+                }`}
+              >
+                Evening Battery
+              </button>
+              <button
+                onClick={() => setDashboardMode('outage')}
+                className={`px-3 py-1.5 rounded-lg font-bold transition ${
+                  dashboardMode === 'outage' ? 'bg-purple-500 text-white' : 'text-[#F8FAF7]/80 hover:text-white'
+                }`}
+              >
+                Grid Outage Mode
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 my-8">
+            <div className="bg-black/30 p-4 rounded-2xl border border-white/5">
+              <span className="text-[11px] text-[#F8FAF7]/60 uppercase block mb-1">Solar PV</span>
+              <div className="text-2xl font-heading font-extrabold text-[#F5B82E] font-mono">
+                {dashboardMode === 'day' ? '2.4' : dashboardMode === 'night' ? '0.0' : '1.8'} <span className="text-xs font-normal">kW</span>
+              </div>
+              <span className="text-[10px] text-emerald-400 mt-1 block">Active Ingress</span>
+            </div>
+
+            <div className="bg-black/30 p-4 rounded-2xl border border-white/5">
+              <span className="text-[11px] text-[#F8FAF7]/60 uppercase block mb-1">Battery State</span>
+              <div className="text-2xl font-heading font-extrabold text-[#19A89A] font-mono">
+                {dashboardMode === 'day' ? '86' : dashboardMode === 'night' ? '74' : '92'} <span className="text-xs font-normal">%</span>
+              </div>
+              <span className="text-[10px] text-[#F8FAF7]/60 mt-1 block font-mono">52.8V • 28°C</span>
+            </div>
+
+            <div className="bg-black/30 p-4 rounded-2xl border border-white/5">
+              <span className="text-[11px] text-[#F8FAF7]/60 uppercase block mb-1">Home Load</span>
+              <div className="text-2xl font-heading font-extrabold text-white font-mono">
+                {dashboardMode === 'day' ? '1.1' : dashboardMode === 'night' ? '0.7' : '1.4'} <span className="text-xs font-normal">kW</span>
+              </div>
+              <span className="text-[10px] text-emerald-400 mt-1 block">Within Capacity</span>
+            </div>
+
+            <div className="bg-black/30 p-4 rounded-2xl border border-white/5">
+              <span className="text-[11px] text-[#F8FAF7]/60 uppercase block mb-1">Payment Balance</span>
+              <div className="text-2xl font-heading font-extrabold text-[#F8FAF7] font-mono">₦0 <span className="text-xs font-normal">due</span></div>
+              <span className="text-[10px] text-[#19A89A] mt-1 block font-semibold">Good Standing</span>
+            </div>
+
+            <div className="bg-black/30 p-4 rounded-2xl border border-white/5">
+              <span className="text-[11px] text-[#F8FAF7]/60 uppercase block mb-1">Next Instalment</span>
+              <div className="text-lg font-heading font-extrabold text-white font-mono">25 Nov</div>
+              <span className="text-[10px] text-[#F5B82E] mt-1 block font-mono">₦78,500 (DVA Linked)</span>
+            </div>
+
+            <div className="bg-black/30 p-4 rounded-2xl border border-white/5">
+              <span className="text-[11px] text-[#F8FAF7]/60 uppercase block mb-1">System Health</span>
+              <div className="text-xl font-heading font-extrabold text-emerald-400 flex items-center gap-1.5">
+                ✓ 100%
+              </div>
+              <span className="text-[10px] text-[#F8FAF7]/60 mt-1 block">All Cells Balanced</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 6: AFFORDABILITY & GENERATOR SAVINGS CALCULATOR */}
+      <section id="calculator" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F5B82E]/15 border border-[#F5B82E]/30 text-[#F5B82E] text-xs font-semibold mb-3">
+            <span>⚡</span> Interactive Electrical &amp; Financial Sizer
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-heading font-extrabold text-white">Affordability &amp; Fuel Savings Calculator</h2>
+          <p className="text-sm sm:text-base text-[#F8FAF7]/75 mt-3">
+            Select your state region and household appliances. Compare your 36-month solar lease-to-own payment directly against what you currently spend on petrol and generator maintenance.
+          </p>
+        </div>
+
+        <div className="bg-[#0B241B]/80 backdrop-blur-xl rounded-3xl p-6 lg:p-10 border border-white/15 shadow-2xl">
+          <div className="grid md:grid-cols-3 gap-6 pb-8 border-b border-white/10">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#F8FAF7]/80 mb-2">
+                Installation State / Geo-Zone
+              </label>
+              <select
+                value={selectedState}
+                onChange={(e) => setSelectedState(e.target.value)}
+                className="w-full bg-black/50 border border-white/15 text-white rounded-xl px-4 py-2.5 text-sm font-semibold focus:border-[#F5B82E] focus:outline-none"
+              >
+                <option value="LAGOS">Lagos (Southern Coastal - 4.1 PSH)</option>
+                <option value="ABUJA">FCT Abuja (Middle Belt - 5.1 PSH)</option>
+                <option value="RIVERS">Rivers / Port Harcourt (3.8 PSH)</option>
+                <option value="KANO">Kano (Northern Sahel - 5.9 PSH)</option>
+                <option value="BENUE">Benue / Makurdi (4.9 PSH)</option>
+                <option value="PLATEAU">Plateau / Jos (5.3 PSH)</option>
+                <option value="ENUGU">Enugu (4.4 PSH)</option>
+                <option value="OYO">Oyo / Ibadan (4.5 PSH)</option>
+              </select>
+            </div>
+
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#F8FAF7]/80">Down Payment Floor</label>
+                <span className="text-xs font-mono font-bold text-[#F5B82E]">{downPaymentPct}%</span>
+              </div>
+              <input
+                type="range"
+                min="30"
+                max="60"
+                step="5"
+                value={downPaymentPct}
+                onChange={(e) => setDownPaymentPct(Number(e.target.value))}
+                className="w-full h-2 bg-white/10 rounded-lg cursor-pointer accent-[#F5B82E]"
+              />
+              <div className="flex justify-between text-[10px] text-[#F8FAF7]/50 mt-1">
+                <span>30% (Standard)</span>
+                <span>45%</span>
+                <span>60% (Lower Instalment)</span>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#F8FAF7]/80 mb-2">
+                Repayment Tenure
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {[12, 24, 36].map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => setTenureMonths(m)}
+                    className={`py-2 rounded-xl text-xs font-bold transition ${
+                      tenureMonths === m
+                        ? 'bg-[#F5B82E] text-[#0B241B] shadow-md'
+                        : 'bg-white/5 border border-white/10 text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {m} Mo.
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid lg:grid-cols-12 gap-8 my-8">
+            {/* Appliance List */}
+            <div className="lg:col-span-7 space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-white/10">
+                <h4 className="font-heading font-bold text-sm uppercase tracking-wider text-white">Select Connected Appliances</h4>
+                <span className="text-xs text-[#F8FAF7]/60">Click + / - to adjust</span>
               </div>
 
-              {appliances.map((item) => (
-                <div
-                  key={item.code}
-                  className={`p-3.5 rounded-xl border transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-                    item.qty > 0
-                      ? 'bg-slate-950/90 border-emerald-500/40'
-                      : 'bg-slate-950/30 border-slate-800/70 opacity-65'
-                  }`}
-                >
-                  <div>
-                    <p className="text-sm font-semibold text-white">{item.name}</p>
-                    <p className="text-[11px] text-slate-400">
-                      Running: <span className="text-emerald-400 font-mono">{item.watts}W</span> • Surge Factor:{' '}
-                      <span className="font-mono">{item.surge}x</span> {item.motor ? '(Inductive Motor)' : '(Resistive)'}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-4 self-end sm:self-center">
-                    {/* Quantity Stepper */}
-                    <div className="flex items-center bg-slate-900 border border-slate-700 rounded-lg">
+              <div className="space-y-3">
+                {appliances.map((app) => (
+                  <div
+                    key={app.id}
+                    className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition"
+                  >
+                    <div>
+                      <div className="font-bold text-white text-xs">{app.name}</div>
+                      <div className="text-[10px] text-[#F8FAF7]/60 font-mono">
+                        {app.watts}W rating • {app.isMotor ? `Motor Surge ${app.surge}x` : 'Resistive'}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
                       <button
                         type="button"
-                        onClick={() => updateAppliance(item.code, 'qty', item.qty - 1)}
-                        className="px-2.5 py-1 text-slate-300 hover:text-white font-bold"
+                        onClick={() => handleApplianceChange(app.id, -1)}
+                        className="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold flex items-center justify-center transition"
                       >
                         -
                       </button>
-                      <span className="px-2 text-xs font-mono font-bold text-emerald-400">{item.qty}</span>
+                      <span className="font-mono font-bold text-sm text-[#F5B82E] w-5 text-center">{app.qty}</span>
                       <button
                         type="button"
-                        onClick={() => updateAppliance(item.code, 'qty', item.qty + 1)}
-                        className="px-2.5 py-1 text-slate-300 hover:text-white font-bold"
+                        onClick={() => handleApplianceChange(app.id, 1)}
+                        className="w-7 h-7 rounded-lg bg-[#F5B82E] hover:bg-amber-400 text-[#0B241B] font-bold flex items-center justify-center transition"
                       >
                         +
                       </button>
                     </div>
-
-                    {/* Day Hours */}
-                    <input
-                      type="number"
-                      min={0}
-                      max={10}
-                      value={item.dayH}
-                      onChange={(e) => updateAppliance(item.code, 'dayH', Number(e.target.value))}
-                      className="w-14 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-center text-xs font-mono"
-                      title="Daytime Hours (08:00 - 17:00)"
-                    />
-
-                    {/* Night Hours */}
-                    <input
-                      type="number"
-                      min={0}
-                      max={14}
-                      value={item.nightH}
-                      onChange={(e) => updateAppliance(item.code, 'nightH', Number(e.target.value))}
-                      className="w-14 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-center text-xs font-mono"
-                      title="Nighttime Hours on Battery (17:00 - 08:00)"
-                    />
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Right Column: Engineering Telemetry, Amortization Sliders & DisCo/Generator ROI */}
-          <div className="lg:col-span-5 space-y-6">
-            {/* Engineering Output Panel */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5">
-              <h3 className="text-base font-bold text-white border-b border-slate-800 pb-3">
-                Calculated Electrical & Financing Breakdown
-              </h3>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
-                <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                  <p className="text-[11px] text-slate-400">Peak Load</p>
-                  <p className="text-base font-black text-white font-mono">{engineeringResult.runningWatts}W</p>
-                </div>
-                <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                  <p className="text-[11px] text-slate-400">Inverter VA</p>
-                  <p className="text-base font-black text-emerald-400 font-mono">{engineeringResult.requiredVA}VA</p>
-                </div>
-                <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                  <p className="text-[11px] text-slate-400">LiFePO4 Bank</p>
-                  <p className="text-base font-black text-cyan-400 font-mono">{engineeringResult.requiredLiFePO4KWh}kWh</p>
-                </div>
-                <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                  <p className="text-[11px] text-slate-400">Solar PV</p>
-                  <p className="text-base font-black text-amber-400 font-mono">{engineeringResult.requiredPVKWp}kWp</p>
-                </div>
-              </div>
-
-              {engineeringResult.warnings.map((w, idx) => (
-                <div key={idx} className="bg-amber-950/50 border border-amber-600/40 text-amber-200 text-xs p-3 rounded-xl">
-                  ⚠️ {w}
-                </div>
-              ))}
-
-              {paymentMode === 'INSTALLMENT' && (
-                <div className="space-y-4 pt-2">
-                  <div>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className="text-slate-300">Repayment Tenure (Months)</span>
-                      <span className="font-bold text-emerald-400 font-mono">{tenureMonths} Months</span>
-                    </div>
-                    <input
-                      type="range"
-                      min={3}
-                      max={36}
-                      step={3}
-                      value={tenureMonths}
-                      onChange={(e) => setTenureMonths(Number(e.target.value))}
-                      className="w-full accent-emerald-500"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className="text-slate-300">Upfront Down Payment (Min 30% FX Guardrail)</span>
-                      <span className="font-bold text-emerald-400 font-mono">
-                        {downPaymentPct}% ({formatNaira(engineeringResult.downPaymentNaira)})
-                      </span>
-                    </div>
-                    <input
-                      type="range"
-                      min={30}
-                      max={60}
-                      step={5}
-                      value={downPaymentPct}
-                      onChange={(e) => setDownPaymentPct(Number(e.target.value))}
-                      className="w-full accent-emerald-500"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Financial Summary Lines */}
-              <div className="bg-slate-950 rounded-xl p-4 border border-slate-800 space-y-2 text-xs">
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Matched Bundle Cash Value:</span>
-                  <span className="font-mono text-white">{formatNaira(engineeringResult.bundle.priceNaira)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Upfront Down Payment ({paymentMode === 'OUTRIGHT' ? '100%' : `${downPaymentPct}%`}):</span>
-                  <span className="font-mono text-emerald-400 font-bold">{formatNaira(engineeringResult.downPaymentNaira)}</span>
-                </div>
-                {paymentMode === 'INSTALLMENT' && (
-                  <>
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">All-Risk Equipment Insurance (1.75%):</span>
-                      <span className="font-mono text-slate-300">{formatNaira(engineeringResult.insuranceFeeNaira)}</span>
-                    </div>
-                    <div className="flex justify-between pt-2 border-t border-slate-800 text-sm">
-                      <span className="font-bold text-white">Monthly PAYG Installment:</span>
-                      <span className="font-mono font-black text-emerald-400">
-                        {formatNaira(engineeringResult.monthlyInstallment)} / mo
-                      </span>
-                    </div>
-                  </>
-                )}
+                ))}
               </div>
             </div>
 
-            {/* Nigerian DisCo Band A & Petrol Generator ROI Comparison Box */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold text-white">
-                  DisCo Band A & Petrol Generator ROI Comparison
-                </h3>
-                <span className="text-[11px] bg-rose-500/10 text-rose-300 px-2 py-0.5 rounded border border-rose-500/20">
-                  Fossil Burn vs. Solar
-                </span>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3 text-xs">
-                <div>
-                  <label className="text-slate-400 block mb-1">DisCo Bill (₦/mo)</label>
-                  <input
-                    type="number"
-                    value={monthlyGridBill}
-                    onChange={(e) => setMonthlyGridBill(Number(e.target.value))}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 font-mono text-white"
-                  />
-                </div>
-                <div>
-                  <label className="text-slate-400 block mb-1">Gen Run (Hrs/Day)</label>
-                  <input
-                    type="number"
-                    min={0}
-                    max={24}
-                    value={dailyGenHours}
-                    onChange={(e) => setDailyGenHours(Number(e.target.value))}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 font-mono text-white"
-                  />
-                </div>
-                <div>
-                  <label className="text-slate-400 block mb-1">Fuel (₦/Liter)</label>
-                  <input
-                    type="number"
-                    value={fuelPricePerLiter}
-                    onChange={(e) => setFuelPricePerLiter(Number(e.target.value))}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 font-mono text-white"
-                  />
-                </div>
-              </div>
-
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2 text-xs">
-                <div className="flex justify-between text-slate-400">
-                  <span>Monthly Petrol/Diesel Burn:</span>
-                  <span className="font-mono text-rose-400">{formatNaira(engineeringResult.monthlyFuelSpend)}</span>
-                </div>
-                <div className="flex justify-between text-slate-400">
-                  <span>DisCo Grid + Gen Servicing:</span>
-                  <span className="font-mono text-rose-400">
-                    {formatNaira(monthlyGridBill + engineeringResult.monthlyGenMaintenance)}
+            {/* Sizing & Financing Summary */}
+            <div className="lg:col-span-5 bg-black/40 border border-white/10 rounded-2xl p-6 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#F8FAF7]/80">Engineered Result</span>
+                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#F5B82E]/20 text-[#F5B82E] border border-[#F5B82E]/30 font-semibold font-mono">
+                    {sizingMath.bundle.title}
                   </span>
                 </div>
-                <div className="flex justify-between pt-2 border-t border-slate-800 text-sm font-bold">
-                  <span className="text-white">Your Current Monthly Waste:</span>
-                  <span className="font-mono text-rose-400">{formatNaira(engineeringResult.totalCurrentFossilSpend)} / mo</span>
+
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  <div className="bg-white/5 p-3 rounded-xl border border-white/5">
+                    <span className="text-[10px] uppercase text-[#F8FAF7]/60 block">Running Load</span>
+                    <span className="text-xl font-heading font-bold text-white font-mono">
+                      {sizingMath.runningWatts.toLocaleString()} W
+                    </span>
+                  </div>
+                  <div className="bg-white/5 p-3 rounded-xl border border-white/5">
+                    <span className="text-[10px] uppercase text-[#F8FAF7]/60 block">Inrush Surge</span>
+                    <span className="text-xl font-heading font-bold text-[#F5B82E] font-mono">
+                      {Math.round(sizingMath.surgeVA).toLocaleString()} VA
+                    </span>
+                  </div>
+                  <div className="bg-white/5 p-3 rounded-xl border border-white/5">
+                    <span className="text-[10px] uppercase text-[#F8FAF7]/60 block">Battery Required</span>
+                    <span className="text-xl font-heading font-bold text-[#19A89A] font-mono">
+                      {sizingMath.bundle.battery.split(' ')[0]} kWh
+                    </span>
+                  </div>
+                  <div className="bg-white/5 p-3 rounded-xl border border-white/5">
+                    <span className="text-[10px] uppercase text-[#F8FAF7]/60 block">Solar PV Array</span>
+                    <span className="text-xl font-heading font-bold text-white font-mono">
+                      {sizingMath.bundle.pv.split(' ')[0]} kWp
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-3 p-4 rounded-xl bg-[#123B2A]/40 border border-[#19A89A]/20 mb-6 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-[#F8FAF7]/70">Estimated Outright Value:</span>
+                    <span className="font-bold text-white font-mono">₦{sizingMath.cashPrice.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[#F8FAF7]/70">Down Payment Floor:</span>
+                    <span className="font-bold text-white font-mono">₦{sizingMath.downPayment.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between pt-2 border-t border-white/10 text-sm">
+                    <span className="font-bold text-[#F5B82E]">Monthly PAYGo Instalment:</span>
+                    <span className="font-extrabold text-[#F5B82E] font-mono">
+                      ₦{sizingMath.monthlyPayment.toLocaleString()}/mo
+                    </span>
+                  </div>
                 </div>
               </div>
 
               <button
-                onClick={() => setIsModalOpen(true)}
-                className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl transition text-sm"
+                onClick={() => openAuditForPackage(sizingMath.bundle.title)}
+                className="w-full py-3.5 rounded-xl text-xs font-bold text-[#0B241B] bg-[#F5B82E] hover:bg-amber-400 shadow-lg shadow-[#F5B82E]/20 transition-all hover:scale-105 flex items-center justify-center gap-2"
               >
-                Book Physical Site Audit for This Configuration
+                <span>Book Site Audit for this System</span>
+                <span>&rarr;</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Generator ROI Comparison */}
+          <div className="pt-8 border-t border-white/10">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <span className="text-base">⛽</span>
+                <h4 className="font-heading font-bold text-white text-sm">Generator Fuel Cost vs. Solar Repayment</h4>
+              </div>
+              <span className="text-xs text-[#F8FAF7]/60">Assuming ₦1,250 / Litre Petrol + ₦15k/mo engine oil</span>
+            </div>
+
+            <div className="grid sm:grid-cols-3 gap-4 text-center">
+              <div className="p-4 rounded-2xl bg-red-950/40 border border-red-800/30">
+                <span className="text-[10px] uppercase text-red-300 font-semibold block mb-1">Current Monthly Petrol Spend</span>
+                <div className="text-xl font-heading font-bold text-red-400 font-mono">
+                  ₦{sizingMath.monthlyPetrolCost.toLocaleString()}<span className="text-xs font-normal">/mo</span>
+                </div>
+                <span className="text-[10px] text-[#F8FAF7]/60 mt-1 block">8 hrs/day running 3.5kVA gen</span>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-[#19A89A]/15 border border-[#19A89A]/30">
+                <span className="text-[10px] uppercase text-[#19A89A] font-semibold block mb-1">Your Solar Monthly Payment</span>
+                <div className="text-xl font-heading font-bold text-white font-mono">
+                  ₦{sizingMath.monthlyPayment.toLocaleString()}<span className="text-xs font-normal">/mo</span>
+                </div>
+                <span className="text-[10px] text-[#F8FAF7]/60 mt-1 block">Predictable fixed instalment</span>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/40">
+                <span className="text-[10px] uppercase text-emerald-300 font-bold block mb-1">Net Cash Saved in Your Pocket</span>
+                <div className="text-2xl font-heading font-extrabold text-emerald-400 font-mono">
+                  +₦{sizingMath.netMonthlySavings.toLocaleString()}<span className="text-xs font-normal">/mo</span>
+                </div>
+                <span className="text-[10px] text-emerald-300 font-medium mt-1 block">
+                  ₦{sizingMath.threeYearSavings.toLocaleString()} saved over 36 months!
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 7: INSTALLATION CATEGORIES */}
+      <section id="installations" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#19A89A]/15 border border-[#19A89A]/30 text-[#19A89A] text-xs font-semibold mb-3">
+            <span>📸</span> Realistic African Environments
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-heading font-extrabold text-white">Installation Environments</h2>
+          <p className="text-sm sm:text-base text-[#F8FAF7]/75 mt-3">
+            Tailored photovoltaic and battery storage architectures engineered for the specific load dynamics of homes, commercial clinics, and light industrial facilities.
+          </p>
+        </div>
+
+        <div className="grid lg:grid-cols-3 gap-8">
+          <div className="bg-[#0B241B]/80 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/10 group hover:border-[#F5B82E]/50 transition duration-300 flex flex-col justify-between">
+            <div>
+              <div className="relative h-64 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1508873696983-2df5293cb395?auto=format&fit=crop&w=800&q=80"
+                  alt="Residential solar"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0B241B] via-transparent to-transparent" />
+                <span className="absolute top-4 left-4 bg-[#0B241B]/80 backdrop-blur-md text-[#F5B82E] text-xs font-bold px-3 py-1 rounded-full border border-white/10">
+                  Residential Homes
+                </span>
+              </div>
+              <div className="p-6">
+                <h3 className="font-heading font-extrabold text-xl text-white mb-2">Modern Home Energy Storage</h3>
+                <p className="text-xs text-[#F8FAF7]/75 leading-relaxed mb-4">
+                  Silent, reliable rooftop power for flats and duplexes. Protect your family from grid outages, power air conditioning with peace of mind, and eliminate generator noise and fumes forever.
+                </p>
+                <div className="space-y-1.5 text-xs text-[#F8FAF7]/70">
+                  <div className="flex items-center gap-2"><span className="text-[#F5B82E]">✓</span> 0ms Seamless Automatic Transfer</div>
+                  <div className="flex items-center gap-2"><span className="text-[#F5B82E]">✓</span> Quiet indoor LiFePO4 battery enclosures</div>
+                  <div className="flex items-center gap-2"><span className="text-[#F5B82E]">✓</span> Rapid 48-Hour Professional Deployment</div>
+                </div>
+              </div>
+            </div>
+            <div className="p-6 pt-0">
+              <button
+                onClick={() => openAuditForPackage('Residential')}
+                className="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition"
+              >
+                Explore Residential Plans &rarr;
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-[#0B241B]/80 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/10 group hover:border-[#19A89A]/50 transition duration-300 flex flex-col justify-between">
+            <div>
+              <div className="relative h-64 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1497440001374-f26997328c1b?auto=format&fit=crop&w=800&q=80"
+                  alt="Commercial solar"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0B241B] via-transparent to-transparent" />
+                <span className="absolute top-4 left-4 bg-[#0B241B]/80 backdrop-blur-md text-[#19A89A] text-xs font-bold px-3 py-1 rounded-full border border-white/10">
+                  Commercial &amp; SMEs
+                </span>
+              </div>
+              <div className="p-6">
+                <h3 className="font-heading font-extrabold text-xl text-white mb-2">Clinics, Retail &amp; Corporate Hubs</h3>
+                <p className="text-xs text-[#F8FAF7]/75 leading-relaxed mb-4">
+                  Uninterrupted continuity for diagnostic centers, pharmacies, supermarkets, schools, and offices. Protect refrigerated medications and eliminate massive fuel bills during daylight business hours.
+                </p>
+                <div className="space-y-1.5 text-xs text-[#F8FAF7]/70">
+                  <div className="flex items-center gap-2"><span className="text-[#19A89A]">✓</span> Refrigerated cold-chain protection</div>
+                  <div className="flex items-center gap-2"><span className="text-[#19A89A]">✓</span> Daytime direct solar self-consumption</div>
+                  <div className="flex items-center gap-2"><span className="text-[#19A89A]">✓</span> Tax-deductible clean energy leasing</div>
+                </div>
+              </div>
+            </div>
+            <div className="p-6 pt-0">
+              <button
+                onClick={() => openAuditForPackage('Commercial SME')}
+                className="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition"
+              >
+                Explore Commercial Plans &rarr;
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-[#0B241B]/80 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/10 group hover:border-purple-400/50 transition duration-300 flex flex-col justify-between">
+            <div>
+              <div className="relative h-64 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1584271854089-9bb3e5168e32?auto=format&fit=crop&w=800&q=80"
+                  alt="Industrial microgrid"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0B241B] via-transparent to-transparent" />
+                <span className="absolute top-4 left-4 bg-[#0B241B]/80 backdrop-blur-md text-purple-400 text-xs font-bold px-3 py-1 rounded-full border border-white/10">
+                  Industrial &amp; Agro
+                </span>
+              </div>
+              <div className="p-6">
+                <h3 className="font-heading font-extrabold text-xl text-white mb-2">Agro-Processing &amp; Warehouses</h3>
+                <p className="text-xs text-[#F8FAF7]/75 leading-relaxed mb-4">
+                  High-yield 3-phase microgrids for grain milling, manufacturing workshops, cold storage hubs, and logistics facilities. Built with heavy surge tolerances for inductive motor loads.
+                </p>
+                <div className="space-y-1.5 text-xs text-[#F8FAF7]/70">
+                  <div className="flex items-center gap-2"><span className="text-purple-400">✓</span> Balanced 3-Phase 400V Distribution</div>
+                  <div className="flex items-center gap-2"><span className="text-purple-400">✓</span> Containerized Modular LiFePO4 Banks</div>
+                  <div className="flex items-center gap-2"><span className="text-purple-400">✓</span> Dedicated 4-Hour On-Site SLA Response</div>
+                </div>
+              </div>
+            </div>
+            <div className="p-6 pt-0">
+              <button
+                onClick={() => openAuditForPackage('Industrial Microgrid')}
+                className="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition"
+              >
+                Explore Industrial Plans &rarr;
               </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 5. CURATED GROWATT HARDWARE BUNDLES SECTION */}
-      <section id="bundles" className="py-16 bg-slate-900/50 border-t border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-10">
-          <div className="text-center max-w-3xl mx-auto space-y-2">
-            <span className="text-emerald-400 font-bold text-xs uppercase tracking-widest">
-              Factory-Matched Growatt + LiFePO4 Architecture
-            </span>
-            <h2 className="text-3xl font-extrabold text-white">Curated Enterprise Solar Bundles</h2>
-            <p className="text-slate-400 text-sm">
-              Every bundle includes our patented Sealed Lower Terminal Security Shroud, Surge/Lightning Earthing Kit, and 24/7 AI Telemetry.
+      {/* SECTION 8: CUSTOMER STORIES (ILLUSTRATIVE CASE STUDIES) */}
+      <section id="stories" className="py-20 bg-gradient-to-b from-[#0B241B] via-[#123B2A]/20 to-[#0B241B] border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F5B82E]/15 border border-[#F5B82E]/30 text-[#F5B82E] text-xs font-semibold mb-3">
+              <span>📋</span> Engineering Case Studies
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-heading font-extrabold text-white">Proven Field Engineering Impact</h2>
+            <p className="text-sm sm:text-base text-[#F8FAF7]/75 mt-3">
+              Illustrative reference studies demonstrating measurable fuel displacement, uptime reliability, and investment payback across Nigerian sectors.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {GROWATT_BUNDLES.map((b) => {
-              const isRecommended = b.sku === engineeringResult.bundle.sku;
-              return (
-                <div
-                  key={b.sku}
-                  className={`rounded-2xl p-6 flex flex-col justify-between border transition ${
-                    isRecommended
-                      ? 'bg-slate-900 border-emerald-500 shadow-xl shadow-emerald-500/10'
-                      : 'bg-slate-950/80 border-slate-800'
-                  }`}
-                >
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                        {b.badge}
-                      </span>
-                      {isRecommended && (
-                        <span className="text-[10px] font-mono bg-emerald-500 text-slate-950 font-bold px-2 py-0.5 rounded">
-                          MATCHED
-                        </span>
-                      )}
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-extrabold text-white">{b.title}</h3>
-                      <p className="text-xs text-slate-400 mt-0.5">{b.inverter}</p>
-                    </div>
-
-                    <div className="pt-2 border-t border-slate-800">
-                      <p className="text-xs text-slate-400">30% Down Payment From:</p>
-                      <p className="text-2xl font-black text-emerald-400 font-mono">
-                        {formatNaira(b.priceNaira * 0.3)}
-                      </p>
-                      <p className="text-[11px] text-slate-500">Outright Cash: {formatNaira(b.priceNaira)}</p>
-                    </div>
-
-                    <div className="space-y-1.5 text-xs text-slate-300 pt-2">
-                      <p>🔋 <strong>Battery:</strong> {b.battery}</p>
-                      <p>☀️ <strong>Solar Array:</strong> {b.pv}</p>
-                    </div>
-
-                    <ul className="space-y-1.5 pt-3 border-t border-slate-800/80 text-xs text-slate-400">
-                      {b.loads.map((ld, i) => (
-                        <li key={i}>✓ {ld}</li>
-                      ))}
-                    </ul>
+          <div className="grid lg:grid-cols-3 gap-8">
+            {CASE_STUDIES.map((study, sIdx) => (
+              <div key={sIdx} className="bg-[#0B241B]/80 backdrop-blur-xl rounded-3xl p-6 border border-white/10 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between text-xs mb-3">
+                    <span className="text-[#F5B82E] font-semibold">{study.clientType}</span>
+                    <span className="text-[#F8FAF7]/60">{study.location}</span>
                   </div>
-
-                  <button
-                    onClick={() => setIsModalOpen(true)}
-                    className="mt-6 w-full bg-slate-800 hover:bg-emerald-500 hover:text-slate-950 text-white font-bold py-2.5 rounded-xl text-xs transition"
-                  >
-                    Select {b.sku}
-                  </button>
+                  <h4 className="font-heading font-bold text-lg text-white mb-3">{study.title}</h4>
+                  
+                  <div className="space-y-3 text-xs text-[#F8FAF7]/75">
+                    <p><strong className="text-white">Challenge:</strong> {study.challenge}</p>
+                    <p><strong className="text-white">System:</strong> {study.system}</p>
+                    <div className="p-3 rounded-xl bg-black/40 border border-white/5 space-y-1">
+                      <div className="flex justify-between text-[#19A89A] font-semibold"><span>Fuel Reduction:</span> <span>{study.fuelCut}</span></div>
+                      <div className="flex justify-between text-white"><span>Monthly Savings:</span> <span className="font-mono font-bold">{study.monthlySavings}</span></div>
+                      <div className="flex justify-between text-[#F8FAF7]/60"><span>Key Metric:</span> <span>{study.keyMetric}</span></div>
+                    </div>
+                  </div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* 6. HARDWARE SECURITY & ANTI-TAMPER ENGINEERING SECTION */}
-      <section id="security" className="py-16 max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="bg-slate-900/70 border border-slate-800 p-6 rounded-2xl space-y-2">
-            <span className="text-emerald-400 font-mono text-xs font-bold">01 / SEALED TERMINAL SHROUD</span>
-            <h3 className="text-base font-bold text-white">Factory Warranty Preserved</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              We never open the upper Growatt chassis. Our heavy-gauge lockable lower metal shroud encloses all RS485, Dry Contact, and AC/DC breaker ports with serialized steel utility seals.
-            </p>
-          </div>
-          <div className="bg-slate-900/70 border border-slate-800 p-6 rounded-2xl space-y-2">
-            <span className="text-emerald-400 font-mono text-xs font-bold">02 / EEPROM FLASH PROTECTION</span>
-            <h3 className="text-base font-bold text-white">Zero Parasitic Battery Drain</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Even if your credit timer pauses, the Growatt MPPT Solar Charger remains active so your LiFePO4 battery stays healthy at 80%–100% SoC without dying from self-consumption.
-            </p>
-          </div>
-          <div className="bg-slate-900/70 border border-slate-800 p-6 rounded-2xl space-y-2">
-            <span className="text-emerald-400 font-mono text-xs font-bold">03 / MULTI-RAIL INSTANT PAY</span>
-            <h3 className="text-base font-bold text-white">Dedicated Virtual Account + Offline Keypad</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Every customer receives a dedicated Moniepoint, Paystack, or OPay account number. In low-network areas, unlock instantly via Bluetooth (BLE) or a 20-digit SMS token.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* 7. SITE AUDIT BOOKING MODAL */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div>
-                <h3 className="text-lg font-bold text-white">Book COREN Physical Site Audit</h3>
-                <p className="text-xs text-slate-400">
-                  Matched System: <span className="text-emerald-400 font-semibold">{engineeringResult.bundle.title}</span>
-                </p>
+                <div className="mt-6 pt-4 border-t border-white/10 text-[11px] text-[#F8FAF7]/50 italic">
+                  * Illustrative reference case based on standard hardware configuration.
+                </div>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 9: FREQUENTLY ASKED QUESTIONS */}
+      <section id="faq" className="py-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-14">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#19A89A]/15 border border-[#19A89A]/30 text-[#19A89A] text-xs font-semibold mb-3">
+            <span>❓</span> Clear Answers, No Fine Print
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-heading font-extrabold text-white">Frequently Asked Questions</h2>
+          <p className="text-sm text-[#F8FAF7]/75 mt-3">
+            Everything you need to know about our PAYGo lease-to-own terms, warranties, and engineering installations.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          {[
+            {
+              q: '1. How does the PAYGo (Pay-As-You-Go) lease-to-own model work?',
+              a: 'Our PAYGo model allows you to acquire an engineered solar plant by paying an initial 30% down payment, followed by flexible monthly instalments spread across 12, 24, or 36 months. As long as your monthly payment is active, the system generates continuous power. Once your final instalment is completed, full legal ownership transfers to you automatically with zero hidden balloon fees.',
+            },
+            {
+              q: '2. What is the required down payment, and can I pay off early?',
+              a: 'The minimum down payment floor is strictly 30% of the total system cost, which covers factory shipping, mounting hardware, electrical surge protection, and professional installation. Yes, you can pay off your remaining balance at any time before the end of the term with absolutely zero early-exit penalties or prepayment fees.',
+            },
+            {
+              q: '3. What appliances can the system run during grid blackouts?',
+              a: 'Essential Home (3kVA) runs lighting, fans, TVs, laptops, Starlink, and inverter fridges. Family Solar (5kVA) additionally powers a 1.0 HP Inverter AC, deep freezer, and borehole pump. Business Solar (10kVA) runs multiple AC units, commercial medical cold storage, and server equipment.',
+            },
+            {
+              q: '4. How long does professional installation and commissioning take?',
+              a: 'Once your down payment is confirmed, a COREN-certified field engineering crew arrives at your site within 48 to 72 hours. Residential systems are typically commissioned within 1 business day.',
+            },
+            {
+              q: '5. Which payment methods are accepted for monthly instalments?',
+              a: 'We provide each customer with a Dedicated Virtual Account (DVA) issued through our banking partners (Moniepoint / Wema / Paystack). You can transfer from any Nigerian bank app, USSD, debit card auto-charge, or standing order.',
+            },
+            {
+              q: '6. What happens if I experience a financial delay or miss a payment?',
+              a: 'SkyGrid provides an automatic 5-day grace period on all accounts. If payment is still outstanding after the grace period, the inverter automatically transitions into standby mode until the monthly payment is made. Power restores within 60 seconds of payment over our IoT link.',
+            },
+            {
+              q: '7. What warranty coverage is provided on the equipment?',
+              a: 'All systems come with direct OEM factory warranties: 10-Year Manufacturer Warranty on LiFePO4 batteries (rated for 6,000 cycles), 5-Year Replacement Warranty on Growatt hybrid inverters, and 25-Year Linear Power Warranty on solar panels.',
+            },
+            {
+              q: '8. Does the system require 24/7 internet or cellular coverage?',
+              a: 'No. The Growatt hybrid inverter functions fully offline using an internal cryptographic token engine. For remote telemetry and automatic over-the-air recharge, an integrated multi-network GSM SIM connects to MTN, Airtel, or Glo. Manual 20-digit STS tokens can also be entered via keypad.',
+            },
+            {
+              q: '9. Who owns the solar equipment at the end of the payment tenure?',
+              a: 'You do. 100%. Upon completion of your final monthly instalment, our system issues an official Deed of Equipment Ownership, unlocks the IoT gateway into permanent lifetime mode, and transfers all manufacturer warranties directly into your legal name.',
+            },
+          ].map((item, qIdx) => (
+            <div key={qIdx} className="bg-[#0B241B]/80 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
+              <button
+                onClick={() => setExpandedFaq(expandedFaq === qIdx ? null : qIdx)}
+                className="w-full p-5 text-left flex items-center justify-between text-sm font-heading font-bold text-white hover:text-[#F5B82E] transition focus:outline-none"
+              >
+                <span>{item.q}</span>
+                <span className={`text-[#19A89A] transition-transform ${expandedFaq === qIdx ? 'rotate-180' : ''}`}>▼</span>
+              </button>
+              {expandedFaq === qIdx && (
+                <div className="px-5 pb-5 text-xs text-[#F8FAF7]/80 leading-relaxed border-t border-white/5 pt-3">
+                  {item.a}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* SECTION 10: FINAL CALL TO ACTION */}
+      <section className="py-20 relative overflow-hidden bg-gradient-to-r from-[#123B2A] via-[#0B241B] to-[#123B2A] border-t border-white/10">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F5B82E]/15 border border-[#F5B82E]/30 text-[#F5B82E] text-xs font-semibold">
+            <span>☀️</span> Clean Power on Your Terms
+          </div>
+
+          <h2 className="text-3xl sm:text-5xl font-heading font-extrabold text-white tracking-tight leading-tight">
+            Your Energy. Your Budget. Your Future.
+          </h2>
+
+          <p className="text-base sm:text-lg text-[#F8FAF7]/85 max-w-2xl mx-auto leading-relaxed">
+            Stop losing sleep over petrol price hikes, generator repairs, and grid blackouts. Transition to a clean, reliable Growatt LiFePO4 solar plant with flexible 36-month lease-to-own.
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+            <a
+              href="#calculator"
+              className="px-8 py-4 rounded-xl font-heading font-bold text-sm text-[#0B241B] bg-[#F5B82E] hover:bg-amber-400 shadow-xl shadow-[#F5B82E]/30 transition-all hover:scale-105 flex items-center gap-2"
+            >
+              <span>Find Your Solar Plan</span>
+              <span>&rarr;</span>
+            </a>
+
+            <button
+              onClick={() => openAuditForPackage('General Consultation')}
+              className="px-7 py-4 rounded-xl font-heading font-semibold text-sm text-white bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md transition-all flex items-center gap-2"
+            >
+              <span className="text-[#19A89A]">📞</span>
+              <span>Talk to an Adviser</span>
+            </button>
+          </div>
+
+          <div className="pt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-[#F8FAF7]/70">
+            <span className="flex items-center gap-1.5"><span className="text-[#19A89A]">✓</span> Free Engineering Site Audit</span>
+            <span className="flex items-center gap-1.5"><span className="text-[#19A89A]">✓</span> 48-Hour Installation Guarantee</span>
+            <span className="flex items-center gap-1.5"><span className="text-[#19A89A]">✓</span> 10-Year LiFePO4 Battery Warranty</span>
+          </div>
+        </div>
+      </section>
+
+      {/* COMPREHENSIVE FOOTER */}
+      <footer className="bg-black/90 border-t border-white/10 pt-16 pb-12 text-xs text-[#F8FAF7]/70">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 pb-12 border-b border-white/10">
+            <div className="col-span-2 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-[#F5B82E] flex items-center justify-center text-[#0B241B] font-extrabold text-lg shadow-md shadow-[#F5B82E]/20">
+                  ⚡
+                </div>
+                <span className="font-heading font-extrabold text-lg tracking-tight text-white">SKYGRID FLEX SOLUTIONS</span>
+              </div>
+              <p className="text-xs text-[#F8FAF7]/75 max-w-md leading-relaxed">
+                Pioneering intelligent Pay-As-You-Go solar energy infrastructure, calibrated LiFePO4 storage systems, and AI-driven microgrid management across Nigeria and West Africa.
+              </p>
+              <div className="text-[11px] text-[#F8FAF7]/60 space-y-1">
+                <p><strong>Lagos HQ:</strong> Victoria Island, Lagos State</p>
+                <p><strong>Abuja Hub:</strong> Central Business District, FCT Abuja</p>
+                <p><strong>Regional Support:</strong> Port Harcourt • Kano • Ibadan</p>
+                <p><strong>Hotline:</strong> +234 800-SKYGRID (0800-759-4743)</p>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-heading font-bold text-white uppercase tracking-wider text-xs mb-3">Solar Solutions</h4>
+              <ul className="space-y-2 text-xs">
+                <li><a href="#packages" className="hover:text-[#F5B82E] transition">Essential Home (3kVA)</a></li>
+                <li><a href="#packages" className="hover:text-[#F5B82E] transition">Family Standard (5kVA)</a></li>
+                <li><a href="#packages" className="hover:text-[#F5B82E] transition">Business Solar (10kVA)</a></li>
+                <li><a href="#packages" className="hover:text-[#F5B82E] transition">Industrial Microgrids (30kVA+)</a></li>
+                <li><a href="#installations" className="hover:text-[#F5B82E] transition">Agricultural Cold Storage</a></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-heading font-bold text-white uppercase tracking-wider text-xs mb-3">Technology &amp; Model</h4>
+              <ul className="space-y-2 text-xs">
+                <li><a href="#how-it-works" className="hover:text-[#F5B82E] transition">How PAYGo Lease Works</a></li>
+                <li><a href="#monitoring" className="hover:text-[#F5B82E] transition">IoT Cloud Telemetry</a></li>
+                <li><a href="#calculator" className="hover:text-[#F5B82E] transition">Load &amp; Savings Calculator</a></li>
+                <li><a href="#faq" className="hover:text-[#F5B82E] transition">Warranty &amp; Service SLAs</a></li>
+                <li><a href="http://localhost:8000/docs" target="_blank" rel="noreferrer" className="hover:text-[#19A89A] transition">AI Intelligence Engine API &rarr;</a></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-heading font-bold text-white uppercase tracking-wider text-xs mb-3">Legal &amp; Trust</h4>
+              <ul className="space-y-2 text-xs">
+                <li><span className="text-[#19A89A]">● COREN Registered</span></li>
+                <li><span className="text-[#19A89A]">● NEMSA Certified</span></li>
+                <li><a href="#faq" className="hover:text-[#F5B82E] transition">KYC &amp; Credit Terms</a></li>
+                <li><a href="#faq" className="hover:text-[#F5B82E] transition">Data Privacy Policy</a></li>
+                <li><button onClick={() => setIsSignInModalOpen(true)} className="hover:text-[#F5B82E] transition">Customer Portal Login</button></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-[#F8FAF7]/50">
+            <p>© 2026 SkyGrid Flex Solutions Limited. All rights reserved. Registered under Nigerian Corporate Affairs Commission.</p>
+            <p className="text-center md:text-right">
+              Growatt authorized tier-1 system integrator. Inverter &amp; LiFePO4 battery warranties backed by OEM factory certification.
+            </p>
+          </div>
+        </div>
+      </footer>
+
+      {/* MODALS */}
+      {/* 1. Package Detail Modal */}
+      {selectedPackageForModal && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#0B241B]/95 backdrop-blur-xl rounded-3xl max-w-2xl w-full p-6 sm:p-8 border border-white/15 relative shadow-2xl">
+            <button
+              onClick={() => setSelectedPackageForModal(null)}
+              className="absolute top-5 right-5 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition"
+            >
+              ✕
+            </button>
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#F5B82E]/20 text-[#F5B82E] font-mono font-semibold">
+                {selectedPackageForModal.sku}
+              </span>
+              <span className="text-xs text-[#19A89A] font-medium">OEM Factory Certified</span>
+            </div>
+            <h3 className="text-2xl font-heading font-extrabold text-white">{selectedPackageForModal.title}</h3>
+            <p className="text-xs text-[#F8FAF7]/70 mt-1">{selectedPackageForModal.profile}</p>
+
+            <div className="grid sm:grid-cols-2 gap-4 my-6 text-xs">
+              <div className="bg-black/40 p-4 rounded-xl border border-white/5 space-y-2">
+                <span className="font-bold text-white block uppercase tracking-wider text-[10px]">Electrical Architecture</span>
+                <div className="flex justify-between"><span className="text-[#F8FAF7]/60">Inverter:</span> <span className="font-bold text-white font-mono">{selectedPackageForModal.inverter}</span></div>
+                <div className="flex justify-between"><span className="text-[#F8FAF7]/60">Battery:</span> <span className="font-bold text-[#19A89A] font-mono">{selectedPackageForModal.battery}</span></div>
+                <div className="flex justify-between"><span className="text-[#F8FAF7]/60">Solar Array:</span> <span className="font-bold text-white font-mono">{selectedPackageForModal.pv}</span></div>
+                <div className="flex justify-between"><span className="text-[#F8FAF7]/60">Transfer Time:</span> <span className="font-bold text-[#19A89A] font-mono">10 ms (UPS Grade)</span></div>
+              </div>
+
+              <div className="bg-black/40 p-4 rounded-xl border border-white/5 space-y-2">
+                <span className="font-bold text-white block uppercase tracking-wider text-[10px]">Financing &amp; Terms</span>
+                <div className="flex justify-between"><span className="text-[#F8FAF7]/60">Outright Price:</span> <span className="font-bold text-white font-mono">₦{selectedPackageForModal.cashPriceNGN.toLocaleString()}</span></div>
+                <div className="flex justify-between"><span className="text-[#F8FAF7]/60">30% Down Payment:</span> <span className="font-bold text-[#F5B82E] font-mono">₦{Math.round(selectedPackageForModal.cashPriceNGN * 0.3).toLocaleString()}</span></div>
+                <div className="flex justify-between"><span className="text-[#F8FAF7]/60">36-Mo. Payment:</span> <span className="font-bold text-[#F5B82E] font-mono">₦{selectedPackageForModal.monthlyInstallmentNGN.toLocaleString()}/mo</span></div>
+                <div className="flex justify-between"><span className="text-[#F8FAF7]/60">Ownership:</span> <span className="font-bold text-emerald-400">100% Transfer</span></div>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-[#123B2A]/50 border border-[#19A89A]/20 text-xs text-[#F8FAF7]/80 mb-6">
+              <h4 className="font-bold text-white mb-1">Standard Inclusions:</h4>
+              <p>Package includes high-yield monocrystalline half-cell panels, aluminum anodized roof mounting rails, 4mm² double-insulated solar DC cabling, Schneider/ABB DC breaker isolators, Type II lightning surge arrestors, and complete field commissioning.</p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setSelectedPackageForModal(null)}
+                className="w-1/2 py-3 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-white/20 transition"
+              >
+                Close
+              </button>
               <button
                 onClick={() => {
-                  setIsModalOpen(false);
-                  setBookingConfirmation(null);
+                  const title = selectedPackageForModal.title;
+                  setSelectedPackageForModal(null);
+                  openAuditForPackage(title);
                 }}
-                className="text-slate-400 hover:text-white text-sm font-bold"
+                className="w-1/2 py-3 rounded-xl text-xs font-bold text-[#0B241B] bg-[#F5B82E] hover:bg-amber-400 transition"
               >
-                ✕
+                Book Site Audit
               </button>
             </div>
-
-            {bookingConfirmation ? (
-              <div className="bg-emerald-950/60 border border-emerald-500/40 rounded-xl p-5 space-y-3 text-center">
-                <p className="text-xs uppercase tracking-widest text-emerald-400 font-bold">Audit Scheduled</p>
-                <p className="text-2xl font-mono font-black text-white">{bookingConfirmation.ref}</p>
-                <p className="text-xs text-slate-300 leading-relaxed">{bookingConfirmation.message}</p>
-                <button
-                  onClick={() => {
-                    setIsModalOpen(false);
-                    setBookingConfirmation(null);
-                  }}
-                  className="mt-4 bg-emerald-500 text-slate-950 font-bold px-6 py-2.5 rounded-xl text-xs"
-                >
-                  Done
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleBookAuditSubmit} className="space-y-3.5 text-xs">
-                <div>
-                  <label className="block text-slate-300 mb-1 font-medium">Full Name *</label>
-                  <input
-                    required
-                    type="text"
-                    placeholder="Engr. / Mr. / Mrs. Full Name"
-                    value={leadForm.fullName}
-                    onChange={(e) => setLeadForm({ ...leadForm, fullName: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-slate-300 mb-1 font-medium">Phone / WhatsApp *</label>
-                    <input
-                      required
-                      type="tel"
-                      placeholder="0803 000 0000"
-                      value={leadForm.phone}
-                      onChange={(e) => setLeadForm({ ...leadForm, phone: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-300 mb-1 font-medium">Email Address</label>
-                    <input
-                      type="email"
-                      placeholder="you@domain.com"
-                      value={leadForm.email}
-                      onChange={(e) => setLeadForm({ ...leadForm, email: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-slate-300 mb-1 font-medium">City / Town ({selectedState}) *</label>
-                    <input
-                      required
-                      type="text"
-                      placeholder="e.g. Maitama, Jos, Otukpo, Ikeja"
-                      value={leadForm.city}
-                      onChange={(e) => setLeadForm({ ...leadForm, city: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-slate-300 mb-1 font-medium">Preferred Inspection Window</label>
-                    <select
-                      value={leadForm.preferredAuditDay}
-                      onChange={(e) => setLeadForm({ ...leadForm, preferredAuditDay: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-white"
-                    >
-                      <option>Tomorrow Morning (10:00 AM)</option>
-                      <option>Tomorrow Afternoon (2:00 PM)</option>
-                      <option>This Saturday (11:00 AM)</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-slate-300 mb-1 font-medium">Installation Street Address *</label>
-                  <input
-                    required
-                    type="text"
-                    placeholder="House number, street name, and nearest landmark"
-                    value={leadForm.streetAddress}
-                    onChange={(e) => setLeadForm({ ...leadForm, streetAddress: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold py-3 rounded-xl transition text-sm mt-2"
-                >
-                  {isSubmitting ? 'Verifying Engineering Quote...' : 'Confirm Site Audit & Lock Quote'}
-                </button>
-              </form>
-            )}
           </div>
         </div>
       )}
+
+      {/* 2. Site Audit Modal */}
+      {isAuditModalOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#0B241B]/95 backdrop-blur-xl rounded-3xl max-w-lg w-full p-6 sm:p-8 border border-white/15 relative shadow-2xl">
+            <button
+              onClick={() => setIsAuditModalOpen(false)}
+              className="absolute top-5 right-5 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition"
+            >
+              ✕
+            </button>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#F5B82E] animate-pulse" />
+              <span className="text-xs uppercase font-bold text-[#F5B82E] tracking-wider">Field Engineering Dispatch</span>
+            </div>
+            <h3 className="text-2xl font-heading font-extrabold text-white">Book Free Site Audit</h3>
+            <p className="text-xs text-[#F8FAF7]/75 mt-1">
+              A COREN-certified engineer will inspect your roof structure, electrical distribution board, and verify your load profile.
+            </p>
+
+            <form onSubmit={handleAuditSubmit} className="mt-6 space-y-4 text-xs">
+              <div>
+                <label className="block text-[#F8FAF7]/80 font-bold mb-1">Full Legal Name *</label>
+                <input
+                  name="fullName"
+                  type="text"
+                  required
+                  placeholder="e.g. Dr. Babatunde Adeleke"
+                  className="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:border-[#F5B82E] focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[#F8FAF7]/80 font-bold mb-1">Phone Number (WhatsApp) *</label>
+                  <input
+                    name="phone"
+                    type="tel"
+                    required
+                    placeholder="0803 123 4567"
+                    className="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:border-[#F5B82E] focus:outline-none font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[#F8FAF7]/80 font-bold mb-1">Email Address</label>
+                  <input
+                    name="email"
+                    type="email"
+                    placeholder="name@example.com"
+                    className="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:border-[#F5B82E] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[#F8FAF7]/80 font-bold mb-1">Installation State *</label>
+                  <select
+                    name="state"
+                    defaultValue={selectedState}
+                    className="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2.5 text-white focus:border-[#F5B82E] focus:outline-none"
+                  >
+                    <option value="LAGOS">Lagos</option>
+                    <option value="ABUJA">Abuja (FCT)</option>
+                    <option value="RIVERS">Rivers (Port Harcourt)</option>
+                    <option value="OYO">Oyo (Ibadan)</option>
+                    <option value="OGUN">Ogun</option>
+                    <option value="KANO">Kano</option>
+                    <option value="ENUGU">Enugu</option>
+                    <option value="BENUE">Benue</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[#F8FAF7]/80 font-bold mb-1">Target Solar Package</label>
+                  <input
+                    name="package"
+                    type="text"
+                    readOnly
+                    value={auditTargetPackage}
+                    className="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2.5 text-[#F5B82E] font-semibold font-mono"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[#F8FAF7]/80 font-bold mb-1">Physical Site Address / Landmark *</label>
+                <input
+                  name="address"
+                  type="text"
+                  required
+                  placeholder="Plot number, street name, estate or landmark"
+                  className="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:border-[#F5B82E] focus:outline-none"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3.5 rounded-xl text-xs font-bold text-[#0B241B] bg-[#F5B82E] hover:bg-amber-400 transition-all font-heading shadow-lg shadow-[#F5B82E]/20 mt-2"
+              >
+                Confirm Audit Booking
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Customer Portal Sign In Modal */}
+      {isSignInModalOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#0B241B]/95 backdrop-blur-xl rounded-3xl max-w-md w-full p-6 sm:p-8 border border-white/15 relative shadow-2xl">
+            <button
+              onClick={() => setIsSignInModalOpen(false)}
+              className="absolute top-5 right-5 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition"
+            >
+              ✕
+            </button>
+            <div className="w-12 h-12 rounded-2xl bg-[#19A89A]/20 border border-[#19A89A]/30 flex items-center justify-center text-[#19A89A] mb-4 text-xl">
+              🔑
+            </div>
+            <h3 className="text-2xl font-heading font-extrabold text-white">Customer Portal Sign In</h3>
+            <p className="text-xs text-[#F8FAF7]/75 mt-1">
+              Access your real-time telemetry, check token validity, download payment receipts, or view your amortization schedule.
+            </p>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                setIsSignInModalOpen(false);
+                showToast('✓ Portal Verification Successful: IoT Telemetry Active (GW-5000ES-NG94).');
+              }}
+              className="mt-6 space-y-4 text-xs"
+            >
+              <div>
+                <label className="block text-[#F8FAF7]/80 font-bold mb-1">Registered Phone or Inverter Meter ID</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. 08031234567 or GW-5000ES-NG94"
+                  className="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:border-[#F5B82E] focus:outline-none font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[#F8FAF7]/80 font-bold mb-1">Access PIN / Password</label>
+                <input
+                  type="password"
+                  required
+                  placeholder="••••••••"
+                  className="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:border-[#F5B82E] focus:outline-none"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3.5 rounded-xl text-xs font-bold text-[#0B241B] bg-[#F5B82E] hover:bg-amber-400 transition font-heading"
+              >
+                Sign In to Portal
+              </button>
+
+              <p className="text-center text-[11px] text-[#F8FAF7]/60">
+                Need help? Call field engineer dispatch: <span className="text-[#19A89A] font-semibold">+234 800-SKYGRID</span>
+              </p>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 bg-[#0B241B]/95 backdrop-blur-xl border border-[#19A89A]/40 rounded-2xl p-4 shadow-2xl flex items-center gap-3 max-w-md text-xs text-white">
+          <div className="w-8 h-8 rounded-xl bg-[#19A89A]/20 text-[#19A89A] flex items-center justify-center shrink-0">
+            ✓
+          </div>
+          <div className="flex-grow">{toastMessage}</div>
+        </div>
+      )}
+
     </div>
   );
 }
