@@ -1669,7 +1669,7 @@
 
   <!-- Modal 3: Customer Portal Sign In Modal -->
   <div id="signInModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="glass-card-dark rounded-3xl max-w-md w-full p-6 sm:p-8 border border-white/15 relative shadow-2xl">
+    <div class="glass-card-dark rounded-3xl max-w-lg w-full p-6 sm:p-8 border border-white/15 relative shadow-2xl">
       <button onclick="closeModal('signInModal')" class="absolute top-5 right-5 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
@@ -1683,15 +1683,56 @@
         Access your real-time telemetry, check token validity, download payment receipts, or view your amortization schedule.
       </p>
 
-      <form onsubmit="handlePortalSignIn(event)" class="mt-6 space-y-4 text-xs">
+      <!-- Developer 1-Click Fast Access Box -->
+      <div class="mt-4 p-3.5 rounded-2xl bg-brand-forest/60 border border-brand-amber/30 text-xs">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-bold text-brand-amber flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+            <span>⚡</span> Developer / Demo 1-Click Access:
+          </span>
+          <span class="text-[10px] text-brand-teal font-mono">No password required</span>
+        </div>
+        <div class="space-y-1.5">
+          <button type="button" onclick="loadCustomerPortal('amina')" class="w-full text-left p-2 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-between transition">
+            <div>
+              <span class="font-bold text-white block">Engr. Amina Danjuma</span>
+              <span class="text-[10px] text-brand-warm/60 font-mono">DEV-8F3A (5kVA Hybrid, Maitama Abuja)</span>
+            </div>
+            <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-mono">19.4 Days Active &rarr;</span>
+          </button>
+
+          <button type="button" onclick="loadCustomerPortal('stmary')" class="w-full text-left p-2 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-between transition">
+            <div>
+              <span class="font-bold text-white block">St. Mary Clinic &amp; Maternity</span>
+              <span class="text-[10px] text-brand-warm/60 font-mono">DEV-4C91 (10kVA Commercial, Otukpo Benue)</span>
+            </div>
+            <span class="text-[10px] bg-brand-teal/20 text-brand-teal px-2 py-0.5 rounded font-mono">26.0 Days Active &rarr;</span>
+          </button>
+
+          <button type="button" onclick="loadCustomerPortal('lekki')" class="w-full text-left p-2 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-between transition">
+            <div>
+              <span class="font-bold text-white block">Lekki Phase 1 Pharmacy</span>
+              <span class="text-[10px] text-brand-warm/60 font-mono">DEV-9E04 (5kVA Retail, Lekki Lagos)</span>
+            </div>
+            <span class="text-[10px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded font-mono">Tamper Demo &rarr;</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="relative flex py-2 items-center">
+        <div class="flex-grow border-t border-white/10"></div>
+        <span class="flex-shrink mx-4 text-[10px] text-brand-warm/40 uppercase">Or sign in with credentials</span>
+        <div class="flex-grow border-t border-white/10"></div>
+      </div>
+
+      <form onsubmit="handlePortalSignIn(event)" class="space-y-4 text-xs">
         <div>
           <label class="block text-brand-warm/80 font-bold mb-1">Registered Phone or Inverter Meter ID</label>
-          <input type="text" required placeholder="e.g. 08031234567 or GW-5000ES-NG94" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none font-mono">
+          <input type="text" id="portalLoginId" required value="08031234567" placeholder="e.g. 08031234567 or GW-5000ES-NG94" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none font-mono">
         </div>
 
         <div>
           <label class="block text-brand-warm/80 font-bold mb-1">Access PIN / Password</label>
-          <input type="password" required placeholder="••••••••" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none">
+          <input type="password" required value="1234" placeholder="••••••••" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none">
         </div>
 
         <button type="submit" class="w-full py-3.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition font-heading">
@@ -1702,6 +1743,254 @@
           Need help? Call field engineer dispatch: <span class="text-brand-teal font-semibold">+234 800-SKYGRID</span>
         </p>
       </form>
+    </div>
+  </div>
+
+  <!-- Modal 4: Full Interactive Customer Portal Dashboard Modal -->
+  <div id="customerPortalModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+    <div class="glass-card-dark rounded-3xl max-w-5xl w-full p-6 sm:p-8 border border-white/15 relative shadow-2xl max-h-[92vh] overflow-y-auto flex flex-col justify-between">
+      
+      <!-- Top Portal Navigation Bar -->
+      <div>
+        <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-white/10">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-amber to-brand-teal flex items-center justify-center text-brand-dark font-extrabold text-xl shadow-lg shadow-brand-amber/20">
+              ⚡
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 id="portalCustomerName" class="font-heading font-extrabold text-xl text-white">Engr. Amina Danjuma</h3>
+                <span id="portalStatusBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold font-mono">
+                  ● ACTIVE LEASE
+                </span>
+              </div>
+              <p id="portalDeviceInfo" class="text-xs text-brand-warm/60 font-mono mt-0.5">
+                Device: DEV-8F3A-GROWATT-00421 • Maitama, FCT Abuja • Growatt SPF 5000ES
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="bg-black/40 px-3.5 py-2 rounded-xl border border-white/10 text-right">
+              <span class="text-[10px] text-brand-warm/60 uppercase block">Power Token Remaining</span>
+              <span id="portalDaysLeft" class="text-base font-heading font-bold text-brand-amber font-mono">19.4 Days</span>
+            </div>
+            <button onclick="closeModal('customerPortalModal')" class="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition">
+              Sign Out
+            </button>
+          </div>
+        </div>
+
+        <!-- Portal Navigation Tabs -->
+        <div class="flex items-center gap-3 my-6 border-b border-white/10 pb-3 text-xs">
+          <button onclick="switchPortalTab('telemetry')" id="pTabTelemetry" class="px-4 py-2 rounded-xl bg-brand-amber text-brand-dark font-bold transition shadow-md">
+            Live Telemetry &amp; Power Flow
+          </button>
+          <button onclick="switchPortalTab('paygo')" id="pTabPaygo" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 text-white font-medium transition">
+            PAYGo Contract &amp; STS Token
+          </button>
+          <button onclick="switchPortalTab('hardware')" id="pTabHardware" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 text-white font-medium transition">
+            Hardware &amp; Engineering Passport
+          </button>
+        </div>
+
+        <!-- TAB 1: Live Telemetry & Power Flow -->
+        <div id="portalSectionTelemetry" class="space-y-6">
+          <!-- 4 Telemetry Gauges -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-black/40 p-4 rounded-2xl border border-white/5">
+              <div class="flex justify-between items-center text-xs text-brand-warm/60 mb-1">
+                <span>Solar PV Ingress</span>
+                <i data-lucide="sun" class="w-4 h-4 text-brand-amber"></i>
+              </div>
+              <div id="pMetricPV" class="text-2xl font-heading font-extrabold text-brand-amber font-mono">3,420 <span class="text-xs font-normal">W</span></div>
+              <span class="text-[10px] text-emerald-400 mt-1 block">5.4 kWp Rooftop Array</span>
+            </div>
+
+            <div class="bg-black/40 p-4 rounded-2xl border border-white/5">
+              <div class="flex justify-between items-center text-xs text-brand-warm/60 mb-1">
+                <span>Battery SoC</span>
+                <i data-lucide="battery-charging" class="w-4 h-4 text-brand-teal"></i>
+              </div>
+              <div id="pMetricSoC" class="text-2xl font-heading font-extrabold text-brand-teal font-mono">92<span class="text-xs font-normal">%</span></div>
+              <span id="pMetricBattDetail" class="text-[10px] text-brand-warm/60 mt-1 block font-mono">10.24 kWh • 53.1V • 27°C</span>
+            </div>
+
+            <div class="bg-black/40 p-4 rounded-2xl border border-white/5">
+              <div class="flex justify-between items-center text-xs text-brand-warm/60 mb-1">
+                <span>Household Consumption</span>
+                <i data-lucide="home" class="w-4 h-4 text-white"></i>
+              </div>
+              <div id="pMetricLoad" class="text-2xl font-heading font-extrabold text-white font-mono">1,150 <span class="text-xs font-normal">W</span></div>
+              <span class="text-[10px] text-emerald-400 mt-1 block">100% Solar Self-Supply</span>
+            </div>
+
+            <div class="bg-black/40 p-4 rounded-2xl border border-white/5">
+              <div class="flex justify-between items-center text-xs text-brand-warm/60 mb-1">
+                <span>Inverter Core Temp</span>
+                <i data-lucide="thermometer" class="w-4 h-4 text-brand-warm"></i>
+              </div>
+              <div id="pMetricTemp" class="text-2xl font-heading font-extrabold text-white font-mono">37.5 <span class="text-xs font-normal">°C</span></div>
+              <span class="text-[10px] text-brand-warm/60 mt-1 block">Cooling Fans: Idle / Quiet</span>
+            </div>
+          </div>
+
+          <!-- Connected Appliances Live Status -->
+          <div class="bg-black/30 p-5 rounded-2xl border border-white/5">
+            <h4 class="font-heading font-bold text-white text-xs uppercase tracking-wider mb-3">Live Circuit Load Distribution</h4>
+            <div class="grid sm:grid-cols-4 gap-3 text-xs">
+              <div class="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between">
+                <div>
+                  <span class="font-bold text-white block">1.0 HP Inverter AC</span>
+                  <span class="text-[10px] text-emerald-400 font-mono">Drawing 540W</span>
+                </div>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 status-pulse"></span>
+              </div>
+              <div class="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between">
+                <div>
+                  <span class="font-bold text-white block">Deep Chest Freezer</span>
+                  <span class="text-[10px] text-emerald-400 font-mono">Drawing 180W</span>
+                </div>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 status-pulse"></span>
+              </div>
+              <div class="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between">
+                <div>
+                  <span class="font-bold text-white block">Starlink &amp; Home Office</span>
+                  <span class="text-[10px] text-emerald-400 font-mono">Drawing 95W</span>
+                </div>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 status-pulse"></span>
+              </div>
+              <div class="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between">
+                <div>
+                  <span class="font-bold text-white block">1.0 HP Borehole Pump</span>
+                  <span class="text-[10px] text-brand-warm/50 font-mono">Standby (0W)</span>
+                </div>
+                <span class="w-2.5 h-2.5 rounded-full bg-white/20"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: PAYGo Contract & Repayments -->
+        <div id="portalSectionPaygo" class="hidden space-y-6">
+          <div class="grid md:grid-cols-2 gap-6">
+            
+            <!-- Left: Dedicated Virtual Account (DVA) Details -->
+            <div class="bg-black/40 p-6 rounded-2xl border border-white/10 space-y-4">
+              <div class="flex items-center justify-between pb-3 border-b border-white/10">
+                <span class="text-xs font-bold uppercase tracking-wider text-brand-teal">Dedicated Virtual Account (DVA)</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-brand-teal/20 text-brand-teal font-mono">Instant Auto-Recharge</span>
+              </div>
+
+              <div class="p-4 rounded-xl bg-brand-forest/40 border border-brand-teal/30 space-y-2 text-xs">
+                <div class="flex justify-between"><span class="text-brand-warm/70">Bank Name:</span> <span class="font-bold text-white">Moniepoint MFB / Wema Bank</span></div>
+                <div class="flex justify-between items-center">
+                  <span class="text-brand-warm/70">Virtual Account Number:</span>
+                  <div class="flex items-center gap-2">
+                    <span id="pDvaNumber" class="font-bold text-brand-amber font-mono text-sm">9928174021</span>
+                    <button onclick="copyToClipboard('9928174021', 'Virtual Account copied!')" class="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[10px] text-white">Copy</button>
+                  </div>
+                </div>
+                <div class="flex justify-between"><span class="text-brand-warm/70">Beneficiary Name:</span> <span id="pDvaName" class="font-bold text-white">SkyGrid / Amina Danjuma</span></div>
+                <div class="flex justify-between"><span class="text-brand-warm/70">Monthly Instalment:</span> <span id="pMonthlyAmount" class="font-bold text-brand-amber font-mono">₦185,000 / month</span></div>
+              </div>
+
+              <div class="text-[11px] text-brand-warm/70 leading-relaxed">
+                ℹ️ Any bank transfer to this dedicated account instantly credits your PAYGo account within 60 seconds over 4G cellular IoT, extending your power availability by 30 days.
+              </div>
+
+              <button onclick="simulatePortalTopUp()" class="w-full py-3.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition shadow-lg shadow-brand-amber/20 font-heading flex items-center justify-center gap-2">
+                <span>Simulate ₦185,000 Monthly Bank Top-Up</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <!-- Right: 20-Digit Encrypted STS Offline Backup Token -->
+            <div class="bg-black/40 p-6 rounded-2xl border border-white/10 space-y-4 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between pb-3 border-b border-white/10">
+                  <span class="text-xs font-bold uppercase tracking-wider text-brand-amber">Offline STS Keypad Token</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-white/10 text-white font-mono">Zero-Network Backup</span>
+                </div>
+
+                <p class="text-xs text-brand-warm/75 mt-3 leading-relaxed">
+                  If cellular GSM coverage is ever interrupted in your area, enter this 20-digit cryptographic token directly into the Growatt inverter keypad to unlock 30 days of power offline.
+                </p>
+
+                <div class="my-4 p-4 rounded-xl bg-black/60 border border-brand-amber/40 text-center">
+                  <span class="text-[10px] text-brand-warm/60 uppercase block mb-1">Latest Generated 20-Digit STS Token</span>
+                  <div id="pStsToken" class="font-mono font-extrabold text-base sm:text-lg text-brand-amber tracking-widest py-1">
+                    4819 - 2049 - 5510 - 8291 - 7304
+                  </div>
+                  <button onclick="copyToClipboard(document.getElementById('pStsToken').innerText, 'STS Token copied!')" class="mt-2 text-[10px] text-brand-teal hover:underline font-semibold">
+                    Copy 20-Digit Token
+                  </button>
+                </div>
+
+                <!-- Amortization Ownership Progress -->
+                <div class="space-y-1.5 text-xs">
+                  <div class="flex justify-between">
+                    <span class="text-brand-warm/70">Lease-to-Own Progress:</span>
+                    <span id="pEquityStatus" class="font-bold text-white font-mono">Month 11 of 36 (30.5% Equity Owned)</span>
+                  </div>
+                  <div class="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                    <div id="pEquityBar" class="bg-gradient-to-r from-brand-amber to-brand-teal h-2 rounded-full" style="width: 30.5%"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="text-[10px] text-brand-warm/50 italic">
+                * System unlocks into 100% permanent lifetime ownership with zero ongoing fees upon payment 36.
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- TAB 3: Hardware & Engineering Passport -->
+        <div id="portalSectionHardware" class="hidden space-y-6">
+          <div class="grid md:grid-cols-2 gap-6">
+            
+            <div class="bg-black/40 p-6 rounded-2xl border border-white/10 space-y-3 text-xs">
+              <h4 class="font-heading font-bold text-white uppercase tracking-wider text-xs pb-2 border-b border-white/10">Certified Equipment Manifest</h4>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Inverter Serial:</span> <span id="pHardwareInverter" class="font-bold text-white font-mono">GW-SPF5000ES-99881</span></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">LiFePO4 Battery Pack:</span> <span id="pHardwareBattery" class="font-bold text-brand-teal font-mono">LFP-512V-100AH-441 (10.24kWh)</span></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Lower Shroud Tamper Seal:</span> <span id="pHardwareSeal" class="font-bold text-white font-mono">SEAL-NG-00421 (INTACT)</span></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Earth Grounding Resistance:</span> <span id="pHardwareEarth" class="font-bold text-emerald-400 font-mono">2.4 Ω (COREN Compliant &lt; 5.0Ω)</span></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">IoT Firmware Version:</span> <span class="font-bold text-white font-mono">v3.14.9-OTA-SECURE</span></div>
+            </div>
+
+            <div class="bg-black/40 p-6 rounded-2xl border border-white/10 space-y-4 text-xs">
+              <h4 class="font-heading font-bold text-white uppercase tracking-wider text-xs pb-2 border-b border-white/10">Assigned Field Engineering Crew</h4>
+              <div class="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                <span class="font-bold text-white block">Lead Field Engineer: Engr. Emeka Okafor</span>
+                <span class="text-[11px] text-brand-warm/60 block font-mono">COREN Registration: R.48291 • NEMSA Cert #7712</span>
+                <span class="text-[11px] text-brand-teal block">Regional Hub: Central Business District, Abuja</span>
+              </div>
+
+              <div class="space-y-2 pt-2">
+                <button onclick="showToast('✓ Maintenance Request Dispatched to Engr. Emeka Okafor (SLA 4 Hours).')" class="w-full py-2.5 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition">
+                  Request Field Engineer Inspection
+                </button>
+                <button onclick="showToast('✓ 10-Year Factory Warranty Certificate Downloaded (PDF).')" class="w-full py-2.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition">
+                  Download Official Warranty Certificate
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Footer Status -->
+      <div class="mt-6 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between text-[11px] text-brand-warm/60">
+        <span>Connected to Growatt Cloud Telemetry Engine • Encryption: TLS 1.3 AES-256</span>
+        <button onclick="closeModal('customerPortalModal')" class="text-brand-teal hover:underline font-semibold">
+          Return to Showroom &rarr;
+        </button>
+      </div>
+
     </div>
   </div>
 
@@ -2171,10 +2460,193 @@
       }
     }
 
+    // --- Customer Portal Profiles & Interactivity ---
+    const CUSTOMER_PROFILES = {
+      amina: {
+        name: 'Engr. Amina Danjuma',
+        device_id: 'DEV-8F3A-GROWATT-00421',
+        contract_id: 'CTR-ABJ-2026-001',
+        location: 'Maitama, FCT Abuja',
+        model: 'Growatt SPF 5000ES (10.24kWh LiFePO4)',
+        status: 'ACTIVE',
+        status_label: '● ACTIVE LEASE',
+        status_color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+        days_left: 19.4,
+        pv_watts: '3,420 W',
+        soc_pct: '92%',
+        batt_detail: '10.24 kWh • 53.1V • 27°C',
+        load_watts: '1,150 W',
+        temp_c: '37.5 °C',
+        dva_account: '9928174021',
+        dva_name: 'SkyGrid / Amina Danjuma',
+        monthly_ngn: '₦185,000 / month',
+        sts_token: '4819 - 2049 - 5510 - 8291 - 7304',
+        equity_text: 'Month 11 of 36 (30.5% Equity Owned)',
+        equity_pct: '30.5%',
+        inv_serial: 'GW-SPF5000ES-99881',
+        batt_serial: 'LFP-512V-100AH-441 (10.24kWh)',
+        seal_serial: 'SEAL-NG-00421 (INTACT)',
+        earthing_ohms: '2.4 Ω (COREN Compliant < 5.0Ω)'
+      },
+      stmary: {
+        name: 'St. Mary Clinic & Maternity',
+        device_id: 'DEV-4C91-GROWATT-00812',
+        contract_id: 'CTR-BEN-2026-014',
+        location: 'Otukpo, Benue State',
+        model: 'Growatt SPH 10000TL (20.48kWh LiFePO4)',
+        status: 'ACTIVE',
+        status_label: '● CLINICAL GRADE ACTIVE',
+        status_color: 'bg-brand-teal/20 text-brand-teal border-brand-teal/30',
+        days_left: 26.0,
+        pv_watts: '6,890 W',
+        soc_pct: '88%',
+        batt_detail: '20.48 kWh • 52.9V • 29°C',
+        load_watts: '2,940 W',
+        temp_c: '40.2 °C',
+        dva_account: '9928174034',
+        dva_name: 'SkyGrid / St. Mary Clinic',
+        monthly_ngn: '₦340,000 / month',
+        sts_token: '7104 - 9921 - 3840 - 1109 - 4820',
+        equity_text: 'Month 18 of 36 (50.0% Equity Owned)',
+        equity_pct: '50.0%',
+        inv_serial: 'GW-SPH10000-77210',
+        batt_serial: 'LFP-512V-200AH-912 (20.48kWh)',
+        seal_serial: 'SEAL-NG-00812 (INTACT)',
+        earthing_ohms: '1.9 Ω (Hospital Grade Compliant)'
+      },
+      lekki: {
+        name: 'Lekki Phase 1 Pharmacy',
+        device_id: 'DEV-9E04-GROWATT-00933',
+        contract_id: 'CTR-LAG-2026-112',
+        location: 'Lekki Phase 1, Lagos State',
+        model: 'Growatt SPF 5000ES (5.12kWh LiFePO4)',
+        status: 'TAMPER_ALERT',
+        status_label: '⚠️ TAMPER TRIP (MPPT SAFE MODE)',
+        status_color: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+        days_left: 8.5,
+        pv_watts: '1,420 W',
+        soc_pct: '96%',
+        batt_detail: '5.12 kWh • 53.4V • 33°C',
+        load_watts: '0 W (Standby Locked)',
+        temp_c: '33.1 °C',
+        dva_account: '9928174099',
+        dva_name: 'SkyGrid / Lekki Pharmacy',
+        monthly_ngn: '₦132,000 / month',
+        sts_token: '9901 - 4210 - 8812 - 3401 - 6619',
+        equity_text: 'Month 6 of 36 (16.6% Equity Owned)',
+        equity_pct: '16.6%',
+        inv_serial: 'GW-SPF5000ES-61904',
+        batt_serial: 'LFP-512V-100AH-301 (5.12kWh)',
+        seal_serial: 'SEAL-NG-00933 (TRIPPED - FIELD INSPECTION REQUIRED)',
+        earthing_ohms: '3.8 Ω (COREN Compliant < 5.0Ω)'
+      }
+    };
+
+    let activeProfileKey = 'amina';
+
+    function loadCustomerPortal(profileKey) {
+      const p = CUSTOMER_PROFILES[profileKey] || CUSTOMER_PROFILES.amina;
+      activeProfileKey = profileKey;
+
+      document.getElementById('portalCustomerName').textContent = p.name;
+      const badge = document.getElementById('portalStatusBadge');
+      badge.textContent = p.status_label;
+      badge.className = 'text-xs px-2.5 py-0.5 rounded-full border font-semibold font-mono ' + p.status_color;
+
+      document.getElementById('portalDeviceInfo').textContent = `Device: ${p.device_id} • ${p.location} • ${p.model}`;
+      document.getElementById('portalDaysLeft').textContent = p.days_left + ' Days';
+
+      document.getElementById('pMetricPV').innerHTML = `${p.pv_watts.replace('W', '')} <span class="text-xs font-normal">W</span>`;
+      document.getElementById('pMetricSoC').innerHTML = `${p.soc_pct.replace('%', '')}<span class="text-xs font-normal">%</span>`;
+      document.getElementById('pMetricBattDetail').textContent = p.batt_detail;
+      document.getElementById('pMetricLoad').innerHTML = `${p.load_watts.replace('W', '')} <span class="text-xs font-normal">W</span>`;
+      document.getElementById('pMetricTemp').innerHTML = `${p.temp_c.replace('°C', '')} <span class="text-xs font-normal">°C</span>`;
+
+      document.getElementById('pDvaNumber').textContent = p.dva_account;
+      document.getElementById('pDvaName').textContent = p.dva_name;
+      document.getElementById('pMonthlyAmount').textContent = p.monthly_ngn;
+      document.getElementById('pStsToken').textContent = p.sts_token;
+      document.getElementById('pEquityStatus').textContent = p.equity_text;
+      document.getElementById('pEquityBar').style.width = p.equity_pct;
+
+      document.getElementById('pHardwareInverter').textContent = p.inv_serial;
+      document.getElementById('pHardwareBattery').textContent = p.batt_serial;
+      document.getElementById('pHardwareSeal').textContent = p.seal_serial;
+      document.getElementById('pHardwareEarth').textContent = p.earthing_ohms;
+
+      switchPortalTab('telemetry');
+      closeModal('signInModal');
+      openModal('customerPortalModal');
+      lucide.createIcons();
+      showToast(`✓ Logged in as ${p.name}. Telemetry gateway active.`);
+    }
+
+    function switchPortalTab(tab) {
+      const secTel = document.getElementById('portalSectionTelemetry');
+      const secPay = document.getElementById('portalSectionPaygo');
+      const secHw = document.getElementById('portalSectionHardware');
+
+      const btnTel = document.getElementById('pTabTelemetry');
+      const btnPay = document.getElementById('pTabPaygo');
+      const btnHw = document.getElementById('pTabHardware');
+
+      [btnTel, btnPay, btnHw].forEach(b => {
+        b.className = 'px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 text-white font-medium transition';
+      });
+
+      secTel.classList.add('hidden');
+      secPay.classList.add('hidden');
+      secHw.classList.add('hidden');
+
+      if (tab === 'telemetry') {
+        secTel.classList.remove('hidden');
+        btnTel.className = 'px-4 py-2 rounded-xl bg-brand-amber text-brand-dark font-bold transition shadow-md';
+      } else if (tab === 'paygo') {
+        secPay.classList.remove('hidden');
+        btnPay.className = 'px-4 py-2 rounded-xl bg-brand-amber text-brand-dark font-bold transition shadow-md';
+      } else if (tab === 'hardware') {
+        secHw.classList.remove('hidden');
+        btnHw.className = 'px-4 py-2 rounded-xl bg-brand-amber text-brand-dark font-bold transition shadow-md';
+      }
+      lucide.createIcons();
+    }
+
+    function simulatePortalTopUp() {
+      const p = CUSTOMER_PROFILES[activeProfileKey];
+      p.days_left = parseFloat((p.days_left + 30).toFixed(1));
+      
+      // Generate new 20-digit token
+      const p1 = Math.floor(1000 + Math.random() * 9000);
+      const p2 = Math.floor(1000 + Math.random() * 9000);
+      const p3 = Math.floor(1000 + Math.random() * 9000);
+      const p4 = Math.floor(1000 + Math.random() * 9000);
+      const p5 = Math.floor(1000 + Math.random() * 9000);
+      p.sts_token = `${p1} - ${p2} - ${p3} - ${p4} - ${p5}`;
+
+      document.getElementById('portalDaysLeft').textContent = p.days_left + ' Days';
+      document.getElementById('pStsToken').textContent = p.sts_token;
+      showToast(`✓ Moniepoint Transfer Confirmed: +30 Days Added (${p.days_left} Days Total). STS Token Issued.`);
+    }
+
+    function copyToClipboard(text, message) {
+      const clean = text.replace(/\s+/g, '');
+      navigator.clipboard.writeText(clean).then(() => {
+        showToast(message || 'Copied to clipboard!');
+      }).catch(() => {
+        showToast('Copied: ' + clean);
+      });
+    }
+
     function handlePortalSignIn(event) {
       event.preventDefault();
-      closeModal('signInModal');
-      showToast('✓ Portal Verification Successful: IoT Telemetry Active (GW-5000ES-NG94).');
+      const loginId = document.getElementById('portalLoginId').value.trim();
+      if (loginId.includes('0802') || loginId.toLowerCase().includes('mary') || loginId.includes('4C91')) {
+        loadCustomerPortal('stmary');
+      } else if (loginId.includes('0805') || loginId.toLowerCase().includes('lekki') || loginId.includes('9E04')) {
+        loadCustomerPortal('lekki');
+      } else {
+        loadCustomerPortal('amina');
+      }
     }
 
     // Keyboard Accessibility (Esc to close modals)
@@ -2183,6 +2655,7 @@
         closeModal('packageModal');
         closeModal('auditModal');
         closeModal('signInModal');
+        closeModal('customerPortalModal');
       }
     });
 
