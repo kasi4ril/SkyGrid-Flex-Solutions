@@ -24,6 +24,8 @@ core-backend/bin/
 # Local Storage & Runtime VFS
 data/
 data/vfs/
+logs/
+*.log
 
 # Node.js & Web
 node_modules/

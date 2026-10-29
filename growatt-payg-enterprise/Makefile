@@ -62,6 +62,12 @@ build:
 	cd core-backend && $(GO_ENV) go build -o bin/cron-scheduler ./cmd/cron-scheduler/main.go
 	@echo "Build complete. Artifacts in core-backend/bin/"
 
+start:
+	./start_all.sh
+
+stop:
+	./stop_all.sh
+
 run-api:
 	cd core-backend && $(GO_ENV) go run ./cmd/api-server/main.go
 
@@ -70,6 +76,9 @@ run-mqtt:
 
 run-cron:
 	cd core-backend && $(GO_ENV) go run ./cmd/cron-scheduler/main.go
+
+run-python:
+	cd intelligence-engine && PYTHONPATH=. .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 clean:
 	rm -rf core-backend/bin/
