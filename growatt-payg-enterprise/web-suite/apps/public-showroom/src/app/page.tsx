@@ -397,7 +397,14 @@ export default function PublicShowroomPage() {
             <span className="hidden md:inline text-[#19A89A]">Zero-Deposit SME Commercial Pilots Available in Lagos &amp; Abuja</span>
           </div>
           <div className="flex items-center gap-4 text-[11px]">
-            <span className="flex items-center gap-1.5 font-medium text-[#19A89A]">● Tier-1 LiFePO4 Mandate</span>
+            {/* Theme Toggle Button (Dark / Light Mode) */}
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle Theme"
+              className="px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all bg-white/10 hover:bg-white/20 border border-white/15 text-[#F8FAF7]/90 hover:text-white"
+            >
+              <span>{theme === 'dark' ? '🌙 Dark Mode' : '☀️ Light Mode'}</span>
+            </button>
             <a href="#calculator" className="text-[#F5B82E] hover:underline font-semibold flex items-center gap-1">
               Calculate Savings &rarr;
             </a>
@@ -443,13 +450,6 @@ export default function PublicShowroomPage() {
 
           {/* Actions */}
           <div className="hidden sm:flex items-center gap-3">
-            <button
-              onClick={toggleTheme}
-              aria-label="Toggle Theme"
-              className="px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all bg-white/5 hover:bg-white/10 border border-white/10 text-[#F8FAF7]/90 hover:text-white"
-            >
-              <span>{theme === 'dark' ? '🌙 Dark' : '☀️ Light'}</span>
-            </button>
             <button
               onClick={() => setIsSignInModalOpen(true)}
               className="px-4 py-2 rounded-xl text-xs font-semibold text-[#F8FAF7]/90 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"

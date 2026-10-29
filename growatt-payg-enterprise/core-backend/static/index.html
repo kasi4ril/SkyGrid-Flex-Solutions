@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SkyGrid Flex Solutions | Premium AI-Powered PAYGo Solar Energy Platform</title>
+  <title>SkyGrid Solutions | Premium AI-Powered PAYGo Solar Energy Platform</title>
   <meta name="description" content="Discover reliable solar energy for your home or business with flexible payment plans, intelligent energy monitoring, and support you can trust.">
   <meta name="keywords" content="PAYGo solar, African solar energy, Growatt hybrid inverter, LiFePO4 battery, Nigerian solar financing, clean energy">
   
@@ -333,7 +333,12 @@
         <span class="hidden md:inline text-brand-teal">Zero-Deposit SME Commercial Pilots Available in Lagos &amp; Abuja</span>
       </div>
       <div class="flex items-center gap-4 text-[11px]">
-        <span class="flex items-center gap-1.5"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-brand-teal"></i> Tier-1 LiFePO4 Mandate</span>
+        <!-- Theme Toggle Button (Dark / Light Mode) -->
+        <button id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Dark and Light Mode" title="Toggle Theme" class="px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all bg-white/10 hover:bg-white/20 border border-white/15 text-brand-warm/90 hover:text-white focus:outline-none focus:ring-2 focus:ring-brand-amber">
+          <i data-lucide="sun" id="themeIconSun" class="w-3.5 h-3.5 text-brand-amber hidden"></i>
+          <i data-lucide="moon" id="themeIconMoon" class="w-3.5 h-3.5 text-brand-teal"></i>
+          <span id="themeLabelText" class="font-medium text-[11px]">Dark Mode</span>
+        </button>
         <a href="#calculator" class="text-brand-amber hover:underline font-semibold flex items-center gap-1">Calculate Savings &rarr;</a>
       </div>
     </div>
@@ -350,7 +355,7 @@
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <span class="font-heading font-extrabold text-xl tracking-tight text-white">SKYGRID</span>
+            <span class="font-heading font-extrabold text-xl tracking-tight text-white">SkyGrid</span>
             <span class="text-[10px] tracking-widest uppercase bg-brand-teal/20 text-brand-teal px-2 py-0.5 rounded-full font-semibold border border-brand-teal/30">PAYGo</span>
           </div>
           <p class="text-[10px] text-brand-warm/60 tracking-wider uppercase font-medium">Intelligent Solar Systems</p>
@@ -370,13 +375,6 @@
 
       <!-- Navigation Actions -->
       <div class="hidden sm:flex items-center gap-3">
-        <!-- Theme Toggle Button (Dark / Light Mode) -->
-        <button id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Dark and Light Mode" title="Toggle Theme" class="px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all bg-white/5 hover:bg-white/10 border border-white/10 text-brand-warm/90 hover:text-white focus:outline-none focus:ring-2 focus:ring-brand-amber">
-          <i data-lucide="sun" id="themeIconSun" class="w-4 h-4 text-brand-amber hidden"></i>
-          <i data-lucide="moon" id="themeIconMoon" class="w-4 h-4 text-brand-teal"></i>
-          <span id="themeLabelText" class="font-medium text-[11px]">Dark</span>
-        </button>
-
         <button onclick="openModal('signInModal')" class="px-4 py-2 rounded-xl text-xs font-semibold text-brand-warm/90 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-colors focus:ring-2 focus:ring-brand-teal">
           Sign In
         </button>
@@ -426,7 +424,7 @@
           Customer Portal Sign In
         </button>
         <button onclick="openAuditModal('Essential Home')" class="w-full py-2.5 rounded-xl text-center text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition">
-          Book Free Engineering Site Audit
+          Book for Engineering Site Audit
         </button>
       </div>
     </div>
@@ -2904,7 +2902,7 @@
       if (sun && moon) {
         sun.classList.toggle('hidden', !isLight);
         moon.classList.toggle('hidden', isLight);
-        if (label) label.textContent = isLight ? 'Light' : 'Dark';
+        if (label) label.textContent = isLight ? 'Light Mode' : 'Dark Mode';
       }
       document.querySelectorAll('.mobile-theme-sun').forEach(el => el.classList.toggle('hidden', !isLight));
       document.querySelectorAll('.mobile-theme-moon').forEach(el => el.classList.toggle('hidden', isLight));
