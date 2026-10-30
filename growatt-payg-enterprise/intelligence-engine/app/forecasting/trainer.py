@@ -18,8 +18,15 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-import numpy as np
-import pandas as pd
+try:
+    import numpy as np
+except ImportError:
+    np = None
+
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 
 try:
     from xgboost import XGBRegressor
@@ -27,7 +34,10 @@ try:
 except ImportError:
     HAS_XGBOOST = False
 
-from sklearn.ensemble import HistGradientBoostingRegressor
+try:
+    from sklearn.ensemble import HistGradientBoostingRegressor
+except ImportError:
+    HistGradientBoostingRegressor = None
 
 
 FEATURE_COLUMNS: List[str] = [

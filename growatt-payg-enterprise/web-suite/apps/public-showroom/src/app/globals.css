@@ -4,16 +4,26 @@
 
 :root {
   --brand-forest: #123B2A;
-  --brand-dark: #0B241B;
+  --brand-dark: #071712;
   --brand-amber: #F5B82E;
   --brand-teal: #19A89A;
+  --brand-sky: #0EA5E9;
+  --brand-sky-light: #38BDF8;
+  --brand-sky-dark: #0284C7;
+  --brand-sky-glow: rgba(14, 165, 233, 0.25);
   --brand-warm: #F8FAF7;
   --brand-charcoal: #17231D;
 }
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: var(--brand-dark);
+  background-color: #071712;
+  background-image: 
+    radial-gradient(circle at 15% 10%, rgba(14, 165, 233, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 85% 25%, rgba(25, 168, 154, 0.10) 0%, transparent 45%),
+    radial-gradient(circle at 50% 70%, rgba(14, 165, 233, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 90%, rgba(245, 184, 46, 0.06) 0%, transparent 35%);
+  background-attachment: fixed;
   color: var(--brand-warm);
 }
 

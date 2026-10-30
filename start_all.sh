@@ -48,6 +48,19 @@ echo "=========================================================="
 echo "🚀 Booting Enterprise Growatt PAYG & Smart Energy Platform"
 echo "=========================================================="
 
+# Clean up any lingering processes on service ports before starting
+fuser -k -9 8080/tcp 2>/dev/null || true
+fuser -k -9 8000/tcp 2>/dev/null || true
+lsof -ti:8080 | xargs -r kill -9 2>/dev/null || true
+lsof -ti:8000 | xargs -r kill -9 2>/dev/null || true
+pkill -9 -f "api-server" 2>/dev/null || true
+pkill -9 -f "cmd/api-server" 2>/dev/null || true
+pkill -9 -f "mqtt-gateway" 2>/dev/null || true
+pkill -9 -f "cron-scheduler" 2>/dev/null || true
+pkill -9 -f "app.main:app" 2>/dev/null || true
+pkill -9 -f "uvicorn" 2>/dev/null || true
+sleep 1
+
 # 1. Docker Infrastructure (Postgres 16, EMQX 5, Redis 7)
 if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
     echo "🐳 [1/4] Starting Docker cluster (Postgres, EMQX, Redis)..."
@@ -60,10 +73,22 @@ fi
 echo "🧠 [2/4] Starting Python Intelligence Engine on http://localhost:8000..."
 (
     cd "$ROOT_DIR/intelligence-engine"
-    if [ -f ".venv/bin/uvicorn" ]; then
-        PYTHONPATH=. .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+    UVICORN_BIN=""
+    if [ -x ".venv/bin/uvicorn" ]; then
+        UVICORN_BIN=".venv/bin/uvicorn"
+    elif [ -n "$VIRTUAL_ENV" ] && [ -x "$VIRTUAL_ENV/bin/uvicorn" ]; then
+        UVICORN_BIN="$VIRTUAL_ENV/bin/uvicorn"
+    elif [ -x "$SCRIPT_DIR/.venv/bin/uvicorn" ]; then
+        UVICORN_BIN="$SCRIPT_DIR/.venv/bin/uvicorn"
+    elif [ -x "$ROOT_DIR/.venv/bin/uvicorn" ]; then
+        UVICORN_BIN="$ROOT_DIR/.venv/bin/uvicorn"
+    fi
+
+    if [ -n "$UVICORN_BIN" ]; then
+        export PYTHONPATH=.
+        exec "$UVICORN_BIN" app.main:app --host 0.0.0.0 --port 8000
     else
-        python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+        exec python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000
     fi
 ) > "$LOG_DIR/intelligence-engine.log" 2>&1 &
 PIDS+=($!)
@@ -73,9 +98,9 @@ echo "⚡ [3/4] Starting Core Go API Server on http://localhost:8080..."
 (
     cd "$ROOT_DIR/core-backend"
     if [ -x "bin/api-server" ]; then
-        ./bin/api-server
+        exec ./bin/api-server
     else
-        GOTOOLCHAIN=local CGO_ENABLED=0 GOCACHE=/tmp/go-build GOPATH=/tmp/go go run ./cmd/api-server/main.go
+        exec go run ./cmd/api-server/main.go
     fi
 ) > "$LOG_DIR/api-server.log" 2>&1 &
 PIDS+=($!)
@@ -85,9 +110,9 @@ echo "📡 [4/4] Starting Background Workers (MQTT Gateway & Cron Scheduler)..."
 (
     cd "$ROOT_DIR/core-backend"
     if [ -x "bin/mqtt-gateway" ]; then
-        ./bin/mqtt-gateway
+        exec ./bin/mqtt-gateway
     else
-        GOTOOLCHAIN=local CGO_ENABLED=0 GOCACHE=/tmp/go-build GOPATH=/tmp/go go run ./cmd/mqtt-gateway/main.go
+        exec go run ./cmd/mqtt-gateway/main.go
     fi
 ) > "$LOG_DIR/mqtt-gateway.log" 2>&1 &
 PIDS+=($!)
@@ -95,9 +120,9 @@ PIDS+=($!)
 (
     cd "$ROOT_DIR/core-backend"
     if [ -x "bin/cron-scheduler" ]; then
-        ./bin/cron-scheduler
+        exec ./bin/cron-scheduler
     else
-        GOTOOLCHAIN=local CGO_ENABLED=0 GOCACHE=/tmp/go-build GOPATH=/tmp/go go run ./cmd/cron-scheduler/main.go
+        exec go run ./cmd/cron-scheduler/main.go
     fi
 ) > "$LOG_DIR/cron-scheduler.log" 2>&1 &
 PIDS+=($!)
@@ -106,29 +131,40 @@ echo ""
 echo "⏳ Waiting for health check endpoints..."
 
 # Health check polling
+ALL_HEALTHY=false
 for i in {1..20}; do
     CORE_HEALTH=$(curl -s http://localhost:8080/healthz || echo "")
     PY_HEALTH=$(curl -s http://localhost:8000/healthz || echo "")
 
     if [[ "$CORE_HEALTH" == *"healthy"* ]] && [[ "$PY_HEALTH" == *"healthy"* ]]; then
+        ALL_HEALTHY=true
         break
     fi
     sleep 1
 done
 
 echo ""
-echo "=========================================================="
-echo "🎉 ALL SERVICES ONLINE AND HEALTHY!"
-echo "=========================================================="
-echo "• Core REST API:            http://localhost:8080"
-echo "  - Sizing & ROI Calculator: http://localhost:8080/api/v1/public/catalog"
-echo "  - Health Check:            http://localhost:8080/healthz"
-echo "• Intelligence Engine:      http://localhost:8000"
-echo "  - Interactive Swagger Docs: http://localhost:8000/docs"
-echo "  - Forecasting Health Check: http://localhost:8000/healthz"
-echo "• MQTT Gateway (EMQX):      tcp://localhost:1883"
-echo "• EMQX Admin Dashboard:     http://localhost:18083"
-echo "=========================================================="
+if [ "$ALL_HEALTHY" = true ]; then
+    echo "=========================================================="
+    echo "🎉 ALL SERVICES ONLINE AND HEALTHY!"
+    echo "=========================================================="
+    echo "• Core REST API & Web UI:   http://localhost:8080"
+    echo "  - Sizing & ROI Calculator: http://localhost:8080/api/v1/public/catalog"
+    echo "  - Health Check:            http://localhost:8080/healthz"
+    echo "• Intelligence Engine:      http://localhost:8000"
+    echo "  - Interactive Swagger Docs: http://localhost:8000/docs"
+    echo "  - Forecasting Health Check: http://localhost:8000/healthz"
+    echo "• MQTT Gateway (EMQX):      tcp://localhost:1883"
+    echo "• EMQX Admin Dashboard:     http://localhost:18083"
+    echo "=========================================================="
+else
+    echo "=========================================================="
+    echo "⚠️  WARNING: One or more services failed health checks!"
+    echo "=========================================================="
+    [[ "$CORE_HEALTH" == *"healthy"* ]] && echo "• Core REST API:            ONLINE (http://localhost:8080)" || echo "• Core REST API:            FAILED / OFFLINE (see $LOG_DIR/api-server.log)"
+    [[ "$PY_HEALTH" == *"healthy"* ]] && echo "• Intelligence Engine:      ONLINE (http://localhost:8000)" || echo "• Intelligence Engine:      FAILED / OFFLINE (see $LOG_DIR/intelligence-engine.log)"
+    echo "=========================================================="
+fi
 echo "📝 Streaming live server logs (Press Ctrl+C to stop all)..."
 echo "=========================================================="
 echo ""
@@ -139,4 +175,3 @@ TAIL_PID=$!
 PIDS+=($TAIL_PID)
 
 wait
-

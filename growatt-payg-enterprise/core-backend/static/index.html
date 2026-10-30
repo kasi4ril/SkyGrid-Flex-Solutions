@@ -46,9 +46,13 @@
           colors: {
             brand: {
               forest: '#123B2A',
-              dark: '#0B241B',
+              dark: '#071712',
               amber: '#F5B82E',
               teal: '#19A89A',
+              sky: '#0EA5E9',
+              skyLight: '#38BDF8',
+              skyDark: '#0284C7',
+              skyGlow: 'rgba(14, 165, 233, 0.35)',
               warm: '#F8FAF7',
               charcoal: '#17231D'
             }
@@ -64,9 +68,27 @@
   </script>
 
   <style>
+    :root {
+      --brand-forest: #123B2A;
+      --brand-dark: #071712;
+      --brand-amber: #F5B82E;
+      --brand-teal: #19A89A;
+      --brand-sky: #0EA5E9;
+      --brand-sky-light: #38BDF8;
+      --brand-sky-dark: #0284C7;
+      --brand-sky-glow: rgba(14, 165, 233, 0.25);
+      --brand-warm: #F8FAF7;
+      --brand-charcoal: #17231D;
+    }
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #0B241B;
+      background-color: #071712;
+      background-image: 
+        radial-gradient(circle at 15% 10%, rgba(14, 165, 233, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 25%, rgba(25, 168, 154, 0.10) 0%, transparent 45%),
+        radial-gradient(circle at 50% 70%, rgba(14, 165, 233, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 90%, rgba(245, 184, 46, 0.06) 0%, transparent 35%);
+      background-attachment: fixed;
       color: #F8FAF7;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
@@ -324,59 +346,65 @@
 <body class="selection:bg-brand-amber selection:text-brand-dark antialiased min-h-screen flex flex-col">
 
   <!-- Top Announcement Notification -->
-  <aside aria-label="Announcement" class="top-announcement-bar bg-gradient-to-r from-brand-forest via-brand-dark to-brand-forest border-b border-brand-teal/20 text-[11px] py-1.5 px-4">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-brand-warm/90">
+  <aside aria-label="Announcement" class="top-announcement-bar bg-gradient-to-r from-brand-forest via-brand-dark to-brand-forest border-b border-brand-sky/25 text-[11px] py-1.5 px-4 sm:px-6 lg:px-10">
+    <div class="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-2 text-brand-warm/90">
       <div class="flex items-center gap-2">
-        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-brand-amber/20 text-brand-amber font-bold text-[10px]">⚡</span>
-        <span>Smarter energy. Flexible payments. A brighter future.</span>
-        <span class="hidden md:inline text-brand-teal/60">•</span>
-        <span class="hidden md:inline text-brand-teal">Zero-Deposit SME Commercial Pilots in Lagos &amp; Abuja</span>
+        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-brand-sky/20 text-brand-sky font-bold text-[10px]">⚡</span>
+        <span>Clear Skies &bull; True Renewable Solar Energy &bull; Flexible Lease-to-Own</span>
+        <span class="hidden md:inline text-brand-sky/60">•</span>
+        <span class="hidden md:inline text-brand-sky font-medium">Zero-Deposit SME Commercial Pilots in Lagos &amp; Abuja</span>
       </div>
       <div class="flex items-center gap-3 text-[11px]">
         <!-- Theme Toggle Button (Dark / Light Mode) -->
-        <button id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Dark and Light Mode" title="Toggle Theme" class="px-2.5 py-0.5 rounded-lg text-[11px] font-semibold flex items-center gap-1.5 transition-all bg-white/10 hover:bg-white/20 border border-white/15 text-brand-warm/90 hover:text-white focus:outline-none focus:ring-1 focus:ring-brand-amber">
+        <button id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Dark and Light Mode" title="Toggle Theme" class="px-2.5 py-0.5 rounded-lg text-[11px] font-semibold flex items-center gap-1.5 transition-all bg-white/10 hover:bg-white/20 border border-white/15 text-brand-warm/90 hover:text-white focus:outline-none focus:ring-1 focus:ring-brand-sky">
           <i data-lucide="sun" id="themeIconSun" class="w-3.5 h-3.5 text-brand-amber hidden"></i>
-          <i data-lucide="moon" id="themeIconMoon" class="w-3.5 h-3.5 text-brand-teal"></i>
+          <i data-lucide="moon" id="themeIconMoon" class="w-3.5 h-3.5 text-brand-sky"></i>
           <span id="themeLabelText" class="font-medium text-[10px]">Dark Mode</span>
         </button>
-        <a href="#calculator" class="text-brand-amber hover:underline font-semibold flex items-center gap-1 text-[11px]">Calculate Savings &rarr;</a>
+        <button onclick="openModal('signUpModal')" class="text-brand-sky hover:underline font-bold flex items-center gap-1 text-[11px]">
+          <span>New Customer? Register with NIN &rarr;</span>
+        </button>
       </div>
     </div>
   </aside>
 
   <!-- Main Navigation Bar -->
-  <nav id="mainNav" class="sticky top-0 z-50 transition-all duration-300 bg-transparent py-2.5 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
+  <nav id="mainNav" class="sticky top-0 z-50 transition-all duration-300 bg-transparent py-2.5 px-4 sm:px-6 lg:px-10">
+    <div class="max-w-[1600px] mx-auto flex items-center justify-between">
       
       <!-- Brand Logo -->
-      <a href="#hero" class="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-brand-amber rounded-lg p-1">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-amber to-amber-600 flex items-center justify-center text-brand-dark font-extrabold text-xl shadow-lg shadow-brand-amber/20 group-hover:scale-105 transition-transform">
+      <a href="#hero" class="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-brand-sky rounded-lg p-1">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-sky via-brand-teal to-emerald-500 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-brand-sky/30 group-hover:scale-105 transition-transform">
           ⚡
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <span class="font-heading font-extrabold text-xl tracking-tight text-white">SkyGrid</span>
-            <span class="text-[10px] tracking-widest uppercase bg-brand-teal/20 text-brand-teal px-2 py-0.5 rounded-full font-semibold border border-brand-teal/30">PAYGo</span>
+            <span class="font-heading font-extrabold text-xl tracking-tight text-white">Sky<span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-sky to-brand-skyLight">Grid</span></span>
+            <span class="text-[10px] tracking-widest uppercase bg-brand-sky/20 text-brand-sky px-2.5 py-0.5 rounded-full font-bold border border-brand-sky/40">Clean Energy</span>
           </div>
-          <p class="text-[10px] text-brand-warm/60 tracking-wider uppercase font-medium">Intelligent Solar Systems</p>
+          <p class="text-[10px] text-brand-warm/60 tracking-wider uppercase font-medium">SkyTron Renewable Systems</p>
         </div>
       </a>
 
       <!-- Desktop Navigation Links -->
       <div class="hidden lg:flex items-center gap-7 text-sm font-medium text-brand-warm/80">
-        <a href="#hero" class="hover:text-brand-amber transition-colors">Home</a>
-        <a href="#packages" class="hover:text-brand-amber transition-colors">Our Packages</a>
-        <a href="#how-it-works" class="hover:text-brand-amber transition-colors">How It Works</a>
-        <a href="#monitoring" class="hover:text-brand-amber transition-colors">Monitoring</a>
-        <a href="#calculator" class="hover:text-brand-amber transition-colors">Pricing &amp; Calculator</a>
-        <a href="#installations" class="hover:text-brand-amber transition-colors">Installations</a>
-        <a href="#faq" class="hover:text-brand-amber transition-colors">FAQ</a>
+        <a href="#hero" class="hover:text-brand-sky transition-colors">Home</a>
+        <a href="#packages" class="hover:text-brand-sky transition-colors">Our Packages</a>
+        <a href="#how-it-works" class="hover:text-brand-sky transition-colors">How It Works</a>
+        <a href="#calculator" class="hover:text-brand-sky transition-colors">Pricing &amp; Calculator</a>
+        <a href="#smart-app" class="hover:text-brand-sky transition-colors text-brand-sky font-semibold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-sky status-pulse"></span>Smart App &amp; AI</a>
+        <a href="#installations" class="hover:text-brand-sky transition-colors">Installations</a>
+        <a href="#faq" class="hover:text-brand-sky transition-colors">FAQ</a>
       </div>
 
       <!-- Navigation Actions -->
       <div class="hidden sm:flex items-center gap-3">
-        <button onclick="openModal('signInModal')" class="px-4 py-2 rounded-xl text-xs font-semibold text-brand-warm/90 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-colors focus:ring-2 focus:ring-brand-teal">
+        <button onclick="openModal('signInModal')" class="px-4 py-2 rounded-xl text-xs font-semibold text-brand-warm/90 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-colors focus:ring-2 focus:ring-brand-sky">
           Sign In
+        </button>
+        <button onclick="openModal('signUpModal')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-950 bg-gradient-to-r from-brand-sky to-brand-teal hover:from-sky-400 hover:to-teal-400 shadow-md shadow-brand-sky/25 transition-all hover:scale-105 focus:ring-2 focus:ring-brand-sky flex items-center gap-1.5">
+          <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+          <span>Sign Up</span>
         </button>
         <a href="#calculator" class="px-5 py-2.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 shadow-lg shadow-brand-amber/20 transition-all hover:scale-105 focus:ring-2 focus:ring-offset-2 focus:ring-brand-amber">
           Find Your Solar Plan
@@ -390,9 +418,9 @@
           <i data-lucide="sun" class="w-4 h-4 text-brand-amber hidden mobile-theme-sun"></i>
           <i data-lucide="moon" class="w-4 h-4 text-brand-teal mobile-theme-moon"></i>
         </button>
-        <a href="#calculator" class="sm:hidden px-3 py-1.5 rounded-lg text-xs font-bold text-brand-dark bg-brand-amber">
-          Get Solar
-        </a>
+        <button onclick="openModal('signUpModal')" class="px-3 py-1.5 rounded-lg text-xs font-bold text-brand-dark bg-brand-teal">
+          Sign Up
+        </button>
         <button id="mobileMenuBtn" aria-expanded="false" aria-label="Toggle Navigation Menu" class="p-2 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-brand-amber">
           <i data-lucide="menu" id="menuOpenIcon" class="w-6 h-6"></i>
           <i data-lucide="x" id="menuCloseIcon" class="w-6 h-6 hidden"></i>
@@ -402,13 +430,13 @@
     </div>
 
     <!-- Mobile Slide-Down Menu -->
-    <div id="mobileMenu" class="hidden lg:hidden mt-3 max-w-7xl mx-auto glass-card-dark rounded-2xl p-5 border border-white/10 shadow-2xl">
+    <div id="mobileMenu" class="hidden lg:hidden mt-3 max-w-[1600px] mx-auto glass-card-dark rounded-2xl p-5 border border-white/10 shadow-2xl">
       <div class="flex flex-col gap-3 text-sm font-medium text-brand-warm/90 pb-4 border-b border-white/10">
         <a href="#hero" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 hover:text-brand-amber transition">Home</a>
         <a href="#packages" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 hover:text-brand-amber transition">Solar Solutions</a>
         <a href="#how-it-works" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 hover:text-brand-amber transition">How It Works</a>
-        <a href="#monitoring" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 hover:text-brand-amber transition">Intelligent Monitoring</a>
         <a href="#calculator" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 hover:text-brand-amber transition">Pricing &amp; Calculator</a>
+        <a href="#smart-app" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 text-brand-teal font-semibold transition flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-brand-teal status-pulse"></span>Smart App &amp; AI</a>
         <a href="#installations" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 hover:text-brand-amber transition">Installation Portfolio</a>
         <a href="#faq" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 hover:text-brand-amber transition">Frequently Asked Questions</a>
       </div>
@@ -419,6 +447,10 @@
             <span>Switch Theme</span>
           </span>
           <span class="portal-theme-text text-brand-amber font-mono font-bold">Dark Mode</span>
+        </button>
+        <button onclick="openModal('signUpModal')" class="w-full py-2.5 rounded-xl text-center text-xs font-bold text-brand-dark bg-brand-teal hover:bg-emerald-400 transition flex items-center justify-center gap-2">
+          <i data-lucide="user-plus" class="w-4 h-4"></i>
+          <span>New Customer Sign Up (NIN Instant Verification)</span>
         </button>
         <button onclick="openModal('signInModal')" class="w-full py-2.5 rounded-xl text-center text-xs font-semibold text-brand-warm bg-white/5 border border-white/10 hover:bg-white/10 transition">
           Customer Portal Sign In
@@ -431,7 +463,7 @@
   </nav>
 
   <!-- SECTION 1: HERO (Transparent, Photographic, and Immersive) -->
-  <section id="hero" class="relative min-h-[calc(100vh-84px)] lg:h-[calc(100vh-84px)] flex flex-col justify-between overflow-hidden pt-2 pb-3 px-2 sm:px-4">
+  <section id="hero" class="relative min-h-[calc(100vh-80px)] flex flex-col justify-between overflow-hidden py-4 sm:py-6 lg:py-8 px-4 sm:px-6 lg:px-10">
     
     <!-- Photographic Slideshow Background Layers -->
     <div class="absolute inset-0 z-0 bg-brand-dark overflow-hidden pointer-events-none" aria-hidden="true">
@@ -462,136 +494,142 @@
       <div class="hero-overlay-tint absolute inset-0 bg-brand-forest/20 mix-blend-multiply z-10"></div>
     </div>
 
-    <!-- Hero Content Container (Centered Vertically and Perfectly Fitted) -->
-    <div class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-1 flex flex-col justify-between my-auto">
-      <div class="grid lg:grid-cols-12 gap-6 lg:gap-8 items-center my-auto pt-2">
+    <!-- Hero Content Container (Centered Vertically and Responsive) -->
+    <div class="relative z-20 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 w-full flex-1 flex flex-col justify-center my-auto py-4 sm:py-6">
+      <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center my-auto">
         
         <!-- Left: Hero Headline, Copy and CTAs -->
-        <div class="lg:col-span-7 space-y-3 sm:space-y-4 text-left">
+        <div class="lg:col-span-7 space-y-4 sm:space-y-5 text-left">
           
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-forest/80 border border-brand-teal/40 text-brand-teal text-[11px] font-semibold backdrop-blur-md">
-            <span class="w-2 h-2 rounded-full bg-brand-teal status-pulse"></span>
-            <span>Smarter energy. Flexible payments. A brighter future.</span>
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-sky/15 border border-brand-sky/35 text-brand-sky text-xs font-semibold backdrop-blur-md">
+            <span class="w-2 h-2 rounded-full bg-brand-sky status-pulse"></span>
+            <span>Clear Sky Solar Energy &bull; Flexible Lease-to-Own &bull; Clean Power</span>
           </div>
 
-          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white tracking-tight leading-[1.12]">
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl 2xl:text-6xl font-heading font-extrabold text-white tracking-tight leading-[1.12]">
             Power Your Life.<br/>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-amber via-amber-300 to-brand-teal">
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-amber via-brand-skyLight to-brand-teal">
               Pay at Your Pace.
             </span>
           </h1>
 
-          <p class="text-xs sm:text-sm lg:text-base text-brand-warm/85 max-w-xl leading-relaxed">
+          <p class="text-sm sm:text-base lg:text-lg text-brand-warm/85 max-w-2xl leading-relaxed">
             Discover reliable solar energy for your home or business with flexible payment plans, intelligent energy monitoring, and support you can trust.
           </p>
 
           <!-- Primary and Secondary Hero Actions -->
           <div class="flex flex-wrap items-center gap-3 pt-1">
-            <a href="#calculator" class="px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl font-heading font-bold text-xs sm:text-sm text-brand-dark bg-brand-amber hover:bg-amber-400 shadow-lg shadow-brand-amber/25 transition-all hover:scale-105 flex items-center gap-2 focus:ring-2 focus:ring-offset-2 focus:ring-brand-amber">
+            <button onclick="openModal('signUpModal')" class="px-6 py-3.5 rounded-xl font-heading font-bold text-xs sm:text-sm text-slate-950 bg-gradient-to-r from-brand-sky via-brand-teal to-emerald-400 hover:from-sky-400 hover:to-teal-300 shadow-lg shadow-brand-sky/25 transition-all hover:scale-105 flex items-center gap-2 focus:ring-2 focus:ring-offset-2 focus:ring-brand-sky">
+              <i data-lucide="user-plus" class="w-4 h-4"></i>
+              <span>New Customer Sign Up</span>
+            </button>
+
+            <a href="#calculator" class="px-6 py-3.5 rounded-xl font-heading font-bold text-xs sm:text-sm text-brand-dark bg-brand-amber hover:bg-amber-400 shadow-lg shadow-brand-amber/25 transition-all hover:scale-105 flex items-center gap-2 focus:ring-2 focus:ring-offset-2 focus:ring-brand-amber">
               <span>Find Your Solar Plan</span>
               <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </a>
 
-            <a href="#packages" class="px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl font-heading font-semibold text-xs sm:text-sm text-white bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md transition-all flex items-center gap-2 focus:ring-2 focus:ring-brand-teal">
+            <a href="#packages" class="px-6 py-3.5 rounded-xl font-heading font-semibold text-xs sm:text-sm text-white bg-white/10 hover:bg-white/20 hover:border-brand-sky/40 border border-white/20 backdrop-blur-md transition-all flex items-center gap-2 focus:ring-2 focus:ring-brand-sky">
               <span>Explore Solar Solutions</span>
-              <i data-lucide="sparkles" class="w-4 h-4 text-brand-teal"></i>
+              <i data-lucide="sparkles" class="w-4 h-4 text-brand-sky"></i>
             </a>
           </div>
 
           <!-- Micro-Trust Pillars -->
-          <div class="pt-2.5 grid grid-cols-3 gap-3 border-t border-white/10 max-w-lg text-[11px] text-brand-warm/75">
+          <div class="pt-3 grid grid-cols-3 gap-3 border-t border-white/10 max-w-lg text-xs text-brand-warm/75">
             <div class="flex items-center gap-1.5">
-              <i data-lucide="battery-charging" class="w-3.5 h-3.5 text-brand-teal shrink-0"></i>
+              <i data-lucide="sun" class="w-4 h-4 text-brand-sky shrink-0"></i>
+              <span>Pure Solar Yield</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="battery-charging" class="w-4 h-4 text-brand-teal shrink-0"></i>
               <span>Tier-1 LiFePO4</span>
             </div>
             <div class="flex items-center gap-1.5">
-              <i data-lucide="credit-card" class="w-3.5 h-3.5 text-brand-amber shrink-0"></i>
-              <span>12–36 Mo. Lease</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-              <i data-lucide="cpu" class="w-3.5 h-3.5 text-brand-teal shrink-0"></i>
+              <i data-lucide="cpu" class="w-4 h-4 text-brand-sky shrink-0"></i>
               <span>24/7 AI-IoT Guard</span>
             </div>
           </div>
 
         </div>
 
-        <!-- Right: Reduced & Harmonised Floating Solar Sizing Sample Card -->
+        <!-- Right: Executive Cashflow & System Autonomy Preview Card -->
         <div class="lg:col-span-5 flex justify-center lg:justify-end">
-          <div class="w-full max-w-[320px] sm:max-w-[340px] glass-card-dark rounded-2xl p-4 shadow-xl relative border border-white/15">
+          <div class="w-full max-w-[440px] lg:max-w-[480px] 2xl:max-w-[520px] glass-card-dark rounded-3xl p-5 sm:p-6 shadow-2xl relative border border-brand-sky/25 hover:border-brand-sky/45 transition-colors space-y-4">
             
-            <!-- Live Status Header -->
-            <div class="flex items-center justify-between pb-2.5 border-b border-white/10">
-              <div class="flex items-center gap-2">
-                <div class="w-7 h-7 rounded-lg bg-brand-teal/20 border border-brand-teal/30 flex items-center justify-center text-brand-teal">
-                  <i data-lucide="sun" class="w-3.5 h-3.5 text-brand-amber"></i>
-                </div>
-                <div>
-                  <h3 class="font-heading font-bold text-[11px] uppercase tracking-wider text-brand-warm">SOLAR SYSTEM</h3>
-                  <p class="text-[9px] text-brand-warm/60 font-mono">GW-5000ES • 10.24kWh</p>
-                </div>
+            <!-- 1. System Match Header -->
+            <div class="space-y-1.5 pb-3 border-b border-white/10">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-brand-sky font-mono">
+                  Recommended System
+                </span>
+                <span id="heroStateBadge" class="text-[9px] font-bold px-2.5 py-0.5 rounded-full bg-brand-sky/15 text-brand-sky border border-brand-sky/30 font-mono">
+                  FCT ABUJA / PLATEAU / BENUE
+                </span>
               </div>
-              <div class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-teal/15 border border-brand-teal/30 text-brand-teal text-[10px] font-semibold">
-                <span class="w-1.5 h-1.5 rounded-full bg-brand-teal status-pulse"></span>
-                <span>Online</span>
+              
+              <h3 id="heroBundleTitle" class="text-lg sm:text-xl font-heading font-extrabold text-white">
+                Growatt 5.0kVA Family Standard
+              </h3>
+
+              <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-brand-sky/15 border border-brand-sky/30 text-brand-sky text-[11px] font-medium">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5 shrink-0 text-brand-sky"></i>
+                <span id="heroAutonomyBadge">12–14 Hrs Overnight Autonomy / Runs 1HP AC + Daytime Borehole</span>
               </div>
             </div>
 
-            <!-- Key System Metrics Grid (Compact 2x2) -->
-            <div class="grid grid-cols-2 gap-2 my-2.5">
+            <!-- 2. Side-by-Side Red vs. Green Cashflow Comparison Grid -->
+            <div class="grid grid-cols-2 gap-2.5">
               
-              <div class="bg-black/30 p-2.5 rounded-xl border border-white/5">
-                <div class="flex items-center justify-between text-brand-warm/60 text-[10px] mb-0.5">
-                  <span>Solar generation</span>
-                  <i data-lucide="zap" class="w-3 h-3 text-brand-amber"></i>
+              <!-- Red Card: Current Fuel + Grid Spend -->
+              <div class="p-3 rounded-2xl bg-red-950/40 border border-red-800/40 space-y-1">
+                <span class="text-[10px] uppercase font-bold text-red-300 block">Current Fuel + Grid</span>
+                <div id="heroRedSpend" class="text-base sm:text-lg font-heading font-extrabold text-red-400 font-mono">
+                  ₦245,000<span class="text-[10px] font-normal text-red-300">/mo</span>
                 </div>
-                <div class="text-lg font-heading font-extrabold text-white font-mono">2.4 <span class="text-[10px] font-normal text-brand-warm/60">kW</span></div>
-                <div class="text-[9px] text-brand-teal flex items-center gap-0.5 mt-0.5">
-                  <i data-lucide="trending-up" class="w-2.5 h-2.5"></i> Peak sun
-                </div>
+                <span id="heroRedFuel" class="text-[10px] text-red-300/80 block font-mono">~180L Fuel + DisCo</span>
               </div>
 
-              <div class="bg-black/30 p-2.5 rounded-xl border border-white/5">
-                <div class="flex items-center justify-between text-brand-warm/60 text-[10px] mb-0.5">
-                  <span>Battery charge</span>
-                  <i data-lucide="battery" class="w-3 h-3 text-brand-teal"></i>
+              <!-- Green Card: Your Fixed Solar Installment -->
+              <div class="p-3 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 space-y-1">
+                <span class="text-[10px] uppercase font-bold text-emerald-300 block">Your Fixed Solar</span>
+                <div id="heroGreenInstallment" class="text-base sm:text-lg font-heading font-extrabold text-emerald-400 font-mono">
+                  ₦128,500<span class="text-[10px] font-normal text-emerald-300">/mo</span>
                 </div>
-                <div class="text-lg font-heading font-extrabold text-brand-teal font-mono">86<span class="text-[10px] font-normal text-brand-warm/60">%</span></div>
-                <div class="w-full bg-white/10 rounded-full h-1 mt-1.5 overflow-hidden">
-                  <div class="bg-gradient-to-r from-brand-teal to-emerald-400 h-1 rounded-full" style="width: 86%"></div>
-                </div>
-              </div>
-
-              <div class="bg-black/30 p-2.5 rounded-xl border border-white/5">
-                <div class="flex items-center justify-between text-brand-warm/60 text-[10px] mb-0.5">
-                  <span>Today's harvest</span>
-                  <i data-lucide="activity" class="w-3 h-3 text-brand-amber"></i>
-                </div>
-                <div class="text-lg font-heading font-extrabold text-white font-mono">11.8 <span class="text-[10px] font-normal text-brand-warm/60">kWh</span></div>
-                <div class="text-[9px] text-brand-warm/60 mt-0.5">Clean yield</div>
-              </div>
-
-              <div class="bg-black/30 p-2.5 rounded-xl border border-white/5">
-                <div class="flex items-center justify-between text-brand-warm/60 text-[10px] mb-0.5">
-                  <span>Current load</span>
-                  <i data-lucide="home" class="w-3 h-3 text-emerald-400"></i>
-                </div>
-                <div class="text-lg font-heading font-extrabold text-white font-mono">1.1 <span class="text-[10px] font-normal text-brand-warm/60">kW</span></div>
-                <div class="text-[9px] text-emerald-400 mt-0.5">100% Solar</div>
+                <span id="heroGreenDaily" class="text-[10px] text-emerald-300/80 block font-mono">≈ ₦4,280/day (24m)</span>
               </div>
 
             </div>
 
-            <!-- Operating Mode & Sample Data Notice (Compact 1-line badge) -->
-            <div class="pt-2 border-t border-white/10 space-y-1.5">
-              <div class="flex items-center justify-between text-[10px]">
-                <span class="text-brand-warm/70">Grid: <strong class="text-brand-amber font-mono font-normal">Islanded</strong></span>
-                <span class="text-brand-warm/70">PAYGo: <strong class="text-brand-teal font-mono font-normal">24d Active</strong></span>
+            <!-- 3. Hardware Summary Box -->
+            <div class="p-3.5 rounded-2xl bg-black/40 border border-white/5 space-y-2 text-[11px]">
+              <div class="flex justify-between items-center text-brand-warm/80">
+                <span class="text-brand-warm/60">Hybrid Inverter:</span>
+                <strong id="heroInverterModel" class="text-white font-medium">Growatt SPF 5000ES (5.0kW / 48V Pure Sine)</strong>
               </div>
-              
-              <div class="bg-brand-forest/50 border border-brand-teal/20 rounded-lg py-1 px-2 text-[9px] text-brand-warm/70 text-center">
-                <span class="font-bold text-brand-amber">ⓘ Sample Sizing Telemetry</span> • Demo values
+              <div class="flex justify-between items-center text-brand-warm/80">
+                <span class="text-brand-warm/60">LiFePO4 Storage:</span>
+                <strong id="heroBatteryModel" class="text-brand-teal font-medium">5.12 kWh LiFePO4 (80% DoD, 6,000 Cycles)</strong>
               </div>
+              <div class="flex justify-between items-center text-brand-warm/80">
+                <span class="text-brand-warm/60">Solar PV Array:</span>
+                <strong id="heroPVModel" class="text-brand-sky font-medium">4.40 kWp Mono PERC Array</strong>
+              </div>
+              <div class="flex justify-between items-center text-brand-warm/80 pt-2 border-t border-white/10">
+                <span class="text-brand-warm/60">30% Upfront Down Payment:</span>
+                <strong id="heroDownPayment" class="text-brand-sky font-mono font-bold text-xs">₦1,335,000</strong>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="space-y-1.5 pt-1">
+              <button onclick="openModal('signUpModal')" class="w-full py-3 rounded-xl text-xs font-bold text-slate-950 bg-gradient-to-r from-brand-sky via-brand-teal to-emerald-400 hover:from-sky-400 hover:to-teal-300 shadow-lg shadow-brand-sky/25 transition-all hover:scale-105 flex items-center justify-center gap-1.5">
+                <span>Lock In Quote &amp; Sign Up With NIN</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </button>
+              <a href="#calculator" class="w-full block text-center text-[11px] text-brand-warm/60 hover:text-brand-sky py-0.5 transition">
+                Or inspect COREN electrical sizing below &darr;
+              </a>
             </div>
 
           </div>
@@ -636,7 +674,7 @@
 
   <!-- SECTION 2: TRUST AND CREDIBILITY -->
   <section class="section-trust py-16 bg-gradient-to-b from-brand-dark via-brand-forest/40 to-brand-dark border-y border-white/10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
       
       <div class="text-center max-w-3xl mx-auto mb-12">
         <h2 class="text-xs font-bold uppercase tracking-widest text-brand-teal mb-2">Verified Engineering Standards</h2>
@@ -695,7 +733,7 @@
   </section>
 
   <!-- SECTION 3: SOLAR PACKAGES -->
-  <section id="packages" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <section id="packages" class="py-20 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
     
     <div class="text-center max-w-3xl mx-auto mb-16">
       <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-amber/15 border border-brand-amber/30 text-brand-amber text-xs font-semibold mb-3">
@@ -925,7 +963,7 @@
 
   <!-- SECTION 4: HOW PAYGO WORKS -->
   <section id="how-it-works" class="section-how-it-works py-20 bg-gradient-to-b from-brand-dark via-brand-forest/30 to-brand-dark border-t border-white/10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
       
       <div class="text-center max-w-3xl mx-auto mb-16">
         <h2 class="text-xs font-bold uppercase tracking-widest text-brand-teal mb-2">Frictionless Path to Energy Independence</h2>
@@ -988,7 +1026,7 @@
   </section>
 
   <!-- SECTION 5: INTELLIGENT ENERGY MONITORING -->
-  <section id="monitoring" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <section id="monitoring" class="py-20 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
     
     <div class="text-center max-w-3xl mx-auto mb-16">
       <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-teal/15 border border-brand-teal/30 text-brand-teal text-xs font-semibold mb-3">
@@ -1118,10 +1156,10 @@
   </section>
 
   <!-- SECTION 6: AFFORDABILITY & GENERATOR SAVINGS CALCULATOR -->
-  <section id="calculator" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <section id="calculator" class="py-20 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
     
     <div class="text-center max-w-3xl mx-auto mb-16">
-      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-amber/15 border border-brand-amber/30 text-brand-amber text-xs font-semibold mb-3">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-sky/15 border border-brand-sky/35 text-brand-sky text-xs font-semibold mb-3">
         <span>⚡</span> Interactive Electrical &amp; Financial Sizer
       </div>
       <h2 class="text-3xl sm:text-4xl font-heading font-extrabold text-white">Affordability &amp; Fuel Savings Calculator</h2>
@@ -1199,93 +1237,163 @@
         </div>
 
         <!-- Right: Real-time Sizing & Financing Breakdown (5 Cols) -->
-        <div class="lg:col-span-5 bg-black/40 border border-white/10 rounded-2xl p-6 flex flex-col justify-between">
+        <div class="lg:col-span-5 bg-black/40 border border-white/10 rounded-3xl p-6 lg:p-7 flex flex-col justify-between space-y-6">
           
-          <div>
-            <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
-              <span class="text-xs font-bold uppercase tracking-wider text-brand-warm/80">Engineered Result</span>
-              <span id="badgeBundle" class="text-xs px-2.5 py-0.5 rounded-full bg-brand-amber/20 text-brand-amber border border-brand-amber/30 font-semibold font-mono">
-                Growatt 5.0kVA
+          <div class="space-y-5">
+            <!-- Bundle Header -->
+            <div class="flex items-center justify-between pb-3 border-b border-white/10">
+              <span class="text-xs font-bold uppercase tracking-wider text-brand-warm/80">Engineered Recommendation</span>
+              <span id="badgeBundle" class="text-xs px-3 py-1 rounded-full bg-brand-amber/20 text-brand-amber border border-brand-amber/30 font-semibold font-mono">
+                Growatt 5.0kVA Family Standard
               </span>
             </div>
 
-            <!-- Technical Load Summary -->
-            <div class="grid grid-cols-2 gap-3 mb-6">
-              <div class="bg-white/5 p-3 rounded-xl border border-white/5">
-                <span class="text-[10px] uppercase text-brand-warm/60 block">Running Load</span>
-                <span id="outRunningWatts" class="text-xl font-heading font-bold text-white font-mono">0 W</span>
+            <!-- PRIMARY LAYER 1: Repayment Tenure Slider (3 to 36 Months) -->
+            <div class="space-y-1.5 p-3.5 rounded-2xl bg-white/5 border border-white/5">
+              <div class="flex justify-between items-center text-xs">
+                <span class="text-brand-warm/80 font-medium">Repayment Tenure:</span>
+                <span id="calcTenureLabel" class="font-mono font-bold text-brand-amber">24 Months</span>
               </div>
-              <div class="bg-white/5 p-3 rounded-xl border border-white/5">
-                <span class="text-[10px] uppercase text-brand-warm/60 block">Inrush Surge</span>
-                <span id="outSurgeVA" class="text-xl font-heading font-bold text-brand-amber font-mono">0 VA</span>
-              </div>
-              <div class="bg-white/5 p-3 rounded-xl border border-white/5">
-                <span class="text-[10px] uppercase text-brand-warm/60 block">Battery Required</span>
-                <span id="outBattKWh" class="text-xl font-heading font-bold text-brand-teal font-mono">5.12 kWh</span>
-              </div>
-              <div class="bg-white/5 p-3 rounded-xl border border-white/5">
-                <span class="text-[10px] uppercase text-brand-warm/60 block">Solar PV Array</span>
-                <span id="outPVKWp" class="text-xl font-heading font-bold text-white font-mono">2.70 kWp</span>
+              <input type="range" id="calcTenureSlider" min="3" max="36" step="3" value="24" oninput="runCalculator()" class="w-full h-2 bg-white/10 rounded-lg cursor-pointer accent-brand-amber">
+              <div class="flex justify-between text-[10px] text-brand-warm/50 font-mono">
+                <span>3m</span>
+                <span>12m</span>
+                <span>24m</span>
+                <span>36m</span>
               </div>
             </div>
 
-            <!-- Financing Numbers -->
-            <div class="space-y-3 p-4 rounded-xl bg-brand-forest/40 border border-brand-teal/20 mb-6 text-xs">
-              <div class="flex justify-between">
-                <span class="text-brand-warm/70">Estimated Outright Value:</span>
-                <span id="outTotalCash" class="font-bold text-white font-mono">₦4,450,000</span>
+            <!-- PRIMARY LAYER 2: DisCo Band A & Generator Fuel Inputs -->
+            <div class="space-y-2.5 p-3.5 rounded-2xl bg-white/5 border border-white/5 text-xs">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-brand-warm/60 block">Current Utility &amp; Generator Profile</span>
+              <div class="grid grid-cols-3 gap-2">
+                <div>
+                  <label class="text-[10px] text-brand-warm/60 block mb-1">DisCo (₦/mo)</label>
+                  <input type="number" id="calcGridBill" value="75000" oninput="runCalculator()" class="w-full bg-black/50 border border-white/15 rounded-lg p-2 text-xs font-mono text-white outline-none focus:border-brand-amber">
+                </div>
+                <div>
+                  <label class="text-[10px] text-brand-warm/60 block mb-1">Gen Run (Hrs/d)</label>
+                  <input type="number" id="calcGenHours" value="5" oninput="runCalculator()" class="w-full bg-black/50 border border-white/15 rounded-lg p-2 text-xs font-mono text-white outline-none focus:border-brand-amber">
+                </div>
+                <div>
+                  <label class="text-[10px] text-brand-warm/60 block mb-1">Fuel (₦/Liter)</label>
+                  <input type="number" id="calcFuelPrice" value="1250" oninput="runCalculator()" class="w-full bg-black/50 border border-white/15 rounded-lg p-2 text-xs font-mono text-white outline-none focus:border-brand-amber">
+                </div>
               </div>
-              <div class="flex justify-between">
-                <span class="text-brand-warm/70">Down Payment Floor:</span>
-                <span id="outDeposit" class="font-bold text-white font-mono">₦1,335,000</span>
+            </div>
+
+            <!-- PRIMARY LAYER 3: Net Savings Summary Box -->
+            <div class="space-y-2.5 p-4 rounded-2xl bg-brand-forest/50 border border-brand-teal/30 text-xs">
+              <div class="flex justify-between items-center">
+                <span class="text-brand-warm/70">Current Monthly Generator + Grid:</span>
+                <span id="genCostMonthly" class="font-bold text-red-400 font-mono text-sm">₦240,000/mo</span>
               </div>
-              <div class="flex justify-between pt-2 border-t border-white/10 text-sm">
-                <span class="font-bold text-brand-amber">Monthly PAYGo Instalment:</span>
-                <span id="outMonthly" class="font-extrabold text-brand-amber font-mono">₦128,500/mo</span>
+              <div class="flex justify-between items-center">
+                <span class="text-brand-warm/70">Fixed Growatt PAYG Installment:</span>
+                <span id="solarCostMonthly" class="font-bold text-brand-amber font-mono text-sm">₦128,500/mo</span>
+              </div>
+              <div class="flex justify-between items-center pt-2 border-t border-white/10">
+                <span class="font-bold text-white">Net Monthly Cash Saved:</span>
+                <span id="netMonthlySavings" class="text-xl font-heading font-extrabold text-emerald-400 font-mono">+₦111,500/mo</span>
+              </div>
+              <div class="flex justify-between items-center text-[11px] text-emerald-300">
+                <span>Projected 3-Year Cumulative Savings:</span>
+                <span id="threeYrSavings" class="font-bold font-mono">₦4,014,000 saved over 36 months!</span>
+              </div>
+            </div>
+
+            <!-- SECONDARY LAYER: COLLAPSIBLE COREN ENGINEERING DRAWER -->
+            <div class="border border-brand-sky/20 rounded-2xl overflow-hidden">
+              <button type="button" onclick="toggleCorenDrawer()" class="w-full p-3.5 bg-black/60 hover:bg-black/80 text-left text-xs font-bold text-brand-sky flex items-center justify-between transition">
+                <div class="flex items-center gap-2">
+                  <span>⚙️</span>
+                  <span>Inspect COREN Electrical Sizing &amp; Derating Math</span>
+                </div>
+                <span id="corenDrawerIndicator" class="font-mono text-[10px] px-2 py-0.5 rounded bg-brand-sky/20 border border-brand-sky/30 text-brand-sky">
+                  Show Specs ▼
+                </span>
+              </button>
+
+              <div id="corenMathDrawer" class="hidden p-4 bg-black/80 border-t border-white/10 space-y-3.5 text-xs font-mono">
+                
+                <!-- Formula 1 -->
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                  <div class="flex justify-between text-brand-warm/80 text-[11px]">
+                    <span>Peak Continuous Load (W_run):</span>
+                    <strong id="outRunningWatts" class="text-white font-bold">0 W</strong>
+                  </div>
+                  <p class="text-[10px] text-brand-warm/50">Formula: &sum;(Watts &times; Qty) across all running appliances</p>
+                </div>
+
+                <!-- Formula 2 -->
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                  <div class="flex justify-between text-brand-warm/80 text-[11px]">
+                    <span>Inverter Capacity (VA_inv):</span>
+                    <strong id="outSurgeVA" class="text-brand-amber font-bold">0 VA</strong>
+                  </div>
+                  <p class="text-[10px] text-brand-warm/50">Formula: max(W_run &times; 1.25, W_run + W_largest_motor_surge)</p>
+                </div>
+
+                <!-- Formula 3 -->
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                  <div class="flex justify-between text-brand-warm/80 text-[11px]">
+                    <span>LiFePO4 Storage (Wh_batt):</span>
+                    <strong id="outBattKWh" class="text-brand-teal font-bold">5.12 kWh</strong>
+                  </div>
+                  <p class="text-[10px] text-brand-warm/50">Formula: W_night &times; BackupHrs / (&eta;_inv(0.92) &times; DoD_LiFePO4(0.80))</p>
+                </div>
+
+                <!-- Formula 4 -->
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                  <div class="flex justify-between text-brand-warm/80 text-[11px]">
+                    <span>Derated Solar PV Array (W_pv):</span>
+                    <strong id="outPVKWp" class="text-brand-sky font-bold">2.70 kWp</strong>
+                  </div>
+                  <p class="text-[10px] text-brand-warm/50">Formula: ((Wh_batt &times; 0.80) + Wh_day) / (PeakSunHrs &times; Derating(0.78))</p>
+                </div>
+
+                <!-- Breakdown Footer -->
+                <div class="pt-2 border-t border-white/10 text-[11px] space-y-1 text-brand-warm/70">
+                  <div class="flex justify-between">
+                    <span>Daytime Energy Harvest:</span>
+                    <span id="corenDayWh" class="text-white font-bold">3,600 Wh</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Nighttime Energy Autonomy:</span>
+                    <span id="corenNightWh" class="text-white font-bold">4,200 Wh</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>1.75% All-Risk Insurance Fee:</span>
+                    <span id="corenInsurance" class="text-brand-sky font-bold">₦77,875</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Earth Grounding Standard:</span>
+                    <span id="corenEarth" class="text-brand-sky font-bold">&le; 2.5 &Omega; (COREN Standard)</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Down Payment Floor:</span>
+                    <span id="outDeposit" class="text-white font-bold">₦1,335,000</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Outright Asset Value:</span>
+                    <span id="outTotalCash" class="text-white font-bold">₦4,450,000</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Monthly Installment:</span>
+                    <span id="outMonthly" class="text-brand-amber font-bold">₦128,500/mo</span>
+                  </div>
+                </div>
+
               </div>
             </div>
 
           </div>
 
           <!-- Action Button -->
-          <button onclick="bookAuditWithCurrentQuote()" class="w-full py-3.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 shadow-lg shadow-brand-amber/20 transition-all hover:scale-105 flex items-center justify-center gap-2">
+          <button onclick="bookAuditWithCurrentQuote()" class="w-full py-4 rounded-xl text-xs sm:text-sm font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 shadow-xl shadow-brand-amber/25 transition-all hover:scale-105 flex items-center justify-center gap-2">
             <span>Book Site Audit for this System</span>
             <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </button>
-
-        </div>
-
-      </div>
-
-      <!-- Generator Fuel Savings Comparison ROI Strip -->
-      <div class="pt-8 border-t border-white/10">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-2">
-            <span class="text-base">⛽</span>
-            <h4 class="font-heading font-bold text-white text-sm">Generator Fuel Cost vs. Solar Repayment</h4>
-          </div>
-          <span class="text-xs text-brand-warm/60">Assuming ₦1,250 / Litre Petrol + ₦15k/mo engine oil</span>
-        </div>
-
-        <div class="grid sm:grid-cols-3 gap-4 text-center">
-          
-          <div class="p-4 rounded-2xl bg-red-950/40 border border-red-800/30">
-            <span class="text-[10px] uppercase text-red-300 font-semibold block mb-1">Current Monthly Petrol Spend</span>
-            <div id="genCostMonthly" class="text-xl font-heading font-bold text-red-400 font-mono">₦240,000<span class="text-xs font-normal">/mo</span></div>
-            <span class="text-[10px] text-brand-warm/60 mt-1 block">8 hrs/day running 3.5kVA gen</span>
-          </div>
-
-          <div class="p-4 rounded-2xl bg-brand-teal/15 border border-brand-teal/30">
-            <span class="text-[10px] uppercase text-brand-teal font-semibold block mb-1">Your Solar Monthly Payment</span>
-            <div id="solarCostMonthly" class="text-xl font-heading font-bold text-white font-mono">₦128,500<span class="text-xs font-normal">/mo</span></div>
-            <span class="text-[10px] text-brand-warm/60 mt-1 block">Predictable fixed instalment</span>
-          </div>
-
-          <div class="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/40">
-            <span class="text-[10px] uppercase text-emerald-300 font-bold block mb-1">Net Cash Saved in Your Pocket</span>
-            <div id="netMonthlySavings" class="text-2xl font-heading font-extrabold text-emerald-400 font-mono">+₦111,500<span class="text-xs font-normal">/mo</span></div>
-            <span id="threeYrSavings" class="text-[10px] text-emerald-300 font-medium mt-1 block">₦4,014,000 saved over 36 months!</span>
-          </div>
 
         </div>
 
@@ -1295,8 +1403,188 @@
 
   </section>
 
+  <!-- SECTION 6: SMART CUSTOMER APP & OFFLINE UNLOCK PREVIEW (#smart-app) -->
+  <section id="smart-app" class="py-20 border-t border-white/10 bg-gradient-to-b from-brand-dark via-brand-forest/30 to-brand-dark">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
+      
+      <div class="max-w-3xl mb-14 space-y-3">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-sky/15 border border-brand-sky/35 text-brand-sky text-xs font-semibold">
+          <i data-lucide="smartphone" class="w-3.5 h-3.5"></i>
+          <span>Post-Installation Digital Experience</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-heading font-extrabold text-white">
+          Monitor Your Power &amp; Top Up From Anywhere With Our Smart App
+        </h2>
+        <p class="text-sm sm:text-base text-brand-warm/75 leading-relaxed">
+          Every Growatt hybrid plant is paired with a Shine 4G IoT gateway that streams live generation, battery state of charge, and household load telemetry to your phone every 60 seconds.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-12 gap-8 items-center">
+        
+        <!-- Left Column: Value Proposition -->
+        <div class="lg:col-span-6 space-y-5">
+          
+          <!-- Feature Card 1 -->
+          <div class="glass-card-dark rounded-3xl p-6 border border-white/10 space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-brand-amber/20 text-brand-amber flex items-center justify-center text-lg font-bold">
+              ⚡
+            </div>
+            <h3 class="font-heading font-extrabold text-lg text-white">
+              Instant Dedicated Virtual Account Top-Up
+            </h3>
+            <p class="text-xs sm:text-sm text-brand-warm/75 leading-relaxed">
+              Your system comes provisioned with a permanent Moniepoint, Paystack, or OPay Virtual Account (DVA). Bank transfers from any Nigerian banking app automatically top up your meter and unlock power in &lt; 5 seconds without manual intervention.
+            </p>
+          </div>
+
+          <!-- Feature Card 2 -->
+          <div class="glass-card-dark rounded-3xl p-6 border border-white/10 space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-brand-sky/20 text-brand-sky flex items-center justify-center text-lg font-bold">
+              📶
+            </div>
+            <h3 class="font-heading font-extrabold text-lg text-white">
+              Bluetooth (BLE) &amp; 20-Digit Keypad Offline Unlock
+            </h3>
+            <p class="text-xs sm:text-sm text-brand-warm/75 leading-relaxed">
+              Living in a low-reception area or experiencing a national telecommunications blackout? You can generate cryptographic 20-digit STS tokens via SMS or sync directly over Bluetooth Low Energy (BLE) to keep your energy flowing uninterrupted.
+            </p>
+          </div>
+
+          <!-- Feature Card 3 -->
+          <div class="glass-card-dark rounded-3xl p-6 border border-white/10 space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg font-bold">
+              🤖
+            </div>
+            <h3 class="font-heading font-extrabold text-lg text-white">
+              LocalGridAgent AI Proactive Battery Guard
+            </h3>
+            <p class="text-xs sm:text-sm text-brand-warm/75 leading-relaxed">
+              Our embedded machine learning model analyzes satellite cloud coverage and local DisCo grid stability to throttle non-essential loads automatically before overnight storms or unexpected feeder outages.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Right Column: LIVE DEMO Preview Card (3-Tile Energy Flow Triangle) -->
+        <div class="lg:col-span-6 flex justify-center lg:justify-end">
+          <div class="w-full max-w-[540px] glass-card-dark rounded-3xl p-6 sm:p-8 shadow-2xl relative border border-brand-sky/25 hover:border-brand-sky/45 transition-colors space-y-6">
+            
+            <!-- Header with Live Status -->
+            <div class="flex items-center justify-between pb-4 border-b border-white/10">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-brand-sky status-pulse"></span>
+                <span class="font-heading font-bold text-xs uppercase tracking-wider text-white font-mono">
+                  ● LIVE DEMO &bull; Growatt Hub OS
+                </span>
+              </div>
+              <span class="text-[10px] font-mono text-brand-sky px-2 py-0.5 rounded bg-brand-sky/15 border border-brand-sky/30">
+                Shine 4G LTE &bull; 60s Stream
+              </span>
+            </div>
+
+            <!-- The 3-Tile Visual Preview of Live Energy Flow Triangle -->
+            <div class="space-y-3.5">
+              
+              <!-- Tile 1: Emerald Solar Harvest -->
+              <div class="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-brand-sky/20 text-brand-sky flex items-center justify-center text-xl">
+                    ☀️
+                  </div>
+                  <div>
+                    <span class="text-xs uppercase font-bold text-emerald-300 block">
+                      SOLAR HARVEST
+                    </span>
+                    <span class="text-[11px] text-brand-warm/60 font-medium">
+                      Peak Midday Sun &bull; 98.2% Ingress
+                    </span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xl sm:text-2xl font-mono font-extrabold text-emerald-400">
+                    3,420 W
+                  </div>
+                  <span class="text-[10px] text-brand-sky font-mono">Active Array</span>
+                </div>
+              </div>
+
+              <!-- Tile 2: Cyan LiFePO4 Bank -->
+              <div class="p-4 rounded-2xl bg-cyan-950/40 border border-cyan-500/40 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl">
+                    🔋
+                  </div>
+                  <div>
+                    <span class="text-xs uppercase font-bold text-cyan-300 block">
+                      LiFePO4 BANK
+                    </span>
+                    <span class="text-[11px] text-brand-warm/60 font-medium">
+                      (+2,270W Charging) &bull; 52.8V Balanced
+                    </span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xl sm:text-2xl font-mono font-extrabold text-cyan-400">
+                    94% SoC
+                  </div>
+                  <span class="text-[10px] text-cyan-300 font-mono">6,000 Cycle Tier-1</span>
+                </div>
+              </div>
+
+              <!-- Tile 3: Amber Home Load -->
+              <div class="p-4 rounded-2xl bg-amber-950/40 border border-amber-500/40 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center text-xl">
+                    🏠
+                  </div>
+                  <div>
+                    <span class="text-xs uppercase font-bold text-amber-300 block">
+                      HOME LOAD
+                    </span>
+                    <span class="text-[11px] text-brand-warm/60 font-medium">
+                      (AC + Fridge + Office) &bull; Zero Grid
+                    </span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xl sm:text-2xl font-mono font-extrabold text-amber-300">
+                    1,150 W
+                  </div>
+                  <span class="text-[10px] text-amber-300 font-mono">100% Clean Solar</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Energy Routing Status -->
+            <div class="p-3.5 rounded-xl bg-black/50 border border-white/5 text-[11px] text-brand-warm/80 flex items-center justify-between font-mono">
+              <span class="text-brand-warm/60">Routing Vector:</span>
+              <span class="text-brand-sky font-bold">Solar (3.4kW) &rarr; Home (1.1kW) + Batt (2.3kW)</span>
+            </div>
+
+            <!-- Customer App Access Button -->
+            <div class="pt-2 flex items-center justify-between text-xs">
+              <span class="text-brand-warm/60">Available on iOS &amp; Android PWA</span>
+              <button onclick="openModal('signUpModal')" class="text-brand-sky hover:text-sky-300 font-bold underline transition">
+                Register For Access &rarr;
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+    </div>
+
+  </section>
+
   <!-- SECTION 7: INSTALLATION CATEGORIES -->
-  <section id="installations" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <section id="installations" class="py-20 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
     
     <div class="text-center max-w-3xl mx-auto mb-16">
       <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-teal/15 border border-brand-teal/30 text-brand-teal text-xs font-semibold mb-3">
@@ -1419,7 +1707,7 @@
 
   <!-- SECTION 8: CUSTOMER STORIES (ILLUSTRATIVE CASE STUDIES) -->
   <section id="stories" class="section-stories py-20 bg-gradient-to-b from-brand-dark via-brand-forest/20 to-brand-dark border-t border-white/10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
       
       <div class="text-center max-w-3xl mx-auto mb-16">
         <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-amber/15 border border-brand-amber/30 text-brand-amber text-xs font-semibold mb-3">
@@ -1683,7 +1971,7 @@
 
   <!-- COMPREHENSIVE FOOTER -->
   <footer class="main-footer bg-black/90 border-t border-white/10 pt-16 pb-12 text-xs text-brand-warm/70">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
       
       <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 pb-12 border-b border-white/10">
         
@@ -1740,6 +2028,7 @@
             <li><a href="#faq" class="hover:text-brand-amber transition">KYC &amp; Credit Terms</a></li>
             <li><a href="#faq" class="hover:text-brand-amber transition">Data Privacy Policy</a></li>
             <li><button onclick="openModal('signInModal')" class="hover:text-brand-amber transition">Customer Portal Login</button></li>
+            <li><button onclick="openModal('signUpModal')" class="text-brand-teal font-semibold hover:text-emerald-400 transition">New Customer Sign Up (NIN)</button></li>
           </ul>
         </div>
 
@@ -1939,10 +2228,421 @@
           Sign In to Portal
         </button>
 
+        <div class="pt-3 text-center text-xs text-brand-warm/80 border-t border-white/10">
+          <span>New Customer? </span>
+          <button type="button" onclick="closeModal('signInModal'); openModal('signUpModal')" class="font-bold text-brand-teal hover:underline inline-flex items-center gap-1">
+            <span>Register &amp; Apply for Solar PAYGo</span> &rarr;
+          </button>
+        </div>
+
         <p class="text-center text-[11px] text-brand-warm/60">
           Need help? Call field engineer dispatch: <span class="text-brand-teal font-semibold">+234 800-SKYGRID</span>
         </p>
       </form>
+    </div>
+  </div>
+
+  <!-- Modal 5: New Customer Solar PAYGo Sign Up & NIN Auto-Verification Portal -->
+  <div id="signUpModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+    <div class="glass-card-dark rounded-3xl max-w-4xl w-full p-5 sm:p-8 md:p-10 border border-white/15 relative shadow-2xl max-h-[94vh] overflow-y-auto flex flex-col justify-between">
+      
+      <!-- Close Button -->
+      <button onclick="closeModal('signUpModal')" aria-label="Close Registration Modal" class="absolute top-5 right-5 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition focus:outline-none focus:ring-2 focus:ring-brand-teal">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Sign Up Form View -->
+      <div id="signupFormView">
+        <!-- Header Banner -->
+        <div class="flex items-start gap-4 pb-6 border-b border-white/10">
+          <div class="w-12 h-12 rounded-2xl bg-brand-teal/20 border border-brand-teal/30 flex items-center justify-center text-brand-teal shrink-0">
+            <i data-lucide="user-plus" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h3 class="text-2xl sm:text-3xl font-heading font-extrabold text-white">Customer Registration &amp; Solar PAYGo Onboarding</h3>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-brand-teal/20 text-brand-teal border border-brand-teal/30 uppercase tracking-wider">
+                NIMC Instant Verification
+              </span>
+            </div>
+            <p class="text-xs sm:text-sm text-brand-warm/75 mt-1">
+              Complete your verification in under 60 seconds. Enter your National Identification Number (NIN) to automatically populate and verify your identity credentials.
+            </p>
+          </div>
+        </div>
+
+        <form id="customerSignUpForm" onsubmit="handleCustomerSignUp(event)" class="mt-6 space-y-6 text-xs">
+          
+          <!-- STEP 1: IDENTITY & AUTOMATIC NIN VERIFICATION -->
+          <div class="p-5 rounded-2xl bg-black/40 border border-brand-teal/30 space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-brand-teal text-brand-dark font-bold text-xs flex items-center justify-center">1</span>
+                <h4 class="text-sm font-heading font-bold text-white uppercase tracking-wider">National Identity &amp; Biometric KYC</h4>
+              </div>
+              <span class="text-[11px] text-brand-teal font-mono">Government Identity Registry (NIMC)</span>
+            </div>
+
+            <!-- NIN Input Field with Integrated Verification Action -->
+            <div>
+              <label for="signupNIN" class="block text-brand-warm/90 font-bold mb-1.5">
+                National Identification Number (NIN) <span class="text-brand-amber">* (11 Digits)</span>
+              </label>
+              <div class="flex flex-col sm:flex-row gap-2">
+                <div class="relative flex-1">
+                  <input type="text" id="signupNIN" maxlength="11" required
+                    placeholder="Enter 11-digit NIN (e.g. 11223344556)"
+                    oninput="handleNINInput(this.value)"
+                    class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-brand-warm/40 focus:border-brand-teal focus:ring-1 focus:ring-brand-teal focus:outline-none font-mono text-sm tracking-widest font-bold">
+                  <span id="ninCharCount" class="absolute right-3 top-3 text-[10px] text-brand-warm/50 font-mono">0/11</span>
+                </div>
+                <button type="button" id="btnVerifyNIN" onclick="verifyCustomerNIN()"
+                  class="px-5 py-3 rounded-xl bg-brand-teal hover:bg-emerald-400 text-brand-dark font-heading font-bold text-xs flex items-center justify-center gap-2 transition shadow-md shadow-brand-teal/20 shrink-0">
+                  <i data-lucide="shield-check" id="verifyBtnIcon" class="w-4 h-4"></i>
+                  <span id="verifyBtnText">Verify with NIMC</span>
+                </button>
+              </div>
+
+              <!-- Quick Demo 1-Click Verification Chips -->
+              <div class="mt-2.5 flex items-center gap-2 flex-wrap text-[10px] text-brand-warm/70">
+                <span class="font-medium text-brand-amber">⚡ Instant Demo Test Profiles:</span>
+                <button type="button" onclick="quickFillDemoNIN('11223344556')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 text-brand-warm hover:text-white transition font-mono">
+                  Babatunde Adeyemi (11223344556)
+                </button>
+                <button type="button" onclick="quickFillDemoNIN('99887766554')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 text-brand-warm hover:text-white transition font-mono">
+                  Dr. Zainab Aliyu (99887766554)
+                </button>
+                <button type="button" onclick="quickFillDemoNIN('55443322110')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 text-brand-warm hover:text-white transition font-mono">
+                  Chief Emeka Okafor (55443322110)
+                </button>
+              </div>
+            </div>
+
+            <!-- Dynamic Verification Banner -->
+            <div id="ninStatusBanner" class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-brand-warm/75 flex items-center gap-2.5 transition-all">
+              <i data-lucide="info" class="w-4 h-4 text-brand-teal shrink-0"></i>
+              <span>Enter your 11-digit NIN above or select a demo profile. Your legal names and date of birth will be securely queried and populated automatically.</span>
+            </div>
+
+            <!-- Auto-Populated Identity Columns (Grid) -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+              <div>
+                <label for="signupFirstName" class="block text-brand-warm/70 font-semibold mb-1 flex items-center justify-between">
+                  <span>First Name</span>
+                  <span id="badgeFirstName" class="text-[9px] text-brand-teal font-mono hidden">✓ NIMC Verified</span>
+                </label>
+                <input type="text" id="signupFirstName" required readonly placeholder="Auto-populated from NIN"
+                  class="w-full bg-black/40 border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-medium focus:outline-none cursor-default">
+              </div>
+
+              <div>
+                <label for="signupMiddleName" class="block text-brand-warm/70 font-semibold mb-1 flex items-center justify-between">
+                  <span>Middle Name</span>
+                  <span id="badgeMiddleName" class="text-[9px] text-brand-teal font-mono hidden">✓ NIMC Verified</span>
+                </label>
+                <input type="text" id="signupMiddleName" readonly placeholder="Auto-populated from NIN"
+                  class="w-full bg-black/40 border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-medium focus:outline-none cursor-default">
+              </div>
+
+              <div>
+                <label for="signupLastName" class="block text-brand-warm/70 font-semibold mb-1 flex items-center justify-between">
+                  <span>Surname / Last Name</span>
+                  <span id="badgeLastName" class="text-[9px] text-brand-teal font-mono hidden">✓ NIMC Verified</span>
+                </label>
+                <input type="text" id="signupLastName" required readonly placeholder="Auto-populated from NIN"
+                  class="w-full bg-black/40 border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-medium focus:outline-none cursor-default">
+              </div>
+            </div>
+
+            <!-- Date of Birth & Gender & Identity Tracking Token -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label for="signupDOB" class="block text-brand-warm/70 font-semibold mb-1 flex items-center justify-between">
+                  <span>Date of Birth</span>
+                  <span id="badgeDOB" class="text-[9px] text-brand-teal font-mono hidden">✓ NIMC Verified</span>
+                </label>
+                <input type="date" id="signupDOB" required readonly
+                  class="w-full bg-black/40 border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-mono focus:outline-none cursor-default">
+              </div>
+
+              <div>
+                <label for="signupGender" class="block text-brand-warm/70 font-semibold mb-1 flex items-center justify-between">
+                  <span>Gender</span>
+                  <span id="badgeGender" class="text-[9px] text-brand-teal font-mono hidden">✓ NIMC Verified</span>
+                </label>
+                <input type="text" id="signupGender" readonly placeholder="Gender from NIN"
+                  class="w-full bg-black/40 border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-medium focus:outline-none cursor-default">
+              </div>
+
+              <div>
+                <label for="signupBVN" class="block text-brand-warm/70 font-semibold mb-1">
+                  Bank Verification Number (BVN) <span class="text-brand-warm/40">(Optional)</span>
+                </label>
+                <input type="text" id="signupBVN" maxlength="11" placeholder="11-digit BVN for tier-2 credit"
+                  class="w-full bg-black/50 border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-mono focus:border-brand-teal focus:outline-none">
+              </div>
+            </div>
+
+          </div>
+
+          <!-- STEP 2: CONTACT & INSTALLATION SITE DETAILS -->
+          <div class="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-4">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-brand-amber text-brand-dark font-bold text-xs flex items-center justify-center">2</span>
+              <h4 class="text-sm font-heading font-bold text-white uppercase tracking-wider">Contact &amp; Installation Site Engineering</h4>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="signupPhone" class="block text-brand-warm/80 font-semibold mb-1">
+                  Primary Mobile Phone * <span class="text-brand-teal font-mono text-[10px]">(Token &amp; SMS delivery)</span>
+                </label>
+                <input type="tel" id="signupPhone" required placeholder="e.g. 0803 123 4567"
+                  class="w-full bg-black/50 border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-mono focus:border-brand-amber focus:outline-none">
+              </div>
+
+              <div>
+                <label for="signupEmail" class="block text-brand-warm/80 font-semibold mb-1">
+                  Email Address * <span class="text-brand-warm/40 text-[10px]">(Monthly statement &amp; deed)</span>
+                </label>
+                <input type="email" id="signupEmail" required placeholder="e.g. name@domain.com"
+                  class="w-full bg-black/50 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-amber focus:outline-none">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="sm:col-span-2">
+                <label for="signupAddress" class="block text-brand-warm/80 font-semibold mb-1">Installation Physical Address &amp; Nearest Landmark *</label>
+                <input type="text" id="signupAddress" required placeholder="e.g. Plot 18, Admiralty Way, Lekki Phase 1"
+                  class="w-full bg-black/50 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-amber focus:outline-none">
+              </div>
+
+              <div>
+                <label for="signupState" class="block text-brand-warm/80 font-semibold mb-1">State &amp; Solar Irradiance Zone *</label>
+                <select id="signupState" required onchange="updateSignupAmortization()"
+                  class="w-full bg-black/70 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-amber focus:outline-none">
+                  <option value="Lagos">Lagos (Coastal Zone • 4.5h PSH)</option>
+                  <option value="Abuja" selected>Abuja FCT (Middle Belt • 5.2h PSH)</option>
+                  <option value="Rivers">Rivers / Port Harcourt (Niger Delta • 3.8h PSH)</option>
+                  <option value="Kano">Kano / Northern Sahel (6.0h PSH)</option>
+                  <option value="Oyo">Oyo / Ibadan (South West • 4.8h PSH)</option>
+                  <option value="Enugu">Enugu (South East • 4.6h PSH)</option>
+                  <option value="Ogun">Ogun (Industrial Corridor • 4.5h PSH)</option>
+                  <option value="Delta">Delta (Warri/Asaba • 4.0h PSH)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label for="signupPropertyType" class="block text-brand-warm/80 font-semibold mb-1">Property Ownership</label>
+                <select id="signupPropertyType" class="w-full bg-black/70 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-amber focus:outline-none">
+                  <option value="OWNER">Owner-Occupied (Private Residence)</option>
+                  <option value="COMMERCIAL_OWNER">Commercial Freehold (Business Owner)</option>
+                  <option value="TENANT">Tenant (With Landlord Solar Consent)</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="signupBuildingType" class="block text-brand-warm/80 font-semibold mb-1">Facility / Building Category</label>
+                <select id="signupBuildingType" class="w-full bg-black/70 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-amber focus:outline-none">
+                  <option value="RESIDENTIAL_DUPLEX">4–5 Bedroom Duplex</option>
+                  <option value="RESIDENTIAL_FLAT">2–3 Bedroom Flat / Apartment</option>
+                  <option value="CLINIC_HOSPITAL">Medical Clinic / Maternity Home</option>
+                  <option value="PHARMACY_RETAIL">Pharmacy / Retail Supermarket</option>
+                  <option value="OFFICE_SCHOOL">Corporate Office / School</option>
+                  <option value="LIGHT_INDUSTRY">Light Industrial / Agro-processing</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="signupGridBand" class="block text-brand-warm/80 font-semibold mb-1">Current Grid Supply</label>
+                <select id="signupGridBand" class="w-full bg-black/70 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-amber focus:outline-none">
+                  <option value="BAND_A">Band A (20+ Hours DISCO Power)</option>
+                  <option value="BAND_B">Band B (16–20 Hours DISCO Power)</option>
+                  <option value="BAND_C_D">Band C/D (Under 16 Hours Supply)</option>
+                  <option value="OFF_GRID">100% Off-Grid (Generator Only)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3: SOLAR PACKAGE SELECTION & AMORTIZATION TERMS -->
+          <div class="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-4">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-brand-teal text-brand-dark font-bold text-xs flex items-center justify-center">3</span>
+              <h4 class="text-sm font-heading font-bold text-white uppercase tracking-wider">Solar System &amp; PAYGo Lease Terms</h4>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="signupPackage" class="block text-brand-warm/80 font-semibold mb-1">Target Solar Architecture</label>
+                <select id="signupPackage" onchange="updateSignupAmortization()"
+                  class="w-full bg-black/70 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-teal focus:outline-none font-medium">
+                  <option value="3kVA" data-cash="2850000" data-down="855000" data-monthly="78500">3.0 kVA / 5.12 kWh LiFePO4 (Essential Home — ₦78,500/mo)</option>
+                  <option value="5kVA" selected data-cash="6300000" data-down="1890000" data-monthly="172000">5.0 kVA / 10.24 kWh LiFePO4 (Family Hybrid — ₦172,000/mo) ★ Recommended</option>
+                  <option value="10kVA" data-cash="11800000" data-down="3540000" data-monthly="325000">10.0 kVA / 20.48 kWh LiFePO4 (Business Solar — ₦325,000/mo)</option>
+                  <option value="20kVA" data-cash="24000000" data-down="7200000" data-monthly="650000">20.0 kVA+ Commercial 3-Phase Scalable (Structured PPA)</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="signupTenure" class="block text-brand-warm/80 font-semibold mb-1">Payment Mode &amp; Lease Tenure</label>
+                <select id="signupTenure" onchange="updateSignupAmortization()"
+                  class="w-full bg-black/70 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-teal focus:outline-none">
+                  <option value="36" selected>36-Month Lease-to-Own (Lowest Monthly Installment)</option>
+                  <option value="24">24-Month Accelerated Lease-to-Own</option>
+                  <option value="12">12-Month Fast-Track Lease-to-Own</option>
+                  <option value="0">Outright Cash Purchase (100% Immediate Ownership)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Real-Time Amortization & Deposit Breakdown Summary Card -->
+            <div class="p-4 rounded-xl bg-brand-forest/40 border border-brand-teal/30 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+              <div>
+                <span class="block text-[10px] text-brand-warm/60 uppercase tracking-wider">Required Down Payment (30%)</span>
+                <span id="signupDisplayDown" class="text-base sm:text-lg font-heading font-extrabold text-brand-amber font-mono">₦1,890,000</span>
+              </div>
+              <div>
+                <span class="block text-[10px] text-brand-warm/60 uppercase tracking-wider">Equipment Insurance (1.5%)</span>
+                <span id="signupDisplayInsurance" class="text-base sm:text-lg font-heading font-extrabold text-white font-mono">₦94,500</span>
+              </div>
+              <div>
+                <span class="block text-[10px] text-brand-warm/60 uppercase tracking-wider">Monthly Installment</span>
+                <span id="signupDisplayMonthly" class="text-base sm:text-lg font-heading font-extrabold text-brand-teal font-mono">₦172,000/mo</span>
+              </div>
+              <div>
+                <span class="block text-[10px] text-brand-warm/60 uppercase tracking-wider">Est. Daily Equivalent</span>
+                <span id="signupDisplayDaily" class="text-base sm:text-lg font-heading font-extrabold text-emerald-400 font-mono">~₦5,733/day</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 4: ACCOUNT SECURITY & HARDWARE ANTI-TAMPER CONSENT -->
+          <div class="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-4">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-brand-amber text-brand-dark font-bold text-xs flex items-center justify-center">4</span>
+              <h4 class="text-sm font-heading font-bold text-white uppercase tracking-wider">Portal Security &amp; Hardware Agreement</h4>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="signupPassword" class="block text-brand-warm/80 font-semibold mb-1">Create Access Password *</label>
+                <input type="password" id="signupPassword" required minlength="6" placeholder="At least 6 characters"
+                  class="w-full bg-black/50 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-teal focus:outline-none">
+              </div>
+
+              <div>
+                <label for="signupConfirmPassword" class="block text-brand-warm/80 font-semibold mb-1">Confirm Access Password *</label>
+                <input type="password" id="signupConfirmPassword" required minlength="6" placeholder="Repeat your password"
+                  class="w-full bg-black/50 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-teal focus:outline-none">
+              </div>
+            </div>
+
+            <!-- Mandatory Global PAYG Regulatory & Hardware Anti-Tamper Checkboxes -->
+            <div class="space-y-2.5 pt-2 text-[11px] text-brand-warm/80">
+              <label class="flex items-start gap-2.5 cursor-pointer">
+                <input type="checkbox" required class="mt-0.5 rounded border-white/30 text-brand-teal focus:ring-brand-teal shrink-0">
+                <span>
+                  <strong class="text-white">Hardware Anti-Tamper &amp; Stay-Alive Protocol:</strong> I understand that the lower Growatt breaker shroud is sealed with serialized meter security cables, and an edge Modbus microcontroller enforces automated AC power delivery based on cleared token credits.
+                </span>
+              </label>
+
+              <label class="flex items-start gap-2.5 cursor-pointer">
+                <input type="checkbox" required class="mt-0.5 rounded border-white/30 text-brand-teal focus:ring-brand-teal shrink-0">
+                <span>
+                  <strong class="text-white">Credit &amp; Identity Verification Authorization:</strong> I authorize SkyGrid Flex Solutions and licensed credit bureau partners to verify my National Identification Number (NIN) with NIMC and assess credit eligibility under Central Bank of Nigeria (CBN) regulations.
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Final Submit Button -->
+          <div class="pt-2 flex flex-col gap-3">
+            <button type="submit" id="btnSubmitSignup"
+              class="w-full py-4 rounded-xl text-sm font-heading font-extrabold text-brand-dark bg-brand-teal hover:bg-emerald-400 shadow-xl shadow-brand-teal/20 transition-all hover:scale-[1.01] flex items-center justify-center gap-2">
+              <i data-lucide="check-circle" class="w-5 h-5"></i>
+              <span>Complete Registration &amp; Provision Dedicated Virtual Account</span>
+            </button>
+
+            <div class="text-center text-xs text-brand-warm/70">
+              Already registered? 
+              <button type="button" onclick="closeModal('signUpModal'); openModal('signInModal')" class="font-bold text-brand-amber hover:underline ml-1">
+                Sign In to Existing Account &rarr;
+              </button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Sign Up Success / Dedicated Virtual Account (DVA) Welcome View -->
+      <div id="signupSuccessView" class="hidden text-center py-6 sm:py-10 space-y-6">
+        <div class="w-16 h-16 rounded-3xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mx-auto text-2xl shadow-lg shadow-emerald-500/20">
+          ✓
+        </div>
+
+        <div class="space-y-2">
+          <span class="px-3 py-1 rounded-full text-xs font-bold bg-brand-teal/20 text-brand-teal border border-brand-teal/30 uppercase tracking-widest font-mono">
+            NIMC Identity Verified • Account Active
+          </span>
+          <h3 class="text-2xl sm:text-3xl font-heading font-extrabold text-white">
+            Welcome to SkyGrid, <span id="successCustomerName" class="text-brand-amber">Customer</span>!
+          </h3>
+          <p class="text-xs sm:text-sm text-brand-warm/80 max-w-lg mx-auto">
+            Your application for the <strong id="successPackageTitle" class="text-white">Growatt Solar System</strong> has been approved. Your Dedicated Virtual Account (DVA) is live:
+          </p>
+        </div>
+
+        <!-- Dedicated Virtual Account (DVA) Banking Card -->
+        <div class="max-w-md mx-auto p-6 rounded-2xl bg-black/60 border border-brand-teal/40 text-left space-y-4 shadow-2xl">
+          <div class="flex items-center justify-between pb-3 border-b border-white/10">
+            <div>
+              <span class="text-[10px] text-brand-warm/60 uppercase tracking-wider block">Dedicated Virtual Account (DVA)</span>
+              <span class="text-xs font-bold text-brand-teal">Moniepoint MFB / Paystack Titan</span>
+            </div>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/20 text-emerald-400">Instant Automated Credit</span>
+          </div>
+
+          <div class="space-y-1">
+            <span class="text-[11px] text-brand-warm/70 block">Virtual Account Number:</span>
+            <div class="flex items-center justify-between bg-white/5 p-3 rounded-xl border border-white/10">
+              <span id="successDVANumber" class="text-2xl font-mono font-extrabold text-brand-amber tracking-wider">9820-384-912</span>
+              <button type="button" onclick="copyDVANumber()" class="px-3 py-1.5 rounded-lg bg-brand-teal/20 text-brand-teal hover:bg-brand-teal hover:text-brand-dark transition text-[11px] font-bold">
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-[11px]">
+            <div>
+              <span class="text-brand-warm/60 block">Beneficiary Name:</span>
+              <span id="successBeneficiaryName" class="text-white font-semibold">SkyGrid PAYG / Customer</span>
+            </div>
+            <div>
+              <span class="text-brand-warm/60 block">30% Down Payment:</span>
+              <span id="successDownPayment" class="text-brand-amber font-mono font-bold">₦1,890,000</span>
+            </div>
+          </div>
+
+          <div class="p-2.5 rounded-xl bg-brand-forest/60 border border-brand-teal/20 text-[10px] text-brand-warm/80">
+            Transfer your down payment directly from any Nigerian bank app. Your hardware commissioning team will be dispatched immediately upon payment confirmation.
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+          <button type="button" onclick="launchCustomerPortalFromSignup()"
+            class="px-8 py-3.5 rounded-xl text-xs sm:text-sm font-heading font-extrabold text-brand-dark bg-brand-amber hover:bg-amber-400 transition-all hover:scale-105 shadow-lg shadow-brand-amber/20">
+            Open Your Live Customer Portal &rarr;
+          </button>
+          <button type="button" onclick="closeModal('signUpModal')"
+            class="px-6 py-3.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/15 transition">
+            Close &amp; Return to Home
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -2440,6 +3140,10 @@
 
     function setTenure(months) {
       selectedTenure = months;
+      const slider = document.getElementById('calcTenureSlider');
+      if (slider) slider.value = months;
+      const label = document.getElementById('calcTenureLabel');
+      if (label) label.textContent = months + ' Months';
       [12, 24, 36].forEach(m => {
         const btn = document.getElementById('tenure' + m);
         if (btn) {
@@ -2453,82 +3157,211 @@
       runCalculator();
     }
 
+    let showCorenMathDrawer = false;
+
+    function toggleCorenDrawer() {
+      showCorenMathDrawer = !showCorenMathDrawer;
+      const drawer = document.getElementById('corenMathDrawer');
+      const indicator = document.getElementById('corenDrawerIndicator');
+      if (drawer) {
+        if (showCorenMathDrawer) {
+          drawer.classList.remove('hidden');
+          if (indicator) indicator.textContent = 'Hide Specs ▲';
+        } else {
+          drawer.classList.add('hidden');
+          if (indicator) indicator.textContent = 'Show Specs ▼';
+        }
+      }
+    }
+
     function runCalculator() {
+      // 1. Gather state, tenure, down payment, grid, and gen inputs
+      const stateEl = document.getElementById('calcState');
+      const stateText = stateEl && stateEl.options[stateEl.selectedIndex] ? stateEl.options[stateEl.selectedIndex].text.split('(')[0].trim() : 'FCT Abuja';
+      const psh = stateEl && stateEl.options[stateEl.selectedIndex] ? parseFloat(stateEl.options[stateEl.selectedIndex].getAttribute('data-psh') || '4.5') : 4.5;
+
+      const tenureSlider = document.getElementById('calcTenureSlider');
+      if (tenureSlider) {
+        selectedTenure = parseInt(tenureSlider.value, 10);
+        const tenureLabel = document.getElementById('calcTenureLabel');
+        if (tenureLabel) tenureLabel.textContent = selectedTenure + ' Months';
+      }
+
+      const downPctEl = document.getElementById('calcDownPct');
+      const downPct = downPctEl ? parseInt(downPctEl.value, 10) : 30;
+      const downLabel = document.getElementById('calcDownPctLabel');
+      if (downLabel) downLabel.textContent = downPct + '%';
+
+      const gridBillInput = document.getElementById('calcGridBill');
+      const monthlyGridBill = gridBillInput ? (parseFloat(gridBillInput.value) || 0) : 75000;
+
+      const genHoursInput = document.getElementById('calcGenHours');
+      const dailyGenHours = genHoursInput ? (parseFloat(genHoursInput.value) || 0) : 5;
+
+      const fuelPriceInput = document.getElementById('calcFuelPrice');
+      const fuelPricePerLiter = fuelPriceInput ? (parseFloat(fuelPriceInput.value) || 0) : 1250;
+
+      // 2. Compute Electrical Loads using the 4 Deterministic Formulas
       let totalRunningWatts = 0;
-      let totalSurgeVA = 0;
+      let largestMotorSurge = 0;
+      let dayWh = 0;
+      let nightWh = 0;
 
       APPLIANCES_DATA.forEach(app => {
-        const running = app.watts * app.qty;
-        totalRunningWatts += running;
-        totalSurgeVA += running * app.surge;
+        const qty = app.qty || 0;
+        if (qty <= 0) return;
+        const lineWatts = app.watts * qty;
+        totalRunningWatts += lineWatts;
+
+        if (app.surge > 1.0) {
+          const singleSurge = Math.ceil(app.watts * (app.surge - 1.0));
+          if (singleSurge > largestMotorSurge) largestMotorSurge = singleSurge;
+        }
+
+        const appDayH = app.dayH !== undefined ? app.dayH : 4;
+        const appNightH = app.nightH !== undefined ? app.nightH : 6;
+        dayWh += lineWatts * appDayH;
+        nightWh += lineWatts * appNightH;
       });
 
-      // Update Top Labels
-      const downPct = parseInt(document.getElementById('calcDownPct').value, 10);
-      document.getElementById('calcDownPctLabel').textContent = downPct + '%';
+      if (totalRunningWatts === 0) totalRunningWatts = 150;
+      if (dayWh === 0) dayWh = 1200;
+      if (nightWh === 0) nightWh = 2400;
 
-      // Sizing Logic
+      // Formula 2: Inverter VA_inv = max(W_run * 1.25, W_run + W_largest_motor_surge)
+      const headroomVA = Math.ceil(totalRunningWatts * 1.25);
+      const surgeTotalVA = totalRunningWatts + largestMotorSurge;
+      const requiredVA = Math.max(headroomVA, surgeTotalVA);
+
+      // Formula 3: LiFePO4 Storage Wh_batt = NightWh / (eta_inv(0.92) * DoD_LiFePO4(0.80))
+      const rawBattWh = nightWh / (0.92 * 0.80);
+      const battKWh = Math.max(2.56, Math.ceil((rawBattWh / 1000) * 10) / 10);
+
+      // Formula 4: Derated PV W_pv = ((Wh_batt * 0.80) + DayWh) / (psh * 0.78)
+      const rawPVWatts = ((rawBattWh * 0.80) + dayWh) / (psh * 0.78);
+      const pvKWp = Math.max(1.5, Math.ceil((rawPVWatts / 1000) * 100) / 100);
+
+      // Match Curated Growatt Bundles
       let bundleName = 'Growatt 3.0kVA Eco-Starter';
+      let inverterModel = 'Growatt SPF 3000TL LVM-ES (3.0kW / 24V)';
+      let batteryModel = '5.12 kWh LiFePO4 (80% DoD, 6,000 Cycles)';
+      let pvModel = '2.70 kWp Mono PERC Half-Cell Array';
       let cashPrice = 2850000;
-      let battKWh = 5.12;
-      let pvKWp = 2.70;
+      let autonomyTag = '12–14 Hrs Overnight Autonomy / Fans + TV + Fridge';
 
-      if (totalRunningWatts > 4500 || totalSurgeVA > 9500) {
+      if (totalRunningWatts > 4500 || requiredVA > 4800 || battKWh > 10.24) {
         bundleName = 'Growatt 10.0kVA Commercial PowerPlant';
+        inverterModel = 'Dual Parallel SPF 5000ES / SPH 10kVA';
+        batteryModel = '20.48 kWh Rack LiFePO4 Vault (6,000 Cycles)';
+        pvModel = '9.90 kWp Commercial Roof Array';
         cashPrice = 11800000;
-        battKWh = 20.48;
-        pvKWp = 9.90;
-      } else if (totalRunningWatts > 2400 || totalSurgeVA > 5500) {
-        bundleName = 'Growatt 5.0kVA Family Executive';
+        autonomyTag = '24/7 Commercial Grade Continuous Uptime';
+      } else if (totalRunningWatts > 2400 || requiredVA > 3800 || battKWh > 5.5) {
+        bundleName = 'Growatt 5.0kVA Executive Night-Cool';
+        inverterModel = 'Growatt SPF 5000ES Hybrid (5.0kW / 48V Pure Sine)';
+        batteryModel = '10.24 kWh Dual LiFePO4 Bank (6,000 Cycles)';
+        pvModel = '5.50 kWp High-Yield Array';
         cashPrice = 6300000;
-        battKWh = 10.24;
-        pvKWp = 5.50;
-      } else if (totalRunningWatts > 1500 || totalSurgeVA > 3500) {
+        autonomyTag = 'Full Overnight 1.5HP AC + Zero Generator';
+      } else if (totalRunningWatts > 1500 || requiredVA > 2400) {
         bundleName = 'Growatt 5.0kVA Family Standard';
+        inverterModel = 'Growatt SPF 5000ES Hybrid (5.0kW / 48V Pure Sine)';
+        batteryModel = '5.12 kWh LiFePO4 (80% DoD, 6,000 Cycles)';
+        pvModel = '4.40 kWp Mono PERC Array';
         cashPrice = 4450000;
-        battKWh = 5.12;
-        pvKWp = 4.40;
+        autonomyTag = '12–14 Hrs Overnight Autonomy / Runs 1HP AC + Daytime Borehole';
       }
 
-      // Financing calculation with 1.75% monthly flat factor
+      // Amortization Math (30%-60% Down Payment, 1.75% Insurance Fee, 1.85% monthly flat factor)
       const downPayment = Math.round(cashPrice * (downPct / 100));
-      const principal = cashPrice - downPayment;
-      const monthlyRate = 0.0175;
-      const totalFinanced = Math.round(principal * (1 + (monthlyRate * selectedTenure)));
-      const monthlyPayment = Math.round(totalFinanced / selectedTenure);
+      const insuranceFee = Math.round(cashPrice * 0.0175);
+      const financedPrincipal = cashPrice - downPayment + insuranceFee;
+      const totalCreditService = Math.round(financedPrincipal * 0.0185 * selectedTenure);
+      const monthlyPayment = Math.ceil((financedPrincipal + totalCreditService) / selectedTenure);
+      const dailyEquivalent = Math.ceil(monthlyPayment / 30);
 
-      // DOM Updates
-      document.getElementById('outRunningWatts').textContent = totalRunningWatts.toLocaleString() + ' W';
-      document.getElementById('outSurgeVA').textContent = Math.round(totalSurgeVA).toLocaleString() + ' VA';
-      document.getElementById('outBattKWh').textContent = battKWh.toFixed(2) + ' kWh';
-      document.getElementById('outPVKWp').textContent = pvKWp.toFixed(2) + ' kWp';
-      document.getElementById('badgeBundle').textContent = bundleName;
-      document.getElementById('outTotalCash').textContent = '₦' + cashPrice.toLocaleString();
-      document.getElementById('outDeposit').textContent = '₦' + downPayment.toLocaleString();
-      document.getElementById('outMonthly').textContent = '₦' + monthlyPayment.toLocaleString() + '/mo';
+      // Fossil Fuel & Generator Comparison
+      const monthlyFuelLiters = Math.round(dailyGenHours * 1.35 * 30);
+      const monthlyFuelSpend = Math.round(monthlyFuelLiters * fuelPricePerLiter);
+      const monthlyMaintenance = dailyGenHours >= 2 ? 18000 : 0;
+      const totalCurrentSpend = monthlyGridBill + monthlyFuelSpend + monthlyMaintenance;
+      const displacedSpend = Math.round(totalCurrentSpend * 0.85);
+      const netSavings = displacedSpend - monthlyPayment;
+      const threeYrSavings = (displacedSpend * 36) - (downPayment + (monthlyPayment * selectedTenure));
 
-      // Generator Comparison (₦1,250/L petrol; ~1.8L/hr for 3.5kVA generator running 8 hours/day)
-      const dailyPetrolLiters = totalRunningWatts > 3000 ? 22 : 14;
-      const monthlyPetrolCost = (dailyPetrolLiters * 1250 * 30) + 15000; // includes oil service
-      const netSavings = monthlyPetrolCost - monthlyPayment;
-      const threeYrSavings = netSavings * 36;
+      // --- A. Update Hero Right Card ---
+      const heroTitle = document.getElementById('heroBundleTitle');
+      if (heroTitle) heroTitle.textContent = bundleName;
+      const heroAutonomy = document.getElementById('heroAutonomyBadge');
+      if (heroAutonomy) heroAutonomy.textContent = autonomyTag;
+      const heroState = document.getElementById('heroStateBadge');
+      if (heroState) heroState.textContent = stateText.toUpperCase();
+      const heroRedSpend = document.getElementById('heroRedSpend');
+      if (heroRedSpend) heroRedSpend.innerHTML = '₦' + totalCurrentSpend.toLocaleString() + '<span class="text-[10px] font-normal text-red-300">/mo</span>';
+      const heroRedFuel = document.getElementById('heroRedFuel');
+      if (heroRedFuel) heroRedFuel.textContent = '~' + monthlyFuelLiters + 'L Fuel + DisCo';
+      const heroGreenInstallment = document.getElementById('heroGreenInstallment');
+      if (heroGreenInstallment) heroGreenInstallment.innerHTML = '₦' + monthlyPayment.toLocaleString() + '<span class="text-[10px] font-normal text-emerald-300">/mo</span>';
+      const heroGreenDaily = document.getElementById('heroGreenDaily');
+      if (heroGreenDaily) heroGreenDaily.textContent = '≈ ₦' + dailyEquivalent.toLocaleString() + '/day (' + selectedTenure + 'm)';
+      const heroInverter = document.getElementById('heroInverterModel');
+      if (heroInverter) heroInverter.textContent = inverterModel;
+      const heroBattery = document.getElementById('heroBatteryModel');
+      if (heroBattery) heroBattery.textContent = batteryModel;
+      const heroPV = document.getElementById('heroPVModel');
+      if (heroPV) heroPV.textContent = pvModel;
+      const heroDown = document.getElementById('heroDownPayment');
+      if (heroDown) heroDown.textContent = '₦' + downPayment.toLocaleString() + ' (' + downPct + '%)';
 
-      document.getElementById('genCostMonthly').innerHTML = '₦' + monthlyPetrolCost.toLocaleString() + '<span class="text-xs font-normal">/mo</span>';
-      document.getElementById('solarCostMonthly').innerHTML = '₦' + monthlyPayment.toLocaleString() + '<span class="text-xs font-normal">/mo</span>';
-      
-      const netEl = document.getElementById('netMonthlySavings');
+      // --- B. Update Calculator Primary View ---
+      const badgeBundle = document.getElementById('badgeBundle');
+      if (badgeBundle) badgeBundle.textContent = bundleName;
+      const genMonthly = document.getElementById('genCostMonthly');
+      if (genMonthly) genMonthly.textContent = '₦' + totalCurrentSpend.toLocaleString() + '/mo';
+      const solarMonthly = document.getElementById('solarCostMonthly');
+      if (solarMonthly) solarMonthly.textContent = '₦' + monthlyPayment.toLocaleString() + '/mo';
+      const netSavingsEl = document.getElementById('netMonthlySavings');
       const threeYrEl = document.getElementById('threeYrSavings');
-      if (netSavings >= 0) {
-        netEl.className = 'text-2xl font-heading font-extrabold text-emerald-400 font-mono';
-        netEl.innerHTML = '+₦' + netSavings.toLocaleString() + '<span class="text-xs font-normal">/mo</span>';
-        threeYrEl.textContent = '₦' + threeYrSavings.toLocaleString() + ' saved over 36 months!';
-      } else {
-        netEl.className = 'text-2xl font-heading font-extrabold text-brand-amber font-mono';
-        netEl.innerHTML = '₦' + Math.abs(netSavings).toLocaleString() + '<span class="text-xs font-normal">/mo differential</span>';
-        threeYrEl.textContent = 'Full capital asset ownership gained upon term finish.';
+      if (netSavingsEl) {
+        if (netSavings >= 0) {
+          netSavingsEl.className = 'text-xl font-heading font-extrabold text-emerald-400 font-mono';
+          netSavingsEl.textContent = '+₦' + netSavings.toLocaleString() + '/mo';
+        } else {
+          netSavingsEl.className = 'text-xl font-heading font-extrabold text-brand-amber font-mono';
+          netSavingsEl.textContent = '₦' + Math.abs(netSavings).toLocaleString() + '/mo diff';
+        }
       }
+      if (threeYrEl) {
+        threeYrEl.textContent = '₦' + threeYrSavings.toLocaleString() + ' cumulative 3-year savings!';
+      }
+
+      // --- C. Update Collapsible COREN Drawer ---
+      const outRun = document.getElementById('outRunningWatts');
+      if (outRun) outRun.textContent = totalRunningWatts.toLocaleString() + ' W';
+      const outSurge = document.getElementById('outSurgeVA');
+      if (outSurge) outSurge.textContent = requiredVA.toLocaleString() + ' VA';
+      const outBatt = document.getElementById('outBattKWh');
+      if (outBatt) outBatt.textContent = battKWh.toFixed(2) + ' kWh';
+      const outPV = document.getElementById('outPVKWp');
+      if (outPV) outPV.textContent = pvKWp.toFixed(2) + ' kWp';
+
+      const corenDay = document.getElementById('corenDayWh');
+      if (corenDay) corenDay.textContent = dayWh.toLocaleString() + ' Wh';
+      const corenNight = document.getElementById('corenNightWh');
+      if (corenNight) corenNight.textContent = nightWh.toLocaleString() + ' Wh';
+      const corenIns = document.getElementById('corenInsurance');
+      if (corenIns) corenIns.textContent = '₦' + insuranceFee.toLocaleString();
+      const outDepositEl = document.getElementById('outDeposit');
+      if (outDepositEl) outDepositEl.textContent = '₦' + downPayment.toLocaleString();
+      const outTotalCashEl = document.getElementById('outTotalCash');
+      if (outTotalCashEl) outTotalCashEl.textContent = '₦' + cashPrice.toLocaleString();
+      const outMonthlyEl = document.getElementById('outMonthly');
+      if (outMonthlyEl) outMonthlyEl.textContent = '₦' + monthlyPayment.toLocaleString() + '/mo';
 
       window.currentCalculatedBundle = bundleName;
+      if (window.lucide) {
+        lucide.createIcons();
+      }
     }
 
     // --- 5. Modal and Drawer Controllers ---
@@ -2537,6 +3370,9 @@
       if (el) {
         el.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
+        if (window.lucide) {
+          lucide.createIcons();
+        }
       }
     }
 
@@ -2853,6 +3689,254 @@
       }
     }
 
+    // --- 6. New Customer Sign Up & NIN Instant Auto-Population Engine ---
+    const NIN_DATABASE = {
+      "11223344556": {
+        firstName: "Babatunde",
+        middleName: "Olumide",
+        lastName: "Adeyemi",
+        dob: "1985-06-14",
+        gender: "Male",
+        phone: "08032918472",
+        state: "Lagos",
+        ninRef: "NIMC-VER-LAG-84920"
+      },
+      "99887766554": {
+        firstName: "Zainab",
+        middleName: "Fatima",
+        lastName: "Aliyu",
+        dob: "1990-11-23",
+        gender: "Female",
+        phone: "08024431928",
+        state: "Abuja",
+        ninRef: "NIMC-VER-ABJ-51034"
+      },
+      "55443322110": {
+        firstName: "Emeka",
+        middleName: "Chukwudi",
+        lastName: "Okafor",
+        dob: "1978-03-08",
+        gender: "Male",
+        phone: "08057719043",
+        state: "Rivers",
+        ninRef: "NIMC-VER-PHC-92011"
+      }
+    };
+
+    function generateNIMCRecord(nin) {
+      if (NIN_DATABASE[nin]) {
+        return NIN_DATABASE[nin];
+      }
+      const names = [
+        { first: "Chinedu", mid: "Ifeanyi", last: "Eze", gender: "Male" },
+        { first: "Oluwaseun", mid: "Adeola", last: "Balogun", gender: "Female" },
+        { first: "Ibrahim", mid: "Usman", last: "Bello", gender: "Male" },
+        { first: "Ngozi", mid: "Grace", last: "Okeke", gender: "Female" },
+        { first: "Damilola", mid: "Kayode", last: "Ogunleye", gender: "Male" },
+        { first: "Amina", mid: "Halima", last: "Danjuma", gender: "Female" },
+        { first: "Kufre", mid: "Bassey", last: "Akpan", gender: "Male" }
+      ];
+      const digits = nin.replace(/\D/g, '');
+      const sum = digits.split('').reduce((acc, c) => acc + parseInt(c, 10), 0);
+      const profile = names[sum % names.length];
+      const year = 1974 + (sum % 26); // Age ~26 - 52
+      const month = String((sum % 12) + 1).padStart(2, '0');
+      const day = String((sum % 28) + 1).padStart(2, '0');
+      return {
+        firstName: profile.first,
+        middleName: profile.mid,
+        lastName: profile.last,
+        dob: `${year}-${month}-${day}`,
+        gender: profile.gender,
+        phone: "080" + (10000000 + (sum * 83617) % 89999999),
+        state: "Lagos",
+        ninRef: "NIMC-VER-NG-" + nin.slice(-5)
+      };
+    }
+
+    function handleNINInput(val) {
+      const clean = val.replace(/\D/g, '');
+      document.getElementById('signupNIN').value = clean;
+      const countEl = document.getElementById('ninCharCount');
+      if (countEl) countEl.textContent = clean.length + '/11';
+      if (clean.length === 11) {
+        verifyCustomerNIN();
+      }
+    }
+
+    function quickFillDemoNIN(nin) {
+      document.getElementById('signupNIN').value = nin;
+      handleNINInput(nin);
+      verifyCustomerNIN();
+    }
+
+    function verifyCustomerNIN() {
+      const ninInput = document.getElementById('signupNIN');
+      const cleanNIN = ninInput.value.replace(/\D/g, '');
+      if (cleanNIN.length !== 11) {
+        showToast('Please enter an 11-digit NIN first', false);
+        ninInput.focus();
+        return;
+      }
+
+      const verifyBtn = document.getElementById('btnVerifyNIN');
+      const btnText = document.getElementById('verifyBtnText');
+      const banner = document.getElementById('ninStatusBanner');
+
+      if (verifyBtn) verifyBtn.disabled = true;
+      if (btnText) btnText.textContent = 'Querying NIMC...';
+      if (banner) {
+        banner.className = 'p-3 rounded-xl bg-brand-forest/60 border border-brand-teal/40 text-[11px] text-brand-teal flex items-center gap-2.5 transition-all';
+        banner.innerHTML = '<span class="w-3 h-3 rounded-full bg-brand-teal status-pulse"></span><span>Connecting to National Identity Management Commission (NIMC) Secure Gateway...</span>';
+      }
+
+      setTimeout(() => {
+        const record = generateNIMCRecord(cleanNIN);
+
+        // Populate Form Fields
+        document.getElementById('signupFirstName').value = record.firstName;
+        document.getElementById('signupMiddleName').value = record.middleName;
+        document.getElementById('signupLastName').value = record.lastName;
+        document.getElementById('signupDOB').value = record.dob;
+        document.getElementById('signupGender').value = record.gender;
+
+        if (!document.getElementById('signupPhone').value) {
+          document.getElementById('signupPhone').value = record.phone;
+        }
+
+        // Show verification badges
+        ['badgeFirstName', 'badgeMiddleName', 'badgeLastName', 'badgeDOB', 'badgeGender'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.classList.remove('hidden');
+        });
+
+        // Update Banner to Verified State
+        if (banner) {
+          banner.className = 'p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-[11px] text-emerald-300 flex items-center justify-between gap-3 shadow-lg';
+          banner.innerHTML = `
+            <div class="flex items-center gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-xs">✓</span>
+              <div>
+                <strong class="text-white block font-heading">NIMC Verified: ${record.firstName} ${record.middleName} ${record.lastName}</strong>
+                <span class="text-[10px] text-emerald-400/80 font-mono">Date of Birth: ${record.dob} • Gender: ${record.gender} • Token: ${record.ninRef}</span>
+              </div>
+            </div>
+            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[9px] uppercase font-bold shrink-0">Biometrics Match 99.2%</span>
+          `;
+        }
+
+        if (verifyBtn) verifyBtn.disabled = false;
+        if (btnText) btnText.textContent = 'Verified ✓';
+
+        showToast(`✓ NIMC Identity Verified: ${record.firstName} ${record.lastName}`);
+        updateSignupAmortization();
+      }, 550);
+    }
+
+    function updateSignupAmortization() {
+      const pkgSelect = document.getElementById('signupPackage');
+      const tenureSelect = document.getElementById('signupTenure');
+      if (!pkgSelect || !tenureSelect) return;
+
+      const opt = pkgSelect.options[pkgSelect.selectedIndex];
+      const cash = parseInt(opt.getAttribute('data-cash'), 10) || 6300000;
+      const tenure = parseInt(tenureSelect.value, 10);
+
+      let downPayment = Math.round(cash * 0.30);
+      let insuranceFee = Math.round(cash * 0.015);
+      let monthlyInstallment = 0;
+
+      if (tenure === 0) {
+        downPayment = cash;
+        insuranceFee = 0;
+        monthlyInstallment = 0;
+      } else {
+        const financed = cash - downPayment;
+        const totalWithMargin = financed * (1 + (0.24 * (tenure / 12)));
+        monthlyInstallment = Math.round(totalWithMargin / tenure);
+      }
+
+      const dailyEquivalent = tenure > 0 ? Math.round(monthlyInstallment / 30) : 0;
+
+      document.getElementById('signupDisplayDown').textContent = '₦' + downPayment.toLocaleString();
+      document.getElementById('signupDisplayInsurance').textContent = '₦' + insuranceFee.toLocaleString();
+      document.getElementById('signupDisplayMonthly').textContent = tenure > 0 ? '₦' + monthlyInstallment.toLocaleString() + '/mo' : '₦0 (Paid)';
+      document.getElementById('signupDisplayDaily').textContent = tenure > 0 ? '~₦' + dailyEquivalent.toLocaleString() + '/day' : 'Fully Owned';
+
+      window.currentSignupData = {
+        cash,
+        downPayment,
+        insuranceFee,
+        monthlyInstallment,
+        dailyEquivalent,
+        tenure
+      };
+    }
+
+    function handleCustomerSignUp(event) {
+      event.preventDefault();
+      const nin = document.getElementById('signupNIN').value.trim();
+      const firstName = document.getElementById('signupFirstName').value.trim();
+      const lastName = document.getElementById('signupLastName').value.trim();
+      const dob = document.getElementById('signupDOB').value;
+      const pwd = document.getElementById('signupPassword').value;
+      const pwdConfirm = document.getElementById('signupConfirmPassword').value;
+
+      if (!firstName || !lastName || !dob) {
+        showToast('Please enter an 11-digit NIN and verify your identity first', false);
+        document.getElementById('signupNIN').focus();
+        return;
+      }
+
+      if (pwd !== pwdConfirm) {
+        showToast('Access passwords do not match. Please re-enter.', false);
+        document.getElementById('signupConfirmPassword').focus();
+        return;
+      }
+
+      const submitBtn = document.getElementById('btnSubmitSignup');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="w-4 h-4 rounded-full border-2 border-brand-dark border-t-transparent animate-spin inline-block mr-2"></span> Provisioning Dedicated Virtual Account (Moniepoint/Paystack)...';
+
+      setTimeout(() => {
+        // Transition to Success & DVA View
+        document.getElementById('signupFormView').classList.add('hidden');
+        document.getElementById('signupSuccessView').classList.remove('hidden');
+
+        const fullName = `${firstName} ${lastName}`;
+        const randomDVA = '9820' + Math.floor(100000 + Math.random() * 900000);
+        const pkgTitle = document.getElementById('signupPackage').options[document.getElementById('signupPackage').selectedIndex].text.split('(')[0];
+
+        document.getElementById('successCustomerName').textContent = fullName;
+        document.getElementById('successPackageTitle').textContent = pkgTitle;
+        document.getElementById('successBeneficiaryName').textContent = `SkyGrid PAYG / ${fullName}`;
+        document.getElementById('successDVANumber').textContent = randomDVA;
+        document.getElementById('successDownPayment').textContent = document.getElementById('signupDisplayDown').textContent;
+
+        window.registeredCustomerSession = {
+          name: fullName,
+          phone: document.getElementById('signupPhone').value,
+          email: document.getElementById('signupEmail').value,
+          dva: randomDVA
+        };
+
+        submitBtn.disabled = false;
+        showToast('🎉 Customer account verified & DVA provisioned successfully!');
+        const modalContainer = document.querySelector('#signUpModal > div');
+        if (modalContainer) modalContainer.scrollTop = 0;
+      }, 700);
+    }
+
+    function copyDVANumber() {
+      const dva = document.getElementById('successDVANumber').textContent.trim();
+      copyToClipboard(dva, 'Virtual Account Number copied to clipboard!');
+    }
+
+    function launchCustomerPortalFromSignup() {
+      closeModal('signUpModal');
+      loadCustomerPortal('amina');
+    }
+
     // Keyboard Accessibility (Esc to close modals)
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
@@ -2860,6 +3944,7 @@
         closeModal('auditModal');
         closeModal('signInModal');
         closeModal('customerPortalModal');
+        closeModal('signUpModal');
       }
     });
 

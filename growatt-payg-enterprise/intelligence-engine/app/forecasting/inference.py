@@ -21,7 +21,10 @@ from .cold_start import ColdStartApplianceSpec, ColdStartSyntheticGenerator
 from .trainer import FEATURE_COLUMNS, MultiHorizonTrainer, TrainedDeviceModels
 from .weather_client import HourlyWeatherPoint, OpenMeteoSolarClient
 
-import numpy as np
+try:
+    import numpy as np
+except ImportError:
+    np = None
 
 
 class MultiHorizonInferenceEngine:

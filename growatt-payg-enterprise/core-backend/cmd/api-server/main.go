@@ -27,11 +27,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/skytron-quantum/growatt-payg-enterprise/core-backend/internal/adapters/growatt_oss"
-	"github.com/skytron-quantum/growatt-payg-enterprise/core-backend/internal/adapters/handlers"
-	"github.com/skytron-quantum/growatt-payg-enterprise/core-backend/internal/adapters/payments"
-	"github.com/skytron-quantum/growatt-payg-enterprise/core-backend/internal/adapters/vfs_store"
-	"github.com/skytron-quantum/growatt-payg-enterprise/core-backend/internal/usecases"
+	"github.com/SkyGrid-Flex-Solutions/growatt-payg-enterprise/core-backend/internal/adapters/growatt_oss"
+	"github.com/SkyGrid-Flex-Solutions/growatt-payg-enterprise/core-backend/internal/adapters/handlers"
+	"github.com/SkyGrid-Flex-Solutions/growatt-payg-enterprise/core-backend/internal/adapters/payments"
+	"github.com/SkyGrid-Flex-Solutions/growatt-payg-enterprise/core-backend/internal/adapters/vfs_store"
+	"github.com/SkyGrid-Flex-Solutions/growatt-payg-enterprise/core-backend/internal/usecases"
 )
 
 func main() {
@@ -119,6 +119,26 @@ func main() {
 	// --- BATCH 5 & 6 ROUTES: Customer Portal VFS Aggregator & LocalGridAgent AI Bridge ---
 	mux.HandleFunc("/api/v1/customer/dashboard/", withCORS(handleCustomerDashboardVFS(vfsManager, vfsRoot)))
 	mux.HandleFunc("/api/v1/customer/ai-advisor", withCORS(handleCustomerAIAdvisorProxy(pythonEngineURL)))
+
+	// --- STATIC WEB UI & SHOWROOM (static/index.html) ---
+	staticDir := getEnv("STATIC_DIR", "static")
+	if _, err := os.Stat(staticDir); os.IsNotExist(err) {
+		if _, err := os.Stat("core-backend/static"); err == nil {
+			staticDir = "core-backend/static"
+		}
+	}
+	fileServer := http.FileServer(http.Dir(staticDir))
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasPrefix(r.URL.Path, "/api/") {
+			http.NotFound(w, r)
+			return
+		}
+		if r.URL.Path == "/" || r.URL.Path == "/index.html" {
+			http.ServeFile(w, r, filepath.Join(staticDir, "index.html"))
+			return
+		}
+		fileServer.ServeHTTP(w, r)
+	})
 
 	srv := &http.Server{
 		Addr:         ":" + port,
