@@ -304,6 +304,7 @@ export function EnergyAnalyticsSuite({
   const [showGisModal, setShowGisModal] = useState<boolean>(false);
   const [showAgentDrawer, setShowAgentDrawer] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const solarGradId = `solarGrad-${mode || "DEFAULT"}`;
 
   const activeData = useMemo(() => SEGMENTS[segment], [segment]);
 
@@ -565,12 +566,12 @@ export function EnergyAnalyticsSuite({
   // RENDER UI
   // ==========================================================================
   return (
-    <div className="w-full bg-slate-950 text-slate-100 font-sans space-y-6 sm:space-y-8 select-none">
+    <div className="w-full bg-[#0B0F19] text-slate-100 font-sans space-y-6 sm:space-y-8 select-none">
       
       {/* Toast Notification Container */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 px-5 py-3 rounded-2xl bg-slate-900 border border-emerald-500/50 text-emerald-300 text-xs font-mono font-bold shadow-2xl shadow-emerald-950/80 flex items-center gap-3 animate-fade-in">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+        <div className="fixed bottom-6 right-6 z-50 px-5 py-3 rounded-2xl bg-[#111827] border border-[#10B981]/50 text-[#10B981] text-xs font-mono font-bold shadow-2xl shadow-emerald-950/80 flex items-center gap-3 animate-fade-in">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-ping" />
           <span>{toastMessage}</span>
         </div>
       )}
@@ -578,18 +579,18 @@ export function EnergyAnalyticsSuite({
       {/* =====================================================================
           SECTION 1: Executive Customer Identity, Picture Column, Geo-Tag & Roof ATM
          ===================================================================== */}
-      <section className="p-5 sm:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-2xl backdrop-blur-md space-y-5">
+      <section className="p-5 sm:p-6 rounded-3xl bg-[#111827] border border-[#64748B]/30 shadow-2xl backdrop-blur-md space-y-5">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           
           {/* Customer Avatar & Verified Metadata */}
           <div className="flex items-center gap-4">
             <div className="relative">
               <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-gradient-to-tr from-amber-500 via-emerald-500 to-sky-400 p-0.5">
-                <div className="w-full h-full rounded-full bg-slate-950 flex items-center justify-center text-xl sm:text-2xl font-black text-amber-300 font-heading">
+                <div className="w-full h-full rounded-full bg-[#1E293B] flex items-center justify-center text-xl sm:text-2xl font-black text-[#FFBF00] font-heading">
                   {activeData.customerInitials}
                 </div>
               </div>
-              <span className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-emerald-500 border-2 border-slate-950 animate-pulse" />
+              <span className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-emerald-500 border-2 border-[#0B0F19] animate-pulse" />
             </div>
 
             <div className="space-y-1">
@@ -597,19 +598,19 @@ export function EnergyAnalyticsSuite({
                 <h1 className="text-lg sm:text-xl font-extrabold text-white tracking-tight">
                   {activeData.customerName}
                 </h1>
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[10px] font-mono font-bold">
+                <span className="px-2.5 py-0.5 rounded-full bg-[#10B981]/15 border border-[#10B981]/30 text-[#10B981] text-[10px] font-mono font-bold">
                   ✓ {activeData.badgeLabel}
                 </span>
               </div>
-              <div className="text-xs text-slate-400 font-mono flex flex-wrap items-center gap-x-3 gap-y-1">
+              <div className="text-xs text-[#64748B] font-mono flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span>ID: <strong className="text-slate-200">{activeData.customerID}</strong></span>
                 <span>•</span>
                 <span>Contract: <strong className="text-slate-200">{activeData.contractID}</strong></span>
                 <span>•</span>
-                <span>Device: <strong className="text-amber-400">{deviceID}</strong></span>
+                <span>Device: <strong className="text-[#FFBF00]">{deviceID}</strong></span>
               </div>
               <div className="text-xs text-slate-300 flex items-center gap-1.5 pt-0.5">
-                <span className="text-slate-400">📍 {activeData.address}</span>
+                <span className="text-[#64748B]">📍 {activeData.address}</span>
               </div>
             </div>
           </div>
@@ -621,7 +622,7 @@ export function EnergyAnalyticsSuite({
             <button
               type="button"
               onClick={() => setShowGisModal(true)}
-              className="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-700 hover:border-amber-400/50 text-xs text-amber-300 font-mono transition flex items-center gap-2 shadow-inner group"
+              className="px-3.5 py-2 rounded-xl bg-[#1E293B] hover:bg-[#1E293B] border border-[#64748B]/40 hover:border-[#FFBF00]/50 text-xs text-[#FFBF00] font-mono transition flex items-center gap-2 shadow-inner group"
             >
               <span className="text-sm group-hover:scale-110 transition">🛰️</span>
               <span className="font-semibold underline decoration-amber-400/40 underline-offset-4">
@@ -630,14 +631,14 @@ export function EnergyAnalyticsSuite({
             </button>
 
             {/* Segment Viewport Switcher */}
-            <div className="inline-flex rounded-xl p-1 bg-slate-950 border border-slate-800 text-xs font-semibold">
+            <div className="inline-flex rounded-xl p-1 bg-[#1E293B] border border-[#64748B]/30 text-xs font-semibold">
               <button
                 type="button"
                 onClick={() => setSegment('residential')}
                 className={`px-3 py-1.5 rounded-lg transition ${
                   segment === 'residential'
-                    ? 'bg-amber-400 text-slate-950 font-bold shadow'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-[#FFBF00] text-[#0B0F19] font-bold shadow'
+                    : 'text-[#64748B] hover:text-white'
                 }`}
               >
                 1. Residential
@@ -647,8 +648,8 @@ export function EnergyAnalyticsSuite({
                 onClick={() => setSegment('commercial')}
                 className={`px-3 py-1.5 rounded-lg transition ${
                   segment === 'commercial'
-                    ? 'bg-amber-400 text-slate-950 font-bold shadow'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-[#FFBF00] text-[#0B0F19] font-bold shadow'
+                    : 'text-[#64748B] hover:text-white'
                 }`}
               >
                 2. Commercial SME
@@ -658,8 +659,8 @@ export function EnergyAnalyticsSuite({
                 onClick={() => setSegment('industrial')}
                 className={`px-3 py-1.5 rounded-lg transition ${
                   segment === 'industrial'
-                    ? 'bg-amber-400 text-slate-950 font-bold shadow'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-[#FFBF00] text-[#0B0F19] font-bold shadow'
+                    : 'text-[#64748B] hover:text-white'
                 }`}
               >
                 3. Industrial
@@ -669,21 +670,21 @@ export function EnergyAnalyticsSuite({
         </div>
 
         {/* Signature Innovation: Live "Solar Wallet / Roof ATM" Ticker */}
-        <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-slate-950 to-amber-950/30 border border-emerald-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-[#10B981]/15 via-[#111827] to-[#FFBF00]/10 border border-[#10B981]/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-xl text-emerald-400 font-bold">
+            <div className="w-10 h-10 rounded-xl bg-[#10B981]/20 border border-[#10B981]/40 flex items-center justify-center text-xl text-[#10B981] font-bold">
               🏧
             </div>
             <div>
-              <span className="text-[11px] text-emerald-400 font-bold uppercase tracking-wider block font-mono">
+              <span className="text-[11px] text-[#10B981] font-bold uppercase tracking-wider block font-mono">
                 Live Roof ATM &bull; Clean Energy Yield Counter
               </span>
               <div className="text-lg sm:text-xl font-extrabold text-white flex items-center gap-2">
                 <span>Today&apos;s Roof ATM Yield:</span>
-                <span className="text-emerald-400 font-mono font-black">
+                <span className="text-[#10B981] font-mono font-black">
                   +{formatNaira(activeData.todayHarvestNaira)}
                 </span>
-                <span className="text-xs text-slate-400 font-mono hidden sm:inline">
+                <span className="text-xs text-[#64748B] font-mono hidden sm:inline">
                   • {activeData.todayPetrolAvoidedLiters}L Petrol Displaced Today
                 </span>
               </div>
@@ -692,16 +693,16 @@ export function EnergyAnalyticsSuite({
 
           <div className="w-full md:w-72 space-y-1.5">
             <div className="flex justify-between text-xs font-mono">
-              <span className="text-slate-400">Total System Cost Recouped:</span>
-              <strong className="text-amber-400">{activeData.paybackProgressPct}%</strong>
+              <span className="text-[#64748B]">Total System Cost Recouped:</span>
+              <strong className="text-[#FFBF00]">{activeData.paybackProgressPct}%</strong>
             </div>
-            <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+            <div className="w-full h-2 rounded-full bg-[#1E293B] overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-amber-400 to-emerald-400 rounded-full transition-all duration-700"
                 style={{ width: `${activeData.paybackProgressPct}%` }}
               />
             </div>
-            <span className="text-[10px] text-slate-400 font-mono block text-right">
+            <span className="text-[10px] text-[#64748B] font-mono block text-right">
               {activeData.paybackProgressPct}% of Total System Cost Harvested from the Sun
             </span>
           </div>
@@ -713,15 +714,15 @@ export function EnergyAnalyticsSuite({
          ===================================================================== */}
       <section className="space-y-3">
         {/* Top-Fold Natural-Language Data Storyteller */}
-        <div className="p-5 rounded-2xl bg-slate-900 border-l-4 border-amber-400 border-y border-r border-slate-800 shadow-xl space-y-2">
+        <div className="p-5 rounded-2xl bg-[#111827] border-l-4 border-[#FFBF00] border-y border-r border-[#64748B]/30 shadow-xl space-y-2">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-              <span className="text-xs font-bold text-amber-400 font-mono uppercase tracking-wider">
+              <span className="w-2 h-2 rounded-full bg-[#FFBF00] animate-pulse" />
+              <span className="text-xs font-bold text-[#FFBF00] font-mono uppercase tracking-wider">
                 Natural-Language Energy Storyteller &bull; Period: {timeframe}
               </span>
             </div>
-            <span className="text-xs text-slate-400 font-mono">
+            <span className="text-xs text-[#64748B] font-mono">
               Algorithmic Telemetry Synthesis
             </span>
           </div>
@@ -734,10 +735,10 @@ export function EnergyAnalyticsSuite({
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs font-mono">
           
           {/* DisCo Feeder Health Pill */}
-          <div className="p-3 rounded-xl bg-slate-900/80 border border-rose-500/30 flex items-center gap-3">
-            <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping flex-shrink-0" />
+          <div className="p-3 rounded-xl bg-[#111827] border border-[#EF4444]/30 flex items-center gap-3">
+            <div className="w-2.5 h-2.5 rounded-full bg-[#EF4444] animate-ping flex-shrink-0" />
             <div className="overflow-hidden">
-              <span className="text-rose-400 font-bold block truncate">
+              <span className="text-[#EF4444] font-bold block truncate">
                 ⚡ {activeData.feederName}
               </span>
               <span className="text-[11px] text-slate-300 block truncate">
@@ -747,10 +748,10 @@ export function EnergyAnalyticsSuite({
           </div>
 
           {/* Harmattan Optical Soiling Pill */}
-          <div className="p-3 rounded-xl bg-slate-900/80 border border-emerald-500/30 flex items-center gap-3">
+          <div className="p-3 rounded-xl bg-[#111827] border border-[#10B981]/30 flex items-center gap-3">
             <span className="text-lg flex-shrink-0">☀️</span>
             <div className="overflow-hidden">
-              <span className="text-emerald-400 font-bold block truncate">
+              <span className="text-[#10B981] font-bold block truncate">
                 Optical Efficiency: {activeData.opticalEfficiencyPct}%
               </span>
               <span className="text-[11px] text-slate-300 block truncate">
@@ -760,10 +761,10 @@ export function EnergyAnalyticsSuite({
           </div>
 
           {/* Live Inverter & Battery Heartbeat */}
-          <div className="p-3 rounded-xl bg-slate-900/80 border border-sky-500/30 flex items-center gap-3 sm:col-span-2 lg:col-span-1">
+          <div className="p-3 rounded-xl bg-[#111827] border border-[#22D3EE]/30 flex items-center gap-3 sm:col-span-2 lg:col-span-1">
             <span className="text-lg flex-shrink-0">🔋</span>
             <div className="overflow-hidden">
-              <span className="text-sky-300 font-bold block truncate">
+              <span className="text-[#22D3EE] font-bold block truncate">
                 LiFePO4 Reserve: {activeData.currentSoC}% (52.8V DC)
               </span>
               <span className="text-[11px] text-slate-300 block truncate">
@@ -777,20 +778,20 @@ export function EnergyAnalyticsSuite({
       {/* =====================================================================
           SECTION 3: Package Amortization Ledger + Credit Passport
          ===================================================================== */}
-      <section className="p-5 sm:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-2xl space-y-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <section className="p-5 sm:p-6 rounded-3xl bg-[#111827] border border-[#64748B]/30 shadow-2xl space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#64748B]/30 pb-4">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
               <span>💳</span> Package Amortization Ledger &amp; Clean Energy Bankability Passport
             </h2>
-            <p className="text-xs text-slate-400 font-mono">
+            <p className="text-xs text-[#64748B] font-mono">
               Transparent 36-Month Lease-to-Own contract. Zero balloon fees or prepayment penalties.
             </p>
           </div>
           <button
             type="button"
             onClick={() => showToast('✓ Official COREN/NEMSA Lease Agreement Downloaded')}
-            className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-mono text-slate-200 transition"
+            className="px-3 py-1.5 rounded-lg bg-[#1E293B] hover:bg-[#64748B]/30 text-xs font-mono text-slate-200 transition"
           >
             Download Agreement (PDF)
           </button>
@@ -799,7 +800,7 @@ export function EnergyAnalyticsSuite({
         <div className="grid lg:grid-cols-12 gap-6 items-center">
           
           {/* Circular Donut Ownership Gauge (3 Cols) */}
-          <div className="lg:col-span-3 flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-950 border border-slate-800 text-center space-y-2">
+          <div className="lg:col-span-3 flex flex-col items-center justify-center p-4 rounded-2xl bg-[#1E293B] border border-[#64748B]/30 text-center space-y-2">
             <div className="relative w-28 h-28 flex items-center justify-center">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
                 <circle
@@ -824,10 +825,10 @@ export function EnergyAnalyticsSuite({
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-xl font-black text-amber-400 font-mono">
+                <span className="text-xl font-black text-[#FFBF00] font-mono">
                   {activeData.equityPct}%
                 </span>
-                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">
+                <span className="text-[9px] text-[#64748B] font-bold uppercase tracking-wider">
                   Equity Owned
                 </span>
               </div>
@@ -836,77 +837,77 @@ export function EnergyAnalyticsSuite({
               <span className="text-slate-300 font-bold">
                 {activeData.monthsPaid} of {activeData.totalTenureMonths} Months
               </span>
-              <p className="text-[10px] text-slate-500">Amortization On Schedule</p>
+              <p className="text-[10px] text-[#64748B]">Amortization On Schedule</p>
             </div>
           </div>
 
           {/* 4 Package Financial Cards (6 Cols) */}
           <div className="lg:col-span-6 grid sm:grid-cols-2 gap-3">
-            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-              <span className="text-[11px] text-slate-400 font-mono block">Total Chosen Package Cost</span>
+            <div className="p-3.5 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+              <span className="text-[11px] text-[#64748B] font-mono block">Total Chosen Package Cost</span>
               <div className="text-lg font-black text-white font-mono">
                 {formatNaira(activeData.totalPackageCost)}
               </div>
-              <span className="text-[10px] text-emerald-400 font-mono block">
+              <span className="text-[10px] text-[#10B981] font-mono block">
                 Paid to Date: {formatNaira(activeData.paidToDate)}
               </span>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-              <span className="text-[11px] text-slate-400 font-mono block">Balance Left to Full Offset</span>
-              <div className="text-lg font-black text-amber-400 font-mono">
+            <div className="p-3.5 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+              <span className="text-[11px] text-[#64748B] font-mono block">Balance Left to Full Offset</span>
+              <div className="text-lg font-black text-[#FFBF00] font-mono">
                 {formatNaira(activeData.balanceLeft)}
               </div>
-              <span className="text-[10px] text-slate-400 font-mono block">
+              <span className="text-[10px] text-[#64748B] font-mono block">
                 Zero early-payoff penalty
               </span>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-              <span className="text-[11px] text-slate-400 font-mono block">Fixed Monthly Lease Due</span>
+            <div className="p-3.5 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+              <span className="text-[11px] text-[#64748B] font-mono block">Fixed Monthly Lease Due</span>
               <div className="text-lg font-black text-white font-mono">
-                {formatNaira(activeData.monthlyInstallment)} <span className="text-xs text-slate-400 font-normal">/mo</span>
+                {formatNaira(activeData.monthlyInstallment)} <span className="text-xs text-[#64748B] font-normal">/mo</span>
               </div>
-              <span className="text-[10px] text-emerald-400 font-mono block">
+              <span className="text-[10px] text-[#10B981] font-mono block">
                 Next Due: {activeData.walletDaysRemaining} Wallet Days Left
               </span>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-              <span className="text-[11px] text-slate-400 font-mono block">Remaining Lease Tenure</span>
+            <div className="p-3.5 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+              <span className="text-[11px] text-[#64748B] font-mono block">Remaining Lease Tenure</span>
               <div className="text-lg font-black text-white font-mono">
                 {activeData.totalTenureMonths - activeData.monthsPaid} Months Left
               </div>
-              <span className="text-[10px] text-amber-400 font-mono block">
+              <span className="text-[10px] text-[#FFBF00] font-mono block">
                 100% Title Deed at Month 36
               </span>
             </div>
           </div>
 
           {/* Clean Energy Credit & Bankability Passport Card (3 Cols) */}
-          <div className="lg:col-span-3 p-4 rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-emerald-950/30 border border-emerald-500/40 space-y-3">
+          <div className="lg:col-span-3 p-4 rounded-2xl bg-gradient-to-br from-[#111827] via-[#1E293B] to-[#10B981]/15 border border-[#10B981]/40 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest font-mono">
+              <span className="text-[10px] font-bold text-[#10B981] uppercase tracking-widest font-mono">
                 Energy Credit Passport
               </span>
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+              <span className="w-2 h-2 rounded-full bg-[#10B981] animate-ping" />
             </div>
 
             <div>
-              <span className="text-xs text-slate-400 block font-mono">Verifiable Clean Energy Score:</span>
-              <div className="text-2xl font-black text-emerald-300 font-mono">
-                {activeData.creditScore} <span className="text-xs font-normal text-slate-400">/ 850</span>
+              <span className="text-xs text-[#64748B] block font-mono">Verifiable Clean Energy Score:</span>
+              <div className="text-2xl font-black text-[#10B981] font-mono">
+                {activeData.creditScore} <span className="text-xs font-normal text-[#64748B]">/ 850</span>
               </div>
-              <span className="text-[11px] text-emerald-400 font-semibold block">
+              <span className="text-[11px] text-[#10B981] font-semibold block">
                 {activeData.creditTier}
               </span>
             </div>
 
-            <div className="pt-2 border-t border-slate-800 space-y-1 text-[11px] font-mono">
-              <div className="text-amber-300 font-semibold">
+            <div className="pt-2 border-t border-[#64748B]/30 space-y-1 text-[11px] font-mono">
+              <div className="text-[#FFBF00] font-semibold">
                 ★ {activeData.preApprovedFacility}
               </div>
-              <div className="text-slate-400">
+              <div className="text-[#64748B]">
                 COREN/ESG Offset: <strong className="text-white">{activeData.carbonOffsetTons} tCO₂e</strong> ({activeData.treesEquivalent} Trees)
               </div>
             </div>
@@ -914,7 +915,7 @@ export function EnergyAnalyticsSuite({
             <button
               type="button"
               onClick={() => showToast('✓ ESG Carbon Offset Certificate generated (1.45 tCO2e COREN verified)')}
-              className="w-full py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-mono font-bold transition text-center"
+              className="w-full py-2 rounded-xl bg-[#10B981]/20 hover:bg-[#10B981]/20 border border-[#10B981]/40 text-[#10B981] text-xs font-mono font-bold transition text-center"
             >
               Download ESG Certificate
             </button>
@@ -925,19 +926,19 @@ export function EnergyAnalyticsSuite({
       {/* =====================================================================
           SECTION 4: Historical Time-Variance Line Graph (1D | 1W | 1M | 1Y)
          ===================================================================== */}
-      <section className="p-5 sm:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-2xl space-y-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <section className="p-5 sm:p-6 rounded-3xl bg-[#111827] border border-[#64748B]/30 shadow-2xl space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#64748B]/30 pb-4">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
               <span>📈</span> Historical Energy Generation vs. Facility Load Demand
             </h2>
-            <p className="text-xs text-slate-400 font-mono">
+            <p className="text-xs text-[#64748B] font-mono">
               Continuous integral telemetry logged via atomic Growatt Modbus VFS store.
             </p>
           </div>
 
           {/* Timeframe Selector Tabs */}
-          <div className="inline-flex rounded-xl p-1 bg-slate-950 border border-slate-800 text-xs font-semibold">
+          <div className="inline-flex rounded-xl p-1 bg-[#1E293B] border border-[#64748B]/30 text-xs font-semibold">
             {(['1D', '1W', '1M', '1Y'] as TimeframePeriod[]).map((t) => (
               <button
                 key={t}
@@ -945,8 +946,8 @@ export function EnergyAnalyticsSuite({
                 onClick={() => setTimeframe(t)}
                 className={`px-3 py-1.5 rounded-lg transition ${
                   timeframe === t
-                    ? 'bg-amber-400 text-slate-950 font-bold shadow'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-[#FFBF00] text-[#0B0F19] font-bold shadow'
+                    : 'text-[#64748B] hover:text-white'
                 }`}
               >
                 {t === '1D' ? '1 Day' : t === '1W' ? '1 Week' : t === '1M' ? '1 Month' : '1 Year'}
@@ -957,31 +958,31 @@ export function EnergyAnalyticsSuite({
 
         {/* Period Integral KPI Cards */}
         <div className="grid grid-cols-3 gap-3 font-mono">
-          <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
-            <span className="text-[11px] text-amber-400 font-bold uppercase tracking-wider block">
+          <div className="p-3.5 rounded-2xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+            <span className="text-[11px] text-[#FFBF00] font-bold uppercase tracking-wider block">
               Total Solar Generated
             </span>
-            <div className="text-lg sm:text-2xl font-black text-amber-400">
+            <div className="text-lg sm:text-2xl font-black text-[#FFBF00]">
               {formatSI(activeData.periodTotals[timeframe].solarWh, 'ENERGY').full}
             </div>
-            <span className="text-[10px] text-slate-400 block">Clean MPPT Harvest</span>
+            <span className="text-[10px] text-[#64748B] block">Clean MPPT Harvest</span>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+          <div className="p-3.5 rounded-2xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
             <span className="text-[11px] text-slate-300 font-bold uppercase tracking-wider block">
               Facility Load Consumed
             </span>
             <div className="text-lg sm:text-2xl font-black text-slate-200">
               {formatSI(activeData.periodTotals[timeframe].loadWh, 'ENERGY').full}
             </div>
-            <span className="text-[10px] text-slate-400 block">Total Active Appliance Use</span>
+            <span className="text-[10px] text-[#64748B] block">Total Active Appliance Use</span>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
-            <span className="text-[11px] text-emerald-400 font-bold uppercase tracking-wider block">
+          <div className="p-3.5 rounded-2xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+            <span className="text-[11px] text-[#10B981] font-bold uppercase tracking-wider block">
               Solar Self-Sufficiency
             </span>
-            <div className="text-lg sm:text-2xl font-black text-emerald-400">
+            <div className="text-lg sm:text-2xl font-black text-[#10B981]">
               {Math.min(
                 100,
                 Math.round(
@@ -991,16 +992,16 @@ export function EnergyAnalyticsSuite({
                 )
               )}%
             </div>
-            <span className="text-[10px] text-emerald-400/80 block">Zero Grid Import Needed</span>
+            <span className="text-[10px] text-[#10B981]/80 block">Zero Grid Import Needed</span>
           </div>
         </div>
 
         {/* Autonomy Crossover Banner */}
-        <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs font-mono">
+        <div className="p-3 rounded-xl bg-[#FFBF00]/10 border border-[#FFBF00]/30 flex items-center justify-between text-xs font-mono">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+            <span className="w-2 h-2 rounded-full bg-[#FFBF00] animate-ping" />
             <span className="font-bold text-white">◈ Solar Autonomy Transition Point:</span>
-            <span className="text-amber-400 font-bold">08:30 AM Daily</span>
+            <span className="text-[#FFBF00] font-bold">08:30 AM Daily</span>
           </div>
           <span className="text-slate-300 hidden sm:inline text-[11px]">
             Array output surpasses facility baseload; 100% autonomous battery charging begins
@@ -1011,7 +1012,7 @@ export function EnergyAnalyticsSuite({
         <div className="w-full overflow-x-auto">
           <svg viewBox={`0 0 ${chartW} ${chartH}`} className="w-full h-auto select-none">
             <defs>
-              <linearGradient id="solarGradCust" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id={solarGradId} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#FFBF00" stopOpacity="0.45" />
                 <stop offset="100%" stopColor="#FFBF00" stopOpacity="0.0" />
               </linearGradient>
@@ -1047,7 +1048,7 @@ export function EnergyAnalyticsSuite({
             })}
 
             {/* Solar Harvest Area & Line (Amber) */}
-            <polygon points={solarPolyPoints} fill="url(#solarGradCust)" />
+            <polygon points={solarPolyPoints} fill={`url(#${solarGradId})`} />
             <path d={solarLinePath} fill="none" stroke="#FFBF00" strokeWidth="2.5" />
 
             {/* Facility Load Line (Slate dashed) */}
@@ -1092,18 +1093,18 @@ export function EnergyAnalyticsSuite({
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap items-center justify-center gap-6 text-xs font-mono pt-2 border-t border-slate-800">
+        <div className="flex flex-wrap items-center justify-center gap-6 text-xs font-mono pt-2 border-t border-[#64748B]/30">
           <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-amber-400" />
+            <span className="w-3 h-3 rounded-full bg-[#FFBF00]" />
             <span className="text-slate-300">☀️ Solar Array Output (#FFBF00)</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-4 h-0.5 border-t-2 border-dashed border-slate-400" />
+            <span className="w-4 h-0.5 border-t-2 border-dashed border-[#64748B]" />
             <span className="text-slate-300">🏢 Connected Facility Load (#94A3B8)</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" />
-            <span className="text-amber-400">◈ Solar Autonomy Crossover (08:30 AM)</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#FFBF00] animate-ping" />
+            <span className="text-[#FFBF00]">◈ Solar Autonomy Crossover (08:30 AM)</span>
           </div>
         </div>
       </section>
@@ -1111,17 +1112,17 @@ export function EnergyAnalyticsSuite({
       {/* =====================================================================
           SECTION 5: Forecast-Driven Dynamic Battery Survival Clock
          ===================================================================== */}
-      <section className="p-5 sm:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-2xl space-y-5">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+      <section className="p-5 sm:p-6 rounded-3xl bg-[#111827] border border-[#64748B]/30 shadow-2xl space-y-5">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#64748B]/30 pb-4">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
               <span>⏱️</span> Dynamic Battery Survival Clock &bull; Quantile Load Forecast
             </h2>
-            <p className="text-xs text-slate-400 font-mono">
+            <p className="text-xs text-[#64748B] font-mono">
               Calculated from usable LiFePO4 energy ({formatSI(usableBatteryWh, 'ENERGY').full}) above the 20% DoD safety floor.
             </p>
           </div>
-          <span className="px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-mono font-bold">
+          <span className="px-3 py-1 rounded-full bg-[#10B981]/15 border border-[#10B981]/30 text-[#10B981] text-xs font-mono font-bold">
             SoC: {activeData.currentSoC}% Active
           </span>
         </div>
@@ -1130,64 +1131,64 @@ export function EnergyAnalyticsSuite({
         <div className="grid md:grid-cols-3 gap-4 font-mono">
           
           {/* 1. Expected Autonomy */}
-          <div className="p-4 rounded-2xl bg-emerald-950/20 border border-emerald-500/40 space-y-2">
+          <div className="p-4 rounded-2xl bg-[#10B981]/10 border border-[#10B981]/40 space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+              <span className="text-xs font-bold text-[#10B981] uppercase tracking-wider">
                 1. Expected Autonomy (P₅₀)
               </span>
-              <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold">
+              <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#10B981]/20 text-[#10B981] font-bold">
                 FORECASTED
               </span>
             </div>
-            <div className="text-2xl font-black text-emerald-300">
+            <div className="text-2xl font-black text-[#10B981]">
               {survivalHours.expected}
             </div>
             <span className="text-[11px] text-slate-300 font-sans block leading-relaxed">
               Comfortably bridges tonight and reaches tomorrow&apos;s 08:30 AM Solar Autonomy Crossover with 36% battery reserve to spare.
             </span>
-            <div className="pt-2 text-[10px] text-emerald-400 border-t border-emerald-500/20">
+            <div className="pt-2 text-[10px] text-[#10B981] border-t border-[#10B981]/20">
               Pace: ~{activeData.p50ForecastWatts} W Mean Evening Demand
             </div>
           </div>
 
           {/* 2. Light-Usage Pace */}
-          <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+          <div className="p-4 rounded-2xl bg-[#1E293B] border border-[#64748B]/30 space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-bold text-sky-400 uppercase tracking-wider">
+              <span className="text-xs font-bold text-[#22D3EE] uppercase tracking-wider">
                 2. Light-Usage Pace (P₂₅)
               </span>
-              <span className="text-[9px] px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 font-bold">
+              <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#22D3EE]/20 text-[#22D3EE] font-bold">
                 BASELOAD
               </span>
             </div>
-            <div className="text-2xl font-black text-sky-300">
+            <div className="text-2xl font-black text-[#22D3EE]">
               {survivalHours.light}
             </div>
             <span className="text-[11px] text-slate-300 font-sans block leading-relaxed">
               Baseload endurance (fans, refrigeration, lighting &amp; WiFi). Stretches through tomorrow midday without strain.
             </span>
-            <div className="pt-2 text-[10px] text-sky-400 border-t border-slate-800">
+            <div className="pt-2 text-[10px] text-[#22D3EE] border-t border-[#64748B]/30">
               Pace: ~{activeData.p25BaseloadWatts} W 25th Percentile
             </div>
           </div>
 
           {/* 3. Heavy-Usage Pace */}
-          <div className="p-4 rounded-2xl bg-rose-950/20 border border-rose-500/40 space-y-2">
+          <div className="p-4 rounded-2xl bg-[#EF4444]/10 border border-[#EF4444]/40 space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-bold text-rose-400 uppercase tracking-wider">
+              <span className="text-xs font-bold text-[#EF4444] uppercase tracking-wider">
                 3. Heavy-Usage Pace (P₉₀)
               </span>
-              <span className="text-[9px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-bold">
+              <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#EF4444]/20 text-[#EF4444] font-bold">
                 PEAK LOAD
               </span>
             </div>
-            <div className="text-2xl font-black text-rose-400">
+            <div className="text-2xl font-black text-[#EF4444]">
               {survivalHours.heavy}
             </div>
             <span className="text-[11px] text-slate-300 font-sans block leading-relaxed">
               Depletes at 04:10 AM — keep evening load near your normal pattern to prevent grid or generator fallback.
             </span>
-            <div className="pt-2 text-[10px] text-rose-400 border-t border-rose-500/20">
+            <div className="pt-2 text-[10px] text-[#EF4444] border-t border-[#EF4444]/20">
               Pace: ~{activeData.p90PeakWatts} W 90th Percentile
             </div>
           </div>
@@ -1197,17 +1198,17 @@ export function EnergyAnalyticsSuite({
       {/* =====================================================================
           SECTION 6: Triple-Source Substitution Tracker & Grouped Bar Chart
          ===================================================================== */}
-      <section className="p-5 sm:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-2xl space-y-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+      <section className="p-5 sm:p-6 rounded-3xl bg-[#111827] border border-[#64748B]/30 shadow-2xl space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#64748B]/30 pb-4">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
               <span>⚖️</span> Triple-Source Substitution Tracker &bull; Financial Optimization
             </h2>
-            <p className="text-xs text-slate-400 font-mono">
+            <p className="text-xs text-[#64748B] font-mono">
               Strict economic comparison: Solar PAYG vs. NERC Band A Grid vs. Petrol/Diesel Generator.
             </p>
           </div>
-          <span className="text-xs text-emerald-400 font-mono font-bold">
+          <span className="text-xs text-[#10B981] font-mono font-bold">
             Period: {timeframe} ({periodKWh.toFixed(1)} kWh Displaced)
           </span>
         </div>
@@ -1216,29 +1217,29 @@ export function EnergyAnalyticsSuite({
         <div className="grid md:grid-cols-3 gap-4 font-mono">
           
           {/* Source 1: Solar PAYG */}
-          <div className="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-500/40 space-y-3">
+          <div className="p-4 rounded-2xl bg-[#10B981]/10 border border-[#10B981]/40 space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+              <span className="text-xs font-bold text-[#10B981] uppercase tracking-wider">
                 ☀️ Solar PAYG Asset
               </span>
-              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300">
+              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#10B981]/20 text-[#10B981]">
                 PRIMARY
               </span>
             </div>
             <div>
-              <span className="text-[10px] text-slate-400 uppercase block">Levelized Cost / kWh</span>
-              <div className="text-2xl font-black text-emerald-400">
-                ₦118 <span className="text-xs font-normal text-emerald-300">/ kWh</span>
+              <span className="text-[10px] text-[#64748B] uppercase block">Levelized Cost / kWh</span>
+              <div className="text-2xl font-black text-[#10B981]">
+                ₦118 <span className="text-xs font-normal text-[#10B981]">/ kWh</span>
               </div>
             </div>
-            <div className="space-y-1 text-xs text-slate-300 pt-2 border-t border-emerald-500/20">
+            <div className="space-y-1 text-xs text-slate-300 pt-2 border-t border-[#10B981]/20">
               <div className="flex justify-between">
                 <span>Period Outlay:</span>
                 <strong className="text-white">{formatNaira(costComparison.solarCost)}</strong>
               </div>
               <div className="flex justify-between">
                 <span>Availability:</span>
-                <strong className="text-emerald-400">99.8% Continuous</strong>
+                <strong className="text-[#10B981]">99.8% Continuous</strong>
               </div>
               <div className="flex justify-between">
                 <span>Asset Status:</span>
@@ -1248,57 +1249,57 @@ export function EnergyAnalyticsSuite({
           </div>
 
           {/* Source 2: National Grid Band A */}
-          <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
+          <div className="p-4 rounded-2xl bg-[#1E293B] border border-[#64748B]/30 space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              <span className="text-xs font-bold text-[#64748B] uppercase tracking-wider">
                 ⚡ National Grid (Band A)
               </span>
-              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">
+              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#1E293B] text-[#64748B]">
                 DISCO
               </span>
             </div>
             <div>
-              <span className="text-[10px] text-slate-400 uppercase block">NERC Band A Tariff</span>
+              <span className="text-[10px] text-[#64748B] uppercase block">NERC Band A Tariff</span>
               <div className="text-2xl font-black text-slate-200">
-                ₦209 <span className="text-xs font-normal text-slate-400">/ kWh</span>
+                ₦209 <span className="text-xs font-normal text-[#64748B]">/ kWh</span>
               </div>
             </div>
-            <div className="space-y-1 text-xs text-slate-400 pt-2 border-t border-slate-800">
+            <div className="space-y-1 text-xs text-[#64748B] pt-2 border-t border-[#64748B]/30">
               <div className="flex justify-between">
                 <span>Baseline Would Spend:</span>
                 <strong className="text-slate-200">{formatNaira(costComparison.gridCost)}</strong>
               </div>
               <div className="flex justify-between">
                 <span>Feeder Stability:</span>
-                <strong className="text-amber-400">35.0% (Surge Risk)</strong>
+                <strong className="text-[#FFBF00]">35.0% (Surge Risk)</strong>
               </div>
               <div className="flex justify-between">
                 <span>Blackout Risk:</span>
-                <strong className="text-rose-400">112h Outage / Month</strong>
+                <strong className="text-[#EF4444]">112h Outage / Month</strong>
               </div>
             </div>
           </div>
 
           {/* Source 3: Fossil Generator */}
-          <div className="p-4 rounded-2xl bg-rose-950/20 border border-rose-500/30 space-y-3">
+          <div className="p-4 rounded-2xl bg-[#EF4444]/10 border border-[#EF4444]/30 space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-xs font-bold text-rose-400 uppercase tracking-wider">
+              <span className="text-xs font-bold text-[#EF4444] uppercase tracking-wider">
                 ⛽ Fossil Generator
               </span>
-              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300">
+              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#EF4444]/20 text-[#EF4444]">
                 FOSSIL BURN
               </span>
             </div>
             <div>
-              <span className="text-[10px] text-slate-400 uppercase block">Specific Yield Fuel Cost</span>
-              <div className="text-2xl font-black text-rose-400">
-                ₦525 <span className="text-xs font-normal text-rose-300">/ kWh</span>
+              <span className="text-[10px] text-[#64748B] uppercase block">Specific Yield Fuel Cost</span>
+              <div className="text-2xl font-black text-[#EF4444]">
+                ₦525 <span className="text-xs font-normal text-[#EF4444]">/ kWh</span>
               </div>
             </div>
-            <div className="space-y-1 text-xs text-slate-300 pt-2 border-t border-rose-500/20">
+            <div className="space-y-1 text-xs text-slate-300 pt-2 border-t border-[#EF4444]/20">
               <div className="flex justify-between">
                 <span>Period Burn &amp; Lube:</span>
-                <strong className="text-rose-400">{formatNaira(costComparison.genCost)}</strong>
+                <strong className="text-[#EF4444]">{formatNaira(costComparison.genCost)}</strong>
               </div>
               <div className="flex justify-between">
                 <span>Fuel Needed:</span>
@@ -1306,19 +1307,19 @@ export function EnergyAnalyticsSuite({
               </div>
               <div className="flex justify-between">
                 <span>Noise &amp; Pollution:</span>
-                <strong className="text-rose-400">85 dB • High Smoke</strong>
+                <strong className="text-[#EF4444]">85 dB • High Smoke</strong>
               </div>
             </div>
           </div>
         </div>
 
         {/* Grouped Vertical Bar Visualization & Net Substitution Callout */}
-        <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6 font-mono">
+        <div className="p-4 rounded-2xl bg-[#1E293B] border border-[#64748B]/30 flex flex-col md:flex-row items-center justify-between gap-6 font-mono">
           <div className="space-y-1">
-            <span className="text-xs text-slate-400 uppercase tracking-wider block font-bold">
+            <span className="text-xs text-[#64748B] uppercase tracking-wider block font-bold">
               Net Financial Substitution Gain:
             </span>
-            <div className="text-2xl sm:text-3xl font-black text-emerald-400">
+            <div className="text-2xl sm:text-3xl font-black text-[#10B981]">
               +{formatNaira(costComparison.netSavingsVsGen)} Saved
             </div>
             <span className="text-xs text-slate-300">
@@ -1330,12 +1331,12 @@ export function EnergyAnalyticsSuite({
           <div className="w-full md:w-80 space-y-2 text-xs">
             <div>
               <div className="flex justify-between text-[11px] mb-1">
-                <span className="text-emerald-400">Solar Asset:</span>
+                <span className="text-[#10B981]">Solar Asset:</span>
                 <span className="text-white">{formatNaira(costComparison.solarCost)}</span>
               </div>
-              <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
+              <div className="h-2 rounded-full bg-[#1E293B] overflow-hidden">
                 <div
-                  className="h-full bg-emerald-400 rounded-full"
+                  className="h-full bg-[#10B981] rounded-full"
                   style={{
                     width: `${Math.round((costComparison.solarCost / costComparison.genCost) * 100)}%`,
                   }}
@@ -1345,12 +1346,12 @@ export function EnergyAnalyticsSuite({
 
             <div>
               <div className="flex justify-between text-[11px] mb-1">
-                <span className="text-slate-400">Grid Band A:</span>
+                <span className="text-[#64748B]">Grid Band A:</span>
                 <span className="text-slate-300">{formatNaira(costComparison.gridCost)}</span>
               </div>
-              <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
+              <div className="h-2 rounded-full bg-[#1E293B] overflow-hidden">
                 <div
-                  className="h-full bg-slate-500 rounded-full"
+                  className="h-full bg-[#64748B] rounded-full"
                   style={{
                     width: `${Math.round((costComparison.gridCost / costComparison.genCost) * 100)}%`,
                   }}
@@ -1360,11 +1361,11 @@ export function EnergyAnalyticsSuite({
 
             <div>
               <div className="flex justify-between text-[11px] mb-1">
-                <span className="text-rose-400">Generator Fuel + Servicing:</span>
-                <span className="text-rose-400 font-bold">{formatNaira(costComparison.genCost)}</span>
+                <span className="text-[#EF4444]">Generator Fuel + Servicing:</span>
+                <span className="text-[#EF4444] font-bold">{formatNaira(costComparison.genCost)}</span>
               </div>
-              <div className="h-2 rounded-full bg-slate-800 overflow-hidden">
-                <div className="h-full bg-rose-500 rounded-full w-full" />
+              <div className="h-2 rounded-full bg-[#1E293B] overflow-hidden">
+                <div className="h-full bg-[#EF4444] rounded-full w-full" />
               </div>
             </div>
           </div>
@@ -1374,19 +1375,19 @@ export function EnergyAnalyticsSuite({
       {/* =====================================================================
           SECTION 7: Multi-Horizon Sunshine & Load Confidence-Band Chart
          ===================================================================== */}
-      <section className="p-5 sm:p-6 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-2xl space-y-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <section className="p-5 sm:p-6 rounded-3xl bg-[#111827] border border-[#64748B]/30 shadow-2xl space-y-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#64748B]/30 pb-4">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
               <span>🔮</span> Multi-Horizon Forecasted Sunshine &amp; Load Confidence Band
             </h2>
-            <p className="text-xs text-slate-400 font-mono">
+            <p className="text-xs text-[#64748B] font-mono">
               LightGBM &amp; NeuralProphet micro-climate synthesis with P10–P90 meteorological confidence bounds.
             </p>
           </div>
 
           {/* Horizon Selector Tabs */}
-          <div className="inline-flex rounded-xl p-1 bg-slate-950 border border-slate-800 text-xs font-semibold">
+          <div className="inline-flex rounded-xl p-1 bg-[#1E293B] border border-[#64748B]/30 text-xs font-semibold">
             {(['1H', '1D', '1W', '1M', '1Y'] as ForecastHorizon[]).map((h) => (
               <button
                 key={h}
@@ -1394,8 +1395,8 @@ export function EnergyAnalyticsSuite({
                 onClick={() => setForecastHorizon(h)}
                 className={`px-3 py-1.5 rounded-lg transition ${
                   forecastHorizon === h
-                    ? 'bg-cyan-400 text-slate-950 font-bold shadow'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-[#22D3EE] text-[#0B0F19] font-bold shadow'
+                    : 'text-[#64748B] hover:text-white'
                 }`}
               >
                 {h === '1H' ? 'Next Hour' : h === '1D' ? 'Next Day' : h === '1W' ? 'Next Week' : h === '1M' ? 'Next Month' : 'Next Year'}
@@ -1448,11 +1449,11 @@ export function EnergyAnalyticsSuite({
         </div>
 
         {/* Proactive AI Coaching Callout & Agent Drawer Button */}
-        <div className="p-4 rounded-2xl bg-cyan-950/20 border border-cyan-500/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="p-4 rounded-2xl bg-[#22D3EE]/10 border border-[#22D3EE]/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="text-2xl flex-shrink-0">🤖</span>
             <div className="space-y-1">
-              <span className="text-[11px] font-bold text-cyan-400 uppercase tracking-wider font-mono block">
+              <span className="text-[11px] font-bold text-[#22D3EE] uppercase tracking-wider font-mono block">
                 LocalGridAgent&trade; AI Dispatch Advisory
               </span>
               <p className="text-xs sm:text-sm text-slate-200 font-sans leading-relaxed">
@@ -1464,7 +1465,7 @@ export function EnergyAnalyticsSuite({
           <button
             type="button"
             onClick={() => setShowAgentDrawer(true)}
-            className="px-4 py-2.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-xs font-mono transition flex-shrink-0 flex items-center gap-2 shadow-lg shadow-cyan-950"
+            className="px-4 py-2.5 rounded-xl bg-[#22D3EE] hover:bg-cyan-300 text-[#0B0F19] font-bold text-xs font-mono transition flex-shrink-0 flex items-center gap-2 shadow-lg shadow-cyan-950"
           >
             <span>💬</span>
             <span>Open LocalGridAgent AI</span>
@@ -1476,9 +1477,9 @@ export function EnergyAnalyticsSuite({
           INTERACTIVE MODAL 1: Roof & Feeder GIS Inspection Modal
          ===================================================================== */}
       {showGisModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-          <div className="w-full max-w-xl rounded-3xl bg-slate-900 border border-slate-700 shadow-2xl p-6 space-y-5">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+          <div className="w-full max-w-xl rounded-3xl bg-[#111827] border border-[#64748B]/40 shadow-2xl p-6 space-y-5">
+            <div className="flex items-center justify-between border-b border-[#64748B]/30 pb-3">
               <div className="flex items-center gap-2">
                 <span className="text-xl">🛰️</span>
                 <h3 className="text-base font-bold text-white">
@@ -1488,40 +1489,40 @@ export function EnergyAnalyticsSuite({
               <button
                 type="button"
                 onClick={() => setShowGisModal(false)}
-                className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition"
+                className="w-8 h-8 rounded-full bg-[#1E293B] hover:bg-[#64748B]/30 text-[#64748B] hover:text-white flex items-center justify-center transition"
               >
                 ✕
               </button>
             </div>
 
             <div className="space-y-3 text-xs font-mono">
-              <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-                <span className="text-slate-400 block">GPS Coordinates &amp; Micro-Climate Geo-Belt:</span>
-                <strong className="text-amber-400 text-sm">{activeData.gpsCoords}</strong>
-                <span className="text-[11px] text-slate-400 block">Zone: {customerState}</span>
+              <div className="p-3 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+                <span className="text-[#64748B] block">GPS Coordinates &amp; Micro-Climate Geo-Belt:</span>
+                <strong className="text-[#FFBF00] text-sm">{activeData.gpsCoords}</strong>
+                <span className="text-[11px] text-[#64748B] block">Zone: {customerState}</span>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-                  <span className="text-slate-400 block">Roof Azimuth &amp; Tilt:</span>
+                <div className="p-3 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+                  <span className="text-[#64748B] block">Roof Azimuth &amp; Tilt:</span>
                   <strong className="text-white">{activeData.roofAzimuth}</strong>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-                  <span className="text-slate-400 block">Ground Earthing Resistance:</span>
-                  <strong className="text-emerald-400">{activeData.earthingOhms}</strong>
+                <div className="p-3 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+                  <span className="text-[#64748B] block">Ground Earthing Resistance:</span>
+                  <strong className="text-[#10B981]">{activeData.earthingOhms}</strong>
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-                <span className="text-slate-400 block">Lower-Shroud Security Seal:</span>
+              <div className="p-3 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+                <span className="text-[#64748B] block">Lower-Shroud Security Seal:</span>
                 <strong className="text-white">{activeData.shroudSerial}</strong>
               </div>
 
-              <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-                <span className="text-slate-400 block">Connected Utility Substation:</span>
-                <strong className="text-rose-400">{activeData.feederName}</strong>
-                <span className="text-[11px] text-slate-400 block">Status: {activeData.feederStatus}</span>
+              <div className="p-3 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+                <span className="text-[#64748B] block">Connected Utility Substation:</span>
+                <strong className="text-[#EF4444]">{activeData.feederName}</strong>
+                <span className="text-[11px] text-[#64748B] block">Status: {activeData.feederStatus}</span>
               </div>
             </div>
 
@@ -1534,14 +1535,14 @@ export function EnergyAnalyticsSuite({
                   }
                   showToast('✓ GPS Coordinates Copied to Clipboard');
                 }}
-                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-mono text-slate-200 transition"
+                className="px-4 py-2 rounded-xl bg-[#1E293B] hover:bg-[#64748B]/30 text-xs font-mono text-slate-200 transition"
               >
                 Copy GPS Coordinates
               </button>
               <button
                 type="button"
                 onClick={() => setShowGisModal(false)}
-                className="px-5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold font-mono transition"
+                className="px-5 py-2 rounded-xl bg-[#FFBF00] hover:bg-amber-300 text-[#0B0F19] text-xs font-bold font-mono transition"
               >
                 Close Inspection
               </button>
@@ -1554,24 +1555,24 @@ export function EnergyAnalyticsSuite({
           INTERACTIVE MODAL 2: LocalGridAgent AI Advisory Drawer
          ===================================================================== */}
       {showAgentDrawer && (
-        <div className="fixed inset-0 z-50 flex items-center justify-end bg-slate-950/70 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-lg h-full bg-slate-900 border-l border-slate-700 shadow-2xl p-6 flex flex-col justify-between space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/80 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-lg h-full bg-[#111827] border-l border-[#64748B]/40 shadow-2xl p-6 flex flex-col justify-between space-y-4">
             
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div className="flex items-center justify-between border-b border-[#64748B]/30 pb-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-xl text-cyan-400">
+                <div className="w-10 h-10 rounded-xl bg-[#22D3EE]/20 border border-[#22D3EE]/40 flex items-center justify-center text-xl text-[#22D3EE]">
                   🤖
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-white">LocalGridAgent&trade; AI</h3>
-                  <p className="text-xs text-cyan-400 font-mono">Read-Only Telemetry Advisory &bull; Active</p>
+                  <p className="text-xs text-[#22D3EE] font-mono">Read-Only Telemetry Advisory &bull; Active</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setShowAgentDrawer(false)}
-                className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition"
+                className="w-8 h-8 rounded-full bg-[#1E293B] hover:bg-[#64748B]/30 text-[#64748B] hover:text-white flex items-center justify-center transition"
               >
                 ✕
               </button>
@@ -1579,24 +1580,24 @@ export function EnergyAnalyticsSuite({
 
             {/* Conversation Area */}
             <div className="flex-1 overflow-y-auto space-y-4 pr-1 text-xs font-mono">
-              <div className="p-3.5 rounded-2xl bg-cyan-950/30 border border-cyan-500/30 text-slate-200 leading-relaxed font-sans">
+              <div className="p-3.5 rounded-2xl bg-[#22D3EE]/10 border border-[#22D3EE]/30 text-slate-200 leading-relaxed font-sans">
                 👋 Hello {activeData.customerName}. I am your dedicated <strong>LocalGridAgent</strong>. I monitor your Growatt SPF inverter, LiFePO4 battery telemetry, and local meteorological forecasts in real-time.
               </div>
 
-              <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-                <span className="text-slate-400 block">Current Telemetry Snapshot:</span>
-                <div className="text-emerald-400 font-bold">
+              <div className="p-3 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+                <span className="text-[#64748B] block">Current Telemetry Snapshot:</span>
+                <div className="text-[#10B981] font-bold">
                   • Battery SoC: {activeData.currentSoC}% ({formatSI(usableBatteryWh, 'ENERGY').full} Usable)
                 </div>
                 <div className="text-slate-300">
                   • Utility Grid: 0V AC (JED Rayfield Feeder Collapsed)
                 </div>
-                <div className="text-amber-400">
+                <div className="text-[#FFBF00]">
                   • Next Solar Autonomy: Tomorrow at 08:30 AM
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-slate-200 leading-relaxed font-sans">
+              <div className="p-3.5 rounded-2xl bg-[#1E293B] border border-[#64748B]/30 text-slate-200 leading-relaxed font-sans">
                 💡 <strong>Operational Dispatch Recommendation:</strong>
                 <p className="mt-1">
                   Based on forecast, remain 100% on solar battery reserve tonight. Your evening load curve will leave approximately 36% battery capacity by sunrise. No generator cranking or grid alternative is required based on financial analysis.
@@ -1605,22 +1606,22 @@ export function EnergyAnalyticsSuite({
             </div>
 
             {/* Prompt Shortcuts */}
-            <div className="space-y-2 pt-2 border-t border-slate-800">
-              <span className="text-[10px] text-slate-400 font-mono uppercase block">
+            <div className="space-y-2 pt-2 border-t border-[#64748B]/30">
+              <span className="text-[10px] text-[#64748B] font-mono uppercase block">
                 Quick Advisory Inquiries:
               </span>
               <div className="grid grid-cols-2 gap-2 text-xs font-mono">
                 <button
                   type="button"
                   onClick={() => showToast('LocalGridAgent: Safe to run borehole pump between 11:30 AM – 2:00 PM.')}
-                  className="p-2 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-800 text-left text-slate-300 hover:text-white transition"
+                  className="p-2 rounded-lg bg-[#1E293B] hover:bg-[#1E293B] border border-[#64748B]/30 text-left text-slate-300 hover:text-white transition"
                 >
                   💧 Can I run the water pump?
                 </button>
                 <button
                   type="button"
                   onClick={() => showToast('LocalGridAgent: Expected battery survival is 14 hrs 20 mins.')}
-                  className="p-2 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-800 text-left text-slate-300 hover:text-white transition"
+                  className="p-2 rounded-lg bg-[#1E293B] hover:bg-[#1E293B] border border-[#64748B]/30 text-left text-slate-300 hover:text-white transition"
                 >
                   🔋 What is my battery clock?
                 </button>
@@ -1628,7 +1629,7 @@ export function EnergyAnalyticsSuite({
               <button
                 type="button"
                 onClick={() => setShowAgentDrawer(false)}
-                className="w-full py-2.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 text-xs font-bold font-mono transition"
+                className="w-full py-2.5 rounded-xl bg-[#22D3EE] hover:bg-cyan-300 text-[#0B0F19] text-xs font-bold font-mono transition"
               >
                 Close AI Drawer
               </button>

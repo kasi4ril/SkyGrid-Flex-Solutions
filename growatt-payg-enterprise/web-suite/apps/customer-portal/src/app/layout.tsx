@@ -20,7 +20,7 @@ export default function CustomerPortalLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-[#0B241B] text-[#F8FAF7] antialiased">
+      <body className="bg-[#0B0F19] text-[#F8FAF7] antialiased">
         {children}
       </body>
     </html>

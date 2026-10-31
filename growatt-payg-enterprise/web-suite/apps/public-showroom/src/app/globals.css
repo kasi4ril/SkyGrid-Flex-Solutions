@@ -3,31 +3,41 @@
 @tailwind utilities;
 
 :root {
-  --brand-forest: #123B2A;
-  --brand-dark: #071712;
-  --brand-amber: #F5B82E;
-  --brand-teal: #19A89A;
-  --brand-sky: #0EA5E9;
+  /* Semantic "Bi-Luminance" Renewable Palette */
+  --bg-midnight: #0B0F19;         /* Photovoltaic Midnight Slate (Canvas) */
+  --card-surface: #111827;        /* Card Surfaces & Elevated Containers */
+  --well-surface: #1E293B;        /* Inner Inputs & Secondary Wells */
+  --utility-slate: #64748B;       /* Clean Utility Slate (Borders & Metadata) */
+  --solar-gold: #FFBF00;          /* Radiant Solar Gold (Generation & Crossovers) */
+  --clean-emerald: #10B981;       /* Clean-Tech Emerald (Wealth & Savings) */
+  --ion-cyan: #22D3EE;            /* Ion Cyan (Lithium Storage & AI Forecasting) */
+  --combustion-crimson: #EF4444;  /* Combustion Crimson (Warnings & Fossil Burn) */
+
+  /* Legacy brand mappings for full backward compatibility */
+  --brand-forest: #111827;
+  --brand-dark: #0B0F19;
+  --brand-amber: #FFBF00;
+  --brand-teal: #10B981;
+  --brand-sky: #22D3EE;
   --brand-sky-light: #38BDF8;
-  --brand-sky-dark: #0284C7;
-  --brand-sky-glow: rgba(14, 165, 233, 0.25);
+  --brand-sky-dark: #06B6D4;
+  --brand-sky-glow: rgba(34, 211, 238, 0.25);
   --brand-warm: #F8FAF7;
-  --brand-charcoal: #17231D;
+  --brand-charcoal: #1E293B;
 }
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: #071712;
+  background-color: #0B0F19;
   background-image: 
-    radial-gradient(circle at 15% 10%, rgba(14, 165, 233, 0.12) 0%, transparent 40%),
-    radial-gradient(circle at 85% 25%, rgba(25, 168, 154, 0.10) 0%, transparent 45%),
-    radial-gradient(circle at 50% 70%, rgba(14, 165, 233, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 80% 90%, rgba(245, 184, 46, 0.06) 0%, transparent 35%);
+    radial-gradient(circle at 15% 10%, rgba(34, 211, 238, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 85% 25%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 50% 70%, rgba(11, 15, 25, 0.95) 0%, transparent 50%),
+    radial-gradient(circle at 80% 90%, rgba(255, 191, 0, 0.05) 0%, transparent 35%);
   background-attachment: fixed;
-  color: var(--brand-warm);
+  color: #F8FAF7;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
-
