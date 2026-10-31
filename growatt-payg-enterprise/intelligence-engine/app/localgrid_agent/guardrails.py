@@ -82,7 +82,7 @@ class LocalGridGuardrails:
                 f"We detected a physical safety hazard in your message (`{', '.join(matched_hazards)}`).\n"
                 f"1. **Immediate Action:** Please switch OFF the main AC/DC isolator breaker next to your "
                 f"Growatt inverter immediately if it is safe to approach. **Do NOT touch wet or smoking cables.**\n"
-                f"2. **Automated Dispatch:** An emergency alert has been escalated to the SkyTron Admin Command "
+                f"2. **Automated Dispatch:** An emergency alert has been escalated to the SkyGrid Admin Command "
                 f"Watchtower for device `{device_id}`. A COREN-certified Field Engineer is contacting you right now."
             )
             return GuardrailVerdict(

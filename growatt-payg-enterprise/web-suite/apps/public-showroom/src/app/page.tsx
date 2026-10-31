@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * @fileoverview Global-Standard Public Marketing Landing Page & Progressive-Disclosure Solar Showroom
  * Application: web-suite/apps/public-showroom/src/app/page.tsx
@@ -9,16 +11,13 @@
  *    Derating Specification" drawer exposing W_run, Inductive Motor Surge VA_inv, 80% DoD LiFePO4
  *    Wh_batt, and State-level Peak Sun Hours (PSH) W_pv calculations for technical buyers and auditors.
  * 3. Interactive App Preview (#smart-app): Embeds the exact same shared <EnergyAnalyticsSuite mode="PUBLIC_PREVIEW" />
- *    component showcasing the 4 statistical data visualizations (24h Dual-Axis Line Graph, 30d Financial Bar Chart,
- *    7d Paired Column Chart, and Contiguous-Bin Operating Regime Histogram).
+ *    component showcasing the 7-section world-standard energy, financial & forecast storytelling suite.
  * 4. Comprehensive Customer Sign-Up Modal: Global fintech standard with 11-digit NIMC NIN verification,
  *    auto-population of legal name, date of birth, gender, 30% down payment breakdown, and DVA generation.
  */
 
-'use client';
-
 import React, { useState, useMemo } from 'react';
-import { EnergyAnalyticsSuite } from '../../../../packages/ui-kit/src/EnergyAnalyticsSuite';
+import { EnergyAnalyticsSuite } from './EnergyAnalyticsSuite';
 
 // Regional solar irradiance data across Nigerian geographical belts
 const NIGERIAN_STATES = [
@@ -34,15 +33,73 @@ const NIGERIAN_STATES = [
   { state_name: 'OYO', geo_belt: 'SOUTH_WEST', peak_sun_hours: 4.5 },
 ];
 
-const INITIAL_APPLIANCES = [
-  { code: 'LED_BULB_15W', name: 'Energy-Saving LED Bulbs (15W)', watts: 15, surge: 1.0, motor: false, qty: 8, dayH: 2, nightH: 8 },
-  { code: 'CEILING_FAN_75W', name: 'Standing / Ceiling Fans (75W)', watts: 75, surge: 1.3, motor: true, qty: 3, dayH: 5, nightH: 8 },
-  { code: 'SMART_TV_120W', name: '55" Smart LED TV & Decoder (120W)', watts: 120, surge: 1.0, motor: false, qty: 1, dayH: 4, nightH: 5 },
-  { code: 'LAPTOP_ROUTER_90W', name: 'Laptops + Starlink / Fiber (90W)', watts: 90, surge: 1.0, motor: false, qty: 2, dayH: 7, nightH: 4 },
-  { code: 'INVERTER_FRIDGE_180W', name: 'Inverter Refrigerator (180W)', watts: 180, surge: 2.2, motor: true, qty: 1, dayH: 6, nightH: 6 },
-  { code: 'CHEST_FREEZER_250W', name: 'Deep Chest Freezer (250W)', watts: 250, surge: 2.8, motor: true, qty: 0, dayH: 6, nightH: 5 },
-  { code: 'INVERTER_AC_1HP', name: '1.0 HP Dual-Inverter Split AC (850W)', watts: 850, surge: 1.6, motor: true, qty: 0, dayH: 4, nightH: 4 },
-  { code: 'BOREHOLE_PUMP_1HP', name: '1.0 HP Submersible Borehole Pump (750W)', watts: 750, surge: 3.0, motor: true, qty: 0, dayH: 1, nightH: 0 },
+interface CatalogAppliance {
+  code: string;
+  name: string;
+  group: string;
+  watts: number;
+  surge: number;
+  motor: boolean;
+  defaultDayH: number;
+  defaultNightH: number;
+}
+
+const APPLIANCE_CATALOG: CatalogAppliance[] = [
+  // ❄️ Cooling & Air Conditioning
+  { code: 'INVERTER_AC_1HP', name: '1.0 HP Dual-Inverter Split AC (850W)', group: '❄️ Cooling & Air Conditioning', watts: 850, surge: 1.6, motor: true, defaultDayH: 4, defaultNightH: 4 },
+  { code: 'INVERTER_AC_1_5HP', name: '1.5 HP Dual-Inverter Split AC (1,250W)', group: '❄️ Cooling & Air Conditioning', watts: 1250, surge: 1.8, motor: true, defaultDayH: 4, defaultNightH: 4 },
+  { code: 'INVERTER_AC_2HP', name: '2.0 HP Heavy-Duty Split AC (1,800W)', group: '❄️ Cooling & Air Conditioning', watts: 1800, surge: 2.0, motor: true, defaultDayH: 4, defaultNightH: 4 },
+  { code: 'CEILING_FAN_75W', name: 'Standing / Ceiling Fans (75W)', group: '❄️ Cooling & Air Conditioning', watts: 75, surge: 1.3, motor: true, defaultDayH: 5, defaultNightH: 8 },
+  { code: 'OX_FAN_150W', name: 'OX Industrial Cyclone Fan (150W)', group: '❄️ Cooling & Air Conditioning', watts: 150, surge: 1.8, motor: true, defaultDayH: 6, defaultNightH: 6 },
+
+  // 🧊 Refrigeration & Freezers
+  { code: 'INVERTER_FRIDGE_120W', name: 'Compact Inverter Refrigerator (120W)', group: '🧊 Refrigeration & Freezers', watts: 120, surge: 2.0, motor: true, defaultDayH: 6, defaultNightH: 6 },
+  { code: 'INVERTER_FRIDGE_180W', name: 'Inverter Refrigerator Double Door (180W)', group: '🧊 Refrigeration & Freezers', watts: 180, surge: 2.2, motor: true, defaultDayH: 6, defaultNightH: 6 },
+  { code: 'CHEST_FREEZER_180W', name: 'Deep Chest Freezer Small 150L (180W)', group: '🧊 Refrigeration & Freezers', watts: 180, surge: 2.5, motor: true, defaultDayH: 6, defaultNightH: 6 },
+  { code: 'CHEST_FREEZER_250W', name: 'Deep Chest Freezer Large 300L (250W)', group: '🧊 Refrigeration & Freezers', watts: 250, surge: 2.8, motor: true, defaultDayH: 6, defaultNightH: 6 },
+  { code: 'COLDROOM_1500W', name: 'Commercial Cold-Room Chiller (1,500W)', group: '🧊 Refrigeration & Freezers', watts: 1500, surge: 3.5, motor: true, defaultDayH: 8, defaultNightH: 8 },
+
+  // 🚰 Water Pumping & Motors
+  { code: 'PUMP_0_5HP', name: '0.5 HP Borehole Water Pump (375W)', group: '🚰 Water Pumping & Motors', watts: 375, surge: 3.0, motor: true, defaultDayH: 1, defaultNightH: 0 },
+  { code: 'BOREHOLE_PUMP_1HP', name: '1.0 HP Submersible Borehole Pump (750W)', group: '🚰 Water Pumping & Motors', watts: 750, surge: 3.0, motor: true, defaultDayH: 1, defaultNightH: 0 },
+  { code: 'PUMP_1_5HP', name: '1.5 HP Submersible Borehole Pump (1,100W)', group: '🚰 Water Pumping & Motors', watts: 1100, surge: 3.2, motor: true, defaultDayH: 1, defaultNightH: 0 },
+  { code: 'PUMP_2HP', name: '2.0 HP Industrial Surface Water Pump (1,500W)', group: '🚰 Water Pumping & Motors', watts: 1500, surge: 3.5, motor: true, defaultDayH: 2, defaultNightH: 0 },
+
+  // 💡 Lighting & Entertainment
+  { code: 'LED_BULB_15W', name: 'Energy-Saving LED Bulbs Pack (50W)', group: '💡 Lighting & Entertainment', watts: 50, surge: 1.0, motor: false, defaultDayH: 2, defaultNightH: 8 },
+  { code: 'SECURITY_FLOOD_100W', name: 'Security Floodlights & Compound LED (100W)', group: '💡 Lighting & Entertainment', watts: 100, surge: 1.0, motor: false, defaultDayH: 0, defaultNightH: 10 },
+  { code: 'SMART_TV_120W', name: '55" Smart 4K LED TV + Soundbar (120W)', group: '💡 Lighting & Entertainment', watts: 120, surge: 1.0, motor: false, defaultDayH: 4, defaultNightH: 5 },
+  { code: 'SMART_TV_220W', name: '75" 4K OLED TV + Home Theater (220W)', group: '💡 Lighting & Entertainment', watts: 220, surge: 1.0, motor: false, defaultDayH: 4, defaultNightH: 5 },
+  { code: 'STARLINK_ROUTER_75W', name: 'Starlink Terminal + WiFi 6 Router (75W)', group: '💡 Lighting & Entertainment', watts: 75, surge: 1.0, motor: false, defaultDayH: 12, defaultNightH: 12 },
+  { code: 'LAPTOP_ROUTER_90W', name: 'Laptops + Dual Monitors Workstation (150W)', group: '💡 Lighting & Entertainment', watts: 150, surge: 1.0, motor: false, defaultDayH: 8, defaultNightH: 4 },
+  { code: 'CCTV_SYSTEM_65W', name: 'CCTV Security System + 8-Ch NVR (65W)', group: '💡 Lighting & Entertainment', watts: 65, surge: 1.0, motor: false, defaultDayH: 12, defaultNightH: 12 },
+
+  // ⚡ Kitchen & Heavy Laundry
+  { code: 'WASHING_MACH_500W', name: 'Inverter Washing Machine (500W)', group: '⚡ Kitchen & Heavy Laundry', watts: 500, surge: 2.0, motor: true, defaultDayH: 2, defaultNightH: 0 },
+  { code: 'MICROWAVE_1200W', name: 'Microwave Oven (1,200W)', group: '⚡ Kitchen & Heavy Laundry', watts: 1200, surge: 1.2, motor: false, defaultDayH: 1, defaultNightH: 0 },
+  { code: 'PRESSING_IRON_1200W', name: 'Electric Pressing Iron (1,200W)', group: '⚡ Kitchen & Heavy Laundry', watts: 1200, surge: 1.0, motor: false, defaultDayH: 1, defaultNightH: 0 },
+  { code: 'KETTLE_1500W', name: 'Electric Kettle / Air Fryer (1,500W)', group: '⚡ Kitchen & Heavy Laundry', watts: 1500, surge: 1.0, motor: false, defaultDayH: 1, defaultNightH: 0 },
+  { code: 'MEDICAL_650W', name: 'Medical Centrifuge & Sterilizer (650W)', group: '⚡ Kitchen & Heavy Laundry', watts: 650, surge: 2.0, motor: true, defaultDayH: 4, defaultNightH: 0 },
+];
+
+export interface ApplianceItem {
+  code: string;
+  name: string;
+  group: string;
+  watts: number;
+  surge: number;
+  motor: boolean;
+  qty: number;
+  dayH: number;
+  nightH: number;
+  daysWeek: number;
+}
+
+const INITIAL_APPLIANCES: ApplianceItem[] = [
+  { code: 'LED_BULB_15W', name: 'Energy-Saving LED Bulbs Pack (50W)', group: '💡 Lighting & Entertainment', watts: 50, surge: 1.0, motor: false, qty: 2, dayH: 2, nightH: 8, daysWeek: 7 },
+  { code: 'CEILING_FAN_75W', name: 'Standing / Ceiling Fans (75W)', group: '❄️ Cooling & Air Conditioning', watts: 75, surge: 1.3, motor: true, qty: 3, dayH: 5, nightH: 8, daysWeek: 7 },
+  { code: 'SMART_TV_120W', name: '55" Smart 4K LED TV + Soundbar (120W)', group: '💡 Lighting & Entertainment', watts: 120, surge: 1.0, motor: false, qty: 1, dayH: 4, nightH: 5, daysWeek: 7 },
+  { code: 'INVERTER_FRIDGE_180W', name: 'Inverter Refrigerator Double Door (180W)', group: '🧊 Refrigeration & Freezers', watts: 180, surge: 2.2, motor: true, qty: 1, dayH: 6, nightH: 6, daysWeek: 7 },
 ];
 
 const GROWATT_BUNDLES = [
@@ -103,9 +160,10 @@ function formatNaira(amount: number): string {
 export default function PublicShowroomLandingPage() {
   // Interactive Calculator & Progressive Disclosure State
   const [selectedState, setSelectedState] = useState<string>('FCT ABUJA');
-  const [appliances, setAppliances] = useState(INITIAL_APPLIANCES);
+  const [selectedCatalogCode, setSelectedCatalogCode] = useState<string>('INVERTER_AC_1HP');
+  const [appliances, setAppliances] = useState<ApplianceItem[]>(INITIAL_APPLIANCES);
   const [paymentMode, setPaymentMode] = useState<'INSTALLMENT' | 'OUTRIGHT'>('INSTALLMENT');
-  const [tenureMonths, setTenureMonths] = useState<number>(24);
+  const [tenureMonths, setTenureMonths] = useState<number>(36);
   const [downPaymentPct, setDownPaymentPct] = useState<number>(30);
   const [showEngineeringMath, setShowEngineeringMath] = useState<boolean>(false);
 
@@ -113,6 +171,57 @@ export default function PublicShowroomLandingPage() {
   const [monthlyGridBill, setMonthlyGridBill] = useState<number>(75000);
   const [dailyGenHours, setDailyGenHours] = useState<number>(5);
   const [fuelPricePerLiter, setFuelPricePerLiter] = useState<number>(1250);
+
+  // Load Cart Management Handlers
+  const addApplianceFromCatalog = () => {
+    const item = APPLIANCE_CATALOG.find((a) => a.code === selectedCatalogCode);
+    if (!item) return;
+    setAppliances((prev) => {
+      const existing = prev.find((a) => a.code === item.code);
+      if (existing) {
+        return prev.map((a) => (a.code === item.code ? { ...a, qty: a.qty + 1 } : a));
+      }
+      return [
+        ...prev,
+        {
+          code: item.code,
+          name: item.name,
+          group: item.group,
+          watts: item.watts,
+          surge: item.surge,
+          motor: item.motor,
+          qty: 1,
+          dayH: item.defaultDayH,
+          nightH: item.defaultNightH,
+          daysWeek: 7,
+        },
+      ];
+    });
+  };
+
+  const removeAppliance = (code: string) => {
+    setAppliances((prev) => prev.filter((a) => a.code !== code));
+  };
+
+  const adjustQty = (code: string, delta: number) => {
+    setAppliances((prev) =>
+      prev
+        .map((a) => {
+          if (a.code === code) {
+            const newQty = a.qty + delta;
+            return newQty > 0 ? { ...a, qty: newQty } : null;
+          }
+          return a;
+        })
+        .filter(Boolean) as ApplianceItem[]
+    );
+  };
+
+  const updateAppliance = (code: string, field: 'qty' | 'dayH' | 'nightH' | 'daysWeek', value: number) => {
+    setAppliances((prev) =>
+      prev.map((item) => (item.code === code ? { ...item, [field]: Math.max(0, value) } : item))
+    );
+  };
 
   // Lead Capture Modal State (Site Audit)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -174,8 +283,9 @@ export default function PublicShowroomLandingPage() {
         if (singleSurge > largestMotorSurge) largestMotorSurge = singleSurge;
       }
 
-      dayWh += lineWatts * app.dayH;
-      nightWh += lineWatts * app.nightH;
+      const weeklyRatio = (app.daysWeek || 7) / 7;
+      dayWh += lineWatts * app.dayH * weeklyRatio;
+      nightWh += lineWatts * app.nightH * weeklyRatio;
 
       if (app.code === 'BOREHOLE_PUMP_1HP' && app.nightH > 0) {
         warnings.push(
@@ -208,7 +318,7 @@ export default function PublicShowroomLandingPage() {
       bundle = requiredLiFePO4KWh > 5.5 ? GROWATT_BUNDLES[2] : GROWATT_BUNDLES[1];
     }
 
-    // Amortization Math (Enforcing 30%-60% Down Payment & 1.75% Insurance Fee)
+    // Amortization Math (Enforcing 30%-60% Down Payment & 1.75% Insurance Fee, 12-60m Tenure)
     const cashPrice = bundle.priceNaira;
     const effectiveDownPct = paymentMode === 'OUTRIGHT' ? 100 : Math.max(30, Math.min(60, downPaymentPct));
     const downPaymentNaira = Math.round(cashPrice * (effectiveDownPct / 100));
@@ -226,7 +336,8 @@ export default function PublicShowroomLandingPage() {
     const totalCurrentFossilSpend = monthlyGridBill + monthlyFuelSpend + monthlyGenMaintenance;
     const displacedSpend = Math.round(totalCurrentFossilSpend * 0.85);
     const monthlyNetSavings = displacedSpend - monthlyInstallment;
-    const cumulative36mSavings = displacedSpend * 36 - (downPaymentNaira + monthlyInstallment * tenureMonths);
+    const cumulativeTenureSavings = displacedSpend * tenureMonths - (downPaymentNaira + monthlyInstallment * tenureMonths);
+    const cumulative60mSavings = displacedSpend * 60 - (downPaymentNaira + (paymentMode === 'OUTRIGHT' ? 0 : monthlyInstallment * Math.min(60, tenureMonths)));
 
     return {
       zone,
@@ -252,16 +363,12 @@ export default function PublicShowroomLandingPage() {
       totalCurrentFossilSpend,
       displacedSpend,
       monthlyNetSavings,
-      cumulative36mSavings,
+      cumulativeTenureSavings,
+      cumulative60mSavings,
+      cumulative36mSavings: cumulativeTenureSavings,
       warnings,
     };
   }, [selectedState, appliances, paymentMode, tenureMonths, downPaymentPct, monthlyGridBill, dailyGenHours, fuelPricePerLiter]);
-
-  const updateAppliance = (code: string, field: 'qty' | 'dayH' | 'nightH', value: number) => {
-    setAppliances((prev) =>
-      prev.map((item) => (item.code === code ? { ...item, [field]: Math.max(0, value) } : item))
-    );
-  };
 
   // Instant NIMC NIN Verification Simulation
   const handleVerifyNIN = () => {
@@ -392,7 +499,7 @@ export default function PublicShowroomLandingPage() {
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-bold text-lg tracking-tight text-white">SKYTRON</span>
+                <span className="font-bold text-lg tracking-tight text-white">SKYGRID</span>
                 <span className="text-emerald-400 font-semibold text-lg">GROWATT PAYG</span>
               </div>
               <p className="text-[10px] text-slate-400 -mt-1 font-mono">Clean Energy-as-a-Service &bull; Nigeria</p>
@@ -671,90 +778,171 @@ export default function PublicShowroomLandingPage() {
               </div>
             </div>
 
-            {/* Appliance List with Qty, Day Hours, Night Hours */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs font-semibold text-slate-400 px-2 pb-1">
-                <span>CONNECTED APPLIANCE</span>
-                <div className="flex items-center gap-6 sm:gap-8">
-                  <span>QTY</span>
-                  <span className="hidden sm:inline">DAY HRS</span>
-                  <span className="hidden sm:inline">NIGHT HRS</span>
-                </div>
+            {/* 3. Dropdown Appliance Selector & Add to Cart */}
+            <div className="space-y-3 p-4 sm:p-5 rounded-2xl bg-slate-950/70 border border-slate-800">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-300">
+                  3. Select &amp; Add Connected Appliance to Cart
+                </label>
+                <span className="text-[11px] font-mono text-emerald-400 font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                  {appliances.length} {appliances.length === 1 ? 'Item in Cart' : 'Items in Cart'}
+                </span>
               </div>
 
-              {appliances.map((item) => (
-                <div
-                  key={item.code}
-                  className={`p-3.5 rounded-2xl border transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-                    item.qty > 0 ? 'bg-slate-950/80 border-slate-700' : 'bg-slate-950/30 border-slate-800/60 opacity-70'
-                  }`}
+              <div className="flex flex-col sm:flex-row gap-2.5">
+                <select
+                  value={selectedCatalogCode}
+                  onChange={(e) => setSelectedCatalogCode(e.target.value)}
+                  className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:border-emerald-500 outline-none font-medium"
                 >
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-sm text-white">{item.name}</span>
-                      {item.motor && (
-                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                          {item.surge}x Surge
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-[11px] text-slate-400 font-mono mt-0.5">
-                      {item.watts}W running load &bull; {item.motor ? 'Inductive motor' : 'Resistive / Electronic'}
-                    </p>
-                  </div>
+                  {['❄️ Cooling & Air Conditioning', '🧊 Refrigeration & Freezers', '🚰 Water Pumping & Motors', '💡 Lighting & Entertainment', '⚡ Kitchen & Heavy Laundry'].map((grp) => (
+                    <optgroup key={grp} label={grp} className="bg-slate-950 text-slate-300 font-bold">
+                      {APPLIANCE_CATALOG.filter((a) => a.group === grp).map((a) => (
+                        <option key={a.code} value={a.code} className="bg-slate-900 text-white font-normal">
+                          {a.name} — {a.watts}W ({a.motor ? `${a.surge}x Surge` : 'Resistive'})
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
 
-                  <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800">
-                    
-                    {/* Qty Counter */}
-                    <div className="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-xl px-2 py-1">
-                      <button
-                        type="button"
-                        onClick={() => updateAppliance(item.code, 'qty', item.qty - 1)}
-                        className="w-6 h-6 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 text-sm font-bold flex items-center justify-center transition"
-                      >
-                        -
-                      </button>
-                      <span className="w-6 text-center font-mono font-bold text-sm text-white">{item.qty}</span>
-                      <button
-                        type="button"
-                        onClick={() => updateAppliance(item.code, 'qty', item.qty + 1)}
-                        className="w-6 h-6 rounded-lg bg-emerald-500 text-slate-950 hover:bg-emerald-400 text-sm font-bold flex items-center justify-center transition"
-                      >
-                        +
-                      </button>
-                    </div>
+                <button
+                  type="button"
+                  onClick={addApplianceFromCatalog}
+                  className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold font-mono transition flex items-center justify-center gap-1.5 shadow-md flex-shrink-0"
+                >
+                  <span>+</span>
+                  <span>Add to Cart</span>
+                </button>
+              </div>
+              <span className="text-[11px] text-slate-400 block">
+                Choose appliances by rated power. Customize quantity, daily operating hours, and days per week below.
+              </span>
+            </div>
 
-                    {/* Day Hours */}
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[11px] text-slate-400 sm:hidden">Day:</span>
-                      <select
-                        value={item.dayH}
-                        onChange={(e) => updateAppliance(item.code, 'dayH', Number(e.target.value))}
-                        className="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-200 font-mono outline-none"
-                      >
-                        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12].map((h) => (
-                          <option key={h} value={h}>{h}h</option>
-                        ))}
-                      </select>
-                    </div>
+            {/* Load Cart Items */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-xs font-semibold text-slate-400 px-2 pb-1">
+                <span>LOAD CART APPLIANCES</span>
+                <span className="text-[11px] font-mono text-emerald-400">Total Run: {engineeringResult.runningWatts} W</span>
+              </div>
 
-                    {/* Night Hours */}
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[11px] text-slate-400 sm:hidden">Night:</span>
-                      <select
-                        value={item.nightH}
-                        onChange={(e) => updateAppliance(item.code, 'nightH', Number(e.target.value))}
-                        className="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-200 font-mono outline-none"
-                      >
-                        {[0, 2, 4, 6, 8, 10, 12].map((h) => (
-                          <option key={h} value={h}>{h}h</option>
-                        ))}
-                      </select>
-                    </div>
-
-                  </div>
+              {appliances.length === 0 ? (
+                <div className="p-8 rounded-2xl bg-slate-950/40 border border-dashed border-slate-800 text-center space-y-2">
+                  <span className="text-3xl block">🛒</span>
+                  <p className="text-sm font-semibold text-slate-300">Your load cart is currently empty</p>
+                  <p className="text-xs text-slate-500">
+                    Select an appliance from the dropdown above and click <strong className="text-emerald-400">+ Add to Cart</strong> to begin sizing.
+                  </p>
                 </div>
-              ))}
+              ) : (
+                appliances.map((item) => (
+                  <div
+                    key={item.code}
+                    className="p-3.5 rounded-2xl border transition flex flex-col gap-3 bg-slate-950/80 border-slate-700"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-sm text-white">{item.name}</span>
+                          {item.motor && (
+                            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                              {item.surge}x Surge
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[11px] text-slate-400 font-mono mt-0.5">
+                          {item.watts}W rating &bull; {item.watts * item.qty}W line load &bull; Weekly est: ~
+                          {(((item.watts * item.qty * (item.dayH + item.nightH) * item.daysWeek) / 7) * 7 / 1000).toFixed(1)} kWh/wk
+                        </p>
+                      </div>
+
+                      {/* Remove Button */}
+                      <button
+                        type="button"
+                        onClick={() => removeAppliance(item.code)}
+                        className="text-xs text-rose-400 hover:text-rose-300 font-mono px-2 py-1 rounded bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition flex items-center gap-1"
+                      >
+                        <span>✕</span> Remove
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-800/80 text-xs font-mono items-center">
+                      
+                      {/* Qty Toggle */}
+                      <div className="flex items-center justify-between bg-slate-900 border border-slate-700/80 rounded-xl px-2.5 py-1.5">
+                        <span className="text-[10px] text-slate-400">Qty:</span>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => adjustQty(item.code, -1)}
+                            className="w-5 h-5 rounded bg-slate-800 text-slate-200 hover:bg-slate-700 text-xs font-bold flex items-center justify-center transition"
+                          >
+                            -
+                          </button>
+                          <span className="font-mono font-bold text-xs text-emerald-400 w-4 text-center">{item.qty}</span>
+                          <button
+                            type="button"
+                            onClick={() => adjustQty(item.code, 1)}
+                            className="w-5 h-5 rounded bg-emerald-500 text-slate-950 hover:bg-emerald-400 text-xs font-bold flex items-center justify-center transition"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Daytime Hours */}
+                      <div className="flex items-center justify-between bg-slate-900 border border-slate-700/80 rounded-xl px-2.5 py-1.5">
+                        <span className="text-[10px] text-slate-400">Day:</span>
+                        <select
+                          value={item.dayH}
+                          onChange={(e) => updateAppliance(item.code, 'dayH', Number(e.target.value))}
+                          className="bg-transparent text-white text-xs font-mono outline-none cursor-pointer"
+                        >
+                          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12].map((h) => (
+                            <option key={h} value={h} className="bg-slate-950 text-white">
+                              {h}h/d
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Nighttime Hours */}
+                      <div className="flex items-center justify-between bg-slate-900 border border-slate-700/80 rounded-xl px-2.5 py-1.5">
+                        <span className="text-[10px] text-slate-400">Night:</span>
+                        <select
+                          value={item.nightH}
+                          onChange={(e) => updateAppliance(item.code, 'nightH', Number(e.target.value))}
+                          className="bg-transparent text-white text-xs font-mono outline-none cursor-pointer"
+                        >
+                          {[0, 1, 2, 3, 4, 5, 6, 8, 10, 12].map((h) => (
+                            <option key={h} value={h} className="bg-slate-950 text-white">
+                              {h}h/d
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Weekly Days */}
+                      <div className="flex items-center justify-between bg-slate-900 border border-slate-700/80 rounded-xl px-2.5 py-1.5">
+                        <span className="text-[10px] text-slate-400">Days:</span>
+                        <select
+                          value={item.daysWeek}
+                          onChange={(e) => updateAppliance(item.code, 'daysWeek', Number(e.target.value))}
+                          className="bg-transparent text-white text-xs font-mono outline-none cursor-pointer"
+                        >
+                          {[1, 2, 3, 4, 5, 6, 7].map((d) => (
+                            <option key={d} value={d} className="bg-slate-950 text-white">
+                              {d}d / wk
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
 
             {/* Smart Warnings */}
@@ -773,35 +961,117 @@ export default function PublicShowroomLandingPage() {
             {/* Header */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
-                Financing &amp; Fuel Savings
+                System Sizing &amp; Financing
               </span>
               <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                 {engineeringResult.bundle.title.split(' ')[0]} {engineeringResult.bundle.title.split(' ')[1]}
               </span>
             </div>
 
-            {/* PRIMARY LAYER: Tenure Slider & Down Payment Slider */}
+            {/* DEDICATED SIZING REQUIREMENTS (INVERTER SIZE, BATTERY SIZE, PV POWER) */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-slate-950/90 border border-emerald-500/40 space-y-3 shadow-xl">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-400 font-mono flex items-center gap-1.5">
+                  <span>⚡</span> Calculated System Sizing Required
+                </span>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  COREN Standard
+                </span>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2.5 text-center">
+                
+                {/* 1. Inverter Size Needed */}
+                <div className="p-3 rounded-xl bg-slate-900 border border-slate-700/80 space-y-1">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block font-mono">
+                    Inverter Size
+                  </span>
+                  <div className="text-sm sm:text-base font-extrabold text-white font-mono">
+                    {(engineeringResult.requiredVA / 1000).toFixed(1)} <span className="text-[10px] font-normal text-emerald-400">kVA</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 block font-mono">
+                    {engineeringResult.requiredVA} VA Surge
+                  </span>
+                </div>
+
+                {/* 2. Battery Size Needed */}
+                <div className="p-3 rounded-xl bg-slate-900 border border-slate-700/80 space-y-1">
+                  <span className="text-[10px] uppercase font-bold text-cyan-400 block font-mono">
+                    Battery Size
+                  </span>
+                  <div className="text-sm sm:text-base font-extrabold text-cyan-400 font-mono">
+                    {engineeringResult.requiredLiFePO4KWh.toFixed(1)} <span className="text-[10px] font-normal text-slate-300">kWh</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 block font-mono">
+                    LiFePO4 (80% DoD)
+                  </span>
+                </div>
+
+                {/* 3. PV Power Needed */}
+                <div className="p-3 rounded-xl bg-slate-900 border border-slate-700/80 space-y-1">
+                  <span className="text-[10px] uppercase font-bold text-amber-400 block font-mono">
+                    PV Power
+                  </span>
+                  <div className="text-sm sm:text-base font-extrabold text-amber-400 font-mono">
+                    {engineeringResult.requiredPVKWp.toFixed(2)} <span className="text-[10px] font-normal text-slate-300">kWp</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 block font-mono">
+                    Mono PERC Array
+                  </span>
+                </div>
+
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-emerald-950/30 border border-emerald-500/20 text-xs font-mono text-slate-300 flex items-center justify-between">
+                <span className="text-slate-400">Matched Package:</span>
+                <strong className="text-emerald-400 font-bold">{engineeringResult.bundle.title}</strong>
+              </div>
+            </div>
+
+            {/* PRIMARY LAYER: Tenure Buttons & Slider (Up to 60 Months / 5 Years) */}
             {paymentMode === 'INSTALLMENT' && (
               <div className="space-y-4 p-4 rounded-2xl bg-slate-950/70 border border-slate-800">
                 <div>
-                  <div className="flex justify-between items-center text-xs mb-1.5">
-                    <span className="font-semibold text-slate-300">Repayment Tenure:</span>
-                    <span className="font-mono font-bold text-emerald-400">{tenureMonths} Months</span>
+                  <div className="flex justify-between items-center text-xs mb-2">
+                    <span className="font-semibold text-slate-300">Leasing Payback Period:</span>
+                    <span className="font-mono font-bold text-emerald-400">
+                      {tenureMonths} Months ({(tenureMonths / 12).toFixed(tenureMonths % 12 === 0 ? 0 : 1)} Years)
+                    </span>
                   </div>
+
+                  {/* 5 Tenure Buttons up to 60 Months */}
+                  <div className="grid grid-cols-5 gap-1.5 mb-3">
+                    {[12, 24, 36, 48, 60].map((m) => (
+                      <button
+                        key={m}
+                        type="button"
+                        onClick={() => setTenureMonths(m)}
+                        className={`py-1.5 text-[11px] font-bold rounded-lg font-mono transition ${
+                          tenureMonths === m
+                            ? 'bg-emerald-500 text-slate-950 shadow-md'
+                            : 'bg-slate-900 border border-slate-700 text-slate-300 hover:text-white'
+                        }`}
+                      >
+                        {m}m {m === 60 ? '(5 Yrs)' : m === 12 ? '(1 Yr)' : `${m / 12} Yrs`}
+                      </button>
+                    ))}
+                  </div>
+
                   <input
                     type="range"
-                    min={3}
-                    max={36}
-                    step={3}
+                    min={12}
+                    max={60}
+                    step={6}
                     value={tenureMonths}
                     onChange={(e) => setTenureMonths(Number(e.target.value))}
                     className="w-full h-2 bg-slate-800 rounded-lg cursor-pointer accent-emerald-500"
                   />
                   <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
-                    <span>3m</span>
-                    <span>12m</span>
+                    <span>12m (1 Yr)</span>
                     <span>24m</span>
                     <span>36m</span>
+                    <span>48m</span>
+                    <span>60m (5 Yrs)</span>
                   </div>
                 </div>
 
@@ -866,7 +1136,7 @@ export default function PublicShowroomLandingPage() {
             </div>
 
             {/* PRIMARY LAYER: Net Savings Summary Box */}
-            <div className="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-500/30 space-y-3 text-xs">
+            <div className="p-4 sm:p-5 rounded-2xl bg-emerald-950/30 border border-emerald-500/30 space-y-3 text-xs">
               <div className="flex justify-between items-center">
                 <span className="text-slate-300">Current Monthly Gen + Grid Spend:</span>
                 <span className="font-mono font-bold text-rose-400 text-sm">
@@ -886,9 +1156,15 @@ export default function PublicShowroomLandingPage() {
                 </span>
               </div>
               <div className="flex justify-between items-center text-[11px] text-emerald-300">
-                <span>Projected 3-Year Cumulative Savings:</span>
+                <span>Projected {tenureMonths}-Month Savings:</span>
                 <span className="font-mono font-bold">
-                  {formatNaira(engineeringResult.cumulative36mSavings)}
+                  {formatNaira(engineeringResult.cumulativeTenureSavings)}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-[11px] text-emerald-300 pt-1 border-t border-emerald-950">
+                <span>Projected 5-Year (60m) Cumulative Savings:</span>
+                <span className="font-mono font-extrabold text-emerald-400">
+                  {formatNaira(engineeringResult.cumulative60mSavings)}
                 </span>
               </div>
             </div>
@@ -1007,7 +1283,7 @@ export default function PublicShowroomLandingPage() {
               Experience Your Live Customer Energy &amp; Savings Dashboard
             </h2>
             <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
-              Every SkyTron Growatt installation includes this real-time executive analytics portal. Test the interactive 24-hour load-shifting simulator, adjust local petrol prices, and inspect 30-day battery health histograms below:
+              Every SkyGrid Growatt installation includes this real-time executive analytics portal. Test the interactive 24-hour load-shifting simulator, adjust local petrol prices, and inspect 30-day battery health histograms below:
             </p>
           </div>
 

@@ -39,7 +39,7 @@ export default function CustomerMobileApp() {
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.badge}>SKYTRON GROWATT MOBILE</Text>
+            <Text style={styles.badge}>SKYGRID GROWATT MOBILE</Text>
             <Text style={styles.title}>SPF 5000ES + 10.24kWh LiFePO4</Text>
           </View>
           <View style={styles.daysBadge}>

@@ -217,7 +217,7 @@ export default function AdminCommandDashboard() {
           </div>
           <div>
             <h1 className="text-base font-extrabold tracking-tight text-white">
-              SKYTRON GROWATT PAYG — EXECUTIVE ADMIN COMMAND & WATCHTOWER
+              SKYGRID GROWATT PAYG — EXECUTIVE ADMIN COMMAND & WATCHTOWER
             </h1>
             <p className="text-xs text-slate-400">
               EMQX 15m Dead-Man&apos;s Switch Active • Growatt EEPROM Flash Wear Guard Enabled

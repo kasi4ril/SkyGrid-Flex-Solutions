@@ -56,7 +56,7 @@ func main() {
 		MoniepointSecretKey: getEnv("MONIEPOINT_SECRET_KEY", "mk_test_moniepoint_2026"),
 		OPaySecretKey:       getEnv("OPAY_SECRET_KEY", "op_test_opay_2026"),
 	})
-	tokenEngine := usecases.NewOfflineTokenEngine(getEnv("STS_MASTER_SECRET", "skytron-growatt-sts-master-key-2026"))
+	tokenEngine := usecases.NewOfflineTokenEngine(getEnv("STS_MASTER_SECRET", "skygrid-growatt-sts-master-key-2026"))
 	ledgerProcessor := usecases.NewLedgerProcessor(vfsManager, tokenEngine)
 	kycService := usecases.NewKYCUnderwritingService()
 	fintechHandler := handlers.NewFintechPaymentHandler(paymentEngine, ledgerProcessor, kycService)
@@ -65,13 +65,14 @@ func main() {
 	telemetryProc := usecases.NewTelemetryHardwareProcessor(
 		vfsManager,
 		ledgerProcessor,
-		getEnv("HEARTBEAT_HMAC_SECRET", "skytron-mqtt-heartbeat-hmac-key-2026"),
+		getEnv("HEARTBEAT_HMAC_SECRET", "skygrid-mqtt-heartbeat-hmac-key-2026"),
 	)
 	growattCloudClient := growatt_oss.NewClient(
 		getEnv("GROWATT_OSS_URL", "https://openapi.growatt.com/v1"),
 		getEnv("GROWATT_OSS_TOKEN", ""),
 	)
 	adminFieldHandler := handlers.NewAdminAndFieldHandler(telemetryProc)
+	analyticsHandler := handlers.NewCustomerAnalyticsHandler(vfsManager, vfsRoot)
 
 	// Seed a reference active contract & commissioned device so the unified binary
 	// serves live VFS telemetry immediately on startup for end-to-end testing.
@@ -116,8 +117,9 @@ func main() {
 		writeJSON(w, http.StatusOK, map[string]any{"status": "success", "cloud_summary": summary})
 	}))
 
-	// --- BATCH 5 & 6 ROUTES: Customer Portal VFS Aggregator & LocalGridAgent AI Bridge ---
-	mux.HandleFunc("/api/v1/customer/dashboard/", withCORS(handleCustomerDashboardVFS(vfsManager, vfsRoot)))
+	// --- BATCH 5 & 6 ROUTES: Customer Portal VFS Aggregator, Natural Storyteller Analytics & LocalGridAgent AI Bridge ---
+	mux.HandleFunc("/api/v1/customer/dashboard/", withCORS(handleCustomerDashboardVFS(vfsManager, vfsRoot, analyticsHandler)))
+	mux.HandleFunc("/api/v1/customer/analytics/", withCORS(analyticsHandler.HandleGetAnalytics))
 	mux.HandleFunc("/api/v1/customer/ai-advisor", withCORS(handleCustomerAIAdvisorProxy(pythonEngineURL)))
 
 	// --- STATIC WEB UI & SHOWROOM (static/index.html) ---
@@ -163,8 +165,9 @@ func main() {
 }
 
 // handleCustomerDashboardVFS reads the atomic JSON snapshots (`identity.json`, `state.json`,
-// `ledger_snap.json`, and `forecasts/horizon_24h.json`) directly from the device's POSIX VFS block.
-func handleCustomerDashboardVFS(vfs *vfs_store.VFSManager, vfsRoot string) http.HandlerFunc {
+// `ledger_snap.json`, and `forecasts/horizon_24h.json`) directly from the device's POSIX VFS block,
+// enriched with natural-language storytelling metrics and triple-source comparisons.
+func handleCustomerDashboardVFS(vfs *vfs_store.VFSManager, vfsRoot string, analytics *handlers.CustomerAnalyticsHandler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			writeJSON(w, http.StatusMethodNotAllowed, map[string]any{"status": "error", "message": "method not allowed"})
@@ -175,6 +178,11 @@ func handleCustomerDashboardVFS(vfs *vfs_store.VFSManager, vfsRoot string) http.
 		deviceID := parts[len(parts)-1]
 		if deviceID == "" || deviceID == "dashboard" {
 			deviceID = "DEV-8F3A-GROWATT-00421"
+		}
+
+		segment := strings.ToLower(r.URL.Query().Get("segment"))
+		if segment == "" {
+			segment = "residential"
 		}
 
 		blockDir, err := vfs.ResolveDeviceBlockDir(deviceID)
@@ -195,6 +203,8 @@ func handleCustomerDashboardVFS(vfs *vfs_store.VFSManager, vfsRoot string) http.
 		_ = vfs.ReadJSON(filepath.Join(relBlock, "ledger_snap.json"), &ledgerSnap)
 		_ = vfs.ReadJSON(filepath.Join(relBlock, "forecasts", "horizon_24h.json"), &horizon24h)
 
+		analyticsPayload := analytics.BuildAnalyticsPayload(deviceID, segment)
+
 		writeJSON(w, http.StatusOK, map[string]any{
 			"status":       "success",
 			"device_id":    deviceID,
@@ -203,6 +213,7 @@ func handleCustomerDashboardVFS(vfs *vfs_store.VFSManager, vfsRoot string) http.
 			"live_state":   state,
 			"ledger_snap":  ledgerSnap,
 			"forecast_24h": horizon24h,
+			"analytics":    analyticsPayload,
 		})
 	}
 }

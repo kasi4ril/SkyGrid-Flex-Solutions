@@ -82,13 +82,23 @@ echo "🧠 [2/4] Starting Python Intelligence Engine on http://localhost:8000...
         UVICORN_BIN="$SCRIPT_DIR/.venv/bin/uvicorn"
     elif [ -x "$ROOT_DIR/.venv/bin/uvicorn" ]; then
         UVICORN_BIN="$ROOT_DIR/.venv/bin/uvicorn"
+    elif command -v uvicorn >/dev/null 2>&1; then
+        UVICORN_BIN="$(command -v uvicorn)"
+    elif python3 -c "import uvicorn" >/dev/null 2>&1; then
+        UVICORN_BIN="python3 -m uvicorn"
     fi
 
     if [ -n "$UVICORN_BIN" ]; then
         export PYTHONPATH=.
-        exec "$UVICORN_BIN" app.main:app --host 0.0.0.0 --port 8000
+        if [[ "$UVICORN_BIN" == python3* ]]; then
+            exec python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+        else
+            exec "$UVICORN_BIN" app.main:app --host 0.0.0.0 --port 8000
+        fi
     else
-        exec python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+        echo "❌ Error: uvicorn not found in .venv or system python3."
+        echo "💡 Self-healing: cd $ROOT_DIR/intelligence-engine && python3 -m venv .venv && .venv/bin/pip install fastapi 'uvicorn[standard]' pydantic httpx numpy"
+        exit 1
     fi
 ) > "$LOG_DIR/intelligence-engine.log" 2>&1 &
 PIDS+=($!)

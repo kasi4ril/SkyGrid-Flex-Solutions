@@ -1,20 +1,20 @@
+'use client';
+
 /**
- * @fileoverview Customer Account Portal with Full 4-Quadrant Statistical Energy Analytics Suite
+ * @fileoverview Customer Account Portal with Full Unified Energy, Financial & Forecast Storytelling Suite
  * Path: web-suite/apps/customer-portal/src/app/page.tsx
  */
 
-'use client';
-
 import React, { useState } from 'react';
-import { EnergyAnalyticsSuite } from '../../../../packages/ui-kit/src/EnergyAnalyticsSuite';
+import { EnergyAnalyticsSuite } from './EnergyAnalyticsSuite';
 
 export default function CustomerAccountPortalPage() {
   const [copiedAcct, setCopiedAcct] = useState<string | null>(null);
 
   const virtualAccounts = [
-    { bank: 'Moniepoint MFB', acctNo: '8049201844', name: 'SKYTRON SOLAR / SHWARJI KHATANG' },
-    { bank: 'Paystack-Titan', acctNo: '9938471029', name: 'SKYTRON SOLAR / SHWARJI KHATANG' },
-    { bank: 'OPay Digital', acctNo: '7083920194', name: 'SKYTRON SOLAR / SHWARJI KHATANG' },
+    { bank: 'Moniepoint MFB', acctNo: '8049201844', name: 'SKYGRID SOLAR / SHWARJI KHATANG' },
+    { bank: 'Paystack-Titan', acctNo: '9938471029', name: 'SKYGRID SOLAR / SHWARJI KHATANG' },
+    { bank: 'OPay Digital', acctNo: '7083920194', name: 'SKYGRID SOLAR / SHWARJI KHATANG' },
   ];
 
   const copyNUBAN = (nuban: string) => {
@@ -31,7 +31,7 @@ export default function CustomerAccountPortalPage() {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-base sm:text-lg font-extrabold text-white">
-              SKY<span className="text-sky-400">TRON</span> GROWATT &mdash; CUSTOMER ENERGY &amp; FINANCIAL ANALYTICS
+              SKY<span className="text-sky-400">GRID</span> GROWATT &mdash; CUSTOMER ENERGY &amp; FINANCIAL ANALYTICS
             </h1>
             <p className="text-xs text-slate-400 font-mono">
               Account: Engr. Shwarji I. Khatang &bull; Contract: CTR-NG-2026-001 &bull; Shroud: SEALED

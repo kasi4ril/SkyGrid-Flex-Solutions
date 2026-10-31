@@ -2,9 +2,9 @@
 // Polyglot gRPC Contract: Golang Core Backend <-> Python Intelligence Engine
 syntax = "proto3";
 
-package skytron.payg.forecasting.v1;
+package skygrid.payg.forecasting.v1;
 
-option go_package = "github.com/skytron-quantum/growatt-payg-enterprise/core-backend/internal/pb/forecastingv1";
+option go_package = "github.com/SkyGrid-Flex-Solutions/growatt-payg-enterprise/core-backend/internal/pb/forecastingv1";
 
 service ForecastingService {
   // GenerateMultiHorizonForecast computes 24h, 7d, and 30d solar & load forecasts

@@ -2,9 +2,9 @@
 // Polyglot gRPC Contract: Golang Core Backend <-> Python LocalGridAgent (RAG + Read-Only LLM)
 syntax = "proto3";
 
-package skytron.payg.agent.v1;
+package skygrid.payg.agent.v1;
 
-option go_package = "github.com/skytron-quantum/growatt-payg-enterprise/core-backend/internal/pb/agentv1";
+option go_package = "github.com/SkyGrid-Flex-Solutions/growatt-payg-enterprise/core-backend/internal/pb/agentv1";
 
 service LocalGridAgentService {
   // QueryDiagnosticsAdvisor answers interactive customer questions by combining

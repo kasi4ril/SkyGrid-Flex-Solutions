@@ -36,7 +36,7 @@ type OfflineTokenEngine struct {
 // NewOfflineTokenEngine creates a new token generator initialized with the factory root key.
 func NewOfflineTokenEngine(masterSecret string) *OfflineTokenEngine {
 	if strings.TrimSpace(masterSecret) == "" {
-		masterSecret = "skytron-growatt-sts-master-key-2026"
+		masterSecret = "skygrid-growatt-sts-master-key-2026"
 	}
 	return &OfflineTokenEngine{
 		masterFactorySecret: []byte(masterSecret),

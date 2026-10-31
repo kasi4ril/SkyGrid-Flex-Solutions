@@ -352,7 +352,7 @@
         <span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-brand-sky/20 text-brand-sky font-bold text-[10px]">⚡</span>
         <span>Clear Skies &bull; True Renewable Solar Energy &bull; Flexible Lease-to-Own</span>
         <span class="hidden md:inline text-brand-sky/60">•</span>
-        <span class="hidden md:inline text-brand-sky font-medium">Zero-Deposit SME Commercial Pilots in Lagos &amp; Abuja</span>
+        <span class="hidden md:inline text-brand-sky font-medium">Zero-Deposit SME Commercial Pilots in Jos &amp; Abuja</span>
       </div>
       <div class="flex items-center gap-3 text-[11px]">
         <!-- Theme Toggle Button (Dark / Light Mode) -->
@@ -382,7 +382,7 @@
             <span class="font-heading font-extrabold text-xl tracking-tight text-white">Sky<span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-sky to-brand-skyLight">Grid</span></span>
             <span class="text-[10px] tracking-widest uppercase bg-brand-sky/20 text-brand-sky px-2.5 py-0.5 rounded-full font-bold border border-brand-sky/40">Clean Energy</span>
           </div>
-          <p class="text-[10px] text-brand-warm/60 tracking-wider uppercase font-medium">SkyTron Renewable Systems</p>
+          <p class="text-[10px] text-brand-warm/60 tracking-wider uppercase font-medium">Intelligent Solar Energy Systems</p>
         </div>
       </a>
 
@@ -450,7 +450,7 @@
         </button>
         <button onclick="openModal('signUpModal')" class="w-full py-2.5 rounded-xl text-center text-xs font-bold text-brand-dark bg-brand-teal hover:bg-emerald-400 transition flex items-center justify-center gap-2">
           <i data-lucide="user-plus" class="w-4 h-4"></i>
-          <span>New Customer Sign Up (NIN Instant Verification)</span>
+          <span>New Customer Sign Up (NIN Required)</span>
         </button>
         <button onclick="openModal('signInModal')" class="w-full py-2.5 rounded-xl text-center text-xs font-semibold text-brand-warm bg-white/5 border border-white/10 hover:bg-white/10 transition">
           Customer Portal Sign In
@@ -1209,14 +1209,16 @@
         <!-- Repayment Tenure -->
         <div>
           <label class="block text-xs font-bold uppercase tracking-wider text-brand-warm/80 mb-2">
-            Repayment Tenure
+            Repayment Tenure (Up to 5 Years)
           </label>
-          <div class="grid grid-cols-3 gap-2">
-            <button type="button" onclick="setTenure(12)" id="tenure12" class="py-2 rounded-xl text-xs font-bold bg-white/5 border border-white/10 hover:bg-white/10 text-white transition">12 Mo.</button>
-            <button type="button" onclick="setTenure(24)" id="tenure24" class="py-2 rounded-xl text-xs font-bold bg-white/5 border border-white/10 hover:bg-white/10 text-white transition">24 Mo.</button>
-            <button type="button" onclick="setTenure(36)" id="tenure36" class="py-2 rounded-xl text-xs font-bold bg-brand-amber text-brand-dark transition shadow-md">36 Mo.</button>
+          <div class="grid grid-cols-5 gap-1.5">
+            <button type="button" onclick="setTenure(12)" id="tenure12" class="py-2 rounded-xl text-xs font-bold bg-white/5 border border-white/10 hover:bg-white/10 text-white transition">12m</button>
+            <button type="button" onclick="setTenure(24)" id="tenure24" class="py-2 rounded-xl text-xs font-bold bg-white/5 border border-white/10 hover:bg-white/10 text-white transition">24m</button>
+            <button type="button" onclick="setTenure(36)" id="tenure36" class="py-2 rounded-xl text-xs font-bold bg-brand-amber text-brand-dark transition shadow-md">36m</button>
+            <button type="button" onclick="setTenure(48)" id="tenure48" class="py-2 rounded-xl text-xs font-bold bg-white/5 border border-white/10 hover:bg-white/10 text-white transition">48m</button>
+            <button type="button" onclick="setTenure(60)" id="tenure60" class="py-2 rounded-xl text-xs font-bold bg-white/5 border border-white/10 hover:bg-white/10 text-white transition">60m</button>
           </div>
-          <span class="text-[10px] text-brand-warm/60 mt-1 block">Zero early termination penalties.</span>
+          <span class="text-[10px] text-brand-teal mt-1 block">Zero early termination penalties • Full title deed at term.</span>
         </div>
 
       </div>
@@ -1224,15 +1226,43 @@
       <!-- Middle: Appliances Selector & Sizing Output -->
       <div class="grid lg:grid-cols-12 gap-8 my-8">
         
-        <!-- Left: Interactive Appliance Sliders/Counters (7 Cols) -->
+        <!-- Left: Interactive Appliance Dropdown & Cart (7 Cols) -->
         <div class="lg:col-span-7 space-y-4">
           <div class="flex items-center justify-between pb-2 border-b border-white/10">
-            <h4 class="font-heading font-bold text-sm uppercase tracking-wider text-white">Select Connected Appliances</h4>
-            <span class="text-xs text-brand-warm/60">Click + / - to adjust</span>
+            <div>
+              <h4 class="font-heading font-bold text-sm uppercase tracking-wider text-white">Select Connected Appliances</h4>
+              <p class="text-[11px] text-brand-warm/60">Choose equipment from dropdown and add to your active load cart</p>
+            </div>
+            <span id="cartCountBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-brand-amber/20 text-brand-amber border border-brand-amber/30 font-mono font-bold">
+              0 Items in Cart
+            </span>
           </div>
 
-          <div id="appliancesList" class="space-y-3">
-            <!-- Rendered by JavaScript -->
+          <!-- Add Appliance Dropdown Bar -->
+          <div class="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2.5">
+            <label class="block text-xs font-bold uppercase tracking-wider text-brand-warm/90">
+              Choose Appliance &amp; Power Rating
+            </label>
+            <div class="flex flex-col sm:flex-row gap-2.5">
+              <select id="applianceDropdown" class="flex-1 bg-black/60 border border-white/20 text-white rounded-xl px-3.5 py-2.5 text-xs font-medium focus:border-brand-amber outline-none">
+                <!-- Populated dynamically with optgroups -->
+              </select>
+              <button type="button" onclick="addSelectedApplianceToCart()" class="px-4 py-2.5 rounded-xl bg-brand-amber hover:bg-amber-400 text-brand-dark font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-md flex-shrink-0">
+                <span>➕</span> Add to Cart
+              </button>
+            </div>
+          </div>
+
+          <!-- Chosen Connected Appliances in Cart -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-xs font-semibold text-brand-warm/80 px-1">
+              <span>CHOSEN APPLIANCES IN LOAD CART</span>
+              <span class="text-[10px] text-brand-warm/50 font-mono">Qty • Daily Hrs • Weekly Days</span>
+            </div>
+
+            <div id="appliancesList" class="space-y-2.5">
+              <!-- Rendered by JavaScript -->
+            </div>
           </div>
         </div>
 
@@ -1248,18 +1278,46 @@
               </span>
             </div>
 
-            <!-- PRIMARY LAYER 1: Repayment Tenure Slider (3 to 36 Months) -->
+            <!-- DEDICATED SIZING REQUIREMENTS DISPLAY (Inverter Size, Battery Size & PV Power Needed) -->
+            <div class="p-4 rounded-2xl bg-black/60 border border-brand-amber/30 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-bold text-brand-amber uppercase tracking-wider font-mono">
+                  Calculated System Sizing Required
+                </span>
+                <span class="text-[10px] text-emerald-400 font-mono">COREN Electrical Standard</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2 text-xs font-mono">
+                <div class="p-2.5 rounded-xl bg-white/5 border border-white/5 space-y-0.5">
+                  <span class="text-[10px] text-brand-warm/60 block">Inverter Size</span>
+                  <div id="calcInverterSizeCard" class="text-sm font-bold text-white">5.0 kVA</div>
+                  <span id="calcInverterSurgeCard" class="text-[9px] text-brand-amber block">Surge: 6.2 kVA</span>
+                </div>
+                <div class="p-2.5 rounded-xl bg-white/5 border border-white/5 space-y-0.5">
+                  <span class="text-[10px] text-brand-warm/60 block">Battery Size</span>
+                  <div id="calcBatterySizeCard" class="text-sm font-bold text-brand-teal">10.24 kWh</div>
+                  <span class="text-[9px] text-emerald-400 block">80% DoD LiFePO4</span>
+                </div>
+                <div class="p-2.5 rounded-xl bg-white/5 border border-white/5 space-y-0.5">
+                  <span class="text-[10px] text-brand-warm/60 block">PV Power</span>
+                  <div id="calcPVPowerCard" class="text-sm font-bold text-brand-sky">5.40 kWp</div>
+                  <span class="text-[9px] text-brand-sky/80 block">Tier-1 Array</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- PRIMARY LAYER 1: Repayment Tenure Slider (12 to 60 Months / 5 Years) -->
             <div class="space-y-1.5 p-3.5 rounded-2xl bg-white/5 border border-white/5">
               <div class="flex justify-between items-center text-xs">
                 <span class="text-brand-warm/80 font-medium">Repayment Tenure:</span>
-                <span id="calcTenureLabel" class="font-mono font-bold text-brand-amber">24 Months</span>
+                <span id="calcTenureLabel" class="font-mono font-bold text-brand-amber">36 Months (3 Years)</span>
               </div>
-              <input type="range" id="calcTenureSlider" min="3" max="36" step="3" value="24" oninput="runCalculator()" class="w-full h-2 bg-white/10 rounded-lg cursor-pointer accent-brand-amber">
+              <input type="range" id="calcTenureSlider" min="12" max="60" step="6" value="36" oninput="runCalculator()" class="w-full h-2 bg-white/10 rounded-lg cursor-pointer accent-brand-amber">
               <div class="flex justify-between text-[10px] text-brand-warm/50 font-mono">
-                <span>3m</span>
                 <span>12m</span>
                 <span>24m</span>
                 <span>36m</span>
+                <span>48m</span>
+                <span>60m (5 Yrs)</span>
               </div>
             </div>
 
@@ -2686,20 +2744,455 @@
         </div>
 
         <!-- Portal Navigation Tabs -->
-        <div class="flex items-center gap-3 my-6 border-b border-white/10 pb-3 text-xs">
-          <button onclick="switchPortalTab('telemetry')" id="pTabTelemetry" class="px-4 py-2 rounded-xl bg-brand-amber text-brand-dark font-bold transition shadow-md">
-            Live Telemetry &amp; Power Flow
+        <div class="flex items-center gap-2 sm:gap-3 my-5 border-b border-white/10 pb-3 text-xs overflow-x-auto">
+          <button onclick="switchPortalTab('analytics')" id="pTabAnalytics" class="px-4 py-2 rounded-xl bg-brand-amber text-brand-dark font-bold transition shadow-md whitespace-nowrap flex items-center gap-1.5">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            <span>Financial Story &amp; Analytics</span>
           </button>
-          <button onclick="switchPortalTab('paygo')" id="pTabPaygo" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 text-white font-medium transition">
-            PAYGo Contract &amp; STS Token
+          <button onclick="switchPortalTab('telemetry')" id="pTabTelemetry" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 text-white font-medium transition whitespace-nowrap flex items-center gap-1.5">
+            <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+            <span>Live Power Flow</span>
           </button>
-          <button onclick="switchPortalTab('hardware')" id="pTabHardware" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 text-white font-medium transition">
-            Hardware &amp; Engineering Passport
+          <button onclick="switchPortalTab('paygo')" id="pTabPaygo" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 text-white font-medium transition whitespace-nowrap flex items-center gap-1.5">
+            <i data-lucide="credit-card" class="w-3.5 h-3.5"></i>
+            <span>PAYGo Wallet &amp; Token</span>
+          </button>
+          <button onclick="switchPortalTab('hardware')" id="pTabHardware" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 text-white font-medium transition whitespace-nowrap flex items-center gap-1.5">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+            <span>Hardware Passport</span>
           </button>
         </div>
 
+        <!-- TAB 0: Natural-Language Storyteller & Triple-Source Analytics (PRIMARY VIEW) -->
+        <div id="portalSectionAnalytics" class="space-y-6">
+
+          <!-- A. Customer's Subscribed Package Banner (Direct Customer Package Viewport) -->
+          <div class="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-black/40 border border-brand-sky/20">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-brand-sky/15 border border-brand-sky/30 flex items-center justify-center text-brand-sky">
+                <i data-lucide="package-check" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <span class="text-brand-warm/60 font-bold uppercase tracking-wider text-[10px] block">Customer's Chosen Subscribed Package</span>
+                <h3 id="portalPackageName" class="text-white font-heading font-extrabold text-sm sm:text-base">5.4 kWp Executive Solar Home (Hybrid SPF 5000ES)</h3>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="portalPackageTierBadge" class="text-xs px-3 py-1 rounded-full bg-brand-amber/15 text-brand-amber border border-brand-amber/30 font-mono font-bold">
+                🏡 Residential Subscribed Plan
+              </span>
+              <span id="portalPackageHardwareBadge" class="text-xs px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-mono font-semibold">
+                10.24 kWh LiFePO4
+              </span>
+            </div>
+          </div>
+
+          <!-- B. Narrative Headline Panel (Natural Language Data Storyteller) -->
+          <div class="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border border-brand-sky/30 shadow-xl relative overflow-hidden">
+            <div class="flex items-start justify-between gap-4 mb-3">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-sky/15 border border-brand-sky/30 text-brand-sky text-xs font-bold uppercase tracking-wider">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-brand-sky"></i>
+                <span>Executive Energy &amp; Financial Story</span>
+              </div>
+              <span class="text-[10px] text-brand-warm/50 font-mono">Telemetry Window: Rolling 30 Days</span>
+            </div>
+            <h4 id="narrativeHeadline" class="text-lg sm:text-xl font-heading font-extrabold text-white leading-snug">
+              Zero-Interruption Clean Energy &amp; ₦39,000 Monthly Fuel Displacement
+            </h4>
+            <p id="narrativeStoryBody" class="text-xs sm:text-sm text-brand-warm/85 mt-2 leading-relaxed">
+              Your system harvested 18% more solar power this month due to clear weather. By relying on your battery storage during the evening grid collapse, you completely avoided 42 hours of utility blackouts and saved an estimated ₦39,000 that would have otherwise been spent on generator petrol.
+            </p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 pt-4 border-t border-white/10 text-xs">
+              <div class="bg-black/30 p-2.5 rounded-xl border border-white/5">
+                <span class="text-brand-warm/60 text-[10px] uppercase block">Irradiance Anomaly</span>
+                <span id="narrativeHarvestGain" class="text-brand-amber font-mono font-bold text-sm">+18.2% Harvest</span>
+              </div>
+              <div class="bg-black/30 p-2.5 rounded-xl border border-white/5">
+                <span class="text-brand-warm/60 text-[10px] uppercase block">Grid Blackouts Averted</span>
+                <span id="narrativeBlackoutHours" class="text-emerald-400 font-mono font-bold text-sm">42.0 Hours</span>
+              </div>
+              <div class="bg-black/30 p-2.5 rounded-xl border border-white/5">
+                <span class="text-brand-warm/60 text-[10px] uppercase block">Fuel Displaced</span>
+                <span id="narrativeFuelDisplaced" class="text-brand-sky font-mono font-bold text-sm">114.5 Liters</span>
+              </div>
+              <div class="bg-black/30 p-2.5 rounded-xl border border-white/5">
+                <span class="text-brand-warm/60 text-[10px] uppercase block">Net Money Saved vs Fuel</span>
+                <span id="narrativeNetSavings" class="text-emerald-400 font-mono font-extrabold text-sm">+₦39,000 / mo</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- C. Segment-Specific Visual Metrics Viewports -->
+          <div>
+            <!-- 1. Residential Viewport -->
+            <div id="portalViewportResidential" class="grid sm:grid-cols-3 gap-4">
+              <div class="bg-black/40 p-4 rounded-2xl border border-white/5 space-y-2">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                  <span>Wallet Days Remaining</span>
+                  <i data-lucide="credit-card" class="w-4 h-4 text-brand-amber"></i>
+                </div>
+                <div class="text-2xl font-heading font-extrabold text-brand-amber font-mono">19.4 <span class="text-xs font-normal">Days</span></div>
+                <div class="flex items-center justify-between text-[10px] pt-1 border-t border-white/5 text-brand-warm/70">
+                  <span>DVA: <strong class="text-white font-mono">9928174021</strong></span>
+                  <span class="text-emerald-400 font-semibold">● ACTIVE</span>
+                </div>
+              </div>
+
+              <div class="bg-black/40 p-4 rounded-2xl border border-white/5 space-y-2">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                  <span>Active Appliances Powered</span>
+                  <i data-lucide="home" class="w-4 h-4 text-brand-teal"></i>
+                </div>
+                <div class="text-2xl font-heading font-extrabold text-brand-teal font-mono">815 <span class="text-xs font-normal">W Active</span></div>
+                <p class="text-[10px] text-brand-warm/70 pt-1 border-t border-white/5">
+                  1.0HP AC (540W) • Deep Freezer (180W) • Starlink (95W)
+                </p>
+              </div>
+
+              <div class="bg-black/40 p-4 rounded-2xl border border-white/5 space-y-2">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                  <span>Household Fuel Offset</span>
+                  <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
+                </div>
+                <div class="text-2xl font-heading font-extrabold text-emerald-400 font-mono">+₦142,500 <span class="text-xs font-normal">Displaced</span></div>
+                <p class="text-[10px] text-emerald-400/80 pt-1 border-t border-white/5">
+                  Net cash retained: <strong class="text-white">+₦39,000</strong> over fixed ₦185k installment
+                </p>
+              </div>
+            </div>
+
+            <!-- 2. Commercial (SME) Viewport -->
+            <div id="portalViewportCommercial" class="hidden grid sm:grid-cols-3 gap-4">
+              <div class="bg-black/40 p-4 rounded-2xl border border-white/5 space-y-2">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                  <span>Peak Demand Shaving</span>
+                  <i data-lucide="zap-off" class="w-4 h-4 text-brand-amber"></i>
+                </div>
+                <div class="text-2xl font-heading font-extrabold text-brand-amber font-mono">4.8 <span class="text-xs font-normal">kW Shaved</span></div>
+                <p class="text-[10px] text-brand-warm/70 pt-1 border-t border-white/5">
+                  Peak window: 11:30 AM – 3:00 PM • Peak tariff surcharge bypassed
+                </p>
+              </div>
+
+              <div class="bg-black/40 p-4 rounded-2xl border border-white/5 space-y-2">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                  <span>Business Downtime Avoided</span>
+                  <i data-lucide="shield-alert" class="w-4 h-4 text-brand-teal"></i>
+                </div>
+                <div class="text-2xl font-heading font-extrabold text-brand-teal font-mono">62.0 <span class="text-xs font-normal">Hours (99.8%)</span></div>
+                <p class="text-[10px] text-brand-warm/70 pt-1 border-t border-white/5">
+                  Zero downtime for POS terminals, cold-chain vaccines &amp; labs
+                </p>
+              </div>
+
+              <div class="bg-black/40 p-4 rounded-2xl border border-white/5 space-y-2">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                  <span>Commercial Cash Savings</span>
+                  <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
+                </div>
+                <div class="text-2xl font-heading font-extrabold text-emerald-400 font-mono">+₦184,000 <span class="text-xs font-normal">/ mo</span></div>
+                <p class="text-[10px] text-emerald-400/80 pt-1 border-t border-white/5">
+                  ₦650,000 temperature-sensitive inventory loss eliminated
+                </p>
+              </div>
+            </div>
+
+            <!-- 3. Small Industrial Viewport -->
+            <div id="portalViewportIndustrial" class="hidden grid sm:grid-cols-3 gap-4">
+              <div class="bg-black/40 p-4 rounded-2xl border border-white/5 space-y-2">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                  <span>Technical Efficiency (PR)</span>
+                  <i data-lucide="cpu" class="w-4 h-4 text-brand-sky"></i>
+                </div>
+                <div class="text-2xl font-heading font-extrabold text-brand-sky font-mono">84.6% <span class="text-xs font-normal">PR</span></div>
+                <p class="text-[10px] text-brand-warm/70 pt-1 border-t border-white/5">
+                  Specific Yield: 4.82 kWh/kWp • Temperature derate: -0.38%/°C
+                </p>
+              </div>
+
+              <div class="bg-black/40 p-4 rounded-2xl border border-white/5 space-y-2">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                  <span>Power Factor Stability</span>
+                  <i data-lucide="activity" class="w-4 h-4 text-brand-teal"></i>
+                </div>
+                <div class="text-2xl font-heading font-extrabold text-brand-teal font-mono">0.98 <span class="text-xs font-normal">PF (No Penalty)</span></div>
+                <p class="text-[10px] text-brand-warm/70 pt-1 border-t border-white/5">
+                  Saved ₦92,000 kVA reactive surcharge • 50.04 Hz Frequency
+                </p>
+              </div>
+
+              <div class="bg-black/40 p-4 rounded-2xl border border-white/5 space-y-2">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                  <span>3-Phase Current Balance</span>
+                  <i data-lucide="sliders" class="w-4 h-4 text-emerald-400"></i>
+                </div>
+                <div class="text-2xl font-heading font-extrabold text-emerald-400 font-mono">2.4% <span class="text-xs font-normal">Imbalance</span></div>
+                <p class="text-[10px] text-brand-warm/70 pt-1 border-t border-white/5 font-mono">
+                  L1: 44.2A • L2: 42.1A • L3: 43.0A (IEC &lt; 5% Compliant)
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- D. Core Energy Graph (Historical Generation vs. Load Demand with Transition Point) -->
+          <div class="bg-black/40 p-5 sm:p-6 rounded-3xl border border-white/10 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h4 class="font-heading font-bold text-white text-sm">
+                  Historical Generation vs. Facility Load Demand
+                </h4>
+                <p class="text-[11px] text-brand-warm/60">
+                  Dual-axis telemetry tracking solar array output vs facility building consumption.
+                </p>
+              </div>
+              <div class="inline-flex rounded-xl bg-white/5 p-1 border border-white/10 text-xs font-semibold">
+                <button onclick="setGraphTimeframe('24h')" id="btnTf24h" class="px-3 py-1 rounded-lg bg-brand-amber text-brand-dark font-bold transition">24 Hours</button>
+                <button onclick="setGraphTimeframe('7d')" id="btnTf7d" class="px-3 py-1 rounded-lg text-brand-warm/70 hover:text-white transition">7 Days</button>
+                <button onclick="setGraphTimeframe('30d')" id="btnTf30d" class="px-3 py-1 rounded-lg text-brand-warm/70 hover:text-white transition">30 Days</button>
+              </div>
+            </div>
+
+            <!-- Transition Point Callout Badge -->
+            <div class="p-3 rounded-2xl bg-brand-amber/10 border border-brand-amber/30 flex items-center justify-between gap-3 text-xs">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-brand-amber animate-ping"></span>
+                <span class="font-bold text-white">🌟 Solar Autonomy Transition Point:</span>
+                <span id="graphTransitionText" class="text-brand-amber font-mono font-bold">08:45 AM (1.25 kW crossover)</span>
+              </div>
+              <span class="text-[11px] text-brand-warm/70 hidden sm:inline font-mono">
+                100% building self-supply achieved; battery saturation begins
+              </span>
+            </div>
+
+            <!-- Responsive SVG Dual-Axis Chart Canvas -->
+            <div class="relative w-full h-64 bg-slate-950/80 rounded-2xl border border-white/5 p-4 flex flex-col justify-between">
+              
+              <!-- Legend & SI Suffix Indicator -->
+              <div class="flex items-center justify-between text-[11px] text-brand-warm/70">
+                <div class="flex items-center gap-4">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-3 h-3 rounded-full bg-brand-amber inline-block"></span>
+                    <span class="text-white font-medium">Solar Array Output (<span class="si-unit">kW</span>)</span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-3 h-3 rounded-full bg-brand-sky inline-block"></span>
+                    <span class="text-white font-medium">Facility Load Demand (<span class="si-unit">kW</span>)</span>
+                  </div>
+                </div>
+                <span class="text-[10px] font-mono text-brand-warm/50">Auto-Scaling SI Units</span>
+              </div>
+
+              <!-- SVG Curve Render -->
+              <div class="w-full h-44 relative">
+                <svg id="portalDualAxisSvg" class="w-full h-full overflow-visible" viewBox="0 0 800 160" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="solarHarvestGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#FFBF00" stop-opacity="0.35" />
+                      <stop offset="100%" stop-color="#FFBF00" stop-opacity="0.0" />
+                    </linearGradient>
+                    <linearGradient id="facilityLoadGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#0EA5E9" stop-opacity="0.25" />
+                      <stop offset="100%" stop-color="#0EA5E9" stop-opacity="0.0" />
+                    </linearGradient>
+                  </defs>
+
+                  <!-- Horizontal Grid Lines -->
+                  <line x1="0" y1="20" x2="800" y2="20" stroke="#334155" stroke-dasharray="3,3" stroke-width="0.75" />
+                  <line x1="0" y1="60" x2="800" y2="60" stroke="#334155" stroke-dasharray="3,3" stroke-width="0.75" />
+                  <line x1="0" y1="100" x2="800" y2="100" stroke="#334155" stroke-dasharray="3,3" stroke-width="0.75" />
+                  <line x1="0" y1="140" x2="800" y2="140" stroke="#334155" stroke-width="1" />
+
+                  <!-- Solar Harvest Area & Line (Amber #FFBF00) -->
+                  <polygon id="svgSolarPolygon" points="0,140 100,140 200,136 290,95 350,60 480,25 580,48 680,126 800,140" fill="url(#solarHarvestGrad)" />
+                  <polyline id="svgSolarPolyline" points="0,140 100,140 200,136 290,95 350,60 480,25 580,48 680,126 800,140" fill="none" stroke="#FFBF00" stroke-width="3" stroke-linecap="round" />
+
+                  <!-- Facility Load Demand Area & Line (Clean Sky Blue #0EA5E9) -->
+                  <polygon id="svgLoadPolygon" points="0,125 100,128 200,118 290,95 350,94 480,82 580,90 680,98 800,122" fill="url(#facilityLoadGrad)" />
+                  <polyline id="svgLoadPolyline" points="0,125 100,128 200,118 290,95 350,94 480,82 580,90 680,98 800,122" fill="none" stroke="#0EA5E9" stroke-width="2.5" stroke-dasharray="4,2" stroke-linecap="round" />
+
+                  <!-- Explicit Visual Anchor: Solar Autonomy Transition Point Pin -->
+                  <g id="svgTransitionMarker" transform="translate(290, 95)">
+                    <circle r="8" fill="#FFBF00" fill-opacity="0.3" class="animate-ping" />
+                    <circle r="5" fill="#FFBF00" stroke="#0F172A" stroke-width="2" />
+                    <line x1="0" y1="-8" x2="0" y2="-30" stroke="#FFBF00" stroke-width="1.5" stroke-dasharray="2,2" />
+                    <rect x="-55" y="-50" width="110" height="20" rx="6" fill="#0F172A" stroke="#FFBF00" stroke-width="1" />
+                    <text x="0" y="-36" fill="#FFBF00" font-size="9" font-family="monospace" font-weight="bold" text-anchor="middle">
+                      ★ AUTONOMY: 08:45 AM
+                    </text>
+                  </g>
+                </svg>
+              </div>
+
+              <!-- Time Axis Labels -->
+              <div id="portalTimeLabels" class="flex justify-between text-[10px] text-brand-warm/60 font-mono px-2 pt-1 border-t border-white/5">
+                <span>00:00</span>
+                <span>04:00</span>
+                <span>08:00</span>
+                <span class="text-brand-amber font-bold">08:45 (Autonomy)</span>
+                <span>12:00 (Peak)</span>
+                <span>16:00</span>
+                <span>20:00</span>
+                <span>24:00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- E. The Financial Comparison Block (Triple-Source Cost Tracker) -->
+          <div class="bg-black/40 p-5 sm:p-6 rounded-3xl border border-white/10 space-y-5">
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/10">
+              <div>
+                <h4 class="font-heading font-bold text-white text-sm">
+                  Triple-Source Cost &amp; Reliability Tracker (Solar PAYG vs. Grid vs. Gen)
+                </h4>
+                <p class="text-[11px] text-brand-warm/60">
+                  Direct financial comparison of your active solar asset against historical utility baselines.
+                </p>
+              </div>
+              <span class="text-[10px] px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-mono font-bold">
+                Levelized Savings: +68.4% Cheaper than Generator
+              </span>
+            </div>
+
+            <!-- Triple Source Comparison Matrix Cards -->
+            <div class="grid md:grid-cols-3 gap-4">
+              
+              <!-- Source 1: SkyGrid Growatt Solar PAYG -->
+              <div class="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-500/40 space-y-3">
+                <div class="flex justify-between items-center">
+                  <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">SkyGrid Solar Asset</span>
+                  <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono">PRIMARY</span>
+                </div>
+                <div>
+                  <span class="text-[10px] text-brand-warm/60 uppercase block">Levelized Cost / kWh</span>
+                  <div class="text-2xl font-heading font-black text-emerald-400 font-mono">₦68 <span class="text-xs font-normal text-emerald-300">/ kWh</span></div>
+                </div>
+                <div class="space-y-1.5 text-[11px] text-brand-warm/80 pt-2 border-t border-emerald-500/20 font-mono">
+                  <div class="flex justify-between"><span>Monthly Outlay:</span> <strong class="text-white">₦185,000 fixed</strong></div>
+                  <div class="flex justify-between"><span>Availability:</span> <strong class="text-emerald-400">99.8% Continuous</strong></div>
+                  <div class="flex justify-between"><span>Maintenance:</span> <strong class="text-white">Included (SLA 4h)</strong></div>
+                  <div class="flex justify-between"><span>Noise &amp; Fumes:</span> <strong class="text-emerald-400">0 dB • Zero Smoke</strong></div>
+                </div>
+              </div>
+
+              <!-- Source 2: National Grid (Band A NERC) -->
+              <div class="p-4 rounded-2xl bg-slate-900 border border-slate-700/80 space-y-3">
+                <div class="flex justify-between items-center">
+                  <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">National Grid (Band A)</span>
+                  <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono">ERRATIC</span>
+                </div>
+                <div>
+                  <span class="text-[10px] text-brand-warm/60 uppercase block">What You Would Have Spent</span>
+                  <div id="gridWouldHaveSpentVal" class="text-2xl font-heading font-black text-slate-200 font-mono">₦127,908 <span class="text-xs font-normal text-slate-400">/ mo</span></div>
+                </div>
+                <div class="space-y-1.5 text-[11px] text-brand-warm/70 pt-2 border-t border-slate-800 font-mono">
+                  <div class="flex justify-between"><span>Solar Energy Consumed:</span> <strong id="gridKWhVal" class="text-white">612 kWh / mo</strong></div>
+                  <div class="flex justify-between"><span>NERC Band A Tariff:</span> <strong class="text-brand-amber">₦209 / kWh</strong></div>
+                  <div class="flex justify-between"><span>Calculation Formula:</span> <strong id="gridFormulaVal" class="text-white text-[10px]">612 × ₦209 = ₦127,908</strong></div>
+                  <div class="flex justify-between"><span>Grid Blackout Loss:</span> <strong class="text-rose-400">42 hrs/mo unserved</strong></div>
+                </div>
+              </div>
+
+              <!-- Source 3: Petrol / Diesel Generator -->
+              <div class="p-4 rounded-2xl bg-rose-950/30 border border-rose-800/40 space-y-3">
+                <div class="flex justify-between items-center">
+                  <span class="text-xs font-bold text-rose-400 uppercase tracking-wider">Fossil Generator</span>
+                  <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-mono">POLLUTING</span>
+                </div>
+                <div>
+                  <span class="text-[10px] text-brand-warm/60 uppercase block">What Generator Would Have Cost</span>
+                  <div id="genWouldHaveSpentVal" class="text-2xl font-heading font-black text-rose-400 font-mono">₦301,250 <span class="text-xs font-normal text-rose-300">/ mo</span></div>
+                </div>
+                <div class="space-y-1.5 text-[11px] text-brand-warm/70 pt-2 border-t border-rose-800/30 font-mono">
+                  <div class="flex justify-between"><span>Generator Efficiency:</span> <strong class="text-brand-amber">1 Liter fuels 2.8 kWh</strong></div>
+                  <div class="flex justify-between"><span>Fuel Required:</span> <strong id="genLitersNeededVal" class="text-white">218.6 Liters / mo</strong></div>
+                  <div class="flex justify-between"><span>Fuel Cost @ ₦1,250/L:</span> <strong id="genFuelCostVal" class="text-rose-400">₦273,250</strong></div>
+                  <div class="flex justify-between"><span>Routine Engine Service:</span> <strong class="text-rose-300">₦28,000 / mo</strong></div>
+                  <div class="flex justify-between"><span>Calculation Formula:</span> <strong id="genFormulaVal" class="text-rose-300 text-[10px]">(612÷2.8)L × ₦1,250 + ₦28k</strong></div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Dynamic Interactive Fuel Cost & Generator Yield Simulator -->
+            <div class="p-4 rounded-2xl bg-slate-950/70 border border-white/5 space-y-4">
+              <span class="text-xs font-bold uppercase tracking-wider text-white block">
+                Interactive Engineering Simulator: "Energy Consumed × Tariff vs. Liter/kWh Fuel Model"
+              </span>
+              <div class="grid sm:grid-cols-3 gap-4">
+                <div>
+                  <div class="flex justify-between text-xs mb-1.5">
+                    <span class="text-brand-warm/70">Local Fuel Price:</span>
+                    <span id="labelFuelPrice" class="font-mono font-bold text-brand-amber">₦1,250 / Liter</span>
+                  </div>
+                  <input type="range" id="sliderFuelPrice" min="800" max="2200" step="50" value="1250" oninput="recalcTripleSourceSavings()"
+                    class="w-full h-2 bg-slate-800 rounded-lg cursor-pointer accent-brand-amber">
+                  <div class="flex justify-between text-[10px] text-brand-warm/50 font-mono mt-1">
+                    <span>₦800/L</span>
+                    <span>₦1,250/L</span>
+                    <span>₦2,200/L</span>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-xs mb-1.5">
+                    <span class="text-brand-warm/70">Generator Specific Yield:</span>
+                    <span id="labelGenYield" class="font-mono font-bold text-brand-sky">2.8 kWh / Liter</span>
+                  </div>
+                  <input type="range" id="sliderGenKWhPerLiter" min="2.0" max="3.5" step="0.1" value="2.8" oninput="recalcTripleSourceSavings()"
+                    class="w-full h-2 bg-slate-800 rounded-lg cursor-pointer accent-brand-sky">
+                  <div class="flex justify-between text-[10px] text-brand-warm/50 font-mono mt-1">
+                    <span>2.0 kWh/L (Small)</span>
+                    <span>2.8 kWh/L (Standard)</span>
+                    <span>3.5 kWh/L (Diesel)</span>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-xs mb-1.5">
+                    <span class="text-brand-warm/70">Monthly Solar kWh Consumed:</span>
+                    <span id="labelMonthlyKWh" class="font-mono font-bold text-emerald-400">612 kWh / Month</span>
+                  </div>
+                  <input type="range" id="sliderMonthlyKWh" min="200" max="2000" step="20" value="612" oninput="recalcTripleSourceSavings()"
+                    class="w-full h-2 bg-slate-800 rounded-lg cursor-pointer accent-emerald-400">
+                  <div class="flex justify-between text-[10px] text-brand-warm/50 font-mono mt-1">
+                    <span>200 kWh</span>
+                    <span>612 kWh</span>
+                    <span>2,000 kWh</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Computed Dynamic Net Savings -->
+              <div class="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/30 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div>
+                  <span class="text-brand-warm/70 block">National Grid Spend Averted:</span>
+                  <span id="resGridSpend" class="text-slate-200 font-mono font-bold text-sm">₦127,908 / mo</span>
+                </div>
+                <div>
+                  <span class="text-brand-warm/70 block">Generator Outlay Averted:</span>
+                  <span id="resFuelSpend" class="text-rose-400 font-mono font-bold text-sm">₦301,250 / mo</span>
+                </div>
+                <div>
+                  <span class="text-brand-warm/70 block">Fixed Solar Subscription:</span>
+                  <span id="resSolarSub" class="text-white font-mono font-bold text-sm">₦185,000 / mo</span>
+                </div>
+                <div>
+                  <span class="text-brand-warm/70 block">Net Monthly Money Saved:</span>
+                  <span id="resNetSavings" class="text-emerald-400 font-mono font-extrabold text-base">+₦116,250 / mo</span>
+                </div>
+                <div>
+                  <span class="text-brand-warm/70 block">Projected 3-Year Accumulation:</span>
+                  <span id="res3YrSavings" class="text-brand-sky font-mono font-extrabold text-base">₦4,185,000</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
         <!-- TAB 1: Live Telemetry & Power Flow -->
-        <div id="portalSectionTelemetry" class="space-y-6">
+        <div id="portalSectionTelemetry" class="hidden space-y-6">
           <!-- 4 Telemetry Gauges -->
           <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="bg-black/40 p-4 rounded-2xl border border-white/5">
@@ -2739,44 +3232,207 @@
             </div>
           </div>
 
-          <!-- Connected Appliances Live Status -->
-          <div class="bg-black/30 p-5 rounded-2xl border border-white/5">
-            <h4 class="font-heading font-bold text-white text-xs uppercase tracking-wider mb-3">Live Circuit Load Distribution</h4>
-            <div class="grid sm:grid-cols-4 gap-3 text-xs">
-              <div class="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between">
-                <div>
-                  <span class="font-bold text-white block">1.0 HP Inverter AC</span>
-                  <span class="text-[10px] text-emerald-400 font-mono">Drawing 540W</span>
+          <!-- B. Machine Learning Predictive Horizon & LocalGridAgent AI Advisory Pane -->
+          <div class="space-y-4">
+            
+            <!-- 1. ML Model Horizon Forecast (Solar PV Generation & Load Demand Prediction) -->
+            <div class="bg-black/40 p-5 sm:p-6 rounded-3xl border border-white/10 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/10">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-xl bg-brand-sky/20 border border-brand-sky/30 flex items-center justify-center text-brand-sky">
+                    <i data-lucide="cpu" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-heading font-bold text-white text-xs sm:text-sm">
+                      24-Hour Predictive Horizon: Solar Generation vs. Facility Load Demand
+                    </h4>
+                    <p class="text-[11px] text-brand-warm/60">
+                      ML Intelligence Engine (LightGBM + NeuralProphet) • 96.8% Confidence Interval • Open-Meteo GHI Solar Feed
+                    </p>
+                  </div>
                 </div>
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 status-pulse"></span>
+                <span class="text-[10px] px-2.5 py-1 rounded-full bg-brand-sky/15 text-brand-sky font-mono font-bold border border-brand-sky/30">
+                  ● ML Model: LightGBM-SolarNet-v2
+                </span>
               </div>
-              <div class="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between">
-                <div>
-                  <span class="font-bold text-white block">Deep Chest Freezer</span>
-                  <span class="text-[10px] text-emerald-400 font-mono">Drawing 180W</span>
+
+              <!-- 4 Forecast Summary KPI Tiles -->
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+                  <span class="text-brand-warm/60 text-[10px] uppercase block">Predicted Day Harvest</span>
+                  <span id="pForecastHarvest" class="text-brand-amber font-mono font-bold text-base">24.5 kWh</span>
+                  <span class="text-[10px] text-emerald-400 block mt-0.5">+18.2% vs 30d Mean</span>
                 </div>
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 status-pulse"></span>
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+                  <span class="text-brand-warm/60 text-[10px] uppercase block">Predicted Day Consumption</span>
+                  <span id="pForecastDemand" class="text-brand-sky font-mono font-bold text-base">16.4 kWh</span>
+                  <span class="text-[10px] text-brand-warm/60 block mt-0.5">Peak: 1.65 kW @ 19:30</span>
+                </div>
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+                  <span class="text-brand-warm/60 text-[10px] uppercase block">Night Battery SoC Floor</span>
+                  <span id="pForecastBattFloor" class="text-emerald-400 font-mono font-bold text-base">64% SoC</span>
+                  <span class="text-[10px] text-emerald-400 block mt-0.5">High Safety Reserve</span>
+                </div>
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+                  <span class="text-brand-warm/60 text-[10px] uppercase block">Aux Backup Runtime Needed</span>
+                  <span id="pForecastGenHours" class="text-white font-mono font-bold text-base">0.0 Hours</span>
+                  <span class="text-[10px] text-emerald-400 block mt-0.5">100% Solar Autonomy</span>
+                </div>
               </div>
-              <div class="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between">
-                <div>
-                  <span class="font-bold text-white block">Starlink &amp; Home Office</span>
-                  <span class="text-[10px] text-emerald-400 font-mono">Drawing 95W</span>
+
+              <!-- Visual 24h Horizon Predictive SVG Chart -->
+              <div class="bg-slate-950/80 p-4 rounded-2xl border border-white/5 space-y-2">
+                <div class="flex items-center justify-between text-[11px] text-brand-warm/70">
+                  <div class="flex items-center gap-4">
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-1.5 rounded bg-brand-amber inline-block"></span> Forecasted Solar Generation (kW)</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-1.5 rounded bg-brand-sky inline-block"></span> Predicted Facility Load (kW)</span>
+                  </div>
+                  <span class="text-[10px] font-mono text-emerald-400">100% Self-Powered Window: 08:45 AM – 18:30 PM</span>
                 </div>
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 status-pulse"></span>
-              </div>
-              <div class="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between">
-                <div>
-                  <span class="font-bold text-white block">1.0 HP Borehole Pump</span>
-                  <span class="text-[10px] text-brand-warm/50 font-mono">Standby (0W)</span>
+                <div class="h-28 w-full">
+                  <svg viewBox="0 0 700 100" class="w-full h-full overflow-visible" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="mlSolarGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#FFBF00" stop-opacity="0.3" />
+                        <stop offset="100%" stop-color="#FFBF00" stop-opacity="0.0" />
+                      </linearGradient>
+                    </defs>
+                    <line x1="0" y1="90" x2="700" y2="90" stroke="#334155" stroke-width="1" />
+                    <!-- Solar Curve -->
+                    <polygon points="0,90 100,90 180,88 250,55 350,15 450,30 540,82 620,90 700,90" fill="url(#mlSolarGrad)" />
+                    <polyline points="0,90 100,90 180,88 250,55 350,15 450,30 540,82 620,90 700,90" fill="none" stroke="#FFBF00" stroke-width="2.5" />
+                    <!-- Load Curve -->
+                    <polyline points="0,78 100,82 180,72 250,55 350,52 450,48 540,42 620,58 700,76" fill="none" stroke="#0EA5E9" stroke-width="2" stroke-dasharray="4,2" />
+                  </svg>
                 </div>
-                <span class="w-2.5 h-2.5 rounded-full bg-white/20"></span>
+                <div class="flex justify-between text-[10px] text-brand-warm/50 font-mono">
+                  <span>00:00</span>
+                  <span>04:00</span>
+                  <span>08:00</span>
+                  <span class="text-brand-amber font-bold">12:00 (Peak 4.9 kW)</span>
+                  <span>16:00</span>
+                  <span class="text-brand-sky font-bold">19:30 (Evening Peak)</span>
+                  <span>24:00</span>
+                </div>
               </div>
             </div>
+
+            <!-- 2. AI Agent Operational Advisory & Economic Dispatch Pane -->
+            <div class="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border border-brand-teal/40 shadow-xl space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/10">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-xl bg-brand-teal/20 border border-brand-teal/30 flex items-center justify-center text-brand-teal">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-heading font-bold text-white text-xs sm:text-sm">
+                      LocalGridAgent™ CleanTech AI Advisor &amp; Economic Dispatch
+                    </h4>
+                    <span class="text-[10px] text-brand-warm/60">Autonomous Financial Optimization &bull; Real-Time Tariff Arbitrage</span>
+                  </div>
+                </div>
+                <span class="text-[10px] px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-mono font-bold border border-emerald-500/30 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span>AI RECOMMENDATION ACTIVE</span>
+                </span>
+              </div>
+
+              <!-- Recommendation Banner -->
+              <div class="p-3.5 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5">
+                  <span class="text-lg">🌟</span>
+                  <div>
+                    <span class="text-xs font-heading font-extrabold text-white block">
+                      RECOMMENDATION: REMAIN 100% ON SOLAR (DO NOT RUN GENERATOR OR GRID)
+                    </span>
+                    <span class="text-[11px] text-emerald-300">
+                      Full overnight battery self-sufficiency guaranteed with 64% sunrise safety floor.
+                    </span>
+                  </div>
+                </div>
+                <span class="text-[11px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+                  Economic Score: 98.4/100
+                </span>
+              </div>
+
+              <!-- Economic Analysis Comparison Matrix -->
+              <div class="grid sm:grid-cols-3 gap-3 text-xs font-mono">
+                <div class="p-3 rounded-xl bg-black/40 border border-emerald-500/20 space-y-1">
+                  <span class="text-[10px] text-emerald-400 font-bold block uppercase">Solar Asset Marginal Cost</span>
+                  <div class="text-base font-extrabold text-white">₦0.00 <span class="text-[10px] text-brand-warm/60 font-normal">/ kWh surplus</span></div>
+                  <span class="text-[10px] text-brand-warm/70 block">Fixed asset levelized @ ₦68/kWh</span>
+                </div>
+                <div class="p-3 rounded-xl bg-black/40 border border-slate-700/50 space-y-1">
+                  <span class="text-[10px] text-slate-400 font-bold block uppercase">National Grid Band A Alternative</span>
+                  <div class="text-base font-extrabold text-slate-300">₦209.00 <span class="text-[10px] text-brand-warm/60 font-normal">/ kWh</span></div>
+                  <span class="text-[10px] text-amber-400 block">Erratic • Frequent voltage sags</span>
+                </div>
+                <div class="p-3 rounded-xl bg-black/40 border border-rose-900/40 space-y-1">
+                  <span class="text-[10px] text-rose-400 font-bold block uppercase">Fossil Generator Alternative</span>
+                  <div class="text-base font-extrabold text-rose-400">₦446.40 <span class="text-[10px] text-brand-warm/60 font-normal">/ kWh</span></div>
+                  <span class="text-[10px] text-rose-300 block">Running gen wastes ₦13,400 tonight</span>
+                </div>
+              </div>
+
+              <!-- Plain-Language AI Actionable Directives -->
+              <div class="p-4 rounded-2xl bg-black/50 border border-white/5 space-y-2 text-xs leading-relaxed text-brand-warm/85">
+                <p>
+                  <strong class="text-white">AI Dispatch Note:</strong> Based on forecast of <strong class="text-brand-amber">24.5 kWh</strong> (+18.2% harvest index) and your current <strong class="text-brand-teal">92% (10.24 kWh)</strong> battery state of charge, your facility is 100% autonomous. Your LiFePO4 pack will absorb your 8.4 kWh overnight load cycle with a comfortable <strong>64% reserve floor</strong> at sunrise (06:00 AM).
+                </p>
+                <div class="grid sm:grid-cols-3 gap-2 pt-2 border-t border-white/10 text-[11px]">
+                  <div class="flex items-start gap-1.5">
+                    <span class="text-emerald-400 font-bold">1.</span>
+                    <span><strong class="text-white">Keep Generator OFF:</strong> Starting generator would needlessly burn 5.8 Liters (₦7,250).</span>
+                  </div>
+                  <div class="flex items-start gap-1.5">
+                    <span class="text-emerald-400 font-bold">2.</span>
+                    <span><strong class="text-white">Maintain Solar Priority:</strong> 1.0HP AC and refrigeration are 100% cushioned overnight.</span>
+                  </div>
+                  <div class="flex items-start gap-1.5">
+                    <span class="text-emerald-400 font-bold">3.</span>
+                    <span><strong class="text-white">Midday Surplus Window:</strong> Schedule heavy water pumping tomorrow between 11:30 AM &amp; 2:30 PM.</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
           </div>
         </div>
 
         <!-- TAB 2: PAYGo Contract & Repayments -->
         <div id="portalSectionPaygo" class="hidden space-y-6">
+
+          <!-- Executive Asset Financial Scoreboard: Total Cost, Paid to Date & Balance Remaining -->
+          <div class="grid sm:grid-cols-3 gap-4">
+            <div class="bg-black/40 p-5 rounded-2xl border border-white/10 space-y-1.5">
+              <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                <span>Total Cost of Asset</span>
+                <i data-lucide="package-check" class="w-4 h-4 text-brand-amber"></i>
+              </div>
+              <div id="pTotalAssetCost" class="text-2xl font-heading font-black text-white font-mono">₦6,660,000</div>
+              <span class="text-[10px] text-brand-warm/60 block">36-Month Lease-to-Own Title Agreement</span>
+            </div>
+
+            <div class="bg-black/40 p-5 rounded-2xl border border-emerald-500/30 space-y-1.5">
+              <div class="flex justify-between items-center text-xs text-emerald-400">
+                <span>Accumulated Sum Paid So Far</span>
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+              </div>
+              <div id="pAccumulatedPaid" class="text-2xl font-heading font-black text-emerald-400 font-mono">₦2,035,000</div>
+              <span id="pPaidInstallmentsText" class="text-[10px] text-emerald-300 block">11 of 36 Installments Settled (30.5% Capital)</span>
+            </div>
+
+            <div class="bg-black/40 p-5 rounded-2xl border border-brand-sky/30 space-y-1.5">
+              <div class="flex justify-between items-center text-xs text-brand-sky">
+                <span>Balance Left to Full Asset Transfer</span>
+                <i data-lucide="clock" class="w-4 h-4 text-brand-sky"></i>
+              </div>
+              <div id="pBalanceLeft" class="text-2xl font-heading font-black text-brand-sky font-mono">₦4,625,000</div>
+              <span id="pRemainingInstallmentsText" class="text-[10px] text-brand-sky/80 block">25 Installments Remaining to Title Deed Transfer</span>
+            </div>
+          </div>
+
           <div class="grid md:grid-cols-2 gap-6">
             
             <!-- Left: Dedicated Virtual Account (DVA) Details -->
@@ -2792,7 +3448,7 @@
                   <span class="text-brand-warm/70">Virtual Account Number:</span>
                   <div class="flex items-center gap-2">
                     <span id="pDvaNumber" class="font-bold text-brand-amber font-mono text-sm">9928174021</span>
-                    <button onclick="copyToClipboard('9928174021', 'Virtual Account copied!')" class="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[10px] text-white">Copy</button>
+                    <button onclick="copyToClipboard(document.getElementById('pDvaNumber').innerText, 'Virtual Account copied!')" class="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[10px] text-white">Copy</button>
                   </div>
                 </div>
                 <div class="flex justify-between"><span class="text-brand-warm/70">Beneficiary Name:</span> <span id="pDvaName" class="font-bold text-white">SkyGrid / Amina Danjuma</span></div>
@@ -2853,34 +3509,107 @@
 
         <!-- TAB 3: Hardware & Engineering Passport -->
         <div id="portalSectionHardware" class="hidden space-y-6">
+          
+          <!-- Subscribed Package Header & Validation Card -->
+          <div class="p-5 rounded-3xl bg-black/40 border border-brand-sky/20 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-brand-warm/60 tracking-wider block">Subscribed Clean Energy Package</span>
+              <h3 id="pHardwarePackageTitle" class="text-base sm:text-lg font-heading font-extrabold text-white">5.4 kWp Executive Solar Home (Hybrid SPF 5000ES)</h3>
+              <p id="pHardwarePackageArch" class="text-xs text-brand-sky font-mono mt-0.5">5.4 kWp Bifacial PV + 10.24 kWh LiFePO4 Storage Architecture</p>
+            </div>
+            <div class="flex items-center gap-2 text-xs font-mono">
+              <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold">
+                ✓ COREN &amp; NEMSA Certified
+              </span>
+              <span class="px-3 py-1 rounded-full bg-white/10 text-white font-semibold">
+                10-Year EPC Warranty
+              </span>
+            </div>
+          </div>
+
+          <!-- Comprehensive Hardware Manifest: Inverter, Battery, Panels, Protection -->
           <div class="grid md:grid-cols-2 gap-6">
             
+            <!-- Inverter System Details -->
             <div class="bg-black/40 p-6 rounded-2xl border border-white/10 space-y-3 text-xs">
-              <h4 class="font-heading font-bold text-white uppercase tracking-wider text-xs pb-2 border-b border-white/10">Certified Equipment Manifest</h4>
-              <div class="flex justify-between"><span class="text-brand-warm/60">Inverter Serial:</span> <span id="pHardwareInverter" class="font-bold text-white font-mono">GW-SPF5000ES-99881</span></div>
-              <div class="flex justify-between"><span class="text-brand-warm/60">LiFePO4 Battery Pack:</span> <span id="pHardwareBattery" class="font-bold text-brand-teal font-mono">LFP-512V-100AH-441 (10.24kWh)</span></div>
-              <div class="flex justify-between"><span class="text-brand-warm/60">Lower Shroud Tamper Seal:</span> <span id="pHardwareSeal" class="font-bold text-white font-mono">SEAL-NG-00421 (INTACT)</span></div>
-              <div class="flex justify-between"><span class="text-brand-warm/60">Earth Grounding Resistance:</span> <span id="pHardwareEarth" class="font-bold text-emerald-400 font-mono">2.4 Ω (COREN Compliant &lt; 5.0Ω)</span></div>
-              <div class="flex justify-between"><span class="text-brand-warm/60">IoT Firmware Version:</span> <span class="font-bold text-white font-mono">v3.14.9-OTA-SECURE</span></div>
+              <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                <h4 class="font-heading font-bold text-white uppercase tracking-wider text-xs">1. Inverter Unit Specification</h4>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-brand-amber/15 text-brand-amber font-mono font-bold">PURE SINE WAVE</span>
+              </div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Inverter Type:</span> <strong id="pHardwareInverterType" class="text-white text-right">Hybrid Off-Grid / Grid-Interactive</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Inverter Model:</span> <strong id="pHardwareInverterModel" class="text-white font-mono text-right">Growatt SPF 5000ES (Dual MPPT)</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Rated Power Size:</span> <strong id="pHardwareInverterSize" class="text-brand-amber font-mono text-right">5,000W Cont. / 10,000VA Surge</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Inverter Serial:</span> <strong id="pHardwareInverter" class="text-white font-mono text-right">GW-SPF5000ES-99881</strong></div>
             </div>
 
-            <div class="bg-black/40 p-6 rounded-2xl border border-white/10 space-y-4 text-xs">
-              <h4 class="font-heading font-bold text-white uppercase tracking-wider text-xs pb-2 border-b border-white/10">Assigned Field Engineering Crew</h4>
-              <div class="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1">
-                <span class="font-bold text-white block">Lead Field Engineer: Engr. Emeka Okafor</span>
-                <span class="text-[11px] text-brand-warm/60 block font-mono">COREN Registration: R.48291 • NEMSA Cert #7712</span>
-                <span class="text-[11px] text-brand-teal block">Regional Hub: Central Business District, Abuja</span>
+            <!-- Battery Storage Details -->
+            <div class="bg-black/40 p-6 rounded-2xl border border-white/10 space-y-3 text-xs">
+              <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                <h4 class="font-heading font-bold text-white uppercase tracking-wider text-xs">2. Energy Storage Battery Specification</h4>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-brand-teal/20 text-brand-teal font-mono font-bold">GRADE-A LiFePO4</span>
               </div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Battery Chemistry:</span> <strong id="pHardwareBatteryType" class="text-white text-right">LiFePO4 Lithium Iron Phosphate</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Battery Model:</span> <strong id="pHardwareBatteryModel" class="text-white font-mono text-right">Felicity / Growatt GBLI 5001</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Storage Capacity / Size:</span> <strong id="pHardwareBatterySize" class="text-brand-teal font-mono text-right">10.24 kWh / 200Ah @ 51.2V DC</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Battery Pack Serial:</span> <strong id="pHardwareBattery" class="text-white font-mono text-right">LFP-512V-100AH-441</strong></div>
+            </div>
 
-              <div class="space-y-2 pt-2">
-                <button onclick="showToast('✓ Maintenance Request Dispatched to Engr. Emeka Okafor (SLA 4 Hours).')" class="w-full py-2.5 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition">
-                  Request Field Engineer Inspection
-                </button>
-                <button onclick="showToast('✓ 10-Year Factory Warranty Certificate Downloaded (PDF).')" class="w-full py-2.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition">
-                  Download Official Warranty Certificate
-                </button>
+            <!-- Solar PV Generator Details -->
+            <div class="bg-black/40 p-6 rounded-2xl border border-white/10 space-y-3 text-xs">
+              <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                <h4 class="font-heading font-bold text-white uppercase tracking-wider text-xs">3. Solar PV Generator Specification</h4>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-brand-sky/20 text-brand-sky font-mono font-bold">TIER-1 MONO</span>
+              </div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Solar Panel Type:</span> <strong id="pHardwarePanelsType" class="text-white text-right">Monocrystalline PERC Half-Cell Bifacial</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Panel Power Rating:</span> <strong id="pHardwarePanelsRating" class="text-brand-amber font-mono text-right">550W per Panel (41.8V Vmp)</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Number of Panels:</span> <strong id="pHardwarePanelsNumber" class="text-white font-mono text-right">10 Panels (5.5 kWp Total Solar Array)</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">String Configuration:</span> <strong id="pHardwarePanelsConfig" class="text-white font-mono text-right">2 Strings of 5 Panels in Series</strong></div>
+            </div>
+
+            <!-- Protection & Switchgear Details -->
+            <div class="bg-black/40 p-6 rounded-2xl border border-white/10 space-y-3 text-xs">
+              <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                <h4 class="font-heading font-bold text-white uppercase tracking-wider text-xs">4. Protection Components Used</h4>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono font-bold">IEEE COMPLIANT</span>
+              </div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">DC Isolator &amp; Disconnect:</span> <strong id="pHardwareProtDC" class="text-white text-right">600V 32A Dual-Pole DC Rotary Isolator</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Surge Arrestors (SPD):</span> <strong id="pHardwareProtSPD" class="text-white text-right">Type II 600V DC SPD + 275V Class II AC SPD</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">AC Breakers &amp; Changeover:</span> <strong id="pHardwareProtAC" class="text-white text-right">ABB 32A 2-Pole MCB + 63A Automatic ATS</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Battery DC Fuse:</span> <strong id="pHardwareProtBatt" class="text-white text-right">125A 80V DC High-Rupture Fuse</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Earth Grounding Resistance:</span> <strong id="pHardwareEarth" class="text-emerald-400 font-mono text-right">2.4 Ω (&lt; 5.0Ω COREN Standard)</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">NEMSA Security Tamper Seal:</span> <strong id="pHardwareSeal" class="text-white font-mono text-right">SEAL-NG-00421 (INTACT)</strong></div>
+            </div>
+
+          </div>
+
+          <!-- Certified Field Engineer Authority -->
+          <div class="bg-black/40 p-6 rounded-2xl border border-white/10 space-y-4 text-xs">
+            <h4 class="font-heading font-bold text-white uppercase tracking-wider text-xs pb-2 border-b border-white/10">5. Certified Field Engineering Crew &amp; Authority</h4>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div class="p-3.5 rounded-xl bg-white/5 border border-white/5 space-y-1.5 font-mono">
+                <div class="flex justify-between"><span class="text-brand-warm/60">Lead Engineer:</span> <strong id="pHardwareInstallerName" class="text-white">Engr. Emmanuel O. Danladi, FNSE</strong></div>
+                <div class="flex justify-between"><span class="text-brand-warm/60">COREN Registration:</span> <strong id="pHardwareCoren" class="text-brand-amber">COREN Reg. R.48291/ELECT</strong></div>
+                <div class="flex justify-between"><span class="text-brand-warm/60">NEMSA Certification:</span> <strong id="pHardwareNemsa" class="text-brand-teal">NEMSA Cert #PL-0391/2024</strong></div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-white/5 border border-white/5 space-y-1.5 font-mono">
+                <span class="text-brand-warm/60 block">Accredited Office Location:</span>
+                <p id="pHardwareOffice" class="text-white text-xs leading-relaxed font-sans">
+                  SkyGrid Renewable Systems Ltd, Plot 14 Commercial Area, Yakubu Gowon Way, Jos, Plateau State / Maitama Regional Hub, Abuja
+                </p>
               </div>
             </div>
+
+            <div class="grid sm:grid-cols-2 gap-3 pt-2">
+              <button onclick="showToast('✓ Inspection Dispatched: Lead Engineer will contact within SLA (4h).')" class="w-full py-2.5 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition">
+                Request Field Engineer Inspection
+              </button>
+              <button onclick="showToast('✓ Official Certified Engineering Passport Downloaded (PDF).')" class="w-full py-2.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition">
+                Download Certified Engineering Passport
+              </button>
+            </div>
+          </div>
+
+        </div>
 
           </div>
         </div>
@@ -3095,47 +3824,202 @@
       }
     }
 
-    // --- 4. Interactive Affordability Calculator Engine ---
-    const APPLIANCES_DATA = [
-      { id: 'app_led', name: 'LED Bulbs (15W)', watts: 15, surge: 1.0, isMotor: false, qty: 8 },
-      { id: 'app_fan', name: 'Standing / Ceiling Fans (75W)', watts: 75, surge: 1.3, isMotor: true, qty: 3 },
-      { id: 'app_tv', name: '55" Smart TV & Decoder (120W)', watts: 120, surge: 1.0, isMotor: false, qty: 1 },
-      { id: 'app_work', name: 'Starlink Router + 2 Laptops (90W)', watts: 90, surge: 1.0, isMotor: false, qty: 1 },
-      { id: 'app_fridge', name: 'Inverter Refrigerator (180W)', watts: 180, surge: 2.2, isMotor: true, qty: 1 },
-      { id: 'app_freezer', name: 'Deep Chest Freezer (250W)', watts: 250, surge: 2.8, isMotor: true, qty: 0 },
-      { id: 'app_ac', name: '1.0 HP Inverter Split AC (850W)', watts: 850, surge: 1.6, isMotor: true, qty: 0 },
-      { id: 'app_pump', name: '1.0 HP Borehole Water Pump (750W)', watts: 750, surge: 3.0, isMotor: true, qty: 0 },
+    // --- 4. Interactive Affordability Calculator Engine & Load Cart ---
+    const APPLIANCES_CATALOG = [
+      // Cooling & Air Conditioning
+      { id: 'ac_1hp_inv', name: '1.0 HP Inverter Split AC (850W)', group: '❄️ Air Conditioning & Fans', watts: 850, surge: 1.6, isMotor: true, defaultDayH: 4, defaultNightH: 4 },
+      { id: 'ac_1_5hp_inv', name: '1.5 HP Inverter Split AC (1,250W)', group: '❄️ Air Conditioning & Fans', watts: 1250, surge: 1.6, isMotor: true, defaultDayH: 4, defaultNightH: 4 },
+      { id: 'ac_2hp_inv', name: '2.0 HP Inverter Split AC (1,800W)', group: '❄️ Air Conditioning & Fans', watts: 1800, surge: 1.8, isMotor: true, defaultDayH: 4, defaultNightH: 4 },
+      { id: 'ac_1hp_std', name: '1.0 HP Standard Non-Inverter AC (1,200W)', group: '❄️ Air Conditioning & Fans', watts: 1200, surge: 3.2, isMotor: true, defaultDayH: 3, defaultNightH: 3 },
+      { id: 'fan_ceil', name: 'Standing / Ceiling Fans (75W)', group: '❄️ Air Conditioning & Fans', watts: 75, surge: 1.3, isMotor: true, defaultDayH: 5, defaultNightH: 8 },
+      { id: 'fan_dc', name: 'Rechargeable / DC Solar Fan (30W)', group: '❄️ Air Conditioning & Fans', watts: 30, surge: 1.0, isMotor: false, defaultDayH: 6, defaultNightH: 8 },
+
+      // Refrigeration & Cold Storage
+      { id: 'fridge_inv', name: 'Inverter Refrigerator Single Door (120W)', group: '🧊 Refrigeration & Freezers', watts: 120, surge: 2.0, isMotor: true, defaultDayH: 6, defaultNightH: 6 },
+      { id: 'fridge_double', name: 'Inverter Refrigerator Double Door (180W)', group: '🧊 Refrigeration & Freezers', watts: 180, surge: 2.2, isMotor: true, defaultDayH: 6, defaultNightH: 6 },
+      { id: 'freezer_150l', name: 'Deep Chest Freezer Small 150L (180W)', group: '🧊 Refrigeration & Freezers', watts: 180, surge: 2.5, isMotor: true, defaultDayH: 6, defaultNightH: 6 },
+      { id: 'freezer_300l', name: 'Deep Chest Freezer Large 300L (250W)', group: '🧊 Refrigeration & Freezers', watts: 250, surge: 2.8, isMotor: true, defaultDayH: 6, defaultNightH: 6 },
+      { id: 'coldroom_chiller', name: 'Commercial Cold-Room Chiller (1,500W)', group: '🧊 Refrigeration & Freezers', watts: 1500, surge: 3.5, isMotor: true, defaultDayH: 8, defaultNightH: 8 },
+
+      // Water Pumping & Borehole
+      { id: 'pump_0_5hp', name: '0.5 HP Borehole Water Pump (375W)', group: '🚰 Water Pumping & Motors', watts: 375, surge: 3.0, isMotor: true, defaultDayH: 1, defaultNightH: 0 },
+      { id: 'pump_1hp', name: '1.0 HP Submersible Borehole Pump (750W)', group: '🚰 Water Pumping & Motors', watts: 750, surge: 3.0, isMotor: true, defaultDayH: 1, defaultNightH: 0 },
+      { id: 'pump_1_5hp', name: '1.5 HP Submersible Borehole Pump (1,100W)', group: '🚰 Water Pumping & Motors', watts: 1100, surge: 3.2, isMotor: true, defaultDayH: 1, defaultNightH: 0 },
+      { id: 'pump_2hp', name: '2.0 HP Industrial Surface Water Pump (1,500W)', group: '🚰 Water Pumping & Motors', watts: 1500, surge: 3.5, isMotor: true, defaultDayH: 2, defaultNightH: 0 },
+
+      // Electronics, Lighting & IT
+      { id: 'led_5', name: 'Energy-Saving LED Bulbs Pack (50W)', group: '💡 Lighting & Entertainment', watts: 50, surge: 1.0, isMotor: false, defaultDayH: 2, defaultNightH: 8 },
+      { id: 'led_10', name: 'Energy-Saving LED Bulbs Pack (100W)', group: '💡 Lighting & Entertainment', watts: 100, surge: 1.0, isMotor: false, defaultDayH: 2, defaultNightH: 8 },
+      { id: 'tv_55', name: '55" Smart 4K LED TV + Soundbar (120W)', group: '💡 Lighting & Entertainment', watts: 120, surge: 1.0, isMotor: false, defaultDayH: 4, defaultNightH: 5 },
+      { id: 'tv_75', name: '75" 4K OLED TV + Home Theater (220W)', group: '💡 Lighting & Entertainment', watts: 220, surge: 1.0, isMotor: false, defaultDayH: 4, defaultNightH: 5 },
+      { id: 'starlink', name: 'Starlink Terminal + WiFi 6 Router (75W)', group: '💡 Lighting & Entertainment', watts: 75, surge: 1.0, isMotor: false, defaultDayH: 12, defaultNightH: 12 },
+      { id: 'workstation', name: 'Laptops + Dual Monitors Workstation (150W)', group: '💡 Lighting & Entertainment', watts: 150, surge: 1.0, isMotor: false, defaultDayH: 8, defaultNightH: 4 },
+      { id: 'cctv', name: 'CCTV Security System + 8-Ch NVR (65W)', group: '💡 Lighting & Entertainment', watts: 65, surge: 1.0, isMotor: false, defaultDayH: 12, defaultNightH: 12 },
+
+      // Kitchen & Heavy Laundry
+      { id: 'washing_mach', name: 'Inverter Washing Machine (500W)', group: '⚡ Kitchen & Heavy Laundry', watts: 500, surge: 2.0, isMotor: true, defaultDayH: 2, defaultNightH: 0 },
+      { id: 'microwave', name: 'Microwave Oven (1,200W)', group: '⚡ Kitchen & Heavy Laundry', watts: 1200, surge: 1.2, isMotor: false, defaultDayH: 1, defaultNightH: 0 },
+      { id: 'iron', name: 'Electric Pressing Iron (1,200W)', group: '⚡ Kitchen & Heavy Laundry', watts: 1200, surge: 1.0, isMotor: false, defaultDayH: 1, defaultNightH: 0 },
+      { id: 'kettle', name: 'Electric Kettle / Air Fryer (1,500W)', group: '⚡ Kitchen & Heavy Laundry', watts: 1500, surge: 1.0, isMotor: false, defaultDayH: 1, defaultNightH: 0 },
+      { id: 'medical', name: 'Medical Centrifuge & Sterilizer (650W)', group: '⚡ Kitchen & Heavy Laundry', watts: 650, surge: 2.0, isMotor: true, defaultDayH: 4, defaultNightH: 0 },
+    ];
+
+    let loadCart = [
+      { id: 'led_5', name: 'Energy-Saving LED Bulbs Pack (50W)', watts: 50, surge: 1.0, isMotor: false, qty: 2, dayH: 2, nightH: 8, daysWeek: 7 },
+      { id: 'fan_ceil', name: 'Standing / Ceiling Fans (75W)', watts: 75, surge: 1.3, isMotor: true, qty: 3, dayH: 5, nightH: 8, daysWeek: 7 },
+      { id: 'tv_55', name: '55" Smart 4K LED TV + Soundbar (120W)', watts: 120, surge: 1.0, isMotor: false, qty: 1, dayH: 4, nightH: 5, daysWeek: 7 },
+      { id: 'fridge_double', name: 'Inverter Refrigerator Double Door (180W)', watts: 180, surge: 2.2, isMotor: true, qty: 1, dayH: 6, nightH: 6, daysWeek: 7 },
     ];
 
     let selectedTenure = 36;
 
-    function renderAppliances() {
-      const container = document.getElementById('appliancesList');
-      if (!container) return;
+    function populateApplianceDropdown() {
+      const select = document.getElementById('applianceDropdown');
+      if (!select) return;
 
-      container.innerHTML = APPLIANCES_DATA.map((app, index) => `
-        <div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition">
-          <div>
-            <div class="font-bold text-white text-xs">${app.name}</div>
-            <div class="text-[10px] text-brand-warm/60 font-mono">${app.watts}W rating • ${app.isMotor ? 'Motor Surge ' + app.surge + 'x' : 'Resistive'}</div>
-          </div>
-          <div class="flex items-center gap-3">
-            <button type="button" onclick="adjustQty(${index}, -1)" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold flex items-center justify-center transition">
-              -
-            </button>
-            <span class="font-mono font-bold text-sm text-brand-amber w-5 text-center">${app.qty}</span>
-            <button type="button" onclick="adjustQty(${index}, 1)" class="w-7 h-7 rounded-lg bg-brand-amber hover:bg-amber-400 text-brand-dark font-bold flex items-center justify-center transition">
-              +
-            </button>
-          </div>
-        </div>
+      const groups = {};
+      APPLIANCES_CATALOG.forEach(app => {
+        if (!groups[app.group]) groups[app.group] = [];
+        groups[app.group].push(app);
+      });
+
+      select.innerHTML = Object.keys(groups).map(grp => `
+        <optgroup label="${grp}">
+          ${groups[grp].map(app => `
+            <option value="${app.id}">
+              ${app.name} — ${app.watts}W (${app.isMotor ? app.surge + 'x Surge' : 'Resistive'})
+            </option>
+          `).join('')}
+        </optgroup>
       `).join('');
     }
 
-    function adjustQty(index, delta) {
-      APPLIANCES_DATA[index].qty = Math.max(0, Math.min(20, APPLIANCES_DATA[index].qty + delta));
+    function addSelectedApplianceToCart() {
+      const select = document.getElementById('applianceDropdown');
+      if (!select) return;
+      const appId = select.value;
+      const found = APPLIANCES_CATALOG.find(a => a.id === appId);
+      if (!found) return;
+
+      const existing = loadCart.find(a => a.id === appId);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        loadCart.push({
+          id: found.id,
+          name: found.name,
+          watts: found.watts,
+          surge: found.surge,
+          isMotor: found.isMotor,
+          qty: 1,
+          dayH: found.defaultDayH,
+          nightH: found.defaultNightH,
+          daysWeek: 7,
+        });
+      }
+
       renderAppliances();
       runCalculator();
+      showToast('✓ Added ' + found.name + ' to Load Cart');
+    }
+
+    function renderAppliances() {
+      const container = document.getElementById('appliancesList');
+      const badge = document.getElementById('cartCountBadge');
+      if (badge) {
+        badge.textContent = loadCart.length + (loadCart.length === 1 ? ' Item in Cart' : ' Items in Cart');
+      }
+      if (!container) return;
+
+      if (loadCart.length === 0) {
+        container.innerHTML = `
+          <div class="p-6 rounded-2xl bg-white/5 border border-dashed border-white/10 text-center space-y-2">
+            <span class="text-2xl block">🛒</span>
+            <p class="text-xs text-brand-warm/70">Your load cart is empty. Select an appliance from the dropdown above and click <strong>Add to Cart</strong>.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = loadCart.map((app, index) => {
+        const weeklyWh = Math.round(app.watts * app.qty * ((app.dayH + app.nightH) * (app.daysWeek / 7)));
+        return `
+        <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 transition space-y-2.5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-white text-xs sm:text-sm">${app.name}</span>
+                ${app.isMotor ? `<span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-brand-amber/20 text-brand-amber border border-brand-amber/30">${app.surge}x Surge</span>` : ''}
+              </div>
+              <div class="text-[10px] text-brand-warm/60 font-mono">
+                ${app.watts}W rating • ${app.watts * app.qty}W total • Weekly Est: ~${(weeklyWh / 1000).toFixed(1)} kWh/wk
+              </div>
+            </div>
+
+            <!-- Remove Button -->
+            <button type="button" onclick="removeCartItem(${index})" title="Remove appliance" class="text-xs text-rose-400 hover:text-rose-300 font-mono px-2 py-1 rounded bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition flex items-center gap-1">
+              <span>✕</span> Remove
+            </button>
+          </div>
+
+          <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 pt-2 border-t border-white/5 text-xs font-mono items-center">
+            <!-- Qty Stepper -->
+            <div class="flex items-center gap-1.5 bg-black/40 border border-white/10 rounded-xl px-2 py-1">
+              <span class="text-[10px] text-brand-warm/50">Qty:</span>
+              <button type="button" onclick="adjustCartQty(${index}, -1)" class="w-5 h-5 rounded bg-white/10 hover:bg-white/20 text-white font-bold flex items-center justify-center transition">-</button>
+              <span class="font-bold text-brand-amber w-4 text-center">${app.qty}</span>
+              <button type="button" onclick="adjustCartQty(${index}, 1)" class="w-5 h-5 rounded bg-brand-amber hover:bg-amber-400 text-brand-dark font-bold flex items-center justify-center transition">+</button>
+            </div>
+
+            <!-- Daytime Hours -->
+            <div class="flex items-center gap-1 bg-black/40 border border-white/10 rounded-xl px-2 py-1">
+              <span class="text-[10px] text-brand-warm/50">Day:</span>
+              <select onchange="updateCartItem(${index}, 'dayH', this.value)" class="bg-transparent text-white text-xs outline-none cursor-pointer">
+                ${[0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12].map(h => `<option value="${h}" class="bg-slate-900" ${app.dayH === h ? 'selected' : ''}>${h}h</option>`).join('')}
+              </select>
+            </div>
+
+            <!-- Nighttime Hours -->
+            <div class="flex items-center gap-1 bg-black/40 border border-white/10 rounded-xl px-2 py-1">
+              <span class="text-[10px] text-brand-warm/50">Night:</span>
+              <select onchange="updateCartItem(${index}, 'nightH', this.value)" class="bg-transparent text-white text-xs outline-none cursor-pointer">
+                ${[0, 2, 4, 6, 8, 10, 12].map(h => `<option value="${h}" class="bg-slate-900" ${app.nightH === h ? 'selected' : ''}>${h}h</option>`).join('')}
+              </select>
+            </div>
+
+            <!-- Days per Week -->
+            <div class="flex items-center gap-1 bg-black/40 border border-white/10 rounded-xl px-2 py-1 col-span-3 sm:col-span-1">
+              <span class="text-[10px] text-brand-warm/50">Week:</span>
+              <select onchange="updateCartItem(${index}, 'daysWeek', this.value)" class="bg-transparent text-brand-teal text-xs font-bold outline-none cursor-pointer">
+                ${[1, 2, 3, 4, 5, 6, 7].map(d => `<option value="${d}" class="bg-slate-900" ${app.daysWeek === d ? 'selected' : ''}>${d}d/wk</option>`).join('')}
+              </select>
+            </div>
+          </div>
+        </div>
+        `;
+      }).join('');
+    }
+
+    function adjustCartQty(index, delta) {
+      if (!loadCart[index]) return;
+      loadCart[index].qty = Math.max(1, Math.min(30, loadCart[index].qty + delta));
+      renderAppliances();
+      runCalculator();
+    }
+
+    function updateCartItem(index, field, value) {
+      if (!loadCart[index]) return;
+      loadCart[index][field] = Number(value);
+      renderAppliances();
+      runCalculator();
+    }
+
+    function removeCartItem(index) {
+      if (!loadCart[index]) return;
+      loadCart.splice(index, 1);
+      renderAppliances();
+      runCalculator();
+      showToast('✓ Removed appliance from cart');
     }
 
     function setTenure(months) {
@@ -3143,8 +4027,11 @@
       const slider = document.getElementById('calcTenureSlider');
       if (slider) slider.value = months;
       const label = document.getElementById('calcTenureLabel');
-      if (label) label.textContent = months + ' Months';
-      [12, 24, 36].forEach(m => {
+      if (label) {
+        const yrs = (months / 12).toFixed(months % 12 === 0 ? 0 : 1);
+        label.textContent = months + ' Months (' + yrs + ' Years)';
+      }
+      [12, 24, 36, 48, 60].forEach(m => {
         const btn = document.getElementById('tenure' + m);
         if (btn) {
           if (m === months) {
@@ -3207,7 +4094,7 @@
       let dayWh = 0;
       let nightWh = 0;
 
-      APPLIANCES_DATA.forEach(app => {
+      loadCart.forEach(app => {
         const qty = app.qty || 0;
         if (qty <= 0) return;
         const lineWatts = app.watts * qty;
@@ -3218,10 +4105,11 @@
           if (singleSurge > largestMotorSurge) largestMotorSurge = singleSurge;
         }
 
+        const daysRatio = (app.daysWeek !== undefined ? app.daysWeek : 7) / 7;
         const appDayH = app.dayH !== undefined ? app.dayH : 4;
         const appNightH = app.nightH !== undefined ? app.nightH : 6;
-        dayWh += lineWatts * appDayH;
-        nightWh += lineWatts * appNightH;
+        dayWh += lineWatts * appDayH * daysRatio;
+        nightWh += lineWatts * appNightH * daysRatio;
       });
 
       if (totalRunningWatts === 0) totalRunningWatts = 150;
@@ -3287,7 +4175,7 @@
       const totalCurrentSpend = monthlyGridBill + monthlyFuelSpend + monthlyMaintenance;
       const displacedSpend = Math.round(totalCurrentSpend * 0.85);
       const netSavings = displacedSpend - monthlyPayment;
-      const threeYrSavings = (displacedSpend * 36) - (downPayment + (monthlyPayment * selectedTenure));
+      const tenureSavings = (displacedSpend * selectedTenure) - (downPayment + (monthlyPayment * selectedTenure));
 
       // --- A. Update Hero Right Card ---
       const heroTitle = document.getElementById('heroBundleTitle');
@@ -3332,10 +4220,27 @@
         }
       }
       if (threeYrEl) {
-        threeYrEl.textContent = '₦' + threeYrSavings.toLocaleString() + ' cumulative 3-year savings!';
+        const tenureYrs = (selectedTenure / 12).toFixed(selectedTenure % 12 === 0 ? 0 : 1);
+        threeYrEl.textContent = '₦' + tenureSavings.toLocaleString() + ' cumulative savings over ' + selectedTenure + ' months (' + tenureYrs + ' yrs)!';
       }
 
-      // --- C. Update Collapsible COREN Drawer ---
+      // --- C. Update Dedicated System Sizing Cards ---
+      const calcInvCard = document.getElementById('calcInverterSizeCard');
+      const calcInvSurge = document.getElementById('calcInverterSurgeCard');
+      const calcBattCard = document.getElementById('calcBatterySizeCard');
+      const calcPVCard = document.getElementById('calcPVPowerCard');
+      if (calcInvCard) {
+        if (requiredVA >= 15000) calcInvCard.textContent = (Math.ceil(requiredVA / 5000) * 5.0).toFixed(1) + ' kVA';
+        else if (requiredVA >= 8000) calcInvCard.textContent = '10.0 kVA';
+        else if (requiredVA >= 4500) calcInvCard.textContent = '5.0 kVA';
+        else if (requiredVA >= 2500) calcInvCard.textContent = '3.5 kVA';
+        else calcInvCard.textContent = '3.0 kVA';
+      }
+      if (calcInvSurge) calcInvSurge.textContent = 'Surge: ' + (requiredVA / 1000).toFixed(1) + ' kVA';
+      if (calcBattCard) calcBattCard.textContent = battKWh.toFixed(1) + ' kWh';
+      if (calcPVCard) calcPVCard.textContent = pvKWp.toFixed(2) + ' kWp';
+
+      // --- D. Update Collapsible COREN Drawer ---
       const outRun = document.getElementById('outRunningWatts');
       if (outRun) outRun.textContent = totalRunningWatts.toLocaleString() + ' W';
       const outSurge = document.getElementById('outSurgeVA');
@@ -3508,9 +4413,22 @@
         contract_id: 'CTR-ABJ-2026-001',
         location: 'Maitama, FCT Abuja',
         model: 'Growatt SPF 5000ES (10.24kWh LiFePO4)',
+        package_name: '5.4 kWp Executive Solar Home (Hybrid SPF 5000ES)',
+        package_arch: '5.4 kWp Bifacial PV + 10.24 kWh LiFePO4 Storage Architecture',
+        package_tier_label: '🏡 Residential Subscribed Plan',
+        package_batt_label: '10.24 kWh LiFePO4',
+        segment: 'residential',
         status: 'ACTIVE',
         status_label: '● ACTIVE LEASE',
         status_color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+        total_asset_cost: '₦6,660,000',
+        accumulated_paid: '₦2,035,000',
+        balance_left: '₦4,625,000',
+        installments_paid_text: '11 of 36 Installments Settled (30.5% Capital)',
+        installments_remaining_text: '25 Installments Remaining to Title Deed Transfer',
+        monthly_kwh_consumed: 612,
+        monthly_amount_raw: 185000,
+        monthly_ngn: '₦185,000 / month',
         days_left: 19.4,
         pv_watts: '3,420 W',
         soc_pct: '92%',
@@ -3519,14 +4437,31 @@
         temp_c: '37.5 °C',
         dva_account: '9928174021',
         dva_name: 'SkyGrid / Amina Danjuma',
-        monthly_ngn: '₦185,000 / month',
         sts_token: '4819 - 2049 - 5510 - 8291 - 7304',
         equity_text: 'Month 11 of 36 (30.5% Equity Owned)',
         equity_pct: '30.5%',
+        inv_type: 'Hybrid Off-Grid / Grid-Interactive Pure Sine Wave Inverter',
+        inv_model: 'Growatt SPF 5000ES (Dual MPPT High-Voltage)',
+        inv_size: '5,000W Cont. / 10,000VA Surge (Dual MPPT)',
         inv_serial: 'GW-SPF5000ES-99881',
-        batt_serial: 'LFP-512V-100AH-441 (10.24kWh)',
-        seal_serial: 'SEAL-NG-00421 (INTACT)',
-        earthing_ohms: '2.4 Ω (COREN Compliant < 5.0Ω)'
+        batt_type: 'LiFePO4 Lithium Iron Phosphate (Grade-A Prismatic Cells, Active Smart BMS)',
+        batt_model: 'Felicity / Growatt GBLI 5001 Rack-Mount Module',
+        batt_size: '10.24 kWh / 200Ah @ 51.2V DC (90% DoD, 6,000 Cycles @ 80% EoL)',
+        batt_serial: 'LFP-512V-100AH-441',
+        panels_type: 'Tier-1 Monocrystalline PERC Half-Cell Bifacial Glass-Glass',
+        panels_rating: '550W per Module (41.8V Vmp, 13.16A Imp)',
+        panels_number: '10 Panels (5.5 kWp Total Solar Array)',
+        panels_config: '2 Parallel Strings of 5 Panels in Series',
+        prot_dc: '600V 32A Dual-Pole DC Rotary Isolator',
+        prot_spd: 'Type II 600V DC Photovoltaic SPD + Class II 275V AC SPD',
+        prot_ac: 'ABB 32A 2-Pole Curve-C MCB + 63A Automatic Transfer Switch (ATS)',
+        prot_batt: '125A 80V DC High-Rupture Capacity (HRC) Fuse & Isolator',
+        earthing_ohms: '2.4 Ω (< 5.0Ω COREN Standard)',
+        seal_serial: 'SEAL-NG-00421 (NEMSA Certified Steel Wire Seal)',
+        installer_name: 'Engr. Emmanuel O. Danladi, FNSE, MNIEEE',
+        coren_no: 'COREN Reg. No: R.48291/ELECT',
+        nemsa_no: 'NEMSA Certified Inspector Cat-A: NEMSA/HQ/0391/2024',
+        office_location: 'SkyGrid Renewable Systems Ltd, Plot 14 Commercial Area, Yakubu Gowon Way, Jos, Plateau State / Maitama Regional Hub, Abuja'
       },
       stmary: {
         name: 'St. Mary Clinic & Maternity',
@@ -3534,9 +4469,22 @@
         contract_id: 'CTR-BEN-2026-014',
         location: 'Otukpo, Benue State',
         model: 'Growatt SPH 10000TL (20.48kWh LiFePO4)',
+        package_name: '10.0 kWp Clinical Cold-Chain Solar Plant (Growatt SPH 10000TL)',
+        package_arch: '10.0 kWp Commercial Array + 20.48 kWh Medical Grade LiFePO4',
+        package_tier_label: '🏢 Commercial SME Clinic Plan',
+        package_batt_label: '20.48 kWh LiFePO4',
+        segment: 'commercial',
         status: 'ACTIVE',
         status_label: '● CLINICAL GRADE ACTIVE',
         status_color: 'bg-brand-teal/20 text-brand-teal border-brand-teal/30',
+        total_asset_cost: '₦12,240,000',
+        accumulated_paid: '₦6,120,000',
+        balance_left: '₦6,120,000',
+        installments_paid_text: '18 of 36 Installments Settled (50.0% Capital)',
+        installments_remaining_text: '18 Installments Remaining to Title Deed Transfer',
+        monthly_kwh_consumed: 1450,
+        monthly_amount_raw: 340000,
+        monthly_ngn: '₦340,000 / month',
         days_left: 26.0,
         pv_watts: '6,890 W',
         soc_pct: '88%',
@@ -3545,14 +4493,31 @@
         temp_c: '40.2 °C',
         dva_account: '9928174034',
         dva_name: 'SkyGrid / St. Mary Clinic',
-        monthly_ngn: '₦340,000 / month',
         sts_token: '7104 - 9921 - 3840 - 1109 - 4820',
         equity_text: 'Month 18 of 36 (50.0% Equity Owned)',
         equity_pct: '50.0%',
+        inv_type: 'Commercial 3-Phase Pure Sine Wave Storage Inverter',
+        inv_model: 'Growatt SPH 10000TL3-BH-UP (Triple MPPT)',
+        inv_size: '10,000W Cont. / 15,000VA Surge (3-Phase)',
         inv_serial: 'GW-SPH10000-77210',
-        batt_serial: 'LFP-512V-200AH-912 (20.48kWh)',
-        seal_serial: 'SEAL-NG-00812 (INTACT)',
-        earthing_ohms: '1.9 Ω (Hospital Grade Compliant)'
+        batt_type: 'Medical Grade LiFePO4 Active Thermal Management Pack',
+        batt_model: 'Growatt ARK 20.48H Medical Backup Pack',
+        batt_size: '20.48 kWh / 400Ah @ 51.2V DC (6000 Cycles)',
+        batt_serial: 'LFP-512V-200AH-912',
+        panels_type: 'Tier-1 N-Type TOPCon High-Efficiency Monocrystalline',
+        panels_rating: '585W per Panel (42.5V Vmp, 13.76A Imp)',
+        panels_number: '18 Panels (10.53 kWp Total Solar Array)',
+        panels_config: '2 Strings of 9 Panels in Series',
+        prot_dc: '1000V 63A 4-Pole DC Rotary Isolator',
+        prot_spd: 'Type I+II 1000V DC SPD + 400V 4-Pole AC SPD',
+        prot_ac: 'Chint 63A 4-Pole 3-Phase MCB + 100A Motorized ATS',
+        prot_batt: '250A 80V DC High-Rupture Fuse & Shunt Trip',
+        earthing_ohms: '1.9 Ω (Hospital Grade Compliant < 2.0Ω)',
+        seal_serial: 'SEAL-NG-00812 (INTACT - CLINICAL VAULT)',
+        installer_name: 'Engr. Sarah T. Audu, MNSE, COREN',
+        coren_no: 'COREN Reg. No: R.51042/ELECT',
+        nemsa_no: 'NEMSA Certified Inspector Cat-A: NEMSA/BEN/0184/2025',
+        office_location: 'Suite 4, Otukpo Technology Complex, Federal Road, Benue State / HQ: Jos, Plateau State'
       },
       lekki: {
         name: 'Lekki Phase 1 Pharmacy',
@@ -3560,25 +4525,55 @@
         contract_id: 'CTR-LAG-2026-112',
         location: 'Lekki Phase 1, Lagos State',
         model: 'Growatt SPF 5000ES (5.12kWh LiFePO4)',
+        package_name: '5.0 kWp Retail Pharmacy Hybrid (Growatt SPF 5000ES)',
+        package_arch: '5.0 kWp PV Array + 5.12 kWh Vaccine Storage LiFePO4',
+        package_tier_label: '🏬 Commercial Retail Subscribed Plan',
+        package_batt_label: '5.12 kWh LiFePO4',
+        segment: 'commercial',
         status: 'TAMPER_ALERT',
         status_label: '⚠️ TAMPER TRIP (MPPT SAFE MODE)',
         status_color: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+        total_asset_cost: '₦4,752,000',
+        accumulated_paid: '₦792,000',
+        balance_left: '₦3,960,000',
+        installments_paid_text: '6 of 36 Installments Settled (16.6% Capital)',
+        installments_remaining_text: '30 Installments Remaining to Title Deed Transfer',
+        monthly_kwh_consumed: 580,
+        monthly_amount_raw: 132000,
+        monthly_ngn: '₦132,000 / month',
         days_left: 8.5,
         pv_watts: '1,420 W',
         soc_pct: '96%',
         batt_detail: '5.12 kWh • 53.4V • 33°C',
-        load_watts: '0 W (Standby Locked)',
+        load_watts: '0 W (Tamper Standby)',
         temp_c: '33.1 °C',
         dva_account: '9928174099',
         dva_name: 'SkyGrid / Lekki Pharmacy',
-        monthly_ngn: '₦132,000 / month',
         sts_token: '9901 - 4210 - 8812 - 3401 - 6619',
         equity_text: 'Month 6 of 36 (16.6% Equity Owned)',
         equity_pct: '16.6%',
+        inv_type: 'Single Phase Hybrid Inverter with Tamper Sentinel',
+        inv_model: 'Growatt SPF 5000ES Sentinel Edition',
+        inv_size: '5,000W Cont. / 10,000VA Surge',
         inv_serial: 'GW-SPF5000ES-61904',
-        batt_serial: 'LFP-512V-100AH-301 (5.12kWh)',
+        batt_type: 'LiFePO4 Lithium Iron Phosphate',
+        batt_model: 'Felicity LPBF48100 Rack-Mount Module',
+        batt_size: '5.12 kWh / 100Ah @ 51.2V DC',
+        batt_serial: 'LFP-512V-100AH-301',
+        panels_type: 'Tier-1 Monocrystalline PERC Half-Cell',
+        panels_rating: '550W per Panel (41.8V Vmp)',
+        panels_number: '10 Panels (5.5 kWp Total Solar Array)',
+        panels_config: '2 Strings of 5 Panels in Series',
+        prot_dc: '600V 32A Dual-Pole DC Isolator Switch',
+        prot_spd: 'Type II 600V DC SPD + 275V AC SPD',
+        prot_ac: 'Schneider 32A 2-Pole MCB + 63A Automatic Transfer Switch',
+        prot_batt: '125A 80V DC High-Rupture Fuse',
+        earthing_ohms: '3.8 Ω (< 5.0Ω COREN Compliant)',
         seal_serial: 'SEAL-NG-00933 (TRIPPED - FIELD INSPECTION REQUIRED)',
-        earthing_ohms: '3.8 Ω (COREN Compliant < 5.0Ω)'
+        installer_name: 'Engr. Babatunde O. Adeleke, MNSE',
+        coren_no: 'COREN Reg. No: R.44910/ELECT',
+        nemsa_no: 'NEMSA Certified Inspector Cat-A: NEMSA/LAG/0881/2023',
+        office_location: 'Plot 8 Admiralty Way, Lekki Phase 1, Lagos State / HQ: Jos, Plateau State'
       }
     };
 
@@ -3609,44 +4604,359 @@
       document.getElementById('pEquityStatus').textContent = p.equity_text;
       document.getElementById('pEquityBar').style.width = p.equity_pct;
 
-      document.getElementById('pHardwareInverter').textContent = p.inv_serial;
-      document.getElementById('pHardwareBattery').textContent = p.batt_serial;
-      document.getElementById('pHardwareSeal').textContent = p.seal_serial;
-      document.getElementById('pHardwareEarth').textContent = p.earthing_ohms;
+      // 1. Subscribed Package Banner Updates (Customer's Chosen Package Viewport)
+      const pPkgName = document.getElementById('portalPackageName');
+      const pPkgTier = document.getElementById('portalPackageTierBadge');
+      const pPkgBatt = document.getElementById('portalPackageHardwareBadge');
+      if (pPkgName) pPkgName.textContent = p.package_name;
+      if (pPkgTier) pPkgTier.textContent = p.package_tier_label;
+      if (pPkgBatt) pPkgBatt.textContent = p.package_batt_label;
 
-      switchPortalTab('telemetry');
+      // 2. PAYGo Wallet Scoreboard: Total Asset Cost, Paid to Date, Balance Remaining
+      const pTotCost = document.getElementById('pTotalAssetCost');
+      const pAccPaid = document.getElementById('pAccumulatedPaid');
+      const pBalLeft = document.getElementById('pBalanceLeft');
+      const pPaidText = document.getElementById('pPaidInstallmentsText');
+      const pRemText = document.getElementById('pRemainingInstallmentsText');
+      if (pTotCost) pTotCost.textContent = p.total_asset_cost;
+      if (pAccPaid) pAccPaid.textContent = p.accumulated_paid;
+      if (pBalLeft) pBalLeft.textContent = p.balance_left;
+      if (pPaidText) pPaidText.textContent = p.installments_paid_text;
+      if (pRemText) pRemText.textContent = p.installments_remaining_text;
+
+      // 3. Hardware Passport Comprehensive Fields
+      const hwPkgTitle = document.getElementById('pHardwarePackageTitle');
+      const hwPkgArch = document.getElementById('pHardwarePackageArch');
+      const hwInvType = document.getElementById('pHardwareInverterType');
+      const hwInvModel = document.getElementById('pHardwareInverterModel');
+      const hwInvSize = document.getElementById('pHardwareInverterSize');
+      const hwInv = document.getElementById('pHardwareInverter');
+      const hwBattType = document.getElementById('pHardwareBatteryType');
+      const hwBattModel = document.getElementById('pHardwareBatteryModel');
+      const hwBattSize = document.getElementById('pHardwareBatterySize');
+      const hwBatt = document.getElementById('pHardwareBattery');
+      const hwPanelsType = document.getElementById('pHardwarePanelsType');
+      const hwPanelsRating = document.getElementById('pHardwarePanelsRating');
+      const hwPanelsNum = document.getElementById('pHardwarePanelsNumber');
+      const hwPanelsConfig = document.getElementById('pHardwarePanelsConfig');
+      const hwProtDC = document.getElementById('pHardwareProtDC');
+      const hwProtSPD = document.getElementById('pHardwareProtSPD');
+      const hwProtAC = document.getElementById('pHardwareProtAC');
+      const hwProtBatt = document.getElementById('pHardwareProtBatt');
+      const hwEarth = document.getElementById('pHardwareEarth');
+      const hwSeal = document.getElementById('pHardwareSeal');
+      const hwInstaller = document.getElementById('pHardwareInstallerName');
+      const hwCoren = document.getElementById('pHardwareCoren');
+      const hwNemsa = document.getElementById('pHardwareNemsa');
+      const hwOffice = document.getElementById('pHardwareOffice');
+
+      if (hwPkgTitle) hwPkgTitle.textContent = p.package_name;
+      if (hwPkgArch) hwPkgArch.textContent = p.package_arch;
+      if (hwInvType) hwInvType.textContent = p.inv_type;
+      if (hwInvModel) hwInvModel.textContent = p.inv_model;
+      if (hwInvSize) hwInvSize.textContent = p.inv_size;
+      if (hwInv) hwInv.textContent = p.inv_serial;
+      if (hwBattType) hwBattType.textContent = p.batt_type;
+      if (hwBattModel) hwBattModel.textContent = p.batt_model;
+      if (hwBattSize) hwBattSize.textContent = p.batt_size;
+      if (hwBatt) hwBatt.textContent = p.batt_serial;
+      if (hwPanelsType) hwPanelsType.textContent = p.panels_type;
+      if (hwPanelsRating) hwPanelsRating.textContent = p.panels_rating;
+      if (hwPanelsNum) hwPanelsNum.textContent = p.panels_number;
+      if (hwPanelsConfig) hwPanelsConfig.textContent = p.panels_config;
+      if (hwProtDC) hwProtDC.textContent = p.prot_dc;
+      if (hwProtSPD) hwProtSPD.textContent = p.prot_spd;
+      if (hwProtAC) hwProtAC.textContent = p.prot_ac;
+      if (hwProtBatt) hwProtBatt.textContent = p.prot_batt;
+      if (hwEarth) hwEarth.textContent = p.earthing_ohms;
+      if (hwSeal) hwSeal.textContent = p.seal_serial;
+      if (hwInstaller) hwInstaller.textContent = p.installer_name;
+      if (hwCoren) hwCoren.textContent = p.coren_no;
+      if (hwNemsa) hwNemsa.textContent = p.nemsa_no;
+      if (hwOffice) hwOffice.textContent = p.office_location;
+
+      // 4. ML Forecast Summary Tiles
+      const fcHarvest = document.getElementById('pForecastHarvest');
+      const fcDemand = document.getElementById('pForecastDemand');
+      if (fcHarvest) fcHarvest.textContent = `${(p.monthly_kwh_consumed / 30 * 1.2).toFixed(1)} kWh`;
+      if (fcDemand) fcDemand.textContent = `${(p.monthly_kwh_consumed / 30 * 0.8).toFixed(1)} kWh`;
+
+      // 5. Initialize Simulator Input with Customer's baseline
+      const sliderMonthly = document.getElementById('sliderMonthlyKWh');
+      if (sliderMonthly) sliderMonthly.value = p.monthly_kwh_consumed;
+
+      // Automatically display ONLY the customer's chosen package viewport
+      setPortalSegment(p.segment);
+      recalcTripleSourceSavings();
+
+      switchPortalTab('analytics');
       closeModal('signInModal');
       openModal('customerPortalModal');
       lucide.createIcons();
-      showToast(`✓ Logged in as ${p.name}. Telemetry gateway active.`);
+      showToast(`✓ Logged in as ${p.name}. Subscribed: ${p.package_name}`);
+    }
+
+    // --- Storyteller & Analytics Segment State Machine ---
+    let currentPortalSegment = 'residential';
+    const SEGMENT_DATA = {
+      residential: {
+        label: 'Residential Clean Asset Subscribed Plan',
+        headline: 'Zero-Interruption Clean Energy & ₦39,000 Monthly Fuel Displacement',
+        story: 'Your system harvested 18% more solar power this month due to clear weather. By relying on your battery storage during the evening grid collapse, you completely avoided 42 hours of utility blackouts and saved an estimated ₦39,000 that would have otherwise been spent on generator petrol.',
+        harvestGain: '+18.2% Harvest',
+        blackoutHours: '42.0 Hours',
+        fuelDisplaced: '114.5 Liters',
+        netSavings: '+₦39,000 / mo'
+      },
+      commercial: {
+        label: 'Commercial SME Cold-Chain & POS Subscribed Plan',
+        headline: '₦184,000 Monthly Operating Savings & 62h Cold-Chain Downtime Prevented',
+        story: 'By automatically shaving peak facility demand by 4.8 kW between 11:30 AM and 3:00 PM, your Growatt asset bypassed peak utility surcharges, kept critical cold-chain storage and POS checkout completely uninterrupted, and eliminated ₦650,000 in perishable inventory risk.',
+        harvestGain: '+21.4% Harvest',
+        blackoutHours: '62.0 Hours',
+        fuelDisplaced: '280.0 Liters',
+        netSavings: '+₦184,000 / mo'
+      },
+      industrial: {
+        label: 'Small Industrial 3-Phase Efficiency Subscribed Plan',
+        headline: '84.6% Performance Ratio & 0.98 Power Factor Penalty Immunity',
+        story: 'Your multi-string array achieved a Specific Yield of 4.82 kWh/kWp with strict 3-phase balancing (2.4% imbalance, well below IEC 5% limit). The system\'s reactive power compensation maintained an optimal 0.98 Power Factor, eliminating ₦92,000 in NERC low-PF utility penalties.',
+        harvestGain: '+14.7% Harvest',
+        blackoutHours: '88.5 Hours',
+        fuelDisplaced: '620.0 Liters',
+        netSavings: '+₦412,000 / mo'
+      }
+    };
+
+    function setPortalSegment(seg) {
+      currentPortalSegment = seg;
+      const data = SEGMENT_DATA[seg] || SEGMENT_DATA.residential;
+
+      // Only display the customer's chosen package viewport
+      const vpRes = document.getElementById('portalViewportResidential');
+      const vpCom = document.getElementById('portalViewportCommercial');
+      const vpInd = document.getElementById('portalViewportIndustrial');
+
+      if (vpRes) vpRes.classList.add('hidden');
+      if (vpCom) vpCom.classList.add('hidden');
+      if (vpInd) vpInd.classList.add('hidden');
+
+      if (seg === 'residential') {
+        if (vpRes) vpRes.classList.remove('hidden');
+      } else if (seg === 'commercial') {
+        if (vpCom) vpCom.classList.remove('hidden');
+      } else if (seg === 'industrial') {
+        if (vpInd) vpInd.classList.remove('hidden');
+      }
+
+      const hl = document.getElementById('narrativeHeadline');
+      if (hl) hl.textContent = data.headline;
+
+      const body = document.getElementById('narrativeStoryBody');
+      if (body) body.textContent = data.story;
+
+      const hGain = document.getElementById('narrativeHarvestGain');
+      if (hGain) hGain.textContent = data.harvestGain;
+
+      const bHours = document.getElementById('narrativeBlackoutHours');
+      if (bHours) bHours.textContent = data.blackoutHours;
+
+      const fDisp = document.getElementById('narrativeFuelDisplaced');
+      if (fDisp) fDisp.textContent = data.fuelDisplaced;
+
+      const nSav = document.getElementById('narrativeNetSavings');
+      if (nSav) nSav.textContent = data.netSavings;
+
+      lucide.createIcons();
+    }
+
+    // Dynamic Triple-Source Cost Calculation with exact user formulas:
+    // National Grid: Energy Consumed (from Solar) * Tariff (₦209/kWh)
+    // Fossil Generator: (Energy Consumed ÷ Specific Yield [kWh/L]) × Fuel Price + Maintenance
+    function recalcTripleSourceSavings() {
+      const p = CUSTOMER_PROFILES[activeProfileKey] || CUSTOMER_PROFILES.amina;
+
+      const sliderPrice = document.getElementById('sliderFuelPrice');
+      const sliderYield = document.getElementById('sliderGenKWhPerLiter');
+      const sliderMonthly = document.getElementById('sliderMonthlyKWh');
+
+      const fuelPrice = sliderPrice ? parseInt(sliderPrice.value, 10) : 1250;
+      const kwhPerLiter = sliderYield ? parseFloat(sliderYield.value) : 2.8;
+      const monthlyKWh = sliderMonthly ? parseInt(sliderMonthly.value, 10) : (p.monthly_kwh_consumed || 612);
+      const fixedSolar = p.monthly_amount_raw || 185000;
+
+      // Update Slider Labels
+      const labelPrice = document.getElementById('labelFuelPrice');
+      const labelYield = document.getElementById('labelGenYield');
+      const labelMonthly = document.getElementById('labelMonthlyKWh');
+      if (labelPrice) labelPrice.textContent = `₦${fuelPrice.toLocaleString()} / Liter`;
+      if (labelYield) labelYield.textContent = `${kwhPerLiter.toFixed(1)} kWh / Liter`;
+      if (labelMonthly) labelMonthly.textContent = `${monthlyKWh.toLocaleString()} kWh / Month`;
+
+      // 1. National Grid: Energy Consumed (from Solar) × Tariff (₦209)
+      const gridTariff = 209;
+      const gridTotalCost = Math.round(monthlyKWh * gridTariff);
+
+      // 2. Fossil Generator: (Energy Consumed ÷ kWh/L) × Fuel Price + ₦28k Maintenance
+      const litersNeeded = monthlyKWh / kwhPerLiter;
+      const genFuelCost = Math.round(litersNeeded * fuelPrice);
+      const genMaintenance = 28000;
+      const genTotalCost = genFuelCost + genMaintenance;
+
+      // 3. Solar Savings vs Generator & Grid
+      const netMonthlySavings = genTotalCost - fixedSolar;
+      const threeYrSavings = netMonthlySavings * 36;
+
+      // Update National Grid Card Elements
+      const gridWouldHaveSpent = document.getElementById('gridWouldHaveSpentVal');
+      const gridKWhText = document.getElementById('gridKWhVal');
+      const gridFormula = document.getElementById('gridFormulaVal');
+      if (gridWouldHaveSpent) gridWouldHaveSpent.innerHTML = `₦${gridTotalCost.toLocaleString()} <span class="text-xs font-normal text-slate-400">/ mo</span>`;
+      if (gridKWhText) gridKWhText.textContent = `${monthlyKWh.toLocaleString()} kWh / mo`;
+      if (gridFormula) gridFormula.textContent = `${monthlyKWh} × ₦209 = ₦${gridTotalCost.toLocaleString()}`;
+
+      // Update Fossil Generator Card Elements
+      const genWouldHaveSpent = document.getElementById('genWouldHaveSpentVal');
+      const genLitersText = document.getElementById('genLitersNeededVal');
+      const genFuelCostText = document.getElementById('genFuelCostVal');
+      const genFormula = document.getElementById('genFormulaVal');
+      if (genWouldHaveSpent) genWouldHaveSpent.innerHTML = `₦${genTotalCost.toLocaleString()} <span class="text-xs font-normal text-rose-300">/ mo</span>`;
+      if (genLitersText) genLitersText.textContent = `${litersNeeded.toFixed(1)} Liters / mo`;
+      if (genFuelCostText) genFuelCostText.textContent = `₦${genFuelCost.toLocaleString()}`;
+      if (genFormula) genFormula.textContent = `(${monthlyKWh}÷${kwhPerLiter.toFixed(1)})L = ${litersNeeded.toFixed(1)}L × ₦${fuelPrice} + ₦28k`;
+
+      // Update Computed Summary Bar
+      const resGrid = document.getElementById('resGridSpend');
+      const resFuel = document.getElementById('resFuelSpend');
+      const resSolar = document.getElementById('resSolarSub');
+      const resNet = document.getElementById('resNetSavings');
+      const res3Yr = document.getElementById('res3YrSavings');
+
+      if (resGrid) resGrid.textContent = `₦${gridTotalCost.toLocaleString()} / mo`;
+      if (resFuel) resFuel.textContent = `₦${genTotalCost.toLocaleString()} / mo`;
+      if (resSolar) resSolar.textContent = `₦${fixedSolar.toLocaleString()} / mo`;
+
+      if (resNet) {
+        resNet.textContent = `${netMonthlySavings >= 0 ? '+₦' : '-₦'}${Math.abs(netMonthlySavings).toLocaleString()} / mo`;
+        resNet.className = netMonthlySavings >= 0 ? 'text-emerald-400 font-mono font-extrabold text-base' : 'text-rose-400 font-mono font-extrabold text-base';
+      }
+      if (res3Yr) {
+        res3Yr.textContent = `${threeYrSavings >= 0 ? '₦' : '-₦'}${Math.abs(threeYrSavings).toLocaleString()}`;
+        res3Yr.className = threeYrSavings >= 0 ? 'text-brand-sky font-mono font-extrabold text-base' : 'text-rose-400 font-mono font-extrabold text-base';
+      }
+    }
+
+    function setGraphTimeframe(tf) {
+      const btn24h = document.getElementById('btnTf24h');
+      const btn7d = document.getElementById('btnTf7d');
+      const btn30d = document.getElementById('btnTf30d');
+
+      [btn24h, btn7d, btn30d].forEach(b => {
+        if (b) b.className = 'px-3 py-1 rounded-lg text-brand-warm/70 hover:text-white transition';
+      });
+
+      const polySolar = document.getElementById('svgSolarPolyline');
+      const polySolarArea = document.getElementById('svgSolarPolygon');
+      const polyLoad = document.getElementById('svgLoadPolyline');
+      const polyLoadArea = document.getElementById('svgLoadPolygon');
+      const marker = document.getElementById('svgTransitionMarker');
+      const markerText = marker ? marker.querySelector('text') : null;
+      const transitionCallout = document.getElementById('graphTransitionText');
+      const timeLabels = document.getElementById('portalTimeLabels');
+
+      if (tf === '24h') {
+        if (btn24h) btn24h.className = 'px-3 py-1 rounded-lg bg-brand-amber text-brand-dark font-bold transition';
+        if (polySolar) polySolar.setAttribute('points', '0,140 100,140 200,136 290,95 350,60 480,25 580,48 680,126 800,140');
+        if (polySolarArea) polySolarArea.setAttribute('points', '0,140 100,140 200,136 290,95 350,60 480,25 580,48 680,126 800,140');
+        if (polyLoad) polyLoad.setAttribute('points', '0,125 100,128 200,118 290,95 350,94 480,82 580,90 680,98 800,122');
+        if (polyLoadArea) polyLoadArea.setAttribute('points', '0,125 100,128 200,118 290,95 350,94 480,82 580,90 680,98 800,122');
+        if (marker) marker.setAttribute('transform', 'translate(290, 95)');
+        if (markerText) markerText.textContent = '★ AUTONOMY: 08:45 AM';
+        if (transitionCallout) transitionCallout.textContent = '08:45 AM (1.25 kW crossover)';
+        if (timeLabels) {
+          timeLabels.innerHTML = `
+            <span>00:00</span>
+            <span>04:00</span>
+            <span>08:00</span>
+            <span class="text-brand-amber font-bold">08:45 (Autonomy)</span>
+            <span>12:00 (Peak)</span>
+            <span>16:00</span>
+            <span>20:00</span>
+            <span>24:00</span>
+          `;
+        }
+      } else if (tf === '7d') {
+        if (btn7d) btn7d.className = 'px-3 py-1 rounded-lg bg-brand-amber text-brand-dark font-bold transition';
+        if (polySolar) polySolar.setAttribute('points', '0,140 133,50 266,42 400,65 533,35 666,40 800,140');
+        if (polySolarArea) polySolarArea.setAttribute('points', '0,140 133,50 266,42 400,65 533,35 666,40 800,140');
+        if (polyLoad) polyLoad.setAttribute('points', '0,95 133,85 266,88 400,90 533,82 666,86 800,95');
+        if (polyLoadArea) polyLoadArea.setAttribute('points', '0,95 133,85 266,88 400,90 533,82 666,86 800,95');
+        if (marker) marker.setAttribute('transform', 'translate(400, 65)');
+        if (markerText) markerText.textContent = '★ 7-DAY AUTONOMY: 98.4%';
+        if (transitionCallout) transitionCallout.textContent = 'Daily Autonomy Achieved at ~08:30 AM (98.4% Reliability)';
+        if (timeLabels) {
+          timeLabels.innerHTML = `
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span class="text-brand-amber font-bold">Thu (Autonomy)</span>
+            <span>Fri</span>
+            <span>Sat</span>
+            <span>Sun</span>
+          `;
+        }
+      } else if (tf === '30d') {
+        if (btn30d) btn30d.className = 'px-3 py-1 rounded-lg bg-brand-amber text-brand-dark font-bold transition';
+        if (polySolar) polySolar.setAttribute('points', '0,140 266,45 533,30 800,140');
+        if (polySolarArea) polySolarArea.setAttribute('points', '0,140 266,45 533,30 800,140');
+        if (polyLoad) polyLoad.setAttribute('points', '0,88 266,84 533,80 800,90');
+        if (polyLoadArea) polyLoadArea.setAttribute('points', '0,88 266,84 533,80 800,90');
+        if (marker) marker.setAttribute('transform', 'translate(533, 30)');
+        if (markerText) markerText.textContent = '★ 30-DAY HARVEST: +18.2%';
+        if (transitionCallout) transitionCallout.textContent = '30-Day Cumulative: 99.2% Solar Self-Sufficiency Index';
+        if (timeLabels) {
+          timeLabels.innerHTML = `
+            <span>Week 1</span>
+            <span>Week 2</span>
+            <span class="text-brand-amber font-bold">Week 3 (Peak Harvest)</span>
+            <span>Week 4</span>
+          `;
+        }
+      }
     }
 
     function switchPortalTab(tab) {
+      const secAna = document.getElementById('portalSectionAnalytics');
       const secTel = document.getElementById('portalSectionTelemetry');
       const secPay = document.getElementById('portalSectionPaygo');
       const secHw = document.getElementById('portalSectionHardware');
 
+      const btnAna = document.getElementById('pTabAnalytics');
       const btnTel = document.getElementById('pTabTelemetry');
       const btnPay = document.getElementById('pTabPaygo');
       const btnHw = document.getElementById('pTabHardware');
 
-      [btnTel, btnPay, btnHw].forEach(b => {
-        b.className = 'px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 text-white font-medium transition';
+      [btnAna, btnTel, btnPay, btnHw].forEach(b => {
+        if (b) b.className = 'px-4 py-2 rounded-xl bg-white/5 hover:bg-white/15 text-white font-medium transition whitespace-nowrap flex items-center gap-1.5';
       });
 
-      secTel.classList.add('hidden');
-      secPay.classList.add('hidden');
-      secHw.classList.add('hidden');
+      if (secAna) secAna.classList.add('hidden');
+      if (secTel) secTel.classList.add('hidden');
+      if (secPay) secPay.classList.add('hidden');
+      if (secHw) secHw.classList.add('hidden');
 
-      if (tab === 'telemetry') {
-        secTel.classList.remove('hidden');
-        btnTel.className = 'px-4 py-2 rounded-xl bg-brand-amber text-brand-dark font-bold transition shadow-md';
+      if (tab === 'analytics') {
+        if (secAna) secAna.classList.remove('hidden');
+        if (btnAna) btnAna.className = 'px-4 py-2 rounded-xl bg-brand-amber text-brand-dark font-bold transition shadow-md whitespace-nowrap flex items-center gap-1.5';
+      } else if (tab === 'telemetry') {
+        if (secTel) secTel.classList.remove('hidden');
+        if (btnTel) btnTel.className = 'px-4 py-2 rounded-xl bg-brand-amber text-brand-dark font-bold transition shadow-md whitespace-nowrap flex items-center gap-1.5';
       } else if (tab === 'paygo') {
-        secPay.classList.remove('hidden');
-        btnPay.className = 'px-4 py-2 rounded-xl bg-brand-amber text-brand-dark font-bold transition shadow-md';
+        if (secPay) secPay.classList.remove('hidden');
+        if (btnPay) btnPay.className = 'px-4 py-2 rounded-xl bg-brand-amber text-brand-dark font-bold transition shadow-md whitespace-nowrap flex items-center gap-1.5';
       } else if (tab === 'hardware') {
-        secHw.classList.remove('hidden');
-        btnHw.className = 'px-4 py-2 rounded-xl bg-brand-amber text-brand-dark font-bold transition shadow-md';
+        if (secHw) secHw.classList.remove('hidden');
+        if (btnHw) btnHw.className = 'px-4 py-2 rounded-xl bg-brand-amber text-brand-dark font-bold transition shadow-md whitespace-nowrap flex items-center gap-1.5';
       }
       lucide.createIcons();
     }
@@ -4004,6 +5314,7 @@
 
       lucide.createIcons();
       startSlideshow();
+      populateApplianceDropdown();
       renderAppliances();
       runCalculator();
     });

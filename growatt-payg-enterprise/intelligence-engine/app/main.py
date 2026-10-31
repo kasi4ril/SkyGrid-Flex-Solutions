@@ -21,7 +21,7 @@ VFS_ROOT = os.getenv("PAYG_VFS_ROOT", "/tmp/payg-vfs-dev")
 MODELS_DIR = os.getenv("MODELS_REGISTRY_DIR", "./models_registry")
 
 app = FastAPI(
-    title="SkyTron Growatt PAYG Intelligence Engine (ML Forecasting & LocalGridAgent RAG)",
+    title="SkyGrid Growatt PAYG Intelligence Engine (ML Forecasting & LocalGridAgent RAG)",
     version="1.0.0",
 )
 

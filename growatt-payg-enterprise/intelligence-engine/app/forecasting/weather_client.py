@@ -77,7 +77,7 @@ class OpenMeteoSolarClient:
                     f"&hourly=shortwave_radiation,cloud_cover,temperature_2m"
                     f"&forecast_days={forecast_days}&timezone=Africa%2FLagos"
                 )
-                req = urllib.request.Request(url, headers={"User-Agent": "SkyTron-Growatt-PAYG/1.0"})
+                req = urllib.request.Request(url, headers={"User-Agent": "SkyGrid-Growatt-PAYG/1.0"})
                 with urllib.request.urlopen(req, timeout=self.timeout_seconds) as resp:
                     if resp.status == 200:
                         payload = json.loads(resp.read().decode("utf-8"))

@@ -115,6 +115,6 @@ func (k *KYCUnderwritingService) EvaluateCreditEligibility(
 }
 
 func hashPII(prefix, value string) string {
-	sum := sha256.Sum256([]byte("SKYTRON_PII_SALT_2026:" + prefix + ":" + value))
+	sum := sha256.Sum256([]byte("SKYGRID_PII_SALT_2026:" + prefix + ":" + value))
 	return hex.EncodeToString(sum[:])
 }

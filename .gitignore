@@ -1,7 +1,11 @@
 # Virtual Environments
+.venv
 .venv/
+venv
 venv/
+env
 env/
+ENV
 ENV/
 
 # Python Cache & Artifacts

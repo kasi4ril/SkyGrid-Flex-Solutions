@@ -92,7 +92,7 @@ func (m *MultiRailPaymentEngine) ProvisionDedicatedVirtualAccounts(
 	// - Moniepoint: POST https://api.monnify.com/api/v2/bank-transfer/reserved-accounts
 	// - OPay: POST https://cashierapi.opayweb.com/api/v3/virtual-account/create
 	sanitizedName := strings.ToUpper(strings.TrimSpace(customerName))
-	acctLabel := fmt.Sprintf("SKYTRON SOLAR / %s", sanitizedName)
+	acctLabel := fmt.Sprintf("SKYGRID SOLAR / %s", sanitizedName)
 
 	nubanMoniepoint := deriveDeterministicNUBAN("80", contractID, "MONIEPOINT")
 	nubanPaystack := deriveDeterministicNUBAN("99", contractID, "PAYSTACK")

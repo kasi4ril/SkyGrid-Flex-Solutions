@@ -128,7 +128,7 @@ func NewTelemetryHardwareProcessor(
 	heartbeatSecret string,
 ) *TelemetryHardwareProcessor {
 	if heartbeatSecret == "" {
-		heartbeatSecret = "skytron-mqtt-heartbeat-hmac-key-2026"
+		heartbeatSecret = "skygrid-mqtt-heartbeat-hmac-key-2026"
 	}
 	return &TelemetryHardwareProcessor{
 		vfs:               vfs,
