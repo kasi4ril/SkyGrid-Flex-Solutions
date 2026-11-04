@@ -299,6 +299,90 @@
       color: rgba(248, 250, 247, 0.75) !important;
     }
 
+    /* ==========================================================================
+       ABOUT US & DUAL-AXIS CHARTS LIGHT MODE MASTER OVERRIDES
+       ========================================================================== */
+    html.light #about {
+      background: linear-gradient(to bottom, #F8FAF7, #EEF4F0, #F8FAF7) !important;
+      border-color: rgba(18, 59, 42, 0.12) !important;
+    }
+    html.light #about .bg-black\/40 {
+      background-color: #FFFFFF !important;
+      border: 1px solid rgba(18, 59, 42, 0.12) !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04) !important;
+      color: #17231D !important;
+    }
+    html.light #about .text-white {
+      color: #17231D !important;
+    }
+    html.light #about .text-brand-warm\/80,
+    html.light #about .text-brand-warm\/85,
+    html.light #about .text-brand-warm\/90 {
+      color: #2C3E35 !important;
+    }
+    html.light #about .text-brand-warm\/60,
+    html.light #about .text-brand-warm\/70 {
+      color: #56685F !important;
+    }
+    html.light #about .text-emerald-300 {
+      color: #065F46 !important;
+    }
+    html.light #about .text-sky-300 {
+      color: #0369A1 !important;
+    }
+    html.light #about .text-amber-300 {
+      color: #92400E !important;
+    }
+    html.light #about .text-slate-300 {
+      color: #2C3E35 !important;
+    }
+    html.light #about .text-slate-400 {
+      color: #56685F !important;
+    }
+    html.light #about .bg-white\/5 {
+      background-color: #F1F5F9 !important;
+      border-color: #E2E8F0 !important;
+    }
+
+    /* Dual-Axis SVG Curve Light Mode Contrast Overrides */
+    html.light #portalDualAxisSvg line[stroke="#334155"] {
+      stroke: #CBD5E1 !important;
+    }
+    html.light #portalDualAxisSvg line[stroke="#64748B"] {
+      stroke: #94A3B8 !important;
+    }
+    html.light #portalDualAxisSvg text[fill="#94A3B8"] {
+      fill: #475569 !important;
+    }
+    html.light #portalDualAxisSvg text[fill="#FFBF00"] {
+      fill: #B45309 !important;
+    }
+    html.light #portalDualAxisSvg polygon[fill="#FFBF00"] {
+      fill: #B45309 !important;
+    }
+    html.light #portalDualAxisSvg circle[fill="#FFBF00"] {
+      fill: #D97706 !important;
+    }
+    html.light #portalDualAxisSvg rect[fill="#0F172A"] {
+      fill: #FFFFFF !important;
+      stroke: #D97706 !important;
+    }
+    html.light #portalDualAxisSvg polyline[stroke="#FFBF00"] {
+      stroke: #D97706 !important;
+    }
+    html.light #portalDualAxisSvg polyline[stroke="#0EA5E9"] {
+      stroke: #0284C7 !important;
+    }
+    html.light #portalTimeLabels {
+      border-color: #E2E8F0 !important;
+    }
+    html.light #portalTimeLabels span {
+      color: #475569 !important;
+    }
+    html.light #portalTimeLabels .text-brand-amber {
+      color: #B45309 !important;
+    }
+
     /* Hero Slideshow Transitions */
     .slide-bg {
       position: absolute;
@@ -393,6 +477,7 @@
       <!-- Desktop Navigation Links -->
       <div class="hidden lg:flex items-center gap-7 text-sm font-medium text-brand-warm/80">
         <a href="#hero" class="hover:text-brand-sky transition-colors">Home</a>
+        <a href="#about" class="hover:text-brand-sky transition-colors text-white font-semibold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-teal"></span>About Us</a>
         <a href="#packages" class="hover:text-brand-sky transition-colors">Our Packages</a>
         <a href="#how-it-works" class="hover:text-brand-sky transition-colors">How It Works</a>
         <a href="#calculator" class="hover:text-brand-sky transition-colors">Pricing &amp; Calculator</a>
@@ -437,6 +522,7 @@
     <div id="mobileMenu" class="hidden lg:hidden mt-3 max-w-[1600px] mx-auto glass-card-dark rounded-2xl p-5 border border-white/10 shadow-2xl">
       <div class="flex flex-col gap-3 text-sm font-medium text-brand-warm/90 pb-4 border-b border-white/10">
         <a href="#hero" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 hover:text-brand-amber transition">Home</a>
+        <a href="#about" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 text-brand-teal font-semibold transition flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-brand-teal status-pulse"></span>About Us (Vision &amp; African Impact)</a>
         <a href="#packages" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 hover:text-brand-amber transition">Solar Solutions</a>
         <a href="#how-it-works" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 hover:text-brand-amber transition">How It Works</a>
         <a href="#calculator" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 hover:text-brand-amber transition">Pricing &amp; Calculator</a>
@@ -1641,10 +1727,6 @@
     </div>
   </section>
 
-    </div>
-
-  </section>
-
   <!-- SECTION 7: INSTALLATION CATEGORIES -->
   <section id="installations" class="py-20 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
     
@@ -1864,7 +1946,363 @@
     </div>
   </section>
 
-  <!-- SECTION 9: FREQUENTLY ASKED QUESTIONS (ACCORDION) -->
+  <!-- SECTION: ABOUT SKYGRID — CORPORATE VISION, MISSION & AFRICAN ENERGY SOVEREIGNTY (#about) -->
+  <section id="about" class="py-24 sm:py-32 border-t border-white/10 bg-gradient-to-b from-brand-dark via-brand-forest/40 to-brand-dark relative overflow-hidden">
+    <!-- Ambient Radial Glows -->
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gradient-to-r from-brand-teal/15 via-brand-sky/15 to-brand-amber/10 blur-3xl pointer-events-none rounded-full"></div>
+    <div class="absolute bottom-10 right-10 w-[500px] h-[300px] bg-brand-teal/5 blur-3xl pointer-events-none rounded-full"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20 relative z-10">
+      
+      <!-- 1. Heroic Header: Clear, Open & Grade-A Standard -->
+      <div class="text-center max-w-4xl mx-auto space-y-6">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-brand-teal/20 via-brand-sky/20 to-brand-amber/20 border border-brand-teal/40 text-emerald-300 text-xs font-bold uppercase tracking-wider backdrop-blur-md shadow-lg shadow-brand-teal/10">
+          <span class="w-2 h-2 rounded-full bg-brand-teal animate-ping"></span>
+          <span>Sovereign Clean Energy Infrastructure &bull; Nigeria &bull; West Africa</span>
+        </div>
+        
+        <h2 class="text-3xl sm:text-5xl lg:text-6xl font-heading font-black text-white tracking-tight leading-[1.12]">
+          Built of World Standard.<br />
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-teal via-brand-sky to-brand-amber">
+            Born to Solve Nigeria's Power Deficit &amp; Electrify Africa.
+          </span>
+        </h2>
+        
+        <p class="text-brand-warm/80 text-base sm:text-lg leading-relaxed max-w-3xl mx-auto">
+          SkyGrid Solutions (in strategic alliance with SkyTron Quantum Solutions and Growatt New Energy) is Africa&apos;s premier Clean Energy-as-a-Service (EaaS) infrastructure enterprise. We are on a single uncompromising mandate: to replace the economic drain of fossil-fuel generators with sovereign, intelligent solar micro-powerplants and empower every Nigerian/African home and enterprise with bankable 24/7 electricity.
+        </p>
+
+        <!-- Institutional Alliance Badges -->
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-2 text-xs font-mono font-bold">
+          <span class="px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-brand-teal flex items-center gap-1.5">
+            <span>🏛️</span> COREN Registered Firm
+          </span>
+          <span class="px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-brand-sky flex items-center gap-1.5">
+            <span>🛡️</span> NEMSA Safety Certified
+          </span>
+          <span class="px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-brand-amber flex items-center gap-1.5">
+            <span>⚡</span> Growatt Official Tier-1 Partner
+          </span>
+          <span class="px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-emerald-300 flex items-center gap-1.5">
+            <span>🔋</span> 100% LiFePO4 Mandate
+          </span>
+        </div>
+      </div>
+
+      <!-- 2. High-Impact Institutional Performance Counters -->
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div class="p-5 rounded-2xl bg-black/40 border border-white/10 text-center space-y-1 hover:border-brand-teal/50 transition-all hover:-translate-y-1">
+          <p class="text-2xl sm:text-3xl font-heading font-black text-brand-teal font-mono">99.98%</p>
+          <p class="text-xs font-bold text-white">Power Uptime</p>
+          <p class="text-[10px] text-brand-warm/60">SLA Guaranteed</p>
+        </div>
+        <div class="p-5 rounded-2xl bg-black/40 border border-white/10 text-center space-y-1 hover:border-brand-sky/50 transition-all hover:-translate-y-1">
+          <p class="text-2xl sm:text-3xl font-heading font-black text-brand-sky font-mono">6,000+</p>
+          <p class="text-xs font-bold text-white">LiFePO4 Cycles</p>
+          <p class="text-[10px] text-brand-warm/60">10+ Year Lifespan</p>
+        </div>
+        <div class="p-5 rounded-2xl bg-black/40 border border-white/10 text-center space-y-1 hover:border-brand-amber/50 transition-all hover:-translate-y-1">
+          <p class="text-2xl sm:text-3xl font-heading font-black text-brand-amber font-mono">&gt; 65%</p>
+          <p class="text-xs font-bold text-white">Net Cash Savings</p>
+          <p class="text-[10px] text-brand-warm/60">vs. Petrol/Diesel Gen</p>
+        </div>
+        <div class="p-5 rounded-2xl bg-black/40 border border-white/10 text-center space-y-1 hover:border-white/30 transition-all hover:-translate-y-1">
+          <p class="text-2xl sm:text-3xl font-heading font-black text-white font-mono">36 + FCT</p>
+          <p class="text-xs font-bold text-white">States Covered</p>
+          <p class="text-[10px] text-brand-warm/60">Nationwide Reach</p>
+        </div>
+        <div class="p-5 rounded-2xl bg-black/40 border border-white/10 text-center space-y-1 hover:border-emerald-400/50 transition-all hover:-translate-y-1">
+          <p class="text-2xl sm:text-3xl font-heading font-black text-emerald-400 font-mono">&lt; 48 Hrs</p>
+          <p class="text-xs font-bold text-white">Rapid Install</p>
+          <p class="text-[10px] text-brand-warm/60">Audit to Turn-On</p>
+        </div>
+        <div class="p-5 rounded-2xl bg-black/40 border border-white/10 text-center space-y-1 hover:border-cyan-400/50 transition-all hover:-translate-y-1">
+          <p class="text-2xl sm:text-3xl font-heading font-black text-cyan-400 font-mono">100%</p>
+          <p class="text-xs font-bold text-white">Asset Ownership</p>
+          <p class="text-[10px] text-brand-warm/60">Title Deed Transfer</p>
+        </div>
+      </div>
+
+      <!-- 3. The National Challenge vs. The SkyGrid Standard: Balanced 2-Column Showcase -->
+      <div class="space-y-6">
+        <div class="text-center max-w-2xl mx-auto space-y-2">
+          <span class="text-brand-amber font-bold text-xs uppercase tracking-widest font-mono">The Energy Shift</span>
+          <h3 class="text-2xl sm:text-4xl font-heading font-extrabold text-white">Solving the Nigerian Power Deficit</h3>
+          <p class="text-xs sm:text-sm text-brand-warm/60">
+            A direct comparison between the exhausting fossil-fuel generator trap and the sovereign SkyGrid clean solar standard.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+          
+          <!-- Card A: The Old Dilemma (Generator Trap) -->
+          <div class="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-red-950/20 via-slate-950/80 to-slate-950 border border-red-500/30 space-y-6 shadow-xl relative overflow-hidden flex flex-col justify-between">
+            <div class="space-y-5">
+              <div class="flex items-center justify-between pb-4 border-b border-white/10">
+                <div class="flex items-center gap-2">
+                  <span class="w-8 h-8 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center font-bold text-base">⚠️</span>
+                  <div>
+                    <h4 class="text-lg font-heading font-bold text-white">The Centralized Grid &amp; Generator Trap</h4>
+                    <p class="text-[11px] text-red-300 font-mono">Crippling Nigerian Families &amp; Businesses</p>
+                  </div>
+                </div>
+                <span class="text-xs font-mono font-bold text-red-400 bg-red-500/10 px-2.5 py-1 rounded-full border border-red-500/30">OLD REALITY</span>
+              </div>
+
+              <div class="space-y-4">
+                <div class="flex items-start gap-3">
+                  <div class="w-6 h-6 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center text-xs shrink-0 mt-0.5">✕</div>
+                  <div>
+                    <p class="text-xs sm:text-sm font-bold text-white">Chronic Grid Collapses &amp; Band A Hikes</p>
+                    <p class="text-xs text-brand-warm/60 leading-relaxed">Under 4,500 MW grid capacity for 220M citizens; frequent total system collapses and punitive Band A tariffs exceeding ₦225/kWh without reliable supply.</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                  <div class="w-6 h-6 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center text-xs shrink-0 mt-0.5">✕</div>
+                  <div>
+                    <p class="text-xs sm:text-sm font-bold text-white">$14 Billion Annual Generator Drain</p>
+                    <p class="text-xs text-brand-warm/60 leading-relaxed">Over ₦22 Trillion spent every year on ₦1,250+/L petrol, ₦1,400/L diesel, oil top-ups, and endless engine mechanical servicing that delivers zero asset equity.</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                  <div class="w-6 h-6 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center text-xs shrink-0 mt-0.5">✕</div>
+                  <div>
+                    <p class="text-xs sm:text-sm font-bold text-white">Toxic Fumes &amp; Acoustic Pollution</p>
+                    <p class="text-xs text-brand-warm/60 leading-relaxed">Poisonous carbon monoxide exhaust fumes and deafening engine noise choking residential estates and degrading quality of life.</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                  <div class="w-6 h-6 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center text-xs shrink-0 mt-0.5">✕</div>
+                  <div>
+                    <p class="text-xs sm:text-sm font-bold text-white">The Substandard Battery Trap</p>
+                    <p class="text-xs text-brand-warm/60 leading-relaxed">Tubular and Gel lead-acid batteries that burn out and die within 12 to 18 months in tropical heat, forcing repetitive expensive replacements.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-2xl bg-red-950/40 border border-red-500/30 text-xs text-red-200 font-mono">
+              Result: Permanent capital drain with 0% electricity sovereignty.
+            </div>
+          </div>
+
+          <!-- Card B: The SkyGrid Clean Standard -->
+          <div class="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-emerald-950/20 via-slate-950/80 to-slate-950 border border-brand-teal/50 space-y-6 shadow-2xl shadow-brand-teal/10 relative overflow-hidden flex flex-col justify-between">
+            <div class="space-y-5">
+              <div class="flex items-center justify-between pb-4 border-b border-white/10">
+                <div class="flex items-center gap-2">
+                  <span class="w-8 h-8 rounded-xl bg-brand-teal/20 text-brand-teal flex items-center justify-center font-bold text-base">☀️</span>
+                  <div>
+                    <h4 class="text-lg font-heading font-bold text-white">The SkyGrid Sovereign Clean Solution</h4>
+                    <p class="text-[11px] text-brand-teal font-mono">World-Class Clean Energy-as-a-Service</p>
+                  </div>
+                </div>
+                <span class="text-xs font-mono font-bold text-brand-teal bg-brand-teal/10 px-2.5 py-1 rounded-full border border-brand-teal/30">NEW STANDARD</span>
+              </div>
+
+              <div class="space-y-4">
+                <div class="flex items-start gap-3">
+                  <div class="w-6 h-6 rounded-lg bg-brand-teal/20 text-brand-teal flex items-center justify-center text-xs shrink-0 mt-0.5">✓</div>
+                  <div>
+                    <p class="text-xs sm:text-sm font-bold text-white">Flicker-Free 24/7 Pure Sine Wave Power</p>
+                    <p class="text-xs text-brand-warm/80 leading-relaxed">COREN-certified Growatt hybrid inverters powering continuous inductive loads—including split inverter air conditioners, water borehole pumps, refrigerators, and medical equipment.</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                  <div class="w-6 h-6 rounded-lg bg-brand-teal/20 text-brand-teal flex items-center justify-center text-xs shrink-0 mt-0.5">✓</div>
+                  <div>
+                    <p class="text-xs sm:text-sm font-bold text-white">50% to 65% Cheaper than Generators</p>
+                    <p class="text-xs text-brand-warm/80 leading-relaxed">Start with a transparent 30% down payment and pay fixed, predictable monthly installments that cost significantly less than what you currently burn on petrol and diesel.</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                  <div class="w-6 h-6 rounded-lg bg-brand-teal/20 text-brand-teal flex items-center justify-center text-xs shrink-0 mt-0.5">✓</div>
+                  <div>
+                    <p class="text-xs sm:text-sm font-bold text-white">10+ Year Automotive LiFePO4 Durability</p>
+                    <p class="text-xs text-brand-warm/80 leading-relaxed">Strict mandate on Tier-1 Lithium Iron Phosphate cells rated for 6,000+ cycles at 80% Depth of Discharge, ensuring continuous overnight autonomy that far outlives your lease.</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                  <div class="w-6 h-6 rounded-lg bg-brand-teal/20 text-brand-teal flex items-center justify-center text-xs shrink-0 mt-0.5">✓</div>
+                  <div>
+                    <p class="text-xs sm:text-sm font-bold text-white">100% Asset Title Deed Transfer</p>
+                    <p class="text-xs text-brand-warm/80 leading-relaxed">Every naira paid builds equity. Once your flexible 12 to 60-month lease is concluded, full legal ownership transfers to you with zero balloon payments or buyout fees.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-2xl bg-emerald-950/40 border border-brand-teal/40 text-xs text-emerald-200 font-mono">
+              Result: Sovereign electric independence &bull; Silent, clean, and bankable.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 4. Corporate Vision & Mission: Executive Dual Showcase -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+        
+        <!-- Corporate Vision Card -->
+        <div class="p-8 sm:p-10 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border border-brand-sky/40 relative overflow-hidden space-y-6 shadow-2xl flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-brand-sky/15 border border-brand-sky/30 text-brand-sky flex items-center justify-center text-2xl font-bold shadow-lg shadow-brand-sky/20">
+              🔭
+            </div>
+            <div class="space-y-2">
+              <span class="text-xs font-mono font-bold text-brand-sky uppercase tracking-wider block">Continental Strategic Horizon</span>
+              <h3 class="text-2xl sm:text-3xl font-heading font-black text-white">Our Corporate Vision</h3>
+            </div>
+            <p class="text-sm sm:text-base text-brand-warm/90 leading-relaxed">
+              &ldquo;To build Africa&apos;s most intelligent, resilient, and inclusive decentralized clean energy ecosystem—eradicating energy poverty and guaranteeing continuous, affordable, and sovereign solar electric power for every Nigerian home, enterprise, and essential facility, scaling to power 50 million African lives by 2035.&rdquo;
+            </p>
+          </div>
+
+          <div class="pt-6 border-t border-white/10 grid grid-cols-3 gap-3 text-center">
+            <div class="p-3 rounded-2xl bg-white/5 border border-white/5">
+              <p class="text-xl sm:text-2xl font-black text-brand-sky font-mono">50M+</p>
+              <p class="text-[10px] text-brand-warm/60 font-mono uppercase mt-0.5">African Lives</p>
+            </div>
+            <div class="p-3 rounded-2xl bg-white/5 border border-white/5">
+              <p class="text-xl sm:text-2xl font-black text-white font-mono">100%</p>
+              <p class="text-[10px] text-brand-warm/60 font-mono uppercase mt-0.5">Gen Displacement</p>
+            </div>
+            <div class="p-3 rounded-2xl bg-white/5 border border-white/5">
+              <p class="text-xl sm:text-2xl font-black text-brand-teal font-mono">36 States</p>
+              <p class="text-[10px] text-brand-warm/60 font-mono uppercase mt-0.5">+ ECOWAS Corridor</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Corporate Mission Card -->
+        <div class="p-8 sm:p-10 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border border-brand-teal/40 relative overflow-hidden space-y-6 shadow-2xl flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-brand-teal/15 border border-brand-teal/30 text-brand-teal flex items-center justify-center text-2xl font-bold shadow-lg shadow-brand-teal/20">
+              🎯
+            </div>
+            <div class="space-y-2">
+              <span class="text-xs font-mono font-bold text-brand-teal uppercase tracking-wider block">Operational Execution Mandate</span>
+              <h3 class="text-2xl sm:text-3xl font-heading font-black text-white">Our Corporate Mission</h3>
+            </div>
+            <p class="text-sm sm:text-base text-brand-warm/90 leading-relaxed">
+              &ldquo;To permanently dismantle fossil-fuel generator dependency across Nigeria and the African continent by deploying military-grade, Tier-1 Growatt solar hybrid micro-powerplants and long-life LiFePO4 energy storage via democratized Pay-As-You-Go financing, precision COREN/NEMSA electrical engineering, and proactive edge IoT telematics.&rdquo;
+            </p>
+          </div>
+
+          <div class="pt-6 border-t border-white/10 grid grid-cols-3 gap-3 text-center">
+            <div class="p-3 rounded-2xl bg-white/5 border border-white/5">
+              <p class="text-xl sm:text-2xl font-black text-brand-teal font-mono">6,000</p>
+              <p class="text-[10px] text-brand-warm/60 font-mono uppercase mt-0.5">Cycles (15+ Yrs)</p>
+            </div>
+            <div class="p-3 rounded-2xl bg-white/5 border border-white/5">
+              <p class="text-xl sm:text-2xl font-black text-brand-amber font-mono">₦0</p>
+              <p class="text-[10px] text-brand-warm/60 font-mono uppercase mt-0.5">Collateral Barrier</p>
+            </div>
+            <div class="p-3 rounded-2xl bg-white/5 border border-white/5">
+              <p class="text-xl sm:text-2xl font-black text-brand-sky font-mono">&lt; 48h</p>
+              <p class="text-[10px] text-brand-warm/60 font-mono uppercase mt-0.5">Rapid Installation</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 5. Four Core Pillars of World-Standard Excellence -->
+      <div class="space-y-8">
+        <div class="text-center max-w-2xl mx-auto space-y-2">
+          <span class="text-brand-teal font-bold text-xs uppercase tracking-widest font-mono">Technical Rigor &bull; Zero Compromise</span>
+          <h3 class="text-2xl sm:text-4xl font-heading font-extrabold text-white">Why SkyGrid is of World Standard</h3>
+          <p class="text-xs sm:text-sm text-brand-warm/60">
+            Engineered with strict regulatory compliance, military-grade electrical safety, and institutional governance.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          
+          <!-- Pillar 1 -->
+          <div class="p-6 rounded-3xl bg-black/40 border border-white/10 hover:border-brand-teal/50 transition-all hover:-translate-y-1 space-y-4 shadow-xl">
+            <div class="w-12 h-12 rounded-2xl bg-brand-teal/20 text-brand-teal flex items-center justify-center font-bold text-xl">
+              📐
+            </div>
+            <div class="space-y-2">
+              <h4 class="text-white font-heading font-bold text-base">COREN &amp; NEMSA Certified</h4>
+              <p class="text-xs text-brand-warm/70 leading-relaxed">
+                Every solar array is engineered, derated, and commissioned by COREN-registered engineers with Type-2 AC/DC surge protection, high-voltage lightning arrestors, and deep earthing resistance strictly below 5 Ohms (&le; 2.5&Omega;).
+              </p>
+            </div>
+          </div>
+
+          <!-- Pillar 2 -->
+          <div class="p-6 rounded-3xl bg-black/40 border border-white/10 hover:border-brand-sky/50 transition-all hover:-translate-y-1 space-y-4 shadow-xl">
+            <div class="w-12 h-12 rounded-2xl bg-brand-sky/20 text-brand-sky flex items-center justify-center font-bold text-xl">
+              🔋
+            </div>
+            <div class="space-y-2">
+              <h4 class="text-white font-heading font-bold text-base">100% LiFePO4 Mandate</h4>
+              <p class="text-xs text-brand-warm/70 leading-relaxed">
+                We strictly ban Lead-Acid, Tubular, and Gel batteries across our fleet. We deploy only automotive-grade Lithium Iron Phosphate cells rated for 6,000+ cycles at 80% DoD—delivering 15+ years of nightly battery autonomy.
+              </p>
+            </div>
+          </div>
+
+          <!-- Pillar 3 -->
+          <div class="p-6 rounded-3xl bg-black/40 border border-white/10 hover:border-brand-amber/50 transition-all hover:-translate-y-1 space-y-4 shadow-xl">
+            <div class="w-12 h-12 rounded-2xl bg-brand-amber/20 text-brand-amber flex items-center justify-center font-bold text-xl">
+              💳
+            </div>
+            <div class="space-y-2">
+              <h4 class="text-white font-heading font-bold text-base">Fintech &amp; Offline STS Mesh</h4>
+              <p class="text-xs text-brand-warm/70 leading-relaxed">
+                Instant auto-unlocking in &lt; 5 seconds via dedicated NUBAN virtual accounts (Moniepoint, Paystack, OPay). If telecom cellular towers experience blackouts, our offline 20-digit STS keypad code guarantees your power never shuts off.
+              </p>
+            </div>
+          </div>
+
+          <!-- Pillar 4 -->
+          <div class="p-6 rounded-3xl bg-black/40 border border-white/10 hover:border-purple-400/50 transition-all hover:-translate-y-1 space-y-4 shadow-xl">
+            <div class="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-xl">
+              🌍
+            </div>
+            <div class="space-y-2">
+              <h4 class="text-white font-heading font-bold text-base">Pan-African Technical Academy</h4>
+              <p class="text-xs text-brand-warm/70 leading-relaxed">
+                Engineered to expand from Nigeria into Ghana, Cameroon, Kenya, and across the ECOWAS corridor. The SkyGrid Technical Academy trains and certifies local technicians, creating thousands of high-wage African green engineering jobs.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 6. Grade-A Closing Action Strip -->
+      <div class="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-brand-teal/20 via-slate-900 to-brand-sky/20 border border-brand-teal/40 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
+        <div class="space-y-2 text-center md:text-left">
+          <div class="inline-flex items-center gap-2 text-xs font-mono font-bold text-brand-amber">
+            <span>⚡</span> COREN-Certified Engineers Standing By Nationwide
+          </div>
+          <h4 class="text-xl sm:text-2xl font-heading font-bold text-white">Ready to Power Your Home with Sovereign Clean Energy?</h4>
+          <p class="text-xs sm:text-sm text-brand-warm/80 max-w-xl">
+            Calculate your monthly cashflow savings, customize your appliance load, and get installed within 48 hours with zero collateral barriers.
+          </p>
+        </div>
+        <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0">
+          <button onclick="openModal('signUpModal')" class="w-full sm:w-auto bg-brand-teal hover:bg-emerald-400 text-brand-dark font-extrabold text-xs sm:text-sm px-7 py-3.5 rounded-xl transition shadow-lg shadow-brand-teal/25 text-center">
+            Sign Up with NIN &rarr;
+          </button>
+          <button onclick="openModal('auditModal')" class="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl border border-white/10 transition text-center">
+            Book Site Audit
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
   <section id="faq" class="py-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
     
     <div class="text-center mb-14">
@@ -2071,8 +2509,9 @@
 
         <!-- Technology & Finance Links -->
         <div>
-          <h4 class="font-heading font-bold text-white uppercase tracking-wider text-xs mb-3">Technology &amp; Model</h4>
+          <h4 class="font-heading font-bold text-white uppercase tracking-wider text-xs mb-3">Company &amp; Model</h4>
           <ul class="space-y-2 text-xs">
+            <li><a href="#about" class="text-brand-teal font-semibold hover:text-white transition flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-teal"></span>About Us (Vision &amp; African Mission)</a></li>
             <li><a href="#how-it-works" class="hover:text-brand-amber transition">How PAYGo Lease Works</a></li>
             <li><a href="#monitoring" class="hover:text-brand-amber transition">IoT Cloud Telemetry</a></li>
             <li><a href="#calculator" class="hover:text-brand-amber transition">Load &amp; Savings Calculator</a></li>
@@ -3001,10 +3440,35 @@
                   </defs>
 
                   <!-- Horizontal Grid Lines -->
-                  <line x1="0" y1="20" x2="800" y2="20" stroke="#334155" stroke-dasharray="3,3" stroke-width="0.75" />
-                  <line x1="0" y1="60" x2="800" y2="60" stroke="#334155" stroke-dasharray="3,3" stroke-width="0.75" />
-                  <line x1="0" y1="100" x2="800" y2="100" stroke="#334155" stroke-dasharray="3,3" stroke-width="0.75" />
-                  <line x1="0" y1="140" x2="800" y2="140" stroke="#334155" stroke-width="1" />
+                  <line x1="40" y1="20" x2="800" y2="20" stroke="#334155" stroke-dasharray="3,3" stroke-width="0.75" />
+                  <line x1="40" y1="60" x2="800" y2="60" stroke="#334155" stroke-dasharray="3,3" stroke-width="0.75" />
+                  <line x1="40" y1="100" x2="800" y2="100" stroke="#334155" stroke-dasharray="3,3" stroke-width="0.75" />
+
+                  <!-- Solid Left Vertical Y-Axis (Generated Energy & Facility Load) -->
+                  <line x1="40" y1="12" x2="40" y2="140" stroke="#64748B" stroke-width="2" />
+                  <!-- Top Y-Axis Arrow Pointer -->
+                  <polygon points="36,14 44,14 40,6" fill="#FFBF00" />
+                  <!-- Y-Axis Unit Header -->
+                  <text x="36" y="11" fill="#FFBF00" font-size="9" font-family="monospace" font-weight="bold" text-anchor="end">▲ Power (kW)</text>
+
+                  <!-- Y-Axis Ticks & Level Labels -->
+                  <line x1="35" y1="20" x2="40" y2="20" stroke="#64748B" stroke-width="1.5" />
+                  <text x="32" y="23" fill="#94A3B8" font-size="8.5" font-family="monospace" text-anchor="end">6.0 kW</text>
+
+                  <line x1="35" y1="60" x2="40" y2="60" stroke="#64748B" stroke-width="1.5" />
+                  <text x="32" y="63" fill="#94A3B8" font-size="8.5" font-family="monospace" text-anchor="end">4.0 kW</text>
+
+                  <line x1="35" y1="100" x2="40" y2="100" stroke="#64748B" stroke-width="1.5" />
+                  <text x="32" y="103" fill="#94A3B8" font-size="8.5" font-family="monospace" text-anchor="end">2.0 kW</text>
+
+                  <!-- Solid Bottom Horizontal X-Axis (Timeline Horizon) -->
+                  <line x1="40" y1="140" x2="790" y2="140" stroke="#64748B" stroke-width="2" />
+                  <!-- Right X-Axis Arrow Pointer -->
+                  <polygon points="788,136 788,144 796,140" fill="#64748B" />
+                  <text x="795" y="153" fill="#94A3B8" font-size="8.5" font-family="monospace" text-anchor="end">Timeline ▶</text>
+
+                  <!-- Coordinate Origin Pin Circle -->
+                  <circle cx="40" cy="140" r="3.5" fill="#FFBF00" />
 
                   <!-- Solar Harvest Area & Line (Amber #FFBF00) -->
                   <polygon id="svgSolarPolygon" points="0,140 100,140 200,136 290,95 350,60 480,25 580,48 680,126 800,140" fill="url(#solarHarvestGrad)" />
@@ -3301,7 +3765,15 @@
                         <stop offset="100%" stop-color="#FFBF00" stop-opacity="0.0" />
                       </linearGradient>
                     </defs>
-                    <line x1="0" y1="90" x2="700" y2="90" stroke="#334155" stroke-width="1" />
+                    <!-- Solid Left Vertical Y-Axis -->
+                    <line x1="30" y1="8" x2="30" y2="90" stroke="#64748B" stroke-width="1.5" />
+                    <polygon points="27,10 33,10 30,4" fill="#22D3EE" />
+                    <text x="26" y="8" fill="#22D3EE" font-size="7" font-family="monospace" font-weight="bold" text-anchor="end">▲ kW</text>
+
+                    <!-- Solid Bottom Horizontal X-Axis -->
+                    <line x1="30" y1="90" x2="690" y2="90" stroke="#64748B" stroke-width="1.5" />
+                    <polygon points="688,87 688,93 695,90" fill="#64748B" />
+
                     <!-- Solar Curve -->
                     <polygon points="0,90 100,90 180,88 250,55 350,15 450,30 540,82 620,90 700,90" fill="url(#mlSolarGrad)" />
                     <polyline points="0,90 100,90 180,88 250,55 350,15 450,30 540,82 620,90 700,90" fill="none" stroke="#FFBF00" stroke-width="2.5" />

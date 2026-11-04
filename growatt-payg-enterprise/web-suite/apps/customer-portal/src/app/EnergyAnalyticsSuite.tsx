@@ -303,6 +303,8 @@ export function EnergyAnalyticsSuite({
   const [forecastHorizon, setForecastHorizon] = useState<ForecastHorizon>('1D');
   const [showGisModal, setShowGisModal] = useState<boolean>(false);
   const [showAgentDrawer, setShowAgentDrawer] = useState<boolean>(false);
+  const [activeTooltip, setActiveTooltip] = useState<{ x: number; y: number; text: string } | null>(null);
+  const [forecastTooltip, setForecastTooltip] = useState<{ x: number; y: number; text: string } | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const solarGradId = `solarGrad-${mode || "DEFAULT"}`;
 
@@ -348,6 +350,7 @@ export function EnergyAnalyticsSuite({
         hour: `${hour.toString().padStart(2, '0')}:00`,
         solarW,
         loadW,
+        autonomyCrossover: hour === 8 && 30, // 08:30 AM crossover
       };
     });
   }, [segment, activeData]);
@@ -510,8 +513,23 @@ export function EnergyAnalyticsSuite({
         solarLower = Math.round(solarMean * 0.82);
       }
 
+      let label = `${labelPrefix}${i + 1}`;
+      if (forecastHorizon === '1D') {
+        label = `${i.toString().padStart(2, '0')}:00`;
+      } else if (forecastHorizon === '1W') {
+        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        label = days[i % 7];
+      } else if (forecastHorizon === '1M') {
+        label = `Wk ${i + 1}`;
+      } else if (forecastHorizon === '1Y') {
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        label = months[i % 12];
+      } else if (forecastHorizon === '1H') {
+        label = `${i * 5}m`;
+      }
+
       return {
-        label: `${labelPrefix}${i + 1}`,
+        label,
         solarMean,
         solarUpper,
         solarLower,
@@ -566,7 +584,7 @@ export function EnergyAnalyticsSuite({
   // RENDER UI
   // ==========================================================================
   return (
-    <div className="w-full bg-[#0B0F19] text-slate-100 font-sans space-y-6 sm:space-y-8 select-none">
+    <div className="w-full bg-[#F8FAFC] dark:bg-[#0B0F19] text-slate-900 dark:text-slate-100 font-sans space-y-6 sm:space-y-8 select-none transition-colors duration-200">
       
       {/* Toast Notification Container */}
       {toastMessage && (
@@ -595,7 +613,7 @@ export function EnergyAnalyticsSuite({
 
             <div className="space-y-1">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-lg sm:text-xl font-extrabold text-white tracking-tight">
+                <h1 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                   {activeData.customerName}
                 </h1>
                 <span className="px-2.5 py-0.5 rounded-full bg-[#10B981]/15 border border-[#10B981]/30 text-[#10B981] text-[10px] font-mono font-bold">
@@ -622,7 +640,7 @@ export function EnergyAnalyticsSuite({
             <button
               type="button"
               onClick={() => setShowGisModal(true)}
-              className="px-3.5 py-2 rounded-xl bg-[#1E293B] hover:bg-[#1E293B] border border-[#64748B]/40 hover:border-[#FFBF00]/50 text-xs text-[#FFBF00] font-mono transition flex items-center gap-2 shadow-inner group"
+              className="px-3.5 py-2 rounded-xl bg-[#1E293B] hover:bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 hover:border-[#FFBF00]/50 text-xs text-[#FFBF00] font-mono transition flex items-center gap-2 shadow-inner group"
             >
               <span className="text-sm group-hover:scale-110 transition">🛰️</span>
               <span className="font-semibold underline decoration-amber-400/40 underline-offset-4">
@@ -631,7 +649,7 @@ export function EnergyAnalyticsSuite({
             </button>
 
             {/* Segment Viewport Switcher */}
-            <div className="inline-flex rounded-xl p-1 bg-[#1E293B] border border-[#64748B]/30 text-xs font-semibold">
+            <div className="inline-flex rounded-xl p-1 bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 text-xs font-semibold">
               <button
                 type="button"
                 onClick={() => setSegment('residential')}
@@ -679,7 +697,7 @@ export function EnergyAnalyticsSuite({
               <span className="text-[11px] text-[#10B981] font-bold uppercase tracking-wider block font-mono">
                 Live Roof ATM &bull; Clean Energy Yield Counter
               </span>
-              <div className="text-lg sm:text-xl font-extrabold text-white flex items-center gap-2">
+              <div className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
                 <span>Today&apos;s Roof ATM Yield:</span>
                 <span className="text-[#10B981] font-mono font-black">
                   +{formatNaira(activeData.todayHarvestNaira)}
@@ -778,10 +796,10 @@ export function EnergyAnalyticsSuite({
       {/* =====================================================================
           SECTION 3: Package Amortization Ledger + Credit Passport
          ===================================================================== */}
-      <section className="p-5 sm:p-6 rounded-3xl bg-[#111827] border border-[#64748B]/30 shadow-2xl space-y-6">
+      <section className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-sm dark:shadow-2xl space-y-6 transition-colors duration-200">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#64748B]/30 pb-4">
           <div>
-            <h2 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
               <span>💳</span> Package Amortization Ledger &amp; Clean Energy Bankability Passport
             </h2>
             <p className="text-xs text-[#64748B] font-mono">
@@ -800,14 +818,15 @@ export function EnergyAnalyticsSuite({
         <div className="grid lg:grid-cols-12 gap-6 items-center">
           
           {/* Circular Donut Ownership Gauge (3 Cols) */}
-          <div className="lg:col-span-3 flex flex-col items-center justify-center p-4 rounded-2xl bg-[#1E293B] border border-[#64748B]/30 text-center space-y-2">
+          <div className="lg:col-span-3 flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 text-center space-y-2">
             <div className="relative w-28 h-28 flex items-center justify-center">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
                 <circle
                   cx="50"
                   cy="50"
                   r={donutRadius}
-                  stroke="#1E293B"
+                  stroke="currentColor"
+                  className="text-slate-200 dark:text-slate-800"
                   strokeWidth="10"
                   fill="transparent"
                 />
@@ -843,9 +862,9 @@ export function EnergyAnalyticsSuite({
 
           {/* 4 Package Financial Cards (6 Cols) */}
           <div className="lg:col-span-6 grid sm:grid-cols-2 gap-3">
-            <div className="p-3.5 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+            <div className="p-3.5 rounded-xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-1">
               <span className="text-[11px] text-[#64748B] font-mono block">Total Chosen Package Cost</span>
-              <div className="text-lg font-black text-white font-mono">
+              <div className="text-lg font-black text-slate-900 dark:text-white font-mono">
                 {formatNaira(activeData.totalPackageCost)}
               </div>
               <span className="text-[10px] text-[#10B981] font-mono block">
@@ -853,7 +872,7 @@ export function EnergyAnalyticsSuite({
               </span>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+            <div className="p-3.5 rounded-xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-1">
               <span className="text-[11px] text-[#64748B] font-mono block">Balance Left to Full Offset</span>
               <div className="text-lg font-black text-[#FFBF00] font-mono">
                 {formatNaira(activeData.balanceLeft)}
@@ -863,9 +882,9 @@ export function EnergyAnalyticsSuite({
               </span>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+            <div className="p-3.5 rounded-xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-1">
               <span className="text-[11px] text-[#64748B] font-mono block">Fixed Monthly Lease Due</span>
-              <div className="text-lg font-black text-white font-mono">
+              <div className="text-lg font-black text-slate-900 dark:text-white font-mono">
                 {formatNaira(activeData.monthlyInstallment)} <span className="text-xs text-[#64748B] font-normal">/mo</span>
               </div>
               <span className="text-[10px] text-[#10B981] font-mono block">
@@ -873,9 +892,9 @@ export function EnergyAnalyticsSuite({
               </span>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+            <div className="p-3.5 rounded-xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-1">
               <span className="text-[11px] text-[#64748B] font-mono block">Remaining Lease Tenure</span>
-              <div className="text-lg font-black text-white font-mono">
+              <div className="text-lg font-black text-slate-900 dark:text-white font-mono">
                 {activeData.totalTenureMonths - activeData.monthsPaid} Months Left
               </div>
               <span className="text-[10px] text-[#FFBF00] font-mono block">
@@ -926,10 +945,10 @@ export function EnergyAnalyticsSuite({
       {/* =====================================================================
           SECTION 4: Historical Time-Variance Line Graph (1D | 1W | 1M | 1Y)
          ===================================================================== */}
-      <section className="p-5 sm:p-6 rounded-3xl bg-[#111827] border border-[#64748B]/30 shadow-2xl space-y-6">
+      <section className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-sm dark:shadow-2xl space-y-6 transition-colors duration-200">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#64748B]/30 pb-4">
           <div>
-            <h2 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
               <span>📈</span> Historical Energy Generation vs. Facility Load Demand
             </h2>
             <p className="text-xs text-[#64748B] font-mono">
@@ -938,7 +957,7 @@ export function EnergyAnalyticsSuite({
           </div>
 
           {/* Timeframe Selector Tabs */}
-          <div className="inline-flex rounded-xl p-1 bg-[#1E293B] border border-[#64748B]/30 text-xs font-semibold">
+          <div className="inline-flex rounded-xl p-1 bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 text-xs font-semibold">
             {(['1D', '1W', '1M', '1Y'] as TimeframePeriod[]).map((t) => (
               <button
                 key={t}
@@ -958,7 +977,7 @@ export function EnergyAnalyticsSuite({
 
         {/* Period Integral KPI Cards */}
         <div className="grid grid-cols-3 gap-3 font-mono">
-          <div className="p-3.5 rounded-2xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+          <div className="p-3.5 rounded-2xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-1">
             <span className="text-[11px] text-[#FFBF00] font-bold uppercase tracking-wider block">
               Total Solar Generated
             </span>
@@ -968,7 +987,7 @@ export function EnergyAnalyticsSuite({
             <span className="text-[10px] text-[#64748B] block">Clean MPPT Harvest</span>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+          <div className="p-3.5 rounded-2xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-1">
             <span className="text-[11px] text-slate-300 font-bold uppercase tracking-wider block">
               Facility Load Consumed
             </span>
@@ -978,7 +997,7 @@ export function EnergyAnalyticsSuite({
             <span className="text-[10px] text-[#64748B] block">Total Active Appliance Use</span>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+          <div className="p-3.5 rounded-2xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-1">
             <span className="text-[11px] text-[#10B981] font-bold uppercase tracking-wider block">
               Solar Self-Sufficiency
             </span>
@@ -1009,8 +1028,12 @@ export function EnergyAnalyticsSuite({
         </div>
 
         {/* Dual-Axis SVG Line & Area Chart */}
-        <div className="w-full overflow-x-auto">
-          <svg viewBox={`0 0 ${chartW} ${chartH}`} className="w-full h-auto select-none">
+        <div className="w-full overflow-x-auto relative">
+          <svg
+            viewBox={`0 0 ${chartW} ${chartH}`}
+            className="w-full h-auto select-none"
+            onMouseLeave={() => setActiveTooltip(null)}
+          >
             <defs>
               <linearGradient id={solarGradId} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#FFBF00" stopOpacity="0.45" />
@@ -1018,7 +1041,7 @@ export function EnergyAnalyticsSuite({
               </linearGradient>
             </defs>
 
-            {/* Grid Lines */}
+            {/* Background Horizontal Grid Lines & Y-Axis Reference Values */}
             {[0, 0.25, 0.5, 0.75, 1].map((pct, idx) => {
               const y = padT + plotH * pct;
               const val = Math.round(maxPowerW * (1 - pct));
@@ -1029,23 +1052,96 @@ export function EnergyAnalyticsSuite({
                     y1={y}
                     x2={padL + plotW}
                     y2={y}
-                    stroke="#1E293B"
+                    stroke="currentColor"
+                    className="text-slate-200 dark:text-slate-800/80"
                     strokeDasharray="3 3"
                     strokeWidth="1"
                   />
+                  {/* Left Y-Axis Values */}
                   <text
                     x={padL - 10}
                     y={y + 3}
-                    fill="#64748B"
-                    fontSize="9"
+                    fill="currentColor"
+                    className="text-slate-600 dark:text-slate-400 font-mono"
+                    fontSize="9.5"
                     fontFamily="monospace"
                     textAnchor="end"
                   >
                     {formatSI(val, 'POWER').full}
                   </text>
+                  {/* Y-Axis Tick on Vertical Line */}
+                  <line
+                    x1={padL - 5}
+                    y1={y}
+                    x2={padL}
+                    y2={y}
+                    stroke="currentColor"
+                    className="text-slate-400 dark:text-slate-600"
+                    strokeWidth="1.5"
+                  />
                 </g>
               );
             })}
+
+            {/* Vertical Y-Axis (Left Hand - Generated Energy & Facility Load) */}
+            <line
+              x1={padL}
+              y1={padT - 12}
+              x2={padL}
+              y2={padT + plotH}
+              stroke="currentColor"
+              className="text-slate-400 dark:text-slate-600"
+              strokeWidth="2"
+            />
+            {/* Y-Axis Arrow Pointer (Top) */}
+            <polygon
+              points={`${padL - 3.5},${padT - 8} ${padL + 3.5},${padT - 8} ${padL},${padT - 16}`}
+              fill="#FFBF00"
+            />
+            {/* Y-Axis Label Header */}
+            <text
+              x={padL - 8}
+              y={padT - 14}
+              fill="#FFBF00"
+              fontSize="9"
+              fontFamily="monospace"
+              fontWeight="bold"
+              textAnchor="end"
+            >
+              ▲ Power (W / kW)
+            </text>
+
+            {/* Horizontal X-Axis (Bottom Axis - Time Horizon) */}
+            <line
+              x1={padL}
+              y1={padT + plotH}
+              x2={padL + plotW + 16}
+              y2={padT + plotH}
+              stroke="currentColor"
+              className="text-slate-400 dark:text-slate-600"
+              strokeWidth="2"
+            />
+            {/* X-Axis Arrow Pointer (Right) */}
+            <polygon
+              points={`${padL + plotW + 12},${padT + plotH - 3.5} ${padL + plotW + 12},${padT + plotH + 3.5} ${padL + plotW + 20},${padT + plotH}`}
+              fill="#64748B"
+            />
+            {/* X-Axis Label Header */}
+            <text
+              x={padL + plotW}
+              y={chartH - 2}
+              fill="currentColor"
+              className="text-slate-600 dark:text-slate-400 font-mono"
+              fontSize="8.5"
+              fontFamily="monospace"
+              fontWeight="bold"
+              textAnchor="end"
+            >
+              Time of Day (24-Hour Horizon) ▶
+            </text>
+
+            {/* Origin Point (0,0) Intersection Indicator */}
+            <circle cx={padL} cy={padT + plotH} r="2.5" fill="#64748B" />
 
             {/* Solar Harvest Area & Line (Amber) */}
             <polygon points={solarPolyPoints} fill={`url(#${solarGradId})`} />
@@ -1071,40 +1167,113 @@ export function EnergyAnalyticsSuite({
               </text>
             </g>
 
-            {/* X-Axis Hour Labels */}
-            {historySeries.map((d, i) => {
-              if (i % 3 !== 0 && i !== 23) return null;
-              const x = padL + (i / (historySeries.length - 1)) * plotW;
-              return (
+            {/* Interactive Vertical Guide Line (Tracking Generated Energy Across Hours) */}
+            {activeTooltip && (
+              <g>
+                <line
+                  x1={activeTooltip.x}
+                  y1={padT}
+                  x2={activeTooltip.x}
+                  y2={padT + plotH}
+                  stroke="#FFBF00"
+                  strokeWidth="1.5"
+                  strokeDasharray="2 2"
+                />
+                <circle cx={activeTooltip.x} cy={activeTooltip.y} r="4" fill="#FFBF00" stroke="#0B0F19" strokeWidth="1.5" />
+                <rect
+                  x={Math.min(activeTooltip.x - 70, padL + plotW - 145)}
+                  y={Math.max(activeTooltip.y - 36, padT + 4)}
+                  width="145"
+                  height="26"
+                  rx="6"
+                  fill="#0B0F19"
+                  stroke="#FFBF00"
+                  strokeWidth="1"
+                />
                 <text
-                  key={i}
-                  x={x}
-                  y={chartH - 12}
-                  fill="#64748B"
-                  fontSize="9"
+                  x={Math.min(activeTooltip.x, padL + plotW - 72)}
+                  y={Math.max(activeTooltip.y - 20, padT + 20)}
+                  fill="#FFBF00"
+                  fontSize="8.5"
                   fontFamily="monospace"
+                  fontWeight="bold"
                   textAnchor="middle"
                 >
-                  {d.hour}
+                  {activeTooltip.text}
                 </text>
+              </g>
+            )}
+
+            {/* X-Axis Hour Labels & Ticks + Interactive Hover Hitboxes */}
+            {historySeries.map((d, i) => {
+              const x = padL + (i / (historySeries.length - 1)) * plotW;
+              const ySolar = padT + plotH - (d.solarW / maxPowerW) * plotH;
+              const isMajor = i % 3 === 0 || i === 23;
+              return (
+                <g key={i}>
+                  {isMajor && (
+                    <>
+                      <line
+                        x1={x}
+                        y1={padT + plotH}
+                        x2={x}
+                        y2={padT + plotH + 5}
+                        stroke="#64748B"
+                        strokeWidth="1.5"
+                      />
+                      <text
+                        x={x}
+                        y={chartH - 12}
+                        fill="currentColor"
+                        className="text-slate-600 dark:text-slate-400 font-mono"
+                        fontSize="9"
+                        fontFamily="monospace"
+                        textAnchor="middle"
+                      >
+                        {d.hour}
+                      </text>
+                    </>
+                  )}
+                  {/* Invisible Hitbox for Interactive Inspection */}
+                  <rect
+                    x={x - (plotW / 23) / 2}
+                    y={padT}
+                    width={plotW / 23}
+                    height={plotH}
+                    fill="transparent"
+                    className="cursor-pointer"
+                    onMouseEnter={() =>
+                      setActiveTooltip({
+                        x,
+                        y: ySolar,
+                        text: `${d.hour}: ${d.solarW}W Solar | ${d.loadW}W Load`,
+                      })
+                    }
+                  />
+                </g>
               );
             })}
           </svg>
         </div>
 
-        {/* Legend */}
-        <div className="flex flex-wrap items-center justify-center gap-6 text-xs font-mono pt-2 border-t border-[#64748B]/30">
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-[#FFBF00]" />
-            <span className="text-slate-300">☀️ Solar Array Output (#FFBF00)</span>
+        {/* Legend & Axes Indicator */}
+        <div className="flex flex-wrap items-center justify-between gap-4 text-xs font-mono pt-3 border-t border-[#64748B]/30">
+          <div className="flex flex-wrap items-center gap-6">
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-[#FFBF00]" />
+              <span className="text-slate-300">☀️ Solar Array Output (Y-Axis)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-0.5 border-t-2 border-dashed border-[#94A3B8]" />
+              <span className="text-slate-300">🏢 Connected Facility Load (Y-Axis)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#FFBF00] animate-ping" />
+              <span className="text-[#FFBF00]">◈ Solar Autonomy Crossover (08:30 AM)</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="w-4 h-0.5 border-t-2 border-dashed border-[#64748B]" />
-            <span className="text-slate-300">🏢 Connected Facility Load (#94A3B8)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#FFBF00] animate-ping" />
-            <span className="text-[#FFBF00]">◈ Solar Autonomy Crossover (08:30 AM)</span>
+          <div className="text-[11px] text-[#64748B] flex items-center gap-2">
+            <span className="text-[#FFBF00] font-bold">Y-Axis:</span> Power Output (W) • <span className="text-slate-300 font-bold">X-Axis:</span> 24h Timeline
           </div>
         </div>
       </section>
@@ -1112,10 +1281,10 @@ export function EnergyAnalyticsSuite({
       {/* =====================================================================
           SECTION 5: Forecast-Driven Dynamic Battery Survival Clock
          ===================================================================== */}
-      <section className="p-5 sm:p-6 rounded-3xl bg-[#111827] border border-[#64748B]/30 shadow-2xl space-y-5">
+      <section className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-sm dark:shadow-2xl space-y-5 transition-colors duration-200">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#64748B]/30 pb-4">
           <div>
-            <h2 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
               <span>⏱️</span> Dynamic Battery Survival Clock &bull; Quantile Load Forecast
             </h2>
             <p className="text-xs text-[#64748B] font-mono">
@@ -1152,7 +1321,7 @@ export function EnergyAnalyticsSuite({
           </div>
 
           {/* 2. Light-Usage Pace */}
-          <div className="p-4 rounded-2xl bg-[#1E293B] border border-[#64748B]/30 space-y-2">
+          <div className="p-4 rounded-2xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-xs font-bold text-[#22D3EE] uppercase tracking-wider">
                 2. Light-Usage Pace (P₂₅)
@@ -1198,10 +1367,10 @@ export function EnergyAnalyticsSuite({
       {/* =====================================================================
           SECTION 6: Triple-Source Substitution Tracker & Grouped Bar Chart
          ===================================================================== */}
-      <section className="p-5 sm:p-6 rounded-3xl bg-[#111827] border border-[#64748B]/30 shadow-2xl space-y-6">
+      <section className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-sm dark:shadow-2xl space-y-6 transition-colors duration-200">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#64748B]/30 pb-4">
           <div>
-            <h2 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
               <span>⚖️</span> Triple-Source Substitution Tracker &bull; Financial Optimization
             </h2>
             <p className="text-xs text-[#64748B] font-mono">
@@ -1249,7 +1418,7 @@ export function EnergyAnalyticsSuite({
           </div>
 
           {/* Source 2: National Grid Band A */}
-          <div className="p-4 rounded-2xl bg-[#1E293B] border border-[#64748B]/30 space-y-3">
+          <div className="p-4 rounded-2xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-xs font-bold text-[#64748B] uppercase tracking-wider">
                 ⚡ National Grid (Band A)
@@ -1314,7 +1483,7 @@ export function EnergyAnalyticsSuite({
         </div>
 
         {/* Grouped Vertical Bar Visualization & Net Substitution Callout */}
-        <div className="p-4 rounded-2xl bg-[#1E293B] border border-[#64748B]/30 flex flex-col md:flex-row items-center justify-between gap-6 font-mono">
+        <div className="p-4 rounded-2xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 flex flex-col md:flex-row items-center justify-between gap-6 font-mono">
           <div className="space-y-1">
             <span className="text-xs text-[#64748B] uppercase tracking-wider block font-bold">
               Net Financial Substitution Gain:
@@ -1375,10 +1544,10 @@ export function EnergyAnalyticsSuite({
       {/* =====================================================================
           SECTION 7: Multi-Horizon Sunshine & Load Confidence-Band Chart
          ===================================================================== */}
-      <section className="p-5 sm:p-6 rounded-3xl bg-[#111827] border border-[#64748B]/30 shadow-2xl space-y-6">
+      <section className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-sm dark:shadow-2xl space-y-6 transition-colors duration-200">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#64748B]/30 pb-4">
           <div>
-            <h2 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
               <span>🔮</span> Multi-Horizon Forecasted Sunshine &amp; Load Confidence Band
             </h2>
             <p className="text-xs text-[#64748B] font-mono">
@@ -1387,7 +1556,7 @@ export function EnergyAnalyticsSuite({
           </div>
 
           {/* Horizon Selector Tabs */}
-          <div className="inline-flex rounded-xl p-1 bg-[#1E293B] border border-[#64748B]/30 text-xs font-semibold">
+          <div className="inline-flex rounded-xl p-1 bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 text-xs font-semibold">
             {(['1H', '1D', '1W', '1M', '1Y'] as ForecastHorizon[]).map((h) => (
               <button
                 key={h}
@@ -1406,19 +1575,14 @@ export function EnergyAnalyticsSuite({
         </div>
 
         {/* Confidence-Interval SVG Band Chart */}
-        <div className="w-full overflow-x-auto">
-          <svg viewBox={`0 0 ${chartW} ${chartH}`} className="w-full h-auto select-none">
-            {/* Shaded Upper/Lower Meteorological Confidence Band */}
-            <polygon points={forecastBandPolygon} fill="#22D3EE" fillOpacity="0.15" />
-
-            {/* Mean Forecasted Solar Generation (Cyan line) */}
-            <path d={forecastSolarLine} fill="none" stroke="#22D3EE" strokeWidth="2.5" />
-
-            {/* Forecasted Load Demand (Amber line) */}
-            <path d={forecastLoadLine} fill="none" stroke="#F59E0B" strokeWidth="2" strokeDasharray="3 3" />
-
-            {/* Grid references */}
-            {[0, 0.5, 1].map((pct, idx) => {
+        <div className="w-full overflow-x-auto relative">
+          <svg
+            viewBox={`0 0 ${chartW} ${chartH}`}
+            className="w-full h-auto select-none"
+            onMouseLeave={() => setForecastTooltip(null)}
+          >
+            {/* Background Horizontal Grid Lines & Left Y-Axis Values */}
+            {[0, 0.25, 0.5, 0.75, 1].map((pct, idx) => {
               const y = padT + plotH * pct;
               const val = Math.round(forecastMaxW * (1 - pct));
               return (
@@ -1428,24 +1592,219 @@ export function EnergyAnalyticsSuite({
                     y1={y}
                     x2={padL + plotW}
                     y2={y}
-                    stroke="#1E293B"
+                    stroke="currentColor"
+                    className="text-slate-200 dark:text-slate-800/80"
                     strokeDasharray="2 2"
                     strokeWidth="1"
                   />
+                  {/* Left Y-Axis Values */}
                   <text
                     x={padL - 10}
                     y={y + 3}
-                    fill="#64748B"
-                    fontSize="9"
+                    fill="currentColor"
+                    className="text-slate-600 dark:text-slate-400 font-mono"
+                    fontSize="9.5"
                     fontFamily="monospace"
                     textAnchor="end"
                   >
                     {formatSI(val, 'POWER').full}
                   </text>
+                  {/* Y-Axis Tick Mark on Vertical Line */}
+                  <line
+                    x1={padL - 5}
+                    y1={y}
+                    x2={padL}
+                    y2={y}
+                    stroke="currentColor"
+                    className="text-slate-400 dark:text-slate-600"
+                    strokeWidth="1.5"
+                  />
+                </g>
+              );
+            })}
+
+            {/* Vertical Y-Axis (Left Hand Axis - Forecast Power) */}
+            <line
+              x1={padL}
+              y1={padT - 12}
+              x2={padL}
+              y2={padT + plotH}
+              stroke="currentColor"
+              className="text-slate-400 dark:text-slate-600"
+              strokeWidth="2"
+            />
+            {/* Y-Axis Arrow Pointer (Top) */}
+            <polygon
+              points={`${padL - 3.5},${padT - 8} ${padL + 3.5},${padT - 8} ${padL},${padT - 16}`}
+              fill="#22D3EE"
+            />
+            {/* Y-Axis Label / Unit Header */}
+            <text
+              x={padL - 8}
+              y={padT - 14}
+              fill="#22D3EE"
+              fontSize="9"
+              fontFamily="monospace"
+              fontWeight="bold"
+              textAnchor="end"
+            >
+              ▲ Forecast Power (W)
+            </text>
+
+            {/* Horizontal X-Axis (Bottom Axis - Forecast Horizon) */}
+            <line
+              x1={padL}
+              y1={padT + plotH}
+              x2={padL + plotW + 16}
+              y2={padT + plotH}
+              stroke="currentColor"
+              className="text-slate-400 dark:text-slate-600"
+              strokeWidth="2"
+            />
+            {/* X-Axis Arrow Pointer (Right) */}
+            <polygon
+              points={`${padL + plotW + 12},${padT + plotH - 3.5} ${padL + plotW + 12},${padT + plotH + 3.5} ${padL + plotW + 20},${padT + plotH}`}
+              fill="#64748B"
+            />
+            {/* X-Axis Label Header */}
+            <text
+              x={padL + plotW}
+              y={chartH - 2}
+              fill="currentColor"
+              className="text-slate-600 dark:text-slate-400 font-mono"
+              fontSize="8.5"
+              fontFamily="monospace"
+              fontWeight="bold"
+              textAnchor="end"
+            >
+              Forecast Horizon Timeline ▶
+            </text>
+
+            {/* Origin Point (0,0) Intersection Indicator */}
+            <circle cx={padL} cy={padT + plotH} r="2.5" fill="#64748B" />
+
+            {/* Shaded Upper/Lower Meteorological Confidence Band */}
+            <polygon points={forecastBandPolygon} fill="#22D3EE" fillOpacity="0.15" />
+
+            {/* Mean Forecasted Solar Generation (Cyan line) */}
+            <path d={forecastSolarLine} fill="none" stroke="#22D3EE" strokeWidth="2.5" />
+
+            {/* Forecasted Load Demand (Amber line) */}
+            <path d={forecastLoadLine} fill="none" stroke="#F59E0B" strokeWidth="2" strokeDasharray="3 3" />
+
+            {/* Interactive Vertical Guide Line on Hover */}
+            {forecastTooltip && (
+              <g>
+                <line
+                  x1={forecastTooltip.x}
+                  y1={padT}
+                  x2={forecastTooltip.x}
+                  y2={padT + plotH}
+                  stroke="#22D3EE"
+                  strokeWidth="1.5"
+                  strokeDasharray="2 2"
+                />
+                <circle cx={forecastTooltip.x} cy={forecastTooltip.y} r="4" fill="#22D3EE" stroke="#0B0F19" strokeWidth="1.5" />
+                <rect
+                  x={Math.min(forecastTooltip.x - 70, padL + plotW - 145)}
+                  y={Math.max(forecastTooltip.y - 36, padT + 4)}
+                  width="145"
+                  height="26"
+                  rx="6"
+                  fill="#0B0F19"
+                  stroke="#22D3EE"
+                  strokeWidth="1"
+                />
+                <text
+                  x={Math.min(forecastTooltip.x, padL + plotW - 72)}
+                  y={Math.max(forecastTooltip.y - 20, padT + 20)}
+                  fill="#22D3EE"
+                  fontSize="8.5"
+                  fontFamily="monospace"
+                  fontWeight="bold"
+                  textAnchor="middle"
+                >
+                  {forecastTooltip.text}
+                </text>
+              </g>
+            )}
+
+            {/* X-Axis Horizon Labels & Ticks + Interactive Hover Targets */}
+            {forecastSeries.map((d, i) => {
+              const x = padL + (i / (forecastSeries.length - 1)) * plotW;
+              const ySolar = padT + plotH - (d.solarMean / forecastMaxW) * plotH;
+              const isMajor =
+                forecastHorizon === '1W'
+                  ? true
+                  : forecastHorizon === '1M'
+                  ? true
+                  : i % 3 === 0 || i === forecastSeries.length - 1;
+              return (
+                <g key={i}>
+                  {isMajor && (
+                    <>
+                      <line
+                        x1={x}
+                        y1={padT + plotH}
+                        x2={x}
+                        y2={padT + plotH + 5}
+                        stroke="#64748B"
+                        strokeWidth="1.5"
+                      />
+                      <text
+                        x={x}
+                        y={chartH - 12}
+                        fill="currentColor"
+                        className="text-slate-600 dark:text-slate-400 font-mono"
+                        fontSize="9"
+                        fontFamily="monospace"
+                        textAnchor="middle"
+                      >
+                        {d.label}
+                      </text>
+                    </>
+                  )}
+                  {/* Interactive Hover Hitbox */}
+                  <rect
+                    x={x - (plotW / (forecastSeries.length - 1)) / 2}
+                    y={padT}
+                    width={plotW / (forecastSeries.length - 1)}
+                    height={plotH}
+                    fill="transparent"
+                    className="cursor-pointer"
+                    onMouseEnter={() =>
+                      setForecastTooltip({
+                        x,
+                        y: ySolar,
+                        text: `${d.label}: ${d.solarMean}W Mean | ${d.loadMean}W Load`,
+                      })
+                    }
+                  />
                 </g>
               );
             })}
           </svg>
+        </div>
+
+        {/* Legend & Axes Indicator */}
+        <div className="flex flex-wrap items-center justify-between gap-4 text-xs font-mono pt-3 border-t border-[#64748B]/30">
+          <div className="flex flex-wrap items-center gap-6">
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-[#22D3EE]" />
+              <span className="text-slate-300">🌤️ Mean Solar Generation (Y-Axis)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-2 rounded bg-[#22D3EE]/20 border border-[#22D3EE]/40" />
+              <span className="text-slate-300">P10–P90 Weather Confidence Band</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-0.5 border-t-2 border-dashed border-[#F59E0B]" />
+              <span className="text-slate-300">🏢 Forecasted Facility Load (Y-Axis)</span>
+            </div>
+          </div>
+          <div className="text-[11px] text-[#64748B] flex items-center gap-2">
+            <span className="text-[#22D3EE] font-bold">Y-Axis:</span> Forecast Power (W) • <span className="text-slate-300 font-bold">X-Axis:</span> Horizon Timeline
+          </div>
         </div>
 
         {/* Proactive AI Coaching Callout & Agent Drawer Button */}
@@ -1478,7 +1837,7 @@ export function EnergyAnalyticsSuite({
          ===================================================================== */}
       {showGisModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
-          <div className="w-full max-w-xl rounded-3xl bg-[#111827] border border-[#64748B]/40 shadow-2xl p-6 space-y-5">
+          <div className="w-full max-w-xl rounded-3xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 shadow-2xl p-6 space-y-5 text-slate-900 dark:text-slate-100">
             <div className="flex items-center justify-between border-b border-[#64748B]/30 pb-3">
               <div className="flex items-center gap-2">
                 <span className="text-xl">🛰️</span>
@@ -1496,30 +1855,30 @@ export function EnergyAnalyticsSuite({
             </div>
 
             <div className="space-y-3 text-xs font-mono">
-              <div className="p-3 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+              <div className="p-3 rounded-xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-1">
                 <span className="text-[#64748B] block">GPS Coordinates &amp; Micro-Climate Geo-Belt:</span>
                 <strong className="text-[#FFBF00] text-sm">{activeData.gpsCoords}</strong>
                 <span className="text-[11px] text-[#64748B] block">Zone: {customerState}</span>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+                <div className="p-3 rounded-xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-1">
                   <span className="text-[#64748B] block">Roof Azimuth &amp; Tilt:</span>
                   <strong className="text-white">{activeData.roofAzimuth}</strong>
                 </div>
 
-                <div className="p-3 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+                <div className="p-3 rounded-xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-1">
                   <span className="text-[#64748B] block">Ground Earthing Resistance:</span>
                   <strong className="text-[#10B981]">{activeData.earthingOhms}</strong>
                 </div>
               </div>
 
-              <div className="p-3 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+              <div className="p-3 rounded-xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-1">
                 <span className="text-[#64748B] block">Lower-Shroud Security Seal:</span>
                 <strong className="text-white">{activeData.shroudSerial}</strong>
               </div>
 
-              <div className="p-3 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+              <div className="p-3 rounded-xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-1">
                 <span className="text-[#64748B] block">Connected Utility Substation:</span>
                 <strong className="text-[#EF4444]">{activeData.feederName}</strong>
                 <span className="text-[11px] text-[#64748B] block">Status: {activeData.feederStatus}</span>
@@ -1556,7 +1915,7 @@ export function EnergyAnalyticsSuite({
          ===================================================================== */}
       {showAgentDrawer && (
         <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/80 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-lg h-full bg-[#111827] border-l border-[#64748B]/40 shadow-2xl p-6 flex flex-col justify-between space-y-4">
+          <div className="w-full max-w-lg h-full bg-white dark:bg-[#111827] border-l border-slate-200 dark:border-slate-800 shadow-2xl p-6 flex flex-col justify-between space-y-4 text-slate-900 dark:text-slate-100">
             
             {/* Header */}
             <div className="flex items-center justify-between border-b border-[#64748B]/30 pb-3">
@@ -1584,7 +1943,7 @@ export function EnergyAnalyticsSuite({
                 👋 Hello {activeData.customerName}. I am your dedicated <strong>LocalGridAgent</strong>. I monitor your Growatt SPF inverter, LiFePO4 battery telemetry, and local meteorological forecasts in real-time.
               </div>
 
-              <div className="p-3 rounded-xl bg-[#1E293B] border border-[#64748B]/30 space-y-1">
+              <div className="p-3 rounded-xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-1">
                 <span className="text-[#64748B] block">Current Telemetry Snapshot:</span>
                 <div className="text-[#10B981] font-bold">
                   • Battery SoC: {activeData.currentSoC}% ({formatSI(usableBatteryWh, 'ENERGY').full} Usable)
@@ -1597,7 +1956,7 @@ export function EnergyAnalyticsSuite({
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-[#1E293B] border border-[#64748B]/30 text-slate-200 leading-relaxed font-sans">
+              <div className="p-3.5 rounded-2xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 text-slate-200 leading-relaxed font-sans">
                 💡 <strong>Operational Dispatch Recommendation:</strong>
                 <p className="mt-1">
                   Based on forecast, remain 100% on solar battery reserve tonight. Your evening load curve will leave approximately 36% battery capacity by sunrise. No generator cranking or grid alternative is required based on financial analysis.
@@ -1614,14 +1973,14 @@ export function EnergyAnalyticsSuite({
                 <button
                   type="button"
                   onClick={() => showToast('LocalGridAgent: Safe to run borehole pump between 11:30 AM – 2:00 PM.')}
-                  className="p-2 rounded-lg bg-[#1E293B] hover:bg-[#1E293B] border border-[#64748B]/30 text-left text-slate-300 hover:text-white transition"
+                  className="p-2 rounded-lg bg-[#1E293B] hover:bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 text-left text-slate-300 hover:text-white transition"
                 >
                   💧 Can I run the water pump?
                 </button>
                 <button
                   type="button"
                   onClick={() => showToast('LocalGridAgent: Expected battery survival is 14 hrs 20 mins.')}
-                  className="p-2 rounded-lg bg-[#1E293B] hover:bg-[#1E293B] border border-[#64748B]/30 text-left text-slate-300 hover:text-white transition"
+                  className="p-2 rounded-lg bg-[#1E293B] hover:bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 text-left text-slate-300 hover:text-white transition"
                 >
                   🔋 What is my battery clock?
                 </button>

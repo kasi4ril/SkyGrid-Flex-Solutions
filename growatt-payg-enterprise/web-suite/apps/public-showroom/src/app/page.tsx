@@ -16,7 +16,7 @@
  *    auto-population of legal name, date of birth, gender, 30% down payment breakdown, and DVA generation.
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { EnergyAnalyticsSuite } from './EnergyAnalyticsSuite';
 
 // Regional solar irradiance data across Nigerian geographical belts
@@ -166,6 +166,38 @@ export default function PublicShowroomLandingPage() {
   const [tenureMonths, setTenureMonths] = useState<number>(36);
   const [downPaymentPct, setDownPaymentPct] = useState<number>(30);
   const [showEngineeringMath, setShowEngineeringMath] = useState<boolean>(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('skygrid_theme');
+      if (saved === 'light') {
+        setTheme('light');
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      } else {
+        setTheme('dark');
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      }
+    } catch (e) {}
+  }, []);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
+    try {
+      localStorage.setItem('skygrid_theme', nextTheme);
+    } catch (e) {}
+    if (nextTheme === 'light') {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
+    }
+  };
 
   // Nigerian DisCo Band A & Petrol Generator Comparison Inputs
   const [monthlyGridBill, setMonthlyGridBill] = useState<number>(75000);
@@ -466,22 +498,22 @@ export default function PublicShowroomLandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-slate-100 font-sans selection:bg-[#10B981] selection:text-[#0B0F19]">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0B0F19] text-slate-900 dark:text-slate-100 font-sans selection:bg-emerald-500 selection:text-white transition-colors duration-200">
       
       {/* 1. TOP REGULATORY & REGISTRATION TRUST BAR */}
-      <aside className="bg-gradient-to-r from-[#111827] via-[#0B0F19] to-[#111827] border-b border-[#10B981]/30 text-xs py-2 px-4 sm:px-6 lg:px-10">
-        <div className="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-3 text-emerald-200">
+      <aside className="bg-gradient-to-r from-slate-100 via-white to-slate-100 dark:from-[#111827] dark:via-[#0B0F19] dark:to-[#111827] border-b border-slate-200 dark:border-[#10B981]/30 text-xs py-2 px-4 sm:px-6 lg:px-10 transition-colors duration-200">
+        <div className="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-3 text-slate-700 dark:text-emerald-200">
           <div className="flex items-center gap-3">
-            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#10B981]/20 text-[#10B981] font-bold text-xs">⚡</span>
-            <span className="font-semibold text-[#10B981]">COREN &amp; NEMSA Certified Solar Architecture</span>
-            <span className="hidden md:inline text-[#64748B]">•</span>
-            <span className="hidden md:inline text-emerald-300">100% LiFePO4 Lithium Mandate (80% DoD / 6,000 Cycles)</span>
+            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-800 dark:text-[#10B981] font-bold text-xs">⚡</span>
+            <span className="font-semibold text-emerald-800 dark:text-[#10B981]">COREN &amp; NEMSA Certified Solar Architecture</span>
+            <span className="hidden md:inline text-slate-400 dark:text-[#64748B]">•</span>
+            <span className="hidden md:inline text-slate-600 dark:text-emerald-300">100% LiFePO4 Lithium Mandate (80% DoD / 6,000 Cycles)</span>
           </div>
           <div className="flex items-center gap-4 text-[11px]">
-            <span className="hidden sm:inline text-[#64748B]">Zero-Deposit SME Pilots Active in Lagos &amp; Abuja</span>
+            <span className="hidden sm:inline text-slate-500 dark:text-[#64748B]">Zero-Deposit SME Pilots Active in Lagos &amp; Abuja</span>
             <button
               onClick={() => setIsSignUpModalOpen(true)}
-              className="text-[#10B981] hover:text-emerald-300 font-bold underline flex items-center gap-1 transition"
+              className="text-emerald-700 dark:text-[#10B981] hover:text-emerald-500 dark:hover:text-emerald-300 font-bold underline flex items-center gap-1 transition"
             >
               <span>New Customer? Register with NIN &rarr;</span>
             </button>
@@ -490,50 +522,173 @@ export default function PublicShowroomLandingPage() {
       </aside>
 
       {/* 2. MAIN NAVIGATION */}
-      <header className="sticky top-0 z-40 backdrop-blur-md bg-[#0B0F19]/90 border-b border-[#64748B]/30 px-4 sm:px-6 lg:px-10 py-3.5 transition">
+      <header className="sticky top-0 z-40 backdrop-blur-md bg-white/90 dark:bg-[#0B0F19]/90 border-b border-slate-200 dark:border-[#64748B]/30 px-4 sm:px-6 lg:px-10 py-3.5 transition-colors duration-200">
         <div className="max-w-[1600px] mx-auto flex items-center justify-between">
           
           <a href="#hero" className="flex items-center gap-3 group focus:outline-none">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#10B981] to-teal-600 flex items-center justify-center font-black text-[#0B0F19] text-xl shadow-lg shadow-[#10B981]/25 group-hover:scale-105 transition">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center font-black text-slate-950 text-xl shadow-lg shadow-emerald-500/25 group-hover:scale-105 transition">
               G
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-bold text-lg tracking-tight text-white">SKYGRID</span>
-                <span className="text-[#10B981] font-semibold text-lg">GROWATT PAYG</span>
+                <span className="font-bold text-lg tracking-tight text-slate-900 dark:text-white">SKYGRID</span>
+                <span className="text-emerald-700 dark:text-[#10B981] font-semibold text-lg">GROWATT PAYG</span>
               </div>
-              <p className="text-[10px] text-[#64748B] -mt-1 font-mono">Clean Energy-as-a-Service &bull; Nigeria</p>
+              <p className="text-[10px] text-slate-500 dark:text-[#64748B] -mt-1 font-mono">Clean Energy-as-a-Service &bull; Nigeria</p>
             </div>
           </a>
 
-          <nav className="hidden lg:flex items-center gap-8 text-sm text-slate-300 font-medium">
-            <a href="#hero" className="hover:text-[#10B981] transition">Home</a>
-            <a href="#calculator" className="hover:text-[#10B981] transition">Savings &amp; Load Sizer</a>
-            <a href="#smart-app" className="hover:text-[#10B981] transition text-[#10B981] font-semibold flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span>
+          <nav className="hidden lg:flex items-center gap-8 text-sm text-slate-700 dark:text-slate-300 font-medium">
+            <a href="#hero" className="hover:text-emerald-600 dark:hover:text-[#10B981] transition">Home</a>
+            <a href="#about" className="hover:text-emerald-600 dark:hover:text-[#10B981] transition text-slate-900 dark:text-white font-semibold flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              About Us
+            </a>
+            <a href="#calculator" className="hover:text-emerald-600 dark:hover:text-[#10B981] transition">Savings &amp; Load Sizer</a>
+            <a href="#smart-app" className="hover:text-emerald-600 dark:hover:text-[#10B981] transition text-emerald-700 dark:text-[#10B981] font-semibold flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               Smart App &amp; Analytics
             </a>
-            <a href="#bundles" className="hover:text-[#10B981] transition">Growatt Bundles</a>
-            <a href="#how-it-works" className="hover:text-[#10B981] transition">How It Works</a>
-            <a href="#faq" className="hover:text-[#10B981] transition">FAQ</a>
+            <a href="#bundles" className="hover:text-emerald-600 dark:hover:text-[#10B981] transition">Growatt Bundles</a>
+            <a href="#how-it-works" className="hover:text-emerald-600 dark:hover:text-[#10B981] transition">How It Works</a>
+            <a href="#faq" className="hover:text-emerald-600 dark:hover:text-[#10B981] transition">FAQ</a>
           </nav>
 
           <div className="flex items-center gap-3">
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-[#1E293B] dark:hover:bg-slate-700 dark:text-amber-400 border border-slate-200 dark:border-slate-700 transition flex items-center gap-1.5 text-xs font-semibold"
+              title={theme === 'dark' ? 'Switch to Solar Daylight Mode' : 'Switch to Photovoltaic Night Mode'}
+              aria-label="Toggle color theme"
+            >
+              {theme === 'dark' ? (
+                <>
+                  <span className="text-amber-400 text-base">☀️</span>
+                  <span className="hidden xl:inline text-slate-300">Daylight</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-sky-600 text-base">🌙</span>
+                  <span className="hidden xl:inline text-slate-700">Night</span>
+                </>
+              )}
+            </button>
+
             <button
               onClick={() => setIsSignUpModalOpen(true)}
-              className="bg-[#10B981] hover:bg-emerald-400 text-[#0B0F19] font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition shadow-lg shadow-[#10B981]/20 flex items-center gap-1.5"
+              className="bg-emerald-600 hover:bg-emerald-500 text-white dark:bg-[#10B981] dark:hover:bg-emerald-400 dark:text-[#0B0F19] font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center gap-1.5"
             >
               <span>Sign Up (NIN)</span>
             </button>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="hidden sm:inline-flex bg-[#1E293B] hover:bg-slate-700 text-white font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-[#64748B]/30 transition"
+              className="hidden sm:inline-flex bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-[#1E293B] dark:hover:bg-slate-700 dark:text-white font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-200 dark:border-[#64748B]/30 transition"
             >
               Book Site Audit
+            </button>
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="lg:hidden p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-[#1E293B] dark:hover:bg-slate-700 dark:text-white border border-slate-200 dark:border-[#64748B]/30 transition"
+              aria-label="Toggle navigation menu"
+            >
+              {isMobileMenuOpen ? (
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
             </button>
           </div>
 
         </div>
+
+        {/* Mobile Navigation Drawer */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden border-t border-slate-200 dark:border-[#64748B]/30 bg-white/95 dark:bg-[#0B0F19]/95 backdrop-blur-xl px-4 py-4 mt-3 space-y-3">
+            <a
+              href="#hero"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-sm font-medium text-slate-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-[#10B981] py-1.5 transition"
+            >
+              Home
+            </a>
+            <a
+              href="#about"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-sm font-semibold text-emerald-700 dark:text-[#10B981] py-1.5 transition flex items-center gap-2"
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              About Us (Vision, Mission &amp; African Impact)
+            </a>
+            <a
+              href="#calculator"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-sm font-medium text-slate-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-[#10B981] py-1.5 transition"
+            >
+              Savings &amp; Load Sizer
+            </a>
+            <a
+              href="#smart-app"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-sm font-semibold text-emerald-700 dark:text-[#10B981] py-1.5 transition flex items-center gap-2"
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Smart App &amp; Analytics
+            </a>
+            <a
+              href="#bundles"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-sm font-medium text-slate-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-[#10B981] py-1.5 transition"
+            >
+              Growatt Bundles
+            </a>
+            <a
+              href="#how-it-works"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-sm font-medium text-slate-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-[#10B981] py-1.5 transition"
+            >
+              How It Works
+            </a>
+            <a
+              href="#faq"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-sm font-medium text-slate-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-[#10B981] py-1.5 transition"
+            >
+              FAQ
+            </a>
+            <div className="pt-2 border-t border-slate-200 dark:border-[#64748B]/30 flex flex-col gap-2">
+              {/* Mobile Theme Toggle Button */}
+              <button
+                onClick={toggleTheme}
+                className="w-full py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs font-semibold text-slate-800 dark:text-slate-200 transition"
+              >
+                <span className="flex items-center gap-2">
+                  <span>{theme === 'dark' ? '☀️' : '🌙'}</span>
+                  <span>Switch Color Theme</span>
+                </span>
+                <span className="text-amber-600 dark:text-[#FFBF00] font-mono font-bold">
+                  {theme === 'dark' ? 'Daylight Mode' : 'Night Mode'}
+                </span>
+              </button>
+              <button
+                onClick={() => { setIsMobileMenuOpen(false); setIsSignUpModalOpen(true); }}
+                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white dark:bg-[#10B981] dark:hover:bg-emerald-400 dark:text-[#0B0F19] font-bold text-xs py-2.5 rounded-xl transition shadow-lg text-center"
+              >
+                Sign Up (NIN)
+              </button>
+              <button
+                onClick={() => { setIsMobileMenuOpen(false); setIsModalOpen(true); }}
+                className="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-[#1E293B] dark:hover:bg-slate-700 dark:text-white font-semibold text-xs py-2.5 rounded-xl border border-slate-200 dark:border-[#64748B]/30 transition text-center"
+              >
+                Book Site Audit
+              </button>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* 3. HERO SECTION (OUTCOME & CASHFLOW FIRST — TESLA/SUNRUN STANDARD) */}
@@ -1429,7 +1584,371 @@ export default function PublicShowroomLandingPage() {
         </div>
       </section>
 
-      {/* 8. FAQ SECTION (#faq) */}
+      {/* 8. ABOUT SECTION: WORLD-STANDARD COMPANY PROFILE, VISION, MISSION & AFRICAN ENERGY SOVEREIGNTY (#about) */}
+      <section id="about" className="py-24 sm:py-32 border-t border-slate-200 dark:border-[#64748B]/30 bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-[#0B0F19] dark:via-[#111827]/40 dark:to-[#0B0F19] relative overflow-hidden transition-colors duration-200">
+        {/* Ambient Radial Glows */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gradient-to-r from-emerald-500/10 via-sky-500/10 to-amber-500/10 dark:from-[#10B981]/15 dark:via-[#22D3EE]/15 dark:to-[#FFBF00]/10 blur-3xl pointer-events-none rounded-full" />
+        <div className="absolute bottom-10 right-10 w-[500px] h-[300px] bg-emerald-500/5 blur-3xl pointer-events-none rounded-full" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20 relative z-10">
+          
+          {/* 1. Heroic Header: Clear, Open & Grade-A Standard */}
+          <div className="text-center max-w-4xl mx-auto space-y-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-emerald-500/15 via-sky-500/15 to-amber-500/15 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider backdrop-blur-md shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+              <span>Sovereign Clean Energy Infrastructure &bull; Nigeria &bull; West Africa</span>
+            </div>
+            
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.12]">
+              Built of World Standard.<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-sky-600 to-amber-600 dark:from-[#10B981] dark:via-[#22D3EE] dark:to-[#FFBF00]">
+                Born to Solve Nigeria’s Power Deficit &amp; Electrify Africa.
+              </span>
+            </h2>
+            
+            <p className="text-slate-700 dark:text-slate-300 text-base sm:text-lg leading-relaxed max-w-3xl mx-auto">
+              SkyGrid Flex Solutions (in strategic alliance with SkyTron Quantum Solutions and Growatt New Energy) is Africa&apos;s premier Clean Energy-as-a-Service (EaaS) infrastructure enterprise. We are on a single uncompromising mandate: to replace the economic drain of fossil-fuel generators with sovereign, intelligent solar micro-powerplants and empower every Nigerian home and enterprise with bankable 24/7 electricity.
+            </p>
+
+            {/* Institutional Alliance Badges */}
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2 text-xs font-mono font-bold">
+              <span className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-emerald-800 dark:text-[#10B981] flex items-center gap-1.5">
+                <span>🏛️</span> COREN Registered Firm
+              </span>
+              <span className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sky-800 dark:text-[#22D3EE] flex items-center gap-1.5">
+                <span>🛡️</span> NEMSA Safety Certified
+              </span>
+              <span className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-amber-800 dark:text-[#FFBF00] flex items-center gap-1.5">
+                <span>⚡</span> Growatt Official Tier-1 Partner
+              </span>
+              <span className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
+                <span>🔋</span> 100% LiFePO4 Mandate
+              </span>
+            </div>
+          </div>
+
+          {/* 2. High-Impact Institutional Performance Counters */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="p-5 rounded-2xl bg-white dark:bg-black/40 border border-slate-200/90 dark:border-[#64748B]/30 shadow-sm dark:shadow-none text-center space-y-1 hover:border-emerald-500/50 transition-all hover:-translate-y-1">
+              <p className="text-2xl sm:text-3xl font-black text-emerald-700 dark:text-[#10B981] font-mono tabular-nums">99.98%</p>
+              <p className="text-xs font-bold text-slate-900 dark:text-white">Power Uptime</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400">SLA Guaranteed</p>
+            </div>
+            <div className="p-5 rounded-2xl bg-white dark:bg-black/40 border border-slate-200/90 dark:border-[#64748B]/30 shadow-sm dark:shadow-none text-center space-y-1 hover:border-sky-500/50 transition-all hover:-translate-y-1">
+              <p className="text-2xl sm:text-3xl font-black text-sky-700 dark:text-[#22D3EE] font-mono tabular-nums">6,000+</p>
+              <p className="text-xs font-bold text-slate-900 dark:text-white">LiFePO4 Cycles</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400">15+ Year Lifespan</p>
+            </div>
+            <div className="p-5 rounded-2xl bg-white dark:bg-black/40 border border-slate-200/90 dark:border-[#64748B]/30 shadow-sm dark:shadow-none text-center space-y-1 hover:border-amber-500/50 transition-all hover:-translate-y-1">
+              <p className="text-2xl sm:text-3xl font-black text-amber-700 dark:text-[#FFBF00] font-mono tabular-nums">&gt; 65%</p>
+              <p className="text-xs font-bold text-slate-900 dark:text-white">Net Cash Savings</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400">vs. Petrol/Diesel Gen</p>
+            </div>
+            <div className="p-5 rounded-2xl bg-white dark:bg-black/40 border border-slate-200/90 dark:border-[#64748B]/30 shadow-sm dark:shadow-none text-center space-y-1 hover:border-slate-400 transition-all hover:-translate-y-1">
+              <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-mono tabular-nums">36 + FCT</p>
+              <p className="text-xs font-bold text-slate-900 dark:text-white">States Covered</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400">Nationwide Reach</p>
+            </div>
+            <div className="p-5 rounded-2xl bg-white dark:bg-black/40 border border-slate-200/90 dark:border-[#64748B]/30 shadow-sm dark:shadow-none text-center space-y-1 hover:border-emerald-500/50 transition-all hover:-translate-y-1">
+              <p className="text-2xl sm:text-3xl font-black text-emerald-700 dark:text-emerald-400 font-mono tabular-nums">&lt; 48 Hrs</p>
+              <p className="text-xs font-bold text-slate-900 dark:text-white">Rapid Install</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400">Audit to Turn-On</p>
+            </div>
+            <div className="p-5 rounded-2xl bg-white dark:bg-black/40 border border-slate-200/90 dark:border-[#64748B]/30 shadow-sm dark:shadow-none text-center space-y-1 hover:border-cyan-500/50 transition-all hover:-translate-y-1">
+              <p className="text-2xl sm:text-3xl font-black text-cyan-700 dark:text-cyan-400 font-mono tabular-nums">100%</p>
+              <p className="text-xs font-bold text-slate-900 dark:text-white">Asset Ownership</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400">Title Deed Transfer</p>
+            </div>
+          </div>
+
+          {/* 3. The National Challenge vs. The SkyGrid Standard: Balanced 2-Column Showcase */}
+          <div className="space-y-6">
+            <div className="text-center max-w-2xl mx-auto space-y-2">
+              <span className="text-[#FFBF00] font-bold text-xs uppercase tracking-widest font-mono">The Energy Shift</span>
+              <h3 className="text-2xl sm:text-4xl font-extrabold text-white">Solving the Nigerian Power Deficit</h3>
+              <p className="text-xs sm:text-sm text-slate-400">
+                A direct comparison between the exhausting fossil-fuel generator trap and the sovereign SkyGrid clean solar standard.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+              
+              {/* Card A: The Old Dilemma (Generator Trap) */}
+              <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-red-500/10 via-white to-red-500/5 dark:from-red-950/20 dark:via-slate-950/80 dark:to-slate-950 border border-red-500/30 space-y-6 shadow-sm dark:shadow-xl relative overflow-hidden flex flex-col justify-between">
+                <div className="space-y-5">
+                  <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-white/10">
+                    <div className="flex items-center gap-2">
+                      <span className="w-8 h-8 rounded-xl bg-red-500/20 text-red-700 dark:text-red-400 flex items-center justify-center font-bold text-base">⚠️</span>
+                      <div>
+                        <h4 className="text-lg font-bold text-slate-900 dark:text-white">The Centralized Grid &amp; Generator Trap</h4>
+                        <p className="text-[11px] text-red-700 dark:text-red-300 font-mono">Crippling Nigerian Families &amp; Businesses</p>
+                      </div>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-red-700 dark:text-red-400 bg-red-500/10 px-2.5 py-1 rounded-full border border-red-500/30">OLD REALITY</span>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-lg bg-red-500/10 text-red-700 dark:text-red-400 flex items-center justify-center text-xs shrink-0 mt-0.5">✕</div>
+                      <div>
+                        <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">Chronic Grid Collapses &amp; Band A Hikes</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Under 4,500 MW grid capacity for 220M citizens; frequent total system collapses and punitive Band A tariffs exceeding ₦225/kWh without reliable supply.</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-lg bg-red-500/10 text-red-700 dark:text-red-400 flex items-center justify-center text-xs shrink-0 mt-0.5">✕</div>
+                      <div>
+                        <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">$14 Billion Annual Generator Drain</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Over ₦22 Trillion spent every year on ₦1,250+/L petrol, ₦1,400/L diesel, oil top-ups, and endless engine mechanical servicing that delivers zero asset equity.</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-lg bg-red-500/10 text-red-700 dark:text-red-400 flex items-center justify-center text-xs shrink-0 mt-0.5">✕</div>
+                      <div>
+                        <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">Toxic Fumes &amp; Acoustic Pollution</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Poisonous carbon monoxide exhaust fumes and deafening engine noise choking residential estates and degrading quality of life.</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-lg bg-red-500/10 text-red-700 dark:text-red-400 flex items-center justify-center text-xs shrink-0 mt-0.5">✕</div>
+                      <div>
+                        <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">The Substandard Battery Trap</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Tubular and Gel lead-acid batteries that burn out and die within 12 to 18 months in tropical heat, forcing repetitive expensive replacements.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-red-500/10 dark:bg-red-950/40 border border-red-500/30 text-xs text-red-800 dark:text-red-200 font-mono">
+                  Result: Permanent capital drain with 0% electricity sovereignty.
+                </div>
+              </div>
+
+              {/* Card B: The SkyGrid Clean Standard */}
+              <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-emerald-500/10 via-white to-emerald-500/5 dark:from-emerald-950/20 dark:via-slate-950/80 dark:to-slate-950 border border-emerald-500/40 dark:border-[#10B981]/50 space-y-6 shadow-sm dark:shadow-2xl dark:shadow-[#10B981]/10 relative overflow-hidden flex flex-col justify-between">
+                <div className="space-y-5">
+                  <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-white/10">
+                    <div className="flex items-center gap-2">
+                      <span className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-800 dark:text-[#10B981] flex items-center justify-center font-bold text-base">☀️</span>
+                      <div>
+                        <h4 className="text-lg font-bold text-slate-900 dark:text-white">The SkyGrid Sovereign Clean Solution</h4>
+                        <p className="text-[11px] text-emerald-800 dark:text-[#10B981] font-mono">World-Standard Clean Energy-as-a-Service</p>
+                      </div>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-emerald-800 dark:text-[#10B981] bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/30">NEW STANDARD</span>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-800 dark:text-[#10B981] flex items-center justify-center text-xs shrink-0 mt-0.5">✓</div>
+                      <div>
+                        <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">Flicker-Free 24/7 Pure Sine Wave Power</p>
+                        <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">COREN-certified Growatt hybrid inverters powering continuous inductive loads—including split inverter air conditioners, water borehole pumps, refrigerators, and medical equipment.</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-800 dark:text-[#10B981] flex items-center justify-center text-xs shrink-0 mt-0.5">✓</div>
+                      <div>
+                        <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">50% to 65% Cheaper than Generators</p>
+                        <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">Start with a transparent 30% down payment and pay fixed, predictable monthly installments that cost significantly less than what you currently burn on petrol and diesel.</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-800 dark:text-[#10B981] flex items-center justify-center text-xs shrink-0 mt-0.5">✓</div>
+                      <div>
+                        <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">15+ Year Automotive LiFePO4 Durability</p>
+                        <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">Strict mandate on Tier-1 Lithium Iron Phosphate cells rated for 6,000+ cycles at 80% Depth of Discharge, ensuring continuous overnight autonomy that far outlives your lease.</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-800 dark:text-[#10B981] flex items-center justify-center text-xs shrink-0 mt-0.5">✓</div>
+                      <div>
+                        <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">100% Asset Title Deed Transfer</p>
+                        <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">Every naira paid builds equity. Once your flexible 12 to 60-month lease is concluded, full legal ownership transfers to you with zero balloon payments or buyout fees.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-emerald-500/10 dark:bg-emerald-950/40 border border-emerald-500/30 dark:border-[#10B981]/40 text-xs text-emerald-800 dark:text-emerald-200 font-mono">
+                  Result: Sovereign electric independence &bull; Silent, clean, and bankable.
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          {/* 4. Corporate Vision & Mission: Executive Dual Showcase */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+            
+            {/* Corporate Vision Card */}
+            <div className="p-8 sm:p-10 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-[#22D3EE]/40 relative overflow-hidden space-y-6 shadow-sm dark:shadow-2xl flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="w-14 h-14 rounded-2xl bg-sky-500/15 border border-sky-500/30 text-sky-800 dark:text-[#22D3EE] flex items-center justify-center text-2xl font-bold shadow-lg shadow-sky-500/10">
+                  🔭
+                </div>
+                <div className="space-y-2">
+                  <span className="text-xs font-mono font-bold text-sky-800 dark:text-[#22D3EE] uppercase tracking-wider block">Continental Strategic Horizon</span>
+                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">Our Corporate Vision</h3>
+                </div>
+                <p className="text-sm sm:text-base text-slate-700 dark:text-slate-200 leading-relaxed">
+                  &ldquo;To build Africa&apos;s most intelligent, resilient, and inclusive decentralized clean energy ecosystem—eradicating energy poverty and guaranteeing continuous, affordable, and sovereign solar electric power for every Nigerian home, enterprise, and essential facility, scaling to power 50 million African lives by 2035.&rdquo;
+                </p>
+              </div>
+
+              <div className="pt-6 border-t border-slate-200 dark:border-white/10 grid grid-cols-3 gap-3 text-center">
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5">
+                  <p className="text-xl sm:text-2xl font-black text-sky-700 dark:text-[#22D3EE] font-mono tabular-nums">50M+</p>
+                  <p className="text-[10px] text-slate-600 dark:text-slate-400 font-mono uppercase mt-0.5">African Lives</p>
+                </div>
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5">
+                  <p className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white font-mono tabular-nums">100%</p>
+                  <p className="text-[10px] text-slate-600 dark:text-slate-400 font-mono uppercase mt-0.5">Gen Displacement</p>
+                </div>
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5">
+                  <p className="text-xl sm:text-2xl font-black text-emerald-700 dark:text-[#10B981] font-mono tabular-nums">36 States</p>
+                  <p className="text-[10px] text-slate-600 dark:text-slate-400 font-mono uppercase mt-0.5">+ ECOWAS Corridor</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Corporate Mission Card */}
+            <div className="p-8 sm:p-10 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-[#10B981]/40 relative overflow-hidden space-y-6 shadow-sm dark:shadow-2xl flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-800 dark:text-[#10B981] flex items-center justify-center text-2xl font-bold shadow-lg shadow-emerald-500/10">
+                  🎯
+                </div>
+                <div className="space-y-2">
+                  <span className="text-xs font-mono font-bold text-emerald-800 dark:text-[#10B981] uppercase tracking-wider block">Operational Execution Mandate</span>
+                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">Our Corporate Mission</h3>
+                </div>
+                <p className="text-sm sm:text-base text-slate-700 dark:text-slate-200 leading-relaxed">
+                  &ldquo;To permanently dismantle fossil-fuel generator dependency across Nigeria and the African continent by deploying military-grade, Tier-1 Growatt solar hybrid micro-powerplants and long-life LiFePO4 energy storage via democratized Pay-As-You-Go financing, precision COREN/NEMSA electrical engineering, and proactive edge IoT telematics.&rdquo;
+                </p>
+              </div>
+
+              <div className="pt-6 border-t border-slate-200 dark:border-white/10 grid grid-cols-3 gap-3 text-center">
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5">
+                  <p className="text-xl sm:text-2xl font-black text-emerald-700 dark:text-[#10B981] font-mono tabular-nums">6,000</p>
+                  <p className="text-[10px] text-slate-600 dark:text-slate-400 font-mono uppercase mt-0.5">Cycles (15+ Yrs)</p>
+                </div>
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5">
+                  <p className="text-xl sm:text-2xl font-black text-amber-700 dark:text-[#FFBF00] font-mono tabular-nums">₦0</p>
+                  <p className="text-[10px] text-slate-600 dark:text-slate-400 font-mono uppercase mt-0.5">Collateral Barrier</p>
+                </div>
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5">
+                  <p className="text-xl sm:text-2xl font-black text-sky-700 dark:text-[#22D3EE] font-mono tabular-nums">&lt; 48h</p>
+                  <p className="text-[10px] text-slate-600 dark:text-slate-400 font-mono uppercase mt-0.5">Rapid Installation</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          {/* 5. Four Core Pillars of World-Standard Excellence */}
+          <div className="space-y-8">
+            <div className="text-center max-w-2xl mx-auto space-y-2">
+              <span className="text-emerald-800 dark:text-[#10B981] font-bold text-xs uppercase tracking-widest font-mono">Technical Rigor &bull; Zero Compromise</span>
+              <h3 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">Why SkyGrid is of World Standard</h3>
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                Engineered with strict regulatory compliance, military-grade electrical safety, and institutional governance.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              
+              {/* Pillar 1 */}
+              <div className="p-6 rounded-3xl bg-white dark:bg-black/40 border border-slate-200/90 dark:border-[#64748B]/30 hover:border-emerald-500/50 transition-all hover:-translate-y-1 space-y-4 shadow-sm dark:shadow-xl">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-800 dark:text-[#10B981] flex items-center justify-center font-bold text-xl">
+                  📐
+                </div>
+                <div className="space-y-2">
+                  <h4 className="text-slate-900 dark:text-white font-bold text-base">COREN &amp; NEMSA Certified</h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Every solar array is engineered, derated, and commissioned by COREN-registered engineers with Type-2 AC/DC surge protection, high-voltage lightning arrestors, and deep earthing resistance strictly below 5 Ohms (&le; 2.5&Omega;).
+                  </p>
+                </div>
+              </div>
+
+              {/* Pillar 2 */}
+              <div className="p-6 rounded-3xl bg-white dark:bg-black/40 border border-slate-200/90 dark:border-[#64748B]/30 hover:border-sky-500/50 transition-all hover:-translate-y-1 space-y-4 shadow-sm dark:shadow-xl">
+                <div className="w-12 h-12 rounded-2xl bg-sky-500/20 text-sky-800 dark:text-[#22D3EE] flex items-center justify-center font-bold text-xl">
+                  🔋
+                </div>
+                <div className="space-y-2">
+                  <h4 className="text-slate-900 dark:text-white font-bold text-base">100% LiFePO4 Mandate</h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    We strictly ban Lead-Acid, Tubular, and Gel batteries across our fleet. We deploy only automotive-grade Lithium Iron Phosphate cells rated for 6,000+ cycles at 80% DoD—delivering 15+ years of nightly battery autonomy.
+                  </p>
+                </div>
+              </div>
+
+              {/* Pillar 3 */}
+              <div className="p-6 rounded-3xl bg-white dark:bg-black/40 border border-slate-200/90 dark:border-[#64748B]/30 hover:border-amber-500/50 transition-all hover:-translate-y-1 space-y-4 shadow-sm dark:shadow-xl">
+                <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-800 dark:text-[#FFBF00] flex items-center justify-center font-bold text-xl">
+                  💳
+                </div>
+                <div className="space-y-2">
+                  <h4 className="text-slate-900 dark:text-white font-bold text-base">Fintech &amp; Offline STS Mesh</h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Instant auto-unlocking in &lt; 5 seconds via dedicated NUBAN virtual accounts (Moniepoint, Paystack, OPay). If telecom cellular towers experience blackouts, our offline 20-digit STS keypad code guarantees your power never shuts off.
+                  </p>
+                </div>
+              </div>
+
+              {/* Pillar 4 */}
+              <div className="p-6 rounded-3xl bg-white dark:bg-black/40 border border-slate-200/90 dark:border-[#64748B]/30 hover:border-purple-500/50 transition-all hover:-translate-y-1 space-y-4 shadow-sm dark:shadow-xl">
+                <div className="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-800 dark:text-purple-400 flex items-center justify-center font-bold text-xl">
+                  🌍
+                </div>
+                <div className="space-y-2">
+                  <h4 className="text-slate-900 dark:text-white font-bold text-base">Pan-African Technical Academy</h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Engineered to expand from Nigeria into Ghana, Cameroon, Kenya, and across the ECOWAS corridor. The SkyGrid Technical Academy trains and certifies local technicians, creating thousands of high-wage African green engineering jobs.
+                  </p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          {/* 6. Grade-A Closing Action Strip */}
+          <div className="p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-emerald-500/10 via-slate-100 to-sky-500/10 dark:from-[#10B981]/20 dark:via-slate-900 dark:to-[#22D3EE]/20 border border-emerald-500/30 dark:border-[#10B981]/40 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm dark:shadow-2xl">
+            <div className="space-y-2 text-center md:text-left">
+              <div className="inline-flex items-center gap-2 text-xs font-mono font-bold text-amber-700 dark:text-[#FFBF00]">
+                <span>⚡</span> COREN-Certified Engineers Standing By Nationwide
+              </div>
+              <h4 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Ready to Power Your Home with Sovereign Clean Energy?</h4>
+              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 max-w-xl">
+                Calculate your monthly cashflow savings, customize your appliance load, and get installed within 48 hours with zero collateral barriers.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0">
+              <button
+                onClick={() => setIsSignUpModalOpen(true)}
+                className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white dark:bg-[#10B981] dark:hover:bg-emerald-400 dark:text-[#0B0F19] font-extrabold text-xs sm:text-sm px-7 py-3.5 rounded-xl transition shadow-lg shadow-emerald-500/25 text-center"
+              >
+                Sign Up with NIN &rarr;
+              </button>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="w-full sm:w-auto bg-slate-200 hover:bg-slate-300 text-slate-800 dark:bg-white/10 dark:hover:bg-white/20 dark:text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-xl border border-slate-300 dark:border-white/10 transition text-center"
+              >
+                Book Site Audit
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* 9. FAQ SECTION (#faq) */}
       <section id="faq" className="py-16 sm:py-24 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 space-y-10">
         <div className="text-center max-w-2xl mx-auto space-y-2">
           <span className="text-[#10B981] font-bold text-xs uppercase tracking-widest">Questions &amp; Answers</span>
@@ -1460,16 +1979,101 @@ export default function PublicShowroomLandingPage() {
         </div>
       </section>
 
-      {/* 9. FOOTER */}
-      <footer className="border-t border-[#64748B]/30 bg-[#0B0F19] py-12 px-4 sm:px-6 lg:px-10 text-xs text-[#64748B]">
-        <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#10B981] text-[#0B0F19] font-black flex items-center justify-center">G</div>
-            <span className="text-slate-300 font-bold">SkyGrid Flex Solutions Ltd. &bull; Growatt Official PAYG Partner</span>
+      {/* 10. EXPANSIVE WORLD-STANDARD CORPORATE FOOTER */}
+      <footer className="border-t border-[#64748B]/30 bg-[#0B0F19] py-16 px-4 sm:px-6 lg:px-10 text-xs text-[#64748B]">
+        <div className="max-w-[1600px] mx-auto space-y-12">
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+            
+            {/* Col 1: Corporate Brand & African Energy Mission */}
+            <div className="lg:col-span-2 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#10B981] to-teal-600 flex items-center justify-center font-black text-[#0B0F19] text-xl shadow-lg shadow-[#10B981]/25">
+                  G
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-bold text-lg tracking-tight text-white">SKYGRID</span>
+                    <span className="text-[#10B981] font-semibold text-lg">GROWATT PAYG</span>
+                  </div>
+                  <p className="text-[10px] text-[#64748B] -mt-1 font-mono">Clean Energy-as-a-Service &bull; Nigeria &amp; Africa</p>
+                </div>
+              </div>
+
+              <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
+                SkyGrid Flex Solutions Ltd. is a premier Clean Energy-as-a-Service infrastructure and fintech corporation, in strategic alliance with SkyTron Quantum Solutions and Growatt New Energy. We are committed to solving Nigeria&apos;s electricity deficit, ending fossil generator dependency, and powering every home and enterprise across Africa with world-standard solar technology.
+              </p>
+
+              <div className="flex items-center gap-3 pt-2">
+                <span className="px-2.5 py-1 rounded-md bg-[#10B981]/10 border border-[#10B981]/30 text-[#10B981] font-mono text-[10px] font-bold">
+                  COREN REGISTERED
+                </span>
+                <span className="px-2.5 py-1 rounded-md bg-[#22D3EE]/10 border border-[#22D3EE]/30 text-[#22D3EE] font-mono text-[10px] font-bold">
+                  NEMSA CERTIFIED
+                </span>
+                <span className="px-2.5 py-1 rounded-md bg-[#FFBF00]/10 border border-[#FFBF00]/30 text-[#FFBF00] font-mono text-[10px] font-bold">
+                  GROWATT TIER-1
+                </span>
+              </div>
+            </div>
+
+            {/* Col 2: Navigation Links */}
+            <div className="space-y-3">
+              <h5 className="font-bold text-white text-xs uppercase tracking-wider font-mono">Platform Navigation</h5>
+              <ul className="space-y-2 text-slate-400 text-xs">
+                <li><a href="#hero" className="hover:text-[#10B981] transition">Home Overview</a></li>
+                <li><a href="#about" className="hover:text-[#10B981] transition">About Us (Vision &amp; Mission)</a></li>
+                <li><a href="#calculator" className="hover:text-[#10B981] transition">Savings &amp; Load Sizer</a></li>
+                <li><a href="#smart-app" className="hover:text-[#10B981] transition">Smart App &amp; Analytics Suite</a></li>
+                <li><a href="#bundles" className="hover:text-[#10B981] transition">Curated Growatt Bundles</a></li>
+                <li><a href="#how-it-works" className="hover:text-[#10B981] transition">How It Works</a></li>
+                <li><a href="#faq" className="hover:text-[#10B981] transition">FAQ</a></li>
+              </ul>
+            </div>
+
+            {/* Col 3: Engineering Standards & Technology */}
+            <div className="space-y-3">
+              <h5 className="font-bold text-white text-xs uppercase tracking-wider font-mono">Engineering Standards</h5>
+              <ul className="space-y-2 text-slate-400 text-xs">
+                <li><a href="#about" className="hover:text-[#10B981] transition">100% LiFePO4 Chemistry Mandate</a></li>
+                <li><a href="#about" className="hover:text-[#10B981] transition">COREN Derating &amp; Safety Compliance</a></li>
+                <li><a href="#about" className="hover:text-[#10B981] transition">Type-2 SPD &amp; &lt; 2.5&Omega; Earthing</a></li>
+                <li><a href="#about" className="hover:text-[#10B981] transition">20-Digit STS Offline Keypad Protocol</a></li>
+                <li><a href="#about" className="hover:text-[#10B981] transition">Cloud IoT Telematics &amp; Watchtower</a></li>
+                <li><a href="#about" className="hover:text-[#10B981] transition">All-Risk Equipment Insurance (1.75%)</a></li>
+              </ul>
+            </div>
+
+            {/* Col 4: Corporate Offices & Pan-African Hubs */}
+            <div className="space-y-3">
+              <h5 className="font-bold text-white text-xs uppercase tracking-wider font-mono">Regional Operations</h5>
+              <p className="text-slate-400 text-xs leading-relaxed">
+                <strong className="text-white">Abuja HQ:</strong> Maitama &amp; Central Business District, FCT Abuja.<br />
+                <strong className="text-white">Lagos Hub:</strong> Victoria Island &amp; Ikeja Industrial Zone.<br />
+                <strong className="text-white">Pan-African Horizon:</strong> ECOWAS &amp; East Africa Corridor.
+              </p>
+              <div className="pt-2 space-y-1 text-slate-400 text-xs">
+                <p>📞 Emergency Hotline: +234 (0) 800-SKYGRID</p>
+                <p>✉️ Corporate Inquiries: contact@skygrid.ng</p>
+                <p>⚡ 24/7 Rapid Field Support Active</p>
+              </div>
+            </div>
+
           </div>
-          <p className="text-center md:text-right">
-            &copy; {new Date().getFullYear()} SkyGrid Flex Solutions. COREN Registered Engineering Firm &bull; All Rights Reserved.
-          </p>
+
+          {/* Bottom Divider & Legal */}
+          <div className="pt-8 border-t border-[#64748B]/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[#64748B]">
+            <p>
+              &copy; {new Date().getFullYear()} SkyGrid Flex Solutions Ltd. In Strategic Alliance with SkyTron Quantum Solutions &amp; Growatt New Energy. All Rights Reserved.
+            </p>
+            <div className="flex items-center gap-6">
+              <a href="#about" className="hover:text-slate-400 transition">Corporate Charter</a>
+              <a href="#about" className="hover:text-slate-400 transition">Privacy &amp; Data Protection (NDPR)</a>
+              <a href="#about" className="hover:text-slate-400 transition">PAYG Agreement Terms</a>
+              <a href="#about" className="hover:text-[#10B981] transition text-emerald-400 font-bold">Pan-African Clean Energy Mandate</a>
+            </div>
+          </div>
+
         </div>
       </footer>
 

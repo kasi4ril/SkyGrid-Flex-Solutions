@@ -1,0 +1,15 @@
+{
+  "name": "growatt-payg-web-suite",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:showroom": "npm --workspace=apps/public-showroom run dev",
+    "dev:portal": "npm --workspace=apps/customer-portal run dev",
+    "dev:admin": "npm --workspace=apps/admin-command run dev"
+  }
+}
+

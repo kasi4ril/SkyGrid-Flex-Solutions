@@ -3,41 +3,70 @@
 @tailwind utilities;
 
 :root {
-  /* Semantic "Bi-Luminance" Renewable Palette */
-  --bg-midnight: #0B0F19;         /* Photovoltaic Midnight Slate (Canvas) */
-  --card-surface: #111827;        /* Card Surfaces & Elevated Containers */
-  --well-surface: #1E293B;        /* Inner Inputs & Secondary Wells */
-  --utility-slate: #64748B;       /* Clean Utility Slate (Borders & Metadata) */
-  --solar-gold: #FFBF00;          /* Radiant Solar Gold (Generation & Crossovers) */
-  --clean-emerald: #10B981;       /* Clean-Tech Emerald (Wealth & Savings) */
-  --ion-cyan: #22D3EE;            /* Ion Cyan (Lithium Storage & AI Forecasting) */
-  --combustion-crimson: #EF4444;  /* Combustion Crimson (Warnings & Fossil Burn) */
+  /* Solar Daylight (Light Mode) Variables */
+  --bg-canvas: #F8FAFC;
+  --bg-card: #FFFFFF;
+  --bg-well: #F1F5F9;
+  --border-subtle: #E2E8F0;
+  --border-strong: #CBD5E1;
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
+  --text-muted: #64748B;
+
+  /* Semantic Brand Accents (Deep Ink Shades for Light Mode) */
+  --solar-gold: #D97706;          /* amber-600 */
+  --clean-emerald: #059669;       /* emerald-600 */
+  --brand-sky: #0284C7;           /* sky-600 */
+  --combustion-crimson: #DC2626;  /* red-600 */
+  --utility-slate: #475569;
 
   /* Legacy brand mappings for full backward compatibility */
+  --brand-forest: #F8FAFC;
+  --brand-dark: #FFFFFF;
+  --brand-amber: #D97706;
+  --brand-teal: #059669;
+  --brand-warm: #0F172A;
+  --brand-charcoal: #F1F5F9;
+}
+
+.dark {
+  /* Photovoltaic Night (Dark Mode) Variables */
+  --bg-canvas: #0B0F19;
+  --bg-card: #111827;
+  --bg-well: #1E293B;
+  --border-subtle: #1E293B;
+  --border-strong: #334155;
+  --text-primary: #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+
+  /* Semantic Brand Accents (Luminous Neon for Dark Mode) */
+  --solar-gold: #FFBF00;
+  --clean-emerald: #10B981;
+  --brand-sky: #22D3EE;
+  --combustion-crimson: #EF4444;
+  --utility-slate: #64748B;
+
+  /* Legacy brand mappings */
   --brand-forest: #111827;
   --brand-dark: #0B0F19;
   --brand-amber: #FFBF00;
   --brand-teal: #10B981;
-  --brand-sky: #22D3EE;
-  --brand-sky-light: #38BDF8;
-  --brand-sky-dark: #06B6D4;
-  --brand-sky-glow: rgba(34, 211, 238, 0.25);
   --brand-warm: #F8FAF7;
   --brand-charcoal: #1E293B;
 }
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: #0B0F19;
-  background-image: 
-    radial-gradient(circle at 15% 10%, rgba(34, 211, 238, 0.08) 0%, transparent 40%),
-    radial-gradient(circle at 85% 25%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
-    radial-gradient(circle at 50% 70%, rgba(11, 15, 25, 0.95) 0%, transparent 50%),
-    radial-gradient(circle at 80% 90%, rgba(255, 191, 0, 0.05) 0%, transparent 35%);
-  background-attachment: fixed;
-  color: #F8FAF7;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, .font-heading {
   font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }

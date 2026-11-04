@@ -1,4 +1,4 @@
-.PHONY: help up down logs restart test test-vfs test-usecases test-backend migrate build run-api run-mqtt run-cron seed clean
+.PHONY: help setup up down logs restart test test-vfs test-usecases test-backend migrate build run-api run-mqtt run-cron seed clean
 
 SHELL := /bin/bash
 COMPOSE ?= docker compose
@@ -6,6 +6,7 @@ GO_ENV := GOTOOLCHAIN=local CGO_ENABLED=0 GOCACHE=/tmp/go-build GOPATH=/tmp/go
 
 help:
 	@echo "Growatt PAYG Enterprise Management Commands:"
+	@echo "  make setup         - Bootstrap Python .venv, dependencies, and Go binaries after git clone"
 	@echo "  make up            - Start PostgreSQL (Timescale+pgvector), EMQX, and Redis containers"
 	@echo "  make down          - Stop and remove containers"
 	@echo "  make logs          - View live logs from docker containers"
@@ -18,6 +19,9 @@ help:
 	@echo "  make run-api       - Run API server locally"
 	@echo "  make run-mqtt      - Run MQTT gateway locally"
 	@echo "  make run-cron      - Run Cron scheduler locally"
+
+setup:
+	@bash ./setup.sh
 
 up:
 	$(COMPOSE) up -d

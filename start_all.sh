@@ -70,24 +70,46 @@ else
 fi
 
 # 2. Python Intelligence Engine (FastAPI & ML Forecasting)
+PY_DIR="$ROOT_DIR/intelligence-engine"
+UVICORN_BIN=""
+if [ -x "$PY_DIR/.venv/bin/uvicorn" ]; then
+    UVICORN_BIN="$PY_DIR/.venv/bin/uvicorn"
+elif [ -n "$VIRTUAL_ENV" ] && [ -x "$VIRTUAL_ENV/bin/uvicorn" ]; then
+    UVICORN_BIN="$VIRTUAL_ENV/bin/uvicorn"
+elif [ -x "$SCRIPT_DIR/.venv/bin/uvicorn" ]; then
+    UVICORN_BIN="$SCRIPT_DIR/.venv/bin/uvicorn"
+elif [ -x "$ROOT_DIR/.venv/bin/uvicorn" ]; then
+    UVICORN_BIN="$ROOT_DIR/.venv/bin/uvicorn"
+elif command -v uvicorn >/dev/null 2>&1; then
+    UVICORN_BIN="$(command -v uvicorn)"
+elif python3 -c "import uvicorn" >/dev/null 2>&1; then
+    UVICORN_BIN="python3 -m uvicorn"
+fi
+
+if [ -z "$UVICORN_BIN" ]; then
+    echo "⚙️  [2/4] First-time setup: Python virtual environment or uvicorn not found."
+    echo "📦 Auto-provisioning .venv and installing required microservice dependencies..."
+    if command -v python3 >/dev/null 2>&1; then
+        (
+            cd "$PY_DIR"
+            if [ ! -d ".venv" ]; then
+                python3 -m venv .venv
+            fi
+            .venv/bin/pip install --upgrade pip --quiet 2>/dev/null || true
+            .venv/bin/pip install fastapi 'uvicorn[standard]' pydantic httpx numpy
+        )
+        if [ -x "$PY_DIR/.venv/bin/uvicorn" ]; then
+            UVICORN_BIN="$PY_DIR/.venv/bin/uvicorn"
+            echo "✅ Virtual environment auto-provisioned successfully!"
+        fi
+    else
+        echo "❌ Error: python3 is not installed on this system. Please install python3 & python3-venv."
+    fi
+fi
+
 echo "🧠 [2/4] Starting Python Intelligence Engine on http://localhost:8000..."
 (
     cd "$ROOT_DIR/intelligence-engine"
-    UVICORN_BIN=""
-    if [ -x ".venv/bin/uvicorn" ]; then
-        UVICORN_BIN=".venv/bin/uvicorn"
-    elif [ -n "$VIRTUAL_ENV" ] && [ -x "$VIRTUAL_ENV/bin/uvicorn" ]; then
-        UVICORN_BIN="$VIRTUAL_ENV/bin/uvicorn"
-    elif [ -x "$SCRIPT_DIR/.venv/bin/uvicorn" ]; then
-        UVICORN_BIN="$SCRIPT_DIR/.venv/bin/uvicorn"
-    elif [ -x "$ROOT_DIR/.venv/bin/uvicorn" ]; then
-        UVICORN_BIN="$ROOT_DIR/.venv/bin/uvicorn"
-    elif command -v uvicorn >/dev/null 2>&1; then
-        UVICORN_BIN="$(command -v uvicorn)"
-    elif python3 -c "import uvicorn" >/dev/null 2>&1; then
-        UVICORN_BIN="python3 -m uvicorn"
-    fi
-
     if [ -n "$UVICORN_BIN" ]; then
         export PYTHONPATH=.
         if [[ "$UVICORN_BIN" == python3* ]]; then
@@ -109,8 +131,12 @@ echo "⚡ [3/4] Starting Core Go API Server on http://localhost:8080..."
     cd "$ROOT_DIR/core-backend"
     if [ -x "bin/api-server" ]; then
         exec ./bin/api-server
-    else
+    elif command -v go >/dev/null 2>&1; then
         exec go run ./cmd/api-server/main.go
+    else
+        echo "❌ Error: 'go' toolchain not installed and precompiled bin/api-server not found."
+        echo "💡 Install Go (https://go.dev/doc/install) to run the Core API."
+        exit 1
     fi
 ) > "$LOG_DIR/api-server.log" 2>&1 &
 PIDS+=($!)
@@ -121,8 +147,11 @@ echo "📡 [4/4] Starting Background Workers (MQTT Gateway & Cron Scheduler)..."
     cd "$ROOT_DIR/core-backend"
     if [ -x "bin/mqtt-gateway" ]; then
         exec ./bin/mqtt-gateway
-    else
+    elif command -v go >/dev/null 2>&1; then
         exec go run ./cmd/mqtt-gateway/main.go
+    else
+        echo "❌ Error: Neither prebuilt bin/mqtt-gateway nor 'go' command found."
+        exit 1
     fi
 ) > "$LOG_DIR/mqtt-gateway.log" 2>&1 &
 PIDS+=($!)
@@ -131,8 +160,11 @@ PIDS+=($!)
     cd "$ROOT_DIR/core-backend"
     if [ -x "bin/cron-scheduler" ]; then
         exec ./bin/cron-scheduler
-    else
+    elif command -v go >/dev/null 2>&1; then
         exec go run ./cmd/cron-scheduler/main.go
+    else
+        echo "❌ Error: Neither prebuilt bin/cron-scheduler nor 'go' command found."
+        exit 1
     fi
 ) > "$LOG_DIR/cron-scheduler.log" 2>&1 &
 PIDS+=($!)
