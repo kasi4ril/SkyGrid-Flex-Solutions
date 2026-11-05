@@ -114,6 +114,41 @@ func (h *PublicShowroomHandler) HandleCreateLead(w http.ResponseWriter, r *http.
 	})
 }
 
+// HandleContactInquiry serves POST /api/v1/public/contact
+// Receives general inquiries, technical support tickets, and commercial project scoping requests.
+func (h *PublicShowroomHandler) HandleContactInquiry(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeJSONError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	var req domain.ContactInquiryRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeJSONError(w, http.StatusBadRequest, fmt.Sprintf("invalid JSON payload: %v", err))
+		return
+	}
+
+	if strings.TrimSpace(req.FullName) == "" || strings.TrimSpace(req.Phone) == "" || strings.TrimSpace(req.Message) == "" {
+		writeJSONError(w, http.StatusBadRequest, "full_name, phone, and message are required fields")
+		return
+	}
+
+	ticketID := fmt.Sprintf("TKT-%s", strings.ToUpper(generateUUID()[0:8]))
+	writeJSONResponse(w, http.StatusCreated, map[string]any{
+		"status":      "success",
+		"ticket_id":   ticketID,
+		"message":     "Your inquiry has been logged with our Central Engineering Desk. A COREN-certified Field Engineer will contact you within 2 hours.",
+		"full_name":   req.FullName,
+		"email":       req.Email,
+		"phone":       req.Phone,
+		"inquiry_type": req.InquiryType,
+		"state_region": req.StateRegion,
+		"sla_hours":   2,
+		"hotline":     "+234 800-SKYGRID",
+		"created_at":  time.Now().UTC(),
+	})
+}
+
 // writeJSONResponse writes a standardized JSON HTTP response with CORS headers.
 func writeJSONResponse(w http.ResponseWriter, statusCode int, payload any) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")

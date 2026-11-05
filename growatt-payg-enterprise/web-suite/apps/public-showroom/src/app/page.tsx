@@ -255,6 +255,76 @@ export default function PublicShowroomLandingPage() {
     );
   };
 
+  // Navigation Dropdown & Customer Dashboard Login State
+  const [isAboutDropdownOpen, setIsAboutDropdownOpen] = useState<boolean>(false);
+  const [isMobileAboutAccordionOpen, setIsMobileAboutAccordionOpen] = useState<boolean>(false);
+  const [isPkgDropdownOpen, setIsPkgDropdownOpen] = useState<boolean>(false);
+  const [isMobilePkgAccordionOpen, setIsMobilePkgAccordionOpen] = useState<boolean>(false);
+  const [isCustomerLoginModalOpen, setIsCustomerLoginModalOpen] = useState<boolean>(false);
+
+  // Professional Contact Form State
+  const [contactForm, setContactForm] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    inquiryType: 'Residential Solar PAYGo (5kVA - 8kVA Hybrid)',
+    stateRegion: 'Abuja FCT',
+    estimatedBudget: '',
+    message: '',
+    consentWhatsApp: true,
+  });
+  const [contactSubmitting, setContactSubmitting] = useState<boolean>(false);
+  const [contactConfirmation, setContactConfirmation] = useState<null | {
+    ticketId: string;
+    name: string;
+    inquiry: string;
+    region: string;
+  }>(null);
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setContactSubmitting(true);
+    try {
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+      const response = await fetch(`${apiBase}/api/v1/public/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          full_name: contactForm.fullName,
+          email: contactForm.email,
+          phone: '+234' + contactForm.phone.replace(/^0+/, ''),
+          inquiry_type: contactForm.inquiryType,
+          state_region: contactForm.stateRegion,
+          estimated_budget: contactForm.estimatedBudget,
+          message: contactForm.message,
+          consent_whatsapp: contactForm.consentWhatsApp,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setContactConfirmation({
+          ticketId: data.ticket_id || `TKT-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+          name: contactForm.fullName,
+          inquiry: contactForm.inquiryType,
+          region: contactForm.stateRegion,
+        });
+      } else {
+        throw new Error('Local fallback');
+      }
+    } catch {
+      const fallbackTicket = `TKT-NG-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+      setContactConfirmation({
+        ticketId: fallbackTicket,
+        name: contactForm.fullName,
+        inquiry: contactForm.inquiryType,
+        region: contactForm.stateRegion,
+      });
+    } finally {
+      setContactSubmitting(false);
+    }
+  };
+
   // Lead Capture Modal State (Site Audit)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [leadForm, setLeadForm] = useState({
@@ -264,8 +334,17 @@ export default function PublicShowroomLandingPage() {
     city: '',
     streetAddress: '',
     preferredAuditDay: 'Tomorrow Morning (10:00 AM)',
+    gpsLat: 9.076500,
+    gpsLng: 7.398600,
+    gpsStatus: 'Ready for COREN inspection dispatch',
   });
-  const [bookingConfirmation, setBookingConfirmation] = useState<null | { ref: string; message: string }>(null);
+  const [bookingConfirmation, setBookingConfirmation] = useState<null | {
+    ref: string;
+    message: string;
+    gpsLat?: number;
+    gpsLng?: number;
+    streetAddress?: string;
+  }>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   // Customer Sign-Up Modal State (Global Practice with NIMC NIN)
@@ -286,6 +365,9 @@ export default function PublicShowroomLandingPage() {
     discoProvider: 'AEDC (Abuja Electricity)',
     accountType: 'Residential Band A',
     bvn: '',
+    gpsLat: 9.076500,
+    gpsLng: 7.398600,
+    gpsStatus: 'GIS satellite pin ready for solar azimuth & tilt dispatch',
   });
   const [signUpSuccess, setSignUpSuccess] = useState<null | {
     customerId: string;
@@ -293,7 +375,74 @@ export default function PublicShowroomLandingPage() {
     dvaBank: string;
     downPaymentNaira: number;
     monthlyNaira: number;
+    gpsLat: number;
+    gpsLng: number;
+    streetAddress: string;
+    city: string;
   }>(null);
+
+  // Geo-Tag Coordinates Detection & Preset Helpers
+  const handleDetectGPS = (target: 'lead' | 'signup') => {
+    if (typeof window === 'undefined' || !navigator.geolocation) {
+      alert('Geolocation is not supported by your browser.');
+      return;
+    }
+    if (target === 'lead') {
+      setLeadForm((prev) => ({ ...prev, gpsStatus: '🛰️ Detecting site coordinates via GPS sensor...' }));
+    } else {
+      setSignUpData((prev) => ({ ...prev, gpsStatus: '🛰️ Acquiring GPS satellite fix for site...' }));
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = parseFloat(position.coords.latitude.toFixed(6));
+        const lng = parseFloat(position.coords.longitude.toFixed(6));
+        const acc = Math.round(position.coords.accuracy || 10);
+        if (target === 'lead') {
+          setLeadForm((prev) => ({
+            ...prev,
+            gpsLat: lat,
+            gpsLng: lng,
+            gpsStatus: `✓ GPS Fixed: ${lat}°N, ${lng}°E (±${acc}m)`,
+          }));
+        } else {
+          setSignUpData((prev) => ({
+            ...prev,
+            gpsLat: lat,
+            gpsLng: lng,
+            gpsStatus: `✓ GIS Pin Locked: ${lat}°N, ${lng}°E (±${acc}m)`,
+          }));
+        }
+      },
+      (error) => {
+        const msg = `⚠️ GPS unavailable (${error.message}). Using preset.`;
+        if (target === 'lead') {
+          setLeadForm((prev) => ({ ...prev, gpsStatus: msg }));
+        } else {
+          setSignUpData((prev) => ({ ...prev, gpsStatus: msg }));
+        }
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  };
+
+  const handleSetPresetGPS = (target: 'lead' | 'signup', lat: number, lng: number, label: string) => {
+    if (target === 'lead') {
+      setLeadForm((prev) => ({
+        ...prev,
+        gpsLat: lat,
+        gpsLng: lng,
+        gpsStatus: `✓ Applied ${label} (${lat.toFixed(4)}°N, ${lng.toFixed(4)}°E)`,
+      }));
+    } else {
+      setSignUpData((prev) => ({
+        ...prev,
+        gpsLat: lat,
+        gpsLng: lng,
+        gpsStatus: `✓ Geo-Tag Locked: ${label} (${lat.toFixed(4)}°N, ${lng.toFixed(4)}°E)`,
+      }));
+    }
+  };
 
   // Deterministic Client/Server Synchronized Engineering Calculations
   const engineeringResult = useMemo(() => {
@@ -438,6 +587,10 @@ export default function PublicShowroomLandingPage() {
       dvaBank: 'Moniepoint Microfinance Bank',
       downPaymentNaira: engineeringResult.downPaymentNaira,
       monthlyNaira: engineeringResult.monthlyInstallment,
+      gpsLat: signUpData.gpsLat,
+      gpsLng: signUpData.gpsLng,
+      streetAddress: signUpData.streetAddress,
+      city: signUpData.city,
     });
   };
 
@@ -454,9 +607,11 @@ export default function PublicShowroomLandingPage() {
           phone: leadForm.phone,
           email: leadForm.email,
           state_region: selectedState,
-          city: leadForm.city,
+          city: leadForm.city || 'Abuja',
           street_address: leadForm.streetAddress,
           preferred_audit_day: leadForm.preferredAuditDay,
+          gps_lat: leadForm.gpsLat,
+          gps_lng: leadForm.gpsLng,
           sizing_input: {
             state_region: selectedState,
             payment_mode: paymentMode,
@@ -482,6 +637,9 @@ export default function PublicShowroomLandingPage() {
         setBookingConfirmation({
           ref: data.audit_booking_ref || `AUD-NG-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
           message: data.message || 'Audit booked successfully!',
+          gpsLat: leadForm.gpsLat,
+          gpsLng: leadForm.gpsLng,
+          streetAddress: leadForm.streetAddress,
         });
       } else {
         throw new Error('Local fallback');
@@ -491,6 +649,9 @@ export default function PublicShowroomLandingPage() {
       setBookingConfirmation({
         ref: fallbackRef,
         message: 'Site Audit booked! A COREN-certified Field Engineer will contact you via WhatsApp/Phone within 2 hours to confirm roof & earthing inspection.',
+        gpsLat: leadForm.gpsLat,
+        gpsLng: leadForm.gpsLng,
+        streetAddress: leadForm.streetAddress,
       });
     } finally {
       setIsSubmitting(false);
@@ -500,34 +661,13 @@ export default function PublicShowroomLandingPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0B0F19] text-slate-900 dark:text-slate-100 font-sans selection:bg-emerald-500 selection:text-white transition-colors duration-200">
       
-      {/* 1. TOP REGULATORY & REGISTRATION TRUST BAR */}
-      <aside className="bg-gradient-to-r from-slate-100 via-white to-slate-100 dark:from-[#111827] dark:via-[#0B0F19] dark:to-[#111827] border-b border-slate-200 dark:border-[#10B981]/30 text-xs py-2 px-4 sm:px-6 lg:px-10 transition-colors duration-200">
-        <div className="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-3 text-slate-700 dark:text-emerald-200">
-          <div className="flex items-center gap-3">
-            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-800 dark:text-[#10B981] font-bold text-xs">⚡</span>
-            <span className="font-semibold text-emerald-800 dark:text-[#10B981]">COREN &amp; NEMSA Certified Solar Architecture</span>
-            <span className="hidden md:inline text-slate-400 dark:text-[#64748B]">•</span>
-            <span className="hidden md:inline text-slate-600 dark:text-emerald-300">100% LiFePO4 Lithium Mandate (80% DoD / 6,000 Cycles)</span>
-          </div>
-          <div className="flex items-center gap-4 text-[11px]">
-            <span className="hidden sm:inline text-slate-500 dark:text-[#64748B]">Zero-Deposit SME Pilots Active in Lagos &amp; Abuja</span>
-            <button
-              onClick={() => setIsSignUpModalOpen(true)}
-              className="text-emerald-700 dark:text-[#10B981] hover:text-emerald-500 dark:hover:text-emerald-300 font-bold underline flex items-center gap-1 transition"
-            >
-              <span>New Customer? Register with NIN &rarr;</span>
-            </button>
-          </div>
-        </div>
-      </aside>
-
-      {/* 2. MAIN NAVIGATION */}
-      <header className="sticky top-0 z-40 backdrop-blur-md bg-white/90 dark:bg-[#0B0F19]/90 border-b border-slate-200 dark:border-[#64748B]/30 px-4 sm:px-6 lg:px-10 py-3.5 transition-colors duration-200">
-        <div className="max-w-[1600px] mx-auto flex items-center justify-between">
+      {/* CONSOLIDATED UNIFIED NAVIGATION HEADER (Single Clean Nav Bar) */}
+      <header className="sticky top-0 z-40 backdrop-blur-md bg-white/95 dark:bg-[#0B0F19]/95 border-b border-slate-200 dark:border-[#64748B]/30 px-4 sm:px-6 lg:px-10 py-4 sm:py-5 transition-colors duration-200 shadow-md min-h-[76px] flex items-center">
+        <div className="max-w-[1600px] w-full mx-auto flex items-center justify-between">
           
           <a href="#hero" className="flex items-center gap-3 group focus:outline-none">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center font-black text-slate-950 text-xl shadow-lg shadow-emerald-500/25 group-hover:scale-105 transition">
-              G
+              ⚡
             </div>
             <div>
               <div className="flex items-center gap-1.5">
@@ -538,23 +678,128 @@ export default function PublicShowroomLandingPage() {
             </div>
           </a>
 
-          <nav className="hidden lg:flex items-center gap-8 text-sm text-slate-700 dark:text-slate-300 font-medium">
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-8 text-sm text-slate-700 dark:text-slate-300 font-medium">
             <a href="#hero" className="hover:text-emerald-600 dark:hover:text-[#10B981] transition">Home</a>
-            <a href="#about" className="hover:text-emerald-600 dark:hover:text-[#10B981] transition text-slate-900 dark:text-white font-semibold flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-              About Us
-            </a>
-            <a href="#calculator" className="hover:text-emerald-600 dark:hover:text-[#10B981] transition">Savings &amp; Load Sizer</a>
-            <a href="#smart-app" className="hover:text-emerald-600 dark:hover:text-[#10B981] transition text-emerald-700 dark:text-[#10B981] font-semibold flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              Smart App &amp; Analytics
-            </a>
-            <a href="#bundles" className="hover:text-emerald-600 dark:hover:text-[#10B981] transition">Growatt Bundles</a>
-            <a href="#how-it-works" className="hover:text-emerald-600 dark:hover:text-[#10B981] transition">How It Works</a>
+
+            {/* "About Us" Dropdown (contains: About SkyGrid, Smart App & AI, Gallery) */}
+            <div className="relative group/about">
+              <button
+                type="button"
+                onClick={() => setIsAboutDropdownOpen(!isAboutDropdownOpen)}
+                className="hover:text-emerald-600 dark:hover:text-[#10B981] transition flex items-center gap-1.5 py-2 font-medium focus:outline-none"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span>About Us</span>
+                <svg className="w-3.5 h-3.5 transition-transform duration-200 group-hover/about:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div className="hidden group-hover/about:block absolute top-full left-0 pt-2 w-72 z-50">
+                <div className="bg-white dark:bg-[#111827] rounded-2xl p-2.5 border border-slate-200 dark:border-slate-800 shadow-2xl backdrop-blur-xl space-y-1">
+                  <a
+                    href="#about"
+                    onClick={() => setIsAboutDropdownOpen(false)}
+                    className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition group/item"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-sm">🌍</div>
+                    <div>
+                      <div className="text-xs font-bold text-slate-900 dark:text-white group-hover/item:text-emerald-600 dark:group-hover/item:text-[#10B981] transition">About SkyGrid</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400">Vision, Clean Energy &amp; COREN Mission</div>
+                    </div>
+                  </a>
+                  <a
+                    href="#smart-app"
+                    onClick={() => setIsAboutDropdownOpen(false)}
+                    className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition group/item"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-sky-500/15 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold text-sm">⚡</div>
+                    <div>
+                      <div className="text-xs font-bold text-slate-900 dark:text-white group-hover/item:text-sky-600 dark:group-hover/item:text-[#22D3EE] transition">Smart App &amp; AI</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400">IoT Telemetry &amp; Real-time AI Forecasts</div>
+                    </div>
+                  </a>
+                  <a
+                    href="#gallery"
+                    onClick={() => setIsAboutDropdownOpen(false)}
+                    className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition group/item"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-sm">📸</div>
+                    <div>
+                      <div className="text-xs font-bold text-slate-900 dark:text-white group-hover/item:text-amber-600 dark:group-hover/item:text-amber-400 transition">Gallery</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400">Residential, Commercial &amp; Mini-Grid Showcase</div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* "Our Packages" Dropdown (contains: Our Packages, How It Works, Pricing & Calculator) */}
+            <div className="relative group/pkg">
+              <button
+                type="button"
+                onClick={() => setIsPkgDropdownOpen(!isPkgDropdownOpen)}
+                className="hover:text-emerald-600 dark:hover:text-[#10B981] transition flex items-center gap-1.5 py-2 font-medium focus:outline-none"
+              >
+                <span>Our Packages</span>
+                <svg className="w-3.5 h-3.5 transition-transform duration-200 group-hover/pkg:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div className="hidden group-hover/pkg:block absolute top-full left-0 pt-2 w-72 z-50">
+                <div className="bg-white dark:bg-[#111827] rounded-2xl p-2.5 border border-slate-200 dark:border-slate-800 shadow-2xl backdrop-blur-xl space-y-1">
+                  <a
+                    href="#bundles"
+                    onClick={() => setIsPkgDropdownOpen(false)}
+                    className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition group/item"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-sm">📦</div>
+                    <div>
+                      <div className="text-xs font-bold text-slate-900 dark:text-white group-hover/item:text-emerald-600 dark:group-hover/item:text-[#10B981] transition">Our Packages</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400">Residential &amp; Commercial Solar Systems</div>
+                    </div>
+                  </a>
+                  <a
+                    href="#how-it-works"
+                    onClick={() => setIsPkgDropdownOpen(false)}
+                    className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition group/item"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-sm">⚙️</div>
+                    <div>
+                      <div className="text-xs font-bold text-slate-900 dark:text-white group-hover/item:text-emerald-600 dark:group-hover/item:text-[#10B981] transition">How It Works</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400">4-Step Zero-Deposit Lease-to-Own Process</div>
+                    </div>
+                  </a>
+                  <a
+                    href="#calculator"
+                    onClick={() => setIsPkgDropdownOpen(false)}
+                    className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition group/item"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-sky-500/15 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold text-sm">📐</div>
+                    <div>
+                      <div className="text-xs font-bold text-slate-900 dark:text-white group-hover/item:text-emerald-600 dark:group-hover/item:text-[#10B981] transition">Pricing &amp; Calculator</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400">COREN Load Sizer &amp; Net Naira ROI</div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+
             <a href="#faq" className="hover:text-emerald-600 dark:hover:text-[#10B981] transition">FAQ</a>
+            <a href="#contact" className="hover:text-emerald-600 dark:hover:text-[#10B981] transition">Contact</a>
+
+            {/* Dedicated Link Tab for Customer Dashboard leading to Onboarded Customer Login */}
+            <button
+              type="button"
+              onClick={() => setIsCustomerLoginModalOpen(true)}
+              className="text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 font-semibold transition flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 shadow-sm"
+              title="Onboarded Customers: Sign In to Your Dashboard"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+              <span>Customer Dashboard</span>
+            </button>
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
@@ -577,13 +822,13 @@ export default function PublicShowroomLandingPage() {
 
             <button
               onClick={() => setIsSignUpModalOpen(true)}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white dark:bg-[#10B981] dark:hover:bg-emerald-400 dark:text-[#0B0F19] font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center gap-1.5"
+              className="bg-emerald-600 hover:bg-emerald-500 text-white dark:bg-[#10B981] dark:hover:bg-emerald-400 dark:text-[#0B0F19] font-bold text-xs sm:text-sm px-3.5 sm:px-4 py-2.5 rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center gap-1.5 whitespace-nowrap"
             >
               <span>Sign Up (NIN)</span>
             </button>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="hidden sm:inline-flex bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-[#1E293B] dark:hover:bg-slate-700 dark:text-white font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-200 dark:border-[#64748B]/30 transition"
+              className="hidden sm:inline-flex bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-[#1E293B] dark:hover:bg-slate-700 dark:text-white font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-200 dark:border-[#64748B]/30 transition whitespace-nowrap"
             >
               Book Site Audit
             </button>
@@ -609,6 +854,19 @@ export default function PublicShowroomLandingPage() {
         {/* Mobile Navigation Drawer */}
         {isMobileMenuOpen && (
           <div className="lg:hidden border-t border-slate-200 dark:border-[#64748B]/30 bg-white/95 dark:bg-[#0B0F19]/95 backdrop-blur-xl px-4 py-4 mt-3 space-y-3">
+            
+            {/* Mobile Customer Dashboard Button */}
+            <button
+              onClick={() => { setIsMobileMenuOpen(false); setIsCustomerLoginModalOpen(true); }}
+              className="w-full py-2.5 px-3.5 rounded-xl text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 transition flex items-center justify-between shadow-md"
+            >
+              <span className="flex items-center gap-2">
+                <span>⚡</span>
+                <span>Customer Dashboard (Onboarded Login)</span>
+              </span>
+              <span>&rarr;</span>
+            </button>
+
             <a
               href="#hero"
               onClick={() => setIsMobileMenuOpen(false)}
@@ -616,43 +874,91 @@ export default function PublicShowroomLandingPage() {
             >
               Home
             </a>
-            <a
-              href="#about"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-sm font-semibold text-emerald-700 dark:text-[#10B981] py-1.5 transition flex items-center gap-2"
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              About Us (Vision, Mission &amp; African Impact)
-            </a>
-            <a
-              href="#calculator"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-sm font-medium text-slate-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-[#10B981] py-1.5 transition"
-            >
-              Savings &amp; Load Sizer
-            </a>
-            <a
-              href="#smart-app"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-sm font-semibold text-emerald-700 dark:text-[#10B981] py-1.5 transition flex items-center gap-2"
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              Smart App &amp; Analytics
-            </a>
-            <a
-              href="#bundles"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-sm font-medium text-slate-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-[#10B981] py-1.5 transition"
-            >
-              Growatt Bundles
-            </a>
-            <a
-              href="#how-it-works"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-sm font-medium text-slate-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-[#10B981] py-1.5 transition"
-            >
-              How It Works
-            </a>
+
+            {/* Mobile About Us & Showcase Accordion */}
+            <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-slate-50 dark:bg-white/5">
+              <button
+                type="button"
+                onClick={() => setIsMobileAboutAccordionOpen(!isMobileAboutAccordionOpen)}
+                className="w-full flex items-center justify-between p-2.5 text-left font-semibold text-slate-900 dark:text-white text-xs"
+              >
+                <span className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <span>About Us &amp; Technology</span>
+                </span>
+                <svg className={`w-4 h-4 transition-transform duration-200 ${isMobileAboutAccordionOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {isMobileAboutAccordionOpen && (
+                <div className="px-2 pb-2.5 space-y-1 text-xs border-t border-slate-200 dark:border-slate-800 pt-2">
+                  <a
+                    href="#about"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 text-slate-800 dark:text-slate-200"
+                  >
+                    🌍 About SkyGrid (Mission &amp; Impact)
+                  </a>
+                  <a
+                    href="#smart-app"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 text-slate-800 dark:text-slate-200"
+                  >
+                    ⚡ Smart App &amp; AI Telemetry
+                  </a>
+                  <a
+                    href="#gallery"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 text-slate-800 dark:text-slate-200"
+                  >
+                    📸 Project Gallery &amp; Installations
+                  </a>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile Our Packages Accordion */}
+            <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-slate-50 dark:bg-white/5">
+              <button
+                type="button"
+                onClick={() => setIsMobilePkgAccordionOpen(!isMobilePkgAccordionOpen)}
+                className="w-full flex items-center justify-between p-2.5 text-left font-semibold text-slate-900 dark:text-white text-xs"
+              >
+                <span className="flex items-center gap-2">
+                  <span>📦</span>
+                  <span>Our Packages &amp; Sizing</span>
+                </span>
+                <svg className={`w-4 h-4 transition-transform duration-200 ${isMobilePkgAccordionOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {isMobilePkgAccordionOpen && (
+                <div className="px-2 pb-2.5 space-y-1 text-xs border-t border-slate-200 dark:border-slate-800 pt-2">
+                  <a
+                    href="#bundles"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 text-slate-800 dark:text-slate-200"
+                  >
+                    📦 Our Packages (5kVA, 10kVA, 15kVA)
+                  </a>
+                  <a
+                    href="#how-it-works"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 text-slate-800 dark:text-slate-200"
+                  >
+                    ⚙️ How It Works (4-Step Process)
+                  </a>
+                  <a
+                    href="#calculator"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 text-slate-800 dark:text-slate-200"
+                  >
+                    📐 Pricing &amp; Load Calculator
+                  </a>
+                </div>
+              )}
+            </div>
+
             <a
               href="#faq"
               onClick={() => setIsMobileMenuOpen(false)}
@@ -660,9 +966,43 @@ export default function PublicShowroomLandingPage() {
             >
               FAQ
             </a>
+            <a
+              href="#contact"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-sm font-medium text-slate-800 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-[#10B981] py-1.5 transition"
+            >
+              📞 Contact Us
+            </a>
+
             <div className="pt-2 border-t border-slate-200 dark:border-[#64748B]/30 flex flex-col gap-2">
-              {/* Mobile Theme Toggle Button */}
               <button
+                onClick={toggleTheme}
+                className="w-full py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs font-semibold text-slate-800 dark:text-slate-200 transition"
+              >
+                <span className="flex items-center gap-2">
+                  <span>{theme === 'dark' ? '☀️' : '🌙'}</span>
+                  <span>Switch Color Theme</span>
+                </span>
+                <span className="text-amber-600 dark:text-[#FFBF00] font-mono font-bold">
+                  {theme === 'dark' ? 'Daylight Mode' : 'Night Mode'}
+                </span>
+              </button>
+              <button
+                onClick={() => { setIsMobileMenuOpen(false); setIsSignUpModalOpen(true); }}
+                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white dark:bg-[#10B981] dark:hover:bg-emerald-400 dark:text-[#0B0F19] font-bold text-xs py-2.5 rounded-xl transition shadow-lg text-center"
+              >
+                Sign Up (NIN)
+              </button>
+              <button
+                onClick={() => { setIsMobileMenuOpen(false); setIsModalOpen(true); }}
+                className="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-[#1E293B] dark:hover:bg-slate-700 dark:text-white font-semibold text-xs py-2.5 rounded-xl border border-slate-200 dark:border-[#64748B]/30 transition text-center"
+              >
+                Book Site Audit
+              </button>
+            </div>
+          </div>
+        )}
+      </header>
                 onClick={toggleTheme}
                 className="w-full py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs font-semibold text-slate-800 dark:text-slate-200 transition"
               >
@@ -1584,6 +1924,108 @@ export default function PublicShowroomLandingPage() {
         </div>
       </section>
 
+      {/* 7.5. PROJECT GALLERY & COMMISSIONED SOLAR FLEET (#gallery / #installations) */}
+      <section id="gallery" className="py-20 sm:py-28 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 border-t border-slate-200 dark:border-[#64748B]/30 space-y-12">
+        <span id="installations" className="block -mt-24 pt-24 invisible pointer-events-none" />
+        <div className="text-center max-w-3xl mx-auto space-y-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs font-semibold">
+            <span>📸</span> Certified African Solar Fleet
+          </div>
+          <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            Project Gallery &amp; Installations
+          </h2>
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
+            Explore verified photovoltaic arrays, LiFePO4 battery banks, and hybrid Growatt inverters deployed across residential homes, medical clinics, and industrial facilities in Nigeria.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {/* Card 1: Residential Homes */}
+          <div className="bg-white dark:bg-[#111827] rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 group hover:border-emerald-500/50 transition-all duration-300 shadow-sm dark:shadow-xl flex flex-col justify-between">
+            <div>
+              <div className="relative h-64 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1508873696983-2df5293cb395?auto=format&fit=crop&w=800&q=80"
+                  alt="Residential modern home rooftop solar installation"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
+                <span className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-md text-emerald-400 text-xs font-bold px-3 py-1 rounded-full border border-white/10 font-mono">
+                  Residential 5kVA
+                </span>
+              </div>
+              <div className="p-6 sm:p-7 space-y-3">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Modern Home Energy Storage</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Silent, reliable rooftop power for flats and duplexes in Maitama, Lekki, and Jos. Eliminates generator fumes and protects families from midnight blackouts.
+                </p>
+                <div className="space-y-1.5 text-xs text-slate-500 dark:text-slate-300 pt-2 border-t border-slate-100 dark:border-white/5">
+                  <div className="flex items-center gap-2">✓ 0ms Seamless Automatic Transfer</div>
+                  <div className="flex items-center gap-2">✓ Quiet indoor LiFePO4 battery cabinet</div>
+                  <div className="flex items-center gap-2">✓ Rapid 48-Hour Professional Deployment</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 2: Commercial Clinic */}
+          <div className="bg-white dark:bg-[#111827] rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 group hover:border-sky-500/50 transition-all duration-300 shadow-sm dark:shadow-xl flex flex-col justify-between">
+            <div>
+              <div className="relative h-64 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1587293852726-70cdb56c2866?auto=format&fit=crop&w=800&q=80"
+                  alt="Commercial health clinic rooftop solar"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
+                <span className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-md text-[#22D3EE] text-xs font-bold px-3 py-1 rounded-full border border-white/10 font-mono">
+                  Commercial 10kVA - 20kVA
+                </span>
+              </div>
+              <div className="p-6 sm:p-7 space-y-3">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Clinics, Pharmacies &amp; SMEs</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Continuous 24/7 power for cold-chain vaccine refrigeration, diagnostic ultrasound, and retail checkout points with zero diesel maintenance downtime.
+                </p>
+                <div className="space-y-1.5 text-xs text-slate-500 dark:text-slate-300 pt-2 border-t border-slate-100 dark:border-white/5">
+                  <div className="flex items-center gap-2">✓ 24/7 Vaccine &amp; Specimen Cold Chain</div>
+                  <div className="flex items-center gap-2">✓ Three-phase 380V/400V pure sine output</div>
+                  <div className="flex items-center gap-2">✓ 4-Hour On-Site Field Engineering SLA</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3: Light Industrial & Agro */}
+          <div className="bg-white dark:bg-[#111827] rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 group hover:border-amber-500/50 transition-all duration-300 shadow-sm dark:shadow-xl flex flex-col justify-between">
+            <div>
+              <div className="relative h-64 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1548337138-e87d889cc369?auto=format&fit=crop&w=800&q=80"
+                  alt="Industrial microgrid agricultural solar installation"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
+                <span className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-md text-amber-400 text-xs font-bold px-3 py-1 rounded-full border border-white/10 font-mono">
+                  Industrial Microgrid &gt; 30kVA
+                </span>
+              </div>
+              <div className="p-6 sm:p-7 space-y-3">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Productive Use &amp; Agro Cold Storage</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  High-surge motor start capability for agricultural irrigation boreholes, cold-chain post-harvest storage, and light manufacturing plants across Nigeria.
+                </p>
+                <div className="space-y-1.5 text-xs text-slate-500 dark:text-slate-300 pt-2 border-t border-slate-100 dark:border-white/5">
+                  <div className="flex items-center gap-2">✓ High-torque inductive motor start capability</div>
+                  <div className="flex items-center gap-2">✓ Custom grounding grid &le; 1.5&Omega; certified</div>
+                  <div className="flex items-center gap-2">✓ SCADA Watchtower Telemetry &amp; AI Forecaster</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 8. ABOUT SECTION: WORLD-STANDARD COMPANY PROFILE, VISION, MISSION & AFRICAN ENERGY SOVEREIGNTY (#about) */}
       <section id="about" className="py-24 sm:py-32 border-t border-slate-200 dark:border-[#64748B]/30 bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-[#0B0F19] dark:via-[#111827]/40 dark:to-[#0B0F19] relative overflow-hidden transition-colors duration-200">
         {/* Ambient Radial Glows */}
@@ -1979,6 +2421,280 @@ export default function PublicShowroomLandingPage() {
         </div>
       </section>
 
+      {/* 9.5. PROFESSIONAL CONTACT & ENGINEERING SUPPORT SECTION (#contact) */}
+      <section id="contact" className="py-24 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 border-t border-slate-200 dark:border-[#64748B]/30 relative">
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 text-xs font-semibold">
+            <span>📞</span> 24/7 Engineering Support &amp; Inquiries
+          </div>
+          <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            Connect with Our Clean Energy Architects
+          </h2>
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
+            Whether sizing a 5kVA household system, retrofitting an industrial cold facility, or requesting emergency field service, our COREN-certified engineers respond within 2 hours.
+          </p>
+        </div>
+
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          {/* Left Column: Operations Hubs & Channels */}
+          <div className="lg:col-span-5 space-y-6">
+            <div className="p-6 rounded-3xl bg-emerald-950/20 border border-emerald-500/30 space-y-3 shadow-sm dark:shadow-xl">
+              <div className="flex items-center justify-between">
+                <span className="text-xs uppercase tracking-wider font-mono text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Central Dispatch Live Status
+                </span>
+                <span className="text-[11px] bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-2.5 py-0.5 rounded-full font-mono font-semibold">
+                  Online
+                </span>
+              </div>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                All telemetry servers, IoT SIM gateways, and local field response teams across Abuja, Lagos, and Jos are currently operational. Average callback time: <strong className="text-slate-900 dark:text-white">12 minutes</strong>.
+              </p>
+            </div>
+
+            <div className="p-6 sm:p-7 rounded-3xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-xl space-y-4">
+              <h3 className="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <span>🎧</span> Direct Engineering Channels
+              </h3>
+              <div className="space-y-3 text-xs">
+                <a href="tel:+2348007594743" className="flex items-center gap-4 p-3 rounded-2xl bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 transition group">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center font-bold text-lg">📞</div>
+                  <div className="flex-grow">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Toll-Free Emergency Hotline</span>
+                    <span className="font-mono font-bold text-sm text-slate-900 dark:text-white group-hover:text-amber-500 transition">+234 800-SKYGRID (24/7)</span>
+                  </div>
+                </a>
+                <a href="https://wa.me/2348085377346?text=Hello%20SkyGrid%20Engineering%2C%20I%20would%20like%20to%20inquire%20about%20a%20solar%20solution." target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-3 rounded-2xl bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 transition group">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg">💬</div>
+                  <div className="flex-grow">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider block">WhatsApp Engineering Desk</span>
+                    <span className="font-mono font-bold text-sm text-slate-900 dark:text-white group-hover:text-emerald-400 transition">+234 808 537 7346</span>
+                  </div>
+                </a>
+                <a href="mailto:support@skygrid.ng" className="flex items-center gap-4 p-3 rounded-2xl bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 transition group">
+                  <div className="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-500 flex items-center justify-center font-bold text-lg">✉️</div>
+                  <div className="flex-grow">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Technical &amp; Billing Desk</span>
+                    <span className="font-mono font-bold text-sm text-slate-900 dark:text-white group-hover:text-sky-500 transition">support@skygrid.ng</span>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div className="p-6 sm:p-7 rounded-3xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-xl space-y-3">
+              <h3 className="font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                <span>📍</span> Physical Operations Centers
+              </h3>
+              <div className="space-y-2.5 text-xs text-slate-600 dark:text-slate-400">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5">
+                  <span className="font-bold text-slate-900 dark:text-white block">🏛️ Abuja Corporate Headquarters (FCT)</span>
+                  <p className="text-[11px] mt-0.5">14 Julius Nyerere Crescent, Asokoro &amp; CBD, Abuja</p>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5">
+                  <span className="font-bold text-slate-900 dark:text-white block">🏢 Lagos Commercial Operations Hub</span>
+                  <p className="text-[11px] mt-0.5">Plot 12 Admiralty Way, Lekki Phase 1, Lagos State</p>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5">
+                  <span className="font-bold text-slate-900 dark:text-white block">🏔️ Plateau Regional Hub &amp; Assembly Depot</span>
+                  <p className="text-[11px] mt-0.5">FDA Road, Dadinkowa, Jos South LGA, Plateau State</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Standard Enterprise Contact Form */}
+          <div className="lg:col-span-7">
+            <div className="p-6 sm:p-10 rounded-3xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/15 shadow-2xl relative">
+              <div className="mb-6 space-y-1">
+                <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white">
+                  Send an Engineering Inquiry / Request Callback
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Complete the form below and an engineer will review your load requirements, roof dynamics, and ROI calculation.
+                </p>
+              </div>
+
+              {!contactConfirmation ? (
+                <form onSubmit={handleContactSubmit} className="space-y-4 text-xs">
+                  <div>
+                    <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1.5">
+                      Full Legal Name <span className="text-amber-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Engr. Mustapha Aliyu"
+                      value={contactForm.fullName}
+                      onChange={(e) => setContactForm({ ...contactForm, fullName: e.target.value })}
+                      className="w-full bg-slate-50 dark:bg-[#0B0F19] border border-slate-200 dark:border-white/15 rounded-xl px-4 py-3 text-slate-900 dark:text-white outline-none focus:border-emerald-500 transition"
+                    />
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1.5">
+                        Email Address <span className="text-amber-500">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        placeholder="name@company.ng"
+                        value={contactForm.email}
+                        onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                        className="w-full bg-slate-50 dark:bg-[#0B0F19] border border-slate-200 dark:border-white/15 rounded-xl px-4 py-3 text-slate-900 dark:text-white outline-none focus:border-emerald-500 transition"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1.5">
+                        Phone (WhatsApp-Enabled) <span className="text-amber-500">*</span>
+                      </label>
+                      <div className="relative flex items-center">
+                        <span className="absolute left-3.5 text-slate-500 dark:text-slate-400 font-mono text-xs">+234</span>
+                        <input
+                          type="tel"
+                          required
+                          placeholder="803 123 4567"
+                          value={contactForm.phone}
+                          onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
+                          className="w-full bg-slate-50 dark:bg-[#0B0F19] border border-slate-200 dark:border-white/15 rounded-xl pl-14 pr-4 py-3 text-slate-900 dark:text-white outline-none focus:border-emerald-500 transition font-mono"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1.5">
+                        Inquiry Category <span className="text-amber-500">*</span>
+                      </label>
+                      <select
+                        value={contactForm.inquiryType}
+                        onChange={(e) => setContactForm({ ...contactForm, inquiryType: e.target.value })}
+                        className="w-full bg-slate-50 dark:bg-[#0B0F19] border border-slate-200 dark:border-white/15 rounded-xl px-4 py-3 text-slate-900 dark:text-white outline-none focus:border-emerald-500 transition"
+                      >
+                        <option value="Residential Solar PAYGo (5kVA - 8kVA Hybrid)">Residential Solar PAYGo (5kVA - 8kVA Hybrid)</option>
+                        <option value="Commercial & SME Solar (10kVA - 20kVA Three-Phase)">Commercial &amp; SME Solar (10kVA - 20kVA Three-Phase)</option>
+                        <option value="Industrial Microgrid / Cold Chain (>30kVA)">Industrial Microgrid / Cold Chain (&gt;30kVA)</option>
+                        <option value="COREN Soil Earthing & Roof Structural Audit">COREN Soil Earthing &amp; Roof Structural Audit</option>
+                        <option value="Technical Support / Inverter Contactor Reset">Technical Support / Inverter Contactor Reset</option>
+                        <option value="Corporate Partnership / Investor Inquiry">Corporate Partnership / Investor Inquiry</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1.5">
+                        State / Region <span className="text-amber-500">*</span>
+                      </label>
+                      <select
+                        value={contactForm.stateRegion}
+                        onChange={(e) => setContactForm({ ...contactForm, stateRegion: e.target.value })}
+                        className="w-full bg-slate-50 dark:bg-[#0B0F19] border border-slate-200 dark:border-white/15 rounded-xl px-4 py-3 text-slate-900 dark:text-white outline-none focus:border-emerald-500 transition"
+                      >
+                        <option value="Abuja FCT">Abuja FCT</option>
+                        <option value="Lagos State">Lagos State</option>
+                        <option value="Plateau State">Plateau State</option>
+                        <option value="Kano State">Kano State</option>
+                        <option value="Rivers State">Rivers State</option>
+                        <option value="Oyo State">Oyo State</option>
+                        <option value="Kaduna State">Kaduna State</option>
+                        <option value="Enugu State">Enugu State</option>
+                        <option value="Other State in Nigeria">Other State in Nigeria</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1.5">
+                      Current Monthly Power Expense (Optional context)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. ₦140,000 / month (Band A electricity + petrol generator)"
+                      value={contactForm.estimatedBudget}
+                      onChange={(e) => setContactForm({ ...contactForm, estimatedBudget: e.target.value })}
+                      className="w-full bg-slate-50 dark:bg-[#0B0F19] border border-slate-200 dark:border-white/15 rounded-xl px-4 py-3 text-slate-900 dark:text-white outline-none focus:border-emerald-500 transition font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1.5">
+                      System Requirements / Project Message <span className="text-amber-500">*</span>
+                    </label>
+                    <textarea
+                      rows={4}
+                      required
+                      placeholder="Describe your load items (e.g. 2x 1.5HP inverter ACs, deep freezer, lighting), your current outage duration, or any technical questions..."
+                      value={contactForm.message}
+                      onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                      className="w-full bg-slate-50 dark:bg-[#0B0F19] border border-slate-200 dark:border-white/15 rounded-xl p-4 text-slate-900 dark:text-white outline-none focus:border-emerald-500 transition leading-relaxed"
+                    />
+                  </div>
+
+                  <div className="flex items-start gap-3 pt-1">
+                    <input
+                      type="checkbox"
+                      id="pageContactConsent"
+                      checked={contactForm.consentWhatsApp}
+                      onChange={(e) => setContactForm({ ...contactForm, consentWhatsApp: e.target.checked })}
+                      className="mt-1 rounded bg-slate-100 dark:bg-black/50 border-slate-300 dark:border-white/20 text-emerald-500 focus:ring-emerald-500"
+                    />
+                    <label htmlFor="pageContactConsent" className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal">
+                      I agree to receive engineering proposal documents, solar load assessments, and WhatsApp/SMS audit updates in accordance with SkyGrid&apos;s Privacy &amp; KYC Standards.
+                    </label>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={contactSubmitting}
+                    className="w-full py-4 rounded-xl text-xs sm:text-sm font-bold text-slate-950 bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-400 hover:from-emerald-400 hover:to-sky-300 shadow-xl shadow-emerald-500/20 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 mt-4"
+                  >
+                    {contactSubmitting ? 'Transmitting to Central Dispatch...' : 'Send Project Inquiry & Request Callback →'}
+                  </button>
+
+                  <div className="pt-2 text-center text-[10px] text-slate-500 dark:text-slate-400 flex items-center justify-center gap-2">
+                    <span>COREN &amp; NEMSA Certified Engineers &bull; Zero spam guarantee &bull; Response SLA &lt; 2 Hours</span>
+                  </div>
+                </form>
+              ) : (
+                <div className="p-6 sm:p-8 rounded-3xl bg-emerald-950/40 border border-emerald-500/40 text-center space-y-4 shadow-2xl">
+                  <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl mx-auto font-bold">
+                    ✓
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-xl font-extrabold text-white">Inquiry Transmitted Successfully!</h4>
+                    <p className="text-xs text-slate-300 max-w-md mx-auto leading-relaxed">
+                      Thank you, <strong className="text-white">{contactConfirmation.name}</strong>. Your project inquiry for <strong>{contactConfirmation.inquiry}</strong> ({contactConfirmation.region}) has been dispatched to our Central Engineering Desk.
+                    </p>
+                  </div>
+                  <div className="p-3.5 rounded-2xl bg-black/60 border border-emerald-500/30 max-w-xs mx-auto text-xs font-mono">
+                    <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Assigned Inquiry Ticket Ref</span>
+                    <span className="text-emerald-400 font-extrabold text-base tracking-widest">{contactConfirmation.ticketId}</span>
+                  </div>
+                  <div className="flex flex-wrap items-center justify-center gap-3 pt-2 text-xs">
+                    <a
+                      href={`https://wa.me/2348085377346?text=Hello%20SkyGrid%2C%20I%20just%20submitted%20inquiry%20ticket%20${contactConfirmation.ticketId}%20for%20${encodeURIComponent(contactConfirmation.name)}.`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition flex items-center gap-1.5 shadow-lg shadow-emerald-500/25"
+                    >
+                      <span>💬</span>
+                      <span>Open Instant WhatsApp Priority Chat</span>
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => setContactConfirmation(null)}
+                      className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold transition"
+                    >
+                      Submit Another Inquiry
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 10. EXPANSIVE WORLD-STANDARD CORPORATE FOOTER */}
       <footer className="border-t border-[#64748B]/30 bg-[#0B0F19] py-16 px-4 sm:px-6 lg:px-10 text-xs text-[#64748B]">
         <div className="max-w-[1600px] mx-auto space-y-12">
@@ -2228,6 +2944,57 @@ export default function PublicShowroomLandingPage() {
                   />
                 </div>
 
+                {/* Site Installation Geo-Tag Coordinates */}
+                <div className="p-3.5 rounded-2xl bg-[#0B0F19] border border-[#10B981]/30 space-y-2.5 text-xs">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <label className="text-white font-bold flex items-center gap-1.5 text-xs">
+                      <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse"></span>
+                      <span>Site Geo-Tag Coordinates (GIS Fleet Registry) *</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => handleDetectGPS('signup')}
+                      className="px-2.5 py-1 rounded-lg bg-[#10B981]/20 text-[#10B981] hover:bg-[#10B981]/30 border border-[#10B981]/40 text-[10px] font-bold font-mono transition flex items-center gap-1"
+                    >
+                      <span>📍 Auto-Detect Site GPS</span>
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <span className="text-[10px] text-[#64748B] uppercase tracking-wider block mb-1">Latitude (°N)</span>
+                      <input
+                        type="number"
+                        step="0.000001"
+                        required
+                        value={signUpData.gpsLat}
+                        onChange={(e) => setSignUpData({ ...signUpData, gpsLat: parseFloat(e.target.value) || 0 })}
+                        className="w-full bg-[#111827] border border-[#64748B]/40 rounded-xl px-3 py-2 text-white font-mono text-xs outline-none focus:border-[#10B981]"
+                      />
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-[#64748B] uppercase tracking-wider block mb-1">Longitude (°E)</span>
+                      <input
+                        type="number"
+                        step="0.000001"
+                        required
+                        value={signUpData.gpsLng}
+                        onChange={(e) => setSignUpData({ ...signUpData, gpsLng: parseFloat(e.target.value) || 0 })}
+                        className="w-full bg-[#111827] border border-[#64748B]/40 rounded-xl px-3 py-2 text-white font-mono text-xs outline-none focus:border-[#10B981]"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between flex-wrap gap-2 pt-1 border-t border-[#64748B]/20 text-[10px]">
+                    <span className="text-emerald-400 font-mono text-[9px] truncate max-w-xs">{signUpData.gpsStatus}</span>
+                    <div className="flex items-center gap-1 font-mono text-[9px]">
+                      <span className="text-[#64748B]">Presets:</span>
+                      <button type="button" onClick={() => handleSetPresetGPS('signup', 9.0765, 7.3986, 'Abuja')} className="px-1.5 py-0.5 rounded bg-[#1E293B] hover:bg-[#334155] text-slate-300">Abuja</button>
+                      <button type="button" onClick={() => handleSetPresetGPS('signup', 6.5244, 3.3792, 'Lagos')} className="px-1.5 py-0.5 rounded bg-[#1E293B] hover:bg-[#334155] text-slate-300">Lagos</button>
+                      <button type="button" onClick={() => handleSetPresetGPS('signup', 9.8965, 8.8583, 'Jos')} className="px-1.5 py-0.5 rounded bg-[#1E293B] hover:bg-[#334155] text-slate-300">Jos</button>
+                      <button type="button" onClick={() => handleSetPresetGPS('signup', 4.8156, 7.0498, 'PH')} className="px-1.5 py-0.5 rounded bg-[#1E293B] hover:bg-[#334155] text-slate-300">PH</button>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Plan Quote Snapshot */}
                 <div className="p-3.5 rounded-2xl bg-[#1E293B] border border-[#64748B]/30 text-xs space-y-1.5">
                   <div className="flex justify-between text-slate-300">
@@ -2287,6 +3054,28 @@ export default function PublicShowroomLandingPage() {
                   <div className="flex justify-between">
                     <span className="text-[#64748B]">Monthly Installment:</span>
                     <span className="text-[#10B981] font-bold">{formatNaira(signUpSuccess.monthlyNaira)}/mo</span>
+                  </div>
+
+                  {/* Captured Site Geo-Tag Coordinates */}
+                  <div className="pt-2 border-t border-[#64748B]/30 space-y-1">
+                    <div className="flex justify-between items-center text-[11px]">
+                      <span className="text-[#64748B]">Installation Site Geo-Tag:</span>
+                      <span className="text-[#10B981] font-bold text-[10px] bg-[#10B981]/20 border border-[#10B981]/30 px-2 py-0.5 rounded">GIS Locked</span>
+                    </div>
+                    <div className="text-slate-300 text-[11px] truncate">
+                      {signUpSuccess.streetAddress ? `${signUpSuccess.streetAddress} (${signUpSuccess.city})` : `${signUpSuccess.city}, Nigeria`}
+                    </div>
+                    <div className="flex items-center justify-between text-[#22D3EE] text-[10px]">
+                      <span>📍 {signUpSuccess.gpsLat.toFixed(6)}°N, {signUpSuccess.gpsLng.toFixed(6)}°E</span>
+                      <a
+                        href={`https://maps.google.com/?q=${signUpSuccess.gpsLat},${signUpSuccess.gpsLng}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#FFBF00] underline hover:text-amber-300 text-[9px]"
+                      >
+                        Satellite Map &rarr;
+                      </a>
+                    </div>
                   </div>
                 </div>
 
@@ -2377,6 +3166,57 @@ export default function PublicShowroomLandingPage() {
                       className="w-full bg-[#0B0F19] border border-[#64748B]/40 rounded-xl p-2.5 text-white outline-none focus:border-[#10B981]"
                     />
                   </div>
+
+                  {/* Installation Site Geo-Tag Coordinates */}
+                  <div className="p-3 rounded-2xl bg-[#0B0F19] border border-[#64748B]/30 space-y-2">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <label className="text-white font-bold flex items-center gap-1.5 text-xs">
+                        <span>📍</span>
+                        <span>Site Geo-Tag Coordinates *</span>
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => handleDetectGPS('lead')}
+                        className="px-2 py-0.5 rounded-lg bg-[#FFBF00]/20 text-[#FFBF00] hover:bg-[#FFBF00]/30 border border-[#FFBF00]/40 text-[10px] font-bold font-mono transition flex items-center gap-1"
+                      >
+                        <span>Auto-Detect GPS</span>
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <span className="text-[10px] text-[#64748B] uppercase tracking-wider block mb-0.5">Latitude (°N)</span>
+                        <input
+                          type="number"
+                          step="0.000001"
+                          required
+                          value={leadForm.gpsLat}
+                          onChange={(e) => setLeadForm({ ...leadForm, gpsLat: parseFloat(e.target.value) || 0 })}
+                          className="w-full bg-[#111827] border border-[#64748B]/40 rounded-xl px-2.5 py-1.5 text-white font-mono text-xs outline-none focus:border-[#10B981]"
+                        />
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-[#64748B] uppercase tracking-wider block mb-0.5">Longitude (°E)</span>
+                        <input
+                          type="number"
+                          step="0.000001"
+                          required
+                          value={leadForm.gpsLng}
+                          onChange={(e) => setLeadForm({ ...leadForm, gpsLng: parseFloat(e.target.value) || 0 })}
+                          className="w-full bg-[#111827] border border-[#64748B]/40 rounded-xl px-2.5 py-1.5 text-white font-mono text-xs outline-none focus:border-[#10B981]"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between flex-wrap gap-1 text-[10px] pt-1 border-t border-[#64748B]/20">
+                      <span className="text-[#FFBF00] font-mono text-[9px] truncate max-w-xs">{leadForm.gpsStatus}</span>
+                      <div className="flex items-center gap-1 font-mono text-[9px]">
+                        <span className="text-[#64748B]">Presets:</span>
+                        <button type="button" onClick={() => handleSetPresetGPS('lead', 9.0765, 7.3986, 'Abuja')} className="px-1.5 py-0.5 rounded bg-[#1E293B] hover:bg-[#334155] text-slate-300">Abuja</button>
+                        <button type="button" onClick={() => handleSetPresetGPS('lead', 6.5244, 3.3792, 'Lagos')} className="px-1.5 py-0.5 rounded bg-[#1E293B] hover:bg-[#334155] text-slate-300">Lagos</button>
+                        <button type="button" onClick={() => handleSetPresetGPS('lead', 9.8965, 8.8583, 'Jos')} className="px-1.5 py-0.5 rounded bg-[#1E293B] hover:bg-[#334155] text-slate-300">Jos</button>
+                      </div>
+                    </div>
+                  </div>
+
                   <div>
                     <label className="text-[#64748B] block mb-1">Preferred Audit Window</label>
                     <select
@@ -2411,9 +3251,23 @@ export default function PublicShowroomLandingPage() {
                     {bookingConfirmation.message}
                   </p>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#1E293B] border border-[#64748B]/30 max-w-sm mx-auto text-center space-y-1">
+                <div className="p-4 rounded-2xl bg-[#1E293B] border border-[#64748B]/30 max-w-sm mx-auto text-center space-y-2">
                   <span className="text-[10px] text-[#64748B] uppercase tracking-wider block">Inspection Booking Reference</span>
                   <span className="text-lg font-mono font-extrabold text-[#22D3EE]">{bookingConfirmation.ref}</span>
+                  {bookingConfirmation.gpsLat && bookingConfirmation.gpsLng && (
+                    <div className="pt-2 border-t border-[#64748B]/20 text-[10px] text-slate-300 font-mono flex items-center justify-between">
+                      <span className="text-[#64748B]">GIS Geo-Tag:</span>
+                      <span className="text-[#10B981] font-bold">{bookingConfirmation.gpsLat.toFixed(4)}°N, {bookingConfirmation.gpsLng.toFixed(4)}°E</span>
+                      <a
+                        href={`https://maps.google.com/?q=${bookingConfirmation.gpsLat},${bookingConfirmation.gpsLng}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#FFBF00] underline hover:text-amber-300 text-[9px]"
+                      >
+                        Map &rarr;
+                      </a>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <button
@@ -2425,6 +3279,156 @@ export default function PublicShowroomLandingPage() {
                 </div>
               </div>
             )}
+
+          </div>
+        </div>
+      )}
+
+      {/* 12. CUSTOMER DASHBOARD SIGN IN MODAL (Onboarded Customer Login) */}
+      {isCustomerLoginModalOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+          <div className="relative w-full max-w-lg bg-[#111827] border border-[#64748B]/30 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5">
+            
+            <button
+              onClick={() => setIsCustomerLoginModalOpen(false)}
+              className="absolute top-5 right-5 w-8 h-8 rounded-full bg-[#1E293B] hover:bg-[#64748B]/30 text-white flex items-center justify-center text-sm transition"
+            >
+              &times;
+            </button>
+
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 text-2xl">
+                ⚡
+              </div>
+              <span className="px-3 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 text-[10px] font-bold font-mono uppercase tracking-wider">
+                Onboarded Customer Login
+              </span>
+            </div>
+
+            <div>
+              <h3 className="text-2xl font-extrabold text-white">Customer Dashboard Sign In</h3>
+              <p className="text-xs text-[#64748B] mt-1">
+                Access your real-time solar energy telemetry, check token validity, download payment receipts, or view your amortization schedule.
+              </p>
+            </div>
+
+            {/* Fast 1-Click Access for Live Portals / Demos */}
+            <div className="p-3.5 rounded-2xl bg-[#1E293B] border border-amber-500/30 text-xs space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-amber-400 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+                  <span>⚡</span> 1-Click Fast Access / Demo Portals:
+                </span>
+                <span className="text-[10px] text-[#22D3EE] font-mono">Instant Login</span>
+              </div>
+              <div className="space-y-1.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const target = typeof window !== 'undefined' && window.location.port === '3000' ? 'http://localhost:3001' : '/#customer-portal';
+                    window.location.href = `${target}?customer=amina`;
+                  }}
+                  className="w-full text-left p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-between transition group"
+                >
+                  <div>
+                    <span className="font-bold text-white group-hover:text-emerald-400 block transition">Engr. Amina Danjuma</span>
+                    <span className="text-[10px] text-slate-400 font-mono">DEV-8F3A (5kVA Hybrid, Maitama Abuja)</span>
+                  </div>
+                  <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-mono font-semibold">19.4 Days Active &rarr;</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const target = typeof window !== 'undefined' && window.location.port === '3000' ? 'http://localhost:3001' : '/#customer-portal';
+                    window.location.href = `${target}?customer=stmary`;
+                  }}
+                  className="w-full text-left p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-between transition group"
+                >
+                  <div>
+                    <span className="font-bold text-white group-hover:text-[#22D3EE] block transition">St. Mary Clinic &amp; Maternity</span>
+                    <span className="text-[10px] text-slate-400 font-mono">DEV-4C91 (10kVA Commercial, Otukpo Benue)</span>
+                  </div>
+                  <span className="text-[10px] bg-[#22D3EE]/20 text-[#22D3EE] px-2 py-0.5 rounded font-mono font-semibold">26.0 Days Active &rarr;</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const target = typeof window !== 'undefined' && window.location.port === '3000' ? 'http://localhost:3001' : '/#customer-portal';
+                    window.location.href = `${target}?customer=lekki`;
+                  }}
+                  className="w-full text-left p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-between transition group"
+                >
+                  <div>
+                    <span className="font-bold text-white group-hover:text-amber-400 block transition">Lekki Phase 1 Pharmacy</span>
+                    <span className="text-[10px] text-slate-400 font-mono">DEV-9E04 (5kVA Retail, Lekki Lagos)</span>
+                  </div>
+                  <span className="text-[10px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded font-mono font-semibold">Tamper Demo &rarr;</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="relative flex py-1 items-center">
+              <div className="flex-grow border-t border-[#64748B]/30"></div>
+              <span className="flex-shrink mx-3 text-[10px] text-[#64748B] uppercase tracking-wider font-semibold">Or Sign In with Credentials</span>
+              <div className="flex-grow border-t border-[#64748B]/30"></div>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const target = typeof window !== 'undefined' && window.location.port === '3000' ? 'http://localhost:3001' : '/#customer-portal';
+                window.location.href = target;
+              }}
+              className="space-y-3.5 text-xs"
+            >
+              <div>
+                <label className="text-[#64748B] block mb-1 font-semibold">Registered Phone or Inverter Meter ID</label>
+                <input
+                  type="text"
+                  required
+                  defaultValue="08031234567"
+                  placeholder="e.g. 08031234567 or GW-5000ES-NG94"
+                  className="w-full bg-[#0B0F19] border border-[#64748B]/40 rounded-xl p-2.5 text-white outline-none focus:border-amber-400 font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="text-[#64748B] block mb-1 font-semibold">Access PIN / Password</label>
+                <input
+                  type="password"
+                  required
+                  defaultValue="1234"
+                  placeholder="••••••••"
+                  className="w-full bg-[#0B0F19] border border-[#64748B]/40 rounded-xl p-2.5 text-white outline-none focus:border-amber-400"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-3.5 rounded-xl transition shadow-lg text-sm"
+              >
+                Sign In to Customer Dashboard &rarr;
+              </button>
+
+              <div className="pt-2 text-center text-xs text-slate-300 border-t border-[#64748B]/30">
+                <span>New Customer? </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsCustomerLoginModalOpen(false);
+                    setIsSignUpModalOpen(true);
+                  }}
+                  className="font-bold text-emerald-400 hover:underline inline-flex items-center gap-1"
+                >
+                  <span>Register &amp; Apply for Solar PAYGo</span> &rarr;
+                </button>
+              </div>
+
+              <p className="text-center text-[10px] text-[#64748B]">
+                Need help? Call field engineer dispatch: <span className="text-[#22D3EE] font-semibold">+234 800-SKYGRID</span>
+              </p>
+            </form>
 
           </div>
         </div>

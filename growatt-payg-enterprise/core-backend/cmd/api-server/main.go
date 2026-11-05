@@ -96,6 +96,7 @@ func main() {
 	mux.HandleFunc("/api/v1/public/catalog", withCORS(publicHandler.HandleGetCatalog))
 	mux.HandleFunc("/api/v1/public/calculate-size", withCORS(publicHandler.HandleCalculateSize))
 	mux.HandleFunc("/api/v1/public/leads", withCORS(publicHandler.HandleCreateLead))
+	mux.HandleFunc("/api/v1/public/contact", withCORS(publicHandler.HandleContactInquiry))
 
 	// --- BATCH 3 ROUTES: Multi-Rail Webhooks, DVAs & Nigerian KYC Underwriting ---
 	mux.HandleFunc("/api/v1/webhooks/", withCORS(fintechHandler.HandleWebhook))

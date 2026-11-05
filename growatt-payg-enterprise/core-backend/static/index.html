@@ -137,19 +137,15 @@
       color: #17231D !important;
     }
 
-    html.light .top-announcement-bar {
-      background: linear-gradient(to right, #EBF5F0, #F8FAF7, #EBF5F0) !important;
-      border-bottom: 1px solid rgba(25, 168, 154, 0.25) !important;
-      color: #0B241B !important;
-    }
-    html.light .top-announcement-bar .text-brand-warm\/90 {
-      color: #17231D !important;
+    html.light .glass-nav-scrolled {
+      background: rgba(248, 250, 247, 0.96) !important;
+      border-bottom: 1px solid rgba(18, 59, 42, 0.12) !important;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08) !important;
     }
 
-    html.light .glass-nav-scrolled {
+    html.light #mainNav {
       background: rgba(248, 250, 247, 0.94) !important;
       border-bottom: 1px solid rgba(18, 59, 42, 0.1) !important;
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06) !important;
     }
 
     html.light #mainNav .text-brand-warm\/80 {
@@ -160,6 +156,25 @@
     }
     html.light #mainNav a:hover {
       color: #0B241B !important;
+    }
+
+    html.light #pkgDropdownMenu .glass-card-dark,
+    html.light #aboutDropdownMenu .glass-card-dark {
+      background: rgba(255, 255, 255, 0.98) !important;
+      border-color: rgba(18, 59, 42, 0.15) !important;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.04) !important;
+    }
+    html.light #pkgDropdownMenu .text-white,
+    html.light #aboutDropdownMenu .text-white {
+      color: #17231D !important;
+    }
+    html.light #pkgDropdownMenu .text-brand-warm\/60,
+    html.light #aboutDropdownMenu .text-brand-warm\/60 {
+      color: #4A5E54 !important;
+    }
+    html.light #pkgDropdownMenu a:hover,
+    html.light #aboutDropdownMenu a:hover {
+      background-color: rgba(25, 168, 154, 0.08) !important;
     }
 
     /* Hero Light Mode Adaptations */
@@ -433,32 +448,11 @@
 </head>
 <body class="selection:bg-brand-amber selection:text-brand-dark antialiased min-h-screen flex flex-col">
 
-  <!-- Top Announcement Notification -->
-  <aside aria-label="Announcement" class="top-announcement-bar bg-gradient-to-r from-brand-forest via-brand-dark to-brand-forest border-b border-brand-sky/25 text-[11px] py-1.5 px-4 sm:px-6 lg:px-10">
-    <div class="max-w-[1600px] mx-auto flex flex-wrap items-center justify-between gap-2 text-brand-warm/90">
-      <div class="flex items-center gap-2">
-        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-brand-sky/20 text-brand-sky font-bold text-[10px]">⚡</span>
-        <span>Clear Skies &bull; True Renewable Solar Energy &bull; Flexible Lease-to-Own</span>
-        <span class="hidden md:inline text-brand-sky/60">•</span>
-        <span class="hidden md:inline text-brand-sky font-medium">Zero-Deposit SME Commercial Pilots in Jos &amp; Abuja</span>
-      </div>
-      <div class="flex items-center gap-3 text-[11px]">
-        <!-- Theme Toggle Button (Dark / Light Mode) -->
-        <button id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Dark and Light Mode" title="Toggle Theme" class="px-2.5 py-0.5 rounded-lg text-[11px] font-semibold flex items-center gap-1.5 transition-all bg-white/10 hover:bg-white/20 border border-white/15 text-brand-warm/90 hover:text-white focus:outline-none focus:ring-1 focus:ring-brand-sky">
-          <i data-lucide="sun" id="themeIconSun" class="w-3.5 h-3.5 text-brand-amber hidden"></i>
-          <i data-lucide="moon" id="themeIconMoon" class="w-3.5 h-3.5 text-brand-sky"></i>
-          <span id="themeLabelText" class="font-medium text-[10px]">Dark Mode</span>
-        </button>
-        <button onclick="openModal('signUpModal')" class="text-brand-sky hover:underline font-bold flex items-center gap-1 text-[11px]">
-          <span>New Customer? Register with NIN &rarr;</span>
-        </button>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Main Navigation Bar -->
-  <nav id="mainNav" class="sticky top-0 z-50 transition-all duration-300 bg-transparent py-2.5 px-4 sm:px-6 lg:px-10">
-    <div class="max-w-[1600px] mx-auto flex items-center justify-between">
+  <!-- ========================================================================= -->
+  <!-- CONSOLIDATED UNIFIED NAVIGATION HEADER (Single Clean Nav Bar)            -->
+  <!-- ========================================================================= -->
+  <nav id="mainNav" class="sticky top-0 z-50 transition-all duration-300 bg-brand-dark/95 backdrop-blur-md border-b border-white/10 py-4 sm:py-5 px-4 sm:px-6 lg:px-10 shadow-lg min-h-[76px] flex flex-col justify-center">
+    <div class="max-w-[1600px] w-full mx-auto flex items-center justify-between">
       
       <!-- Brand Logo -->
       <a href="#hero" class="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-brand-sky rounded-lg p-1">
@@ -475,27 +469,102 @@
       </a>
 
       <!-- Desktop Navigation Links -->
-      <div class="hidden lg:flex items-center gap-7 text-sm font-medium text-brand-warm/80">
+      <div class="hidden lg:flex items-center gap-6 xl:gap-7 text-sm font-medium text-brand-warm/80">
         <a href="#hero" class="hover:text-brand-sky transition-colors">Home</a>
-        <a href="#about" class="hover:text-brand-sky transition-colors text-white font-semibold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-teal"></span>About Us</a>
-        <a href="#packages" class="hover:text-brand-sky transition-colors">Our Packages</a>
-        <a href="#how-it-works" class="hover:text-brand-sky transition-colors">How It Works</a>
-        <a href="#calculator" class="hover:text-brand-sky transition-colors">Pricing &amp; Calculator</a>
-        <a href="#smart-app" class="hover:text-brand-sky transition-colors text-brand-sky font-semibold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-sky status-pulse"></span>Smart App &amp; AI</a>
-        <a href="#installations" class="hover:text-brand-sky transition-colors">Installations</a>
+
+        <!-- "About Us" Dropdown (contains: About SkyGrid, Smart App & AI, Gallery) -->
+        <div class="relative group/about dropdown-container">
+          <button id="aboutDropdownBtn" onclick="toggleAboutDropdown(event)" aria-expanded="false" class="hover:text-brand-sky transition-colors flex items-center gap-1.5 py-2 font-medium text-brand-warm/80 group-hover/about:text-brand-sky focus:outline-none">
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-teal"></span>
+            <span>About Us</span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200 group-hover/about:rotate-180"></i>
+          </button>
+          <div id="aboutDropdownMenu" class="hidden group-hover/about:block absolute top-full left-0 pt-2 w-72 z-50">
+            <div class="glass-card-dark rounded-2xl p-2.5 border border-white/15 shadow-2xl backdrop-blur-xl space-y-1">
+              <a href="#about" onclick="closeAboutDropdown()" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/10 text-white transition group/item">
+                <div class="w-8 h-8 rounded-lg bg-brand-teal/20 text-brand-teal flex items-center justify-center font-bold text-sm">🌍</div>
+                <div>
+                  <div class="text-xs font-bold text-white group-hover/item:text-brand-teal transition">About SkyGrid</div>
+                  <div class="text-[10px] text-brand-warm/60">Vision, Clean Energy &amp; COREN Mission</div>
+                </div>
+              </a>
+              <a href="#smart-app" onclick="closeAboutDropdown()" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/10 text-white transition group/item">
+                <div class="w-8 h-8 rounded-lg bg-brand-sky/20 text-brand-sky flex items-center justify-center font-bold text-sm">⚡</div>
+                <div>
+                  <div class="text-xs font-bold text-white group-hover/item:text-brand-sky transition">Smart App &amp; AI</div>
+                  <div class="text-[10px] text-brand-warm/60">IoT Telemetry &amp; Real-time AI Forecasts</div>
+                </div>
+              </a>
+              <a href="#gallery" onclick="closeAboutDropdown()" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/10 text-white transition group/item">
+                <div class="w-8 h-8 rounded-lg bg-brand-amber/20 text-brand-amber flex items-center justify-center font-bold text-sm">📸</div>
+                <div>
+                  <div class="text-xs font-bold text-white group-hover/item:text-brand-amber transition">Gallery</div>
+                  <div class="text-[10px] text-brand-warm/60">Residential, Commercial &amp; Mini-Grid Showcase</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- "Our Packages" Dropdown (contains: Our Packages, How It Works, Pricing & Calculator) -->
+        <div class="relative group/pkg dropdown-container">
+          <button id="pkgDropdownBtn" onclick="togglePkgDropdown(event)" aria-expanded="false" class="hover:text-brand-sky transition-colors flex items-center gap-1.5 py-2 font-medium text-brand-warm/80 group-hover/pkg:text-brand-sky focus:outline-none">
+            <span>Our Packages</span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200 group-hover/pkg:rotate-180"></i>
+          </button>
+          <div id="pkgDropdownMenu" class="hidden group-hover/pkg:block absolute top-full left-0 pt-2 w-72 z-50">
+            <div class="glass-card-dark rounded-2xl p-2.5 border border-white/15 shadow-2xl backdrop-blur-xl space-y-1">
+              <a href="#packages" onclick="closePkgDropdown()" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/10 text-white transition group/item">
+                <div class="w-8 h-8 rounded-lg bg-brand-amber/20 text-brand-amber flex items-center justify-center font-bold text-sm">📦</div>
+                <div>
+                  <div class="text-xs font-bold text-white group-hover/item:text-brand-amber transition">Our Packages</div>
+                  <div class="text-[10px] text-brand-warm/60">5kVA, 10kVA &amp; 15kVA Solar Systems</div>
+                </div>
+              </a>
+              <a href="#how-it-works" onclick="closePkgDropdown()" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/10 text-white transition group/item">
+                <div class="w-8 h-8 rounded-lg bg-brand-teal/20 text-brand-teal flex items-center justify-center font-bold text-sm">⚙️</div>
+                <div>
+                  <div class="text-xs font-bold text-white group-hover/item:text-brand-teal transition">How It Works</div>
+                  <div class="text-[10px] text-brand-warm/60">4-Step Lease-to-Own Process</div>
+                </div>
+              </a>
+              <a href="#calculator" onclick="closePkgDropdown()" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white/10 text-white transition group/item">
+                <div class="w-8 h-8 rounded-lg bg-brand-sky/20 text-brand-sky flex items-center justify-center font-bold text-sm">📐</div>
+                <div>
+                  <div class="text-xs font-bold text-white group-hover/item:text-brand-sky transition">Pricing &amp; Calculator</div>
+                  <div class="text-[10px] text-brand-warm/60">COREN Load Sizer &amp; Net Naira ROI</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
         <a href="#faq" class="hover:text-brand-sky transition-colors">FAQ</a>
+        <a href="#contact" class="hover:text-brand-sky transition-colors font-medium">Contact</a>
+
+        <!-- Dedicated Link Tab for Customer Dashboard leading to Onboarded Customer Login -->
+        <button onclick="openModal('signInModal')" class="hover:text-brand-amber text-brand-amber font-semibold transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-amber/10 border border-brand-amber/30 hover:bg-brand-amber/20 focus:outline-none focus:ring-2 focus:ring-brand-amber shadow-sm" title="Onboarded Customers: Sign In to Your Dashboard">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-amber status-pulse"></span>
+          <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
+          <span>Customer Dashboard</span>
+        </button>
       </div>
 
-      <!-- Navigation Actions -->
+      <!-- Navigation Actions (Right side) -->
       <div class="hidden sm:flex items-center gap-3">
-        <button onclick="openModal('signInModal')" class="px-4 py-2 rounded-xl text-xs font-semibold text-brand-warm/90 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-colors focus:ring-2 focus:ring-brand-sky">
-          Sign In
+        <!-- Theme Toggle Button -->
+        <button id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Dark and Light Mode" title="Toggle Theme" class="p-2.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all bg-white/5 hover:bg-white/10 border border-white/10 text-brand-warm/90 hover:text-white focus:outline-none focus:ring-1 focus:ring-brand-sky">
+          <i data-lucide="sun" id="themeIconSun" class="w-4 h-4 text-brand-amber hidden"></i>
+          <i data-lucide="moon" id="themeIconMoon" class="w-4 h-4 text-brand-sky"></i>
+          <span id="themeLabelText" class="font-medium text-[10px] hidden xl:inline">Dark</span>
         </button>
-        <button onclick="openModal('signUpModal')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-950 bg-gradient-to-r from-brand-sky to-brand-teal hover:from-sky-400 hover:to-teal-400 shadow-md shadow-brand-sky/25 transition-all hover:scale-105 focus:ring-2 focus:ring-brand-sky flex items-center gap-1.5">
+
+        <button onclick="openModal('signUpModal')" class="px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-950 bg-gradient-to-r from-brand-sky to-brand-teal hover:from-sky-400 hover:to-teal-400 shadow-md shadow-brand-sky/25 transition-all hover:scale-105 focus:ring-2 focus:ring-brand-sky flex items-center gap-1.5">
           <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
-          <span>Sign Up</span>
+          <span>Sign Up (NIN)</span>
         </button>
-        <a href="#calculator" class="px-5 py-2.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 shadow-lg shadow-brand-amber/20 transition-all hover:scale-105 focus:ring-2 focus:ring-offset-2 focus:ring-brand-amber">
+
+        <a href="#calculator" class="px-4 py-2.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 shadow-lg shadow-brand-amber/20 transition-all hover:scale-105 focus:ring-2 focus:ring-offset-2 focus:ring-brand-amber whitespace-nowrap">
           Find Your Solar Plan
         </a>
       </div>
@@ -507,8 +576,9 @@
           <i data-lucide="sun" class="w-4 h-4 text-brand-amber hidden mobile-theme-sun"></i>
           <i data-lucide="moon" class="w-4 h-4 text-brand-teal mobile-theme-moon"></i>
         </button>
-        <button onclick="openModal('signUpModal')" class="px-3 py-1.5 rounded-lg text-xs font-bold text-brand-dark bg-brand-teal">
-          Sign Up
+        <button onclick="openModal('signInModal')" class="px-2.5 py-1.5 rounded-lg text-xs font-bold text-brand-dark bg-brand-amber flex items-center gap-1 shadow-sm">
+          <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
+          <span>Dashboard</span>
         </button>
         <button id="mobileMenuBtn" aria-expanded="false" aria-label="Toggle Navigation Menu" class="p-2 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-brand-amber">
           <i data-lucide="menu" id="menuOpenIcon" class="w-6 h-6"></i>
@@ -519,18 +589,71 @@
     </div>
 
     <!-- Mobile Slide-Down Menu -->
-    <div id="mobileMenu" class="hidden lg:hidden mt-3 max-w-[1600px] mx-auto glass-card-dark rounded-2xl p-5 border border-white/10 shadow-2xl">
-      <div class="flex flex-col gap-3 text-sm font-medium text-brand-warm/90 pb-4 border-b border-white/10">
+    <div id="mobileMenu" class="hidden lg:hidden mt-3 max-w-[1600px] mx-auto glass-card-dark rounded-2xl p-5 border border-white/10 shadow-2xl space-y-3">
+      
+      <!-- Primary Customer Dashboard Action for Onboarded Customers -->
+      <button onclick="openModal('signInModal'); toggleMobileMenu();" class="w-full py-3 px-4 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition flex items-center justify-between shadow-lg shadow-brand-amber/20">
+        <span class="flex items-center gap-2">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Customer Dashboard (Onboarded Login)</span>
+        </span>
+        <span>&rarr;</span>
+      </button>
+
+      <div class="flex flex-col gap-2 text-sm font-medium text-brand-warm/90 pb-3 border-b border-white/10">
         <a href="#hero" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 hover:text-brand-amber transition">Home</a>
-        <a href="#about" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 text-brand-teal font-semibold transition flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-brand-teal status-pulse"></span>About Us (Vision &amp; African Impact)</a>
-        <a href="#packages" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 hover:text-brand-amber transition">Solar Solutions</a>
-        <a href="#how-it-works" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 hover:text-brand-amber transition">How It Works</a>
-        <a href="#calculator" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 hover:text-brand-amber transition">Pricing &amp; Calculator</a>
-        <a href="#smart-app" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 text-brand-teal font-semibold transition flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-brand-teal status-pulse"></span>Smart App &amp; AI</a>
-        <a href="#installations" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 hover:text-brand-amber transition">Installation Portfolio</a>
+
+        <!-- Mobile About Us & Showcase Dropdown Accordion -->
+        <div class="border border-white/10 rounded-xl overflow-hidden bg-white/5">
+          <button onclick="toggleMobileAboutAccordion()" class="w-full flex items-center justify-between p-2.5 text-left font-semibold text-white hover:text-brand-sky transition text-xs">
+            <span class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-brand-teal status-pulse"></span>
+              <span>About Us &amp; Technology</span>
+            </span>
+            <i data-lucide="chevron-down" id="mobileAboutAccordionIcon" class="w-4 h-4 transition-transform duration-200"></i>
+          </button>
+          <div id="mobileAboutAccordion" class="hidden px-2 pb-2.5 space-y-1 text-xs border-t border-white/10 pt-2">
+            <a href="#about" class="mobile-nav-link block p-2 rounded-lg hover:bg-white/10 text-white flex items-center gap-2">
+              <span>🌍</span> About SkyGrid (Mission &amp; Impact)
+            </a>
+            <a href="#smart-app" class="mobile-nav-link block p-2 rounded-lg hover:bg-white/10 text-white flex items-center gap-2">
+              <span>⚡</span> Smart App &amp; AI Telemetry
+            </a>
+            <a href="#gallery" class="mobile-nav-link block p-2 rounded-lg hover:bg-white/10 text-white flex items-center gap-2">
+              <span>📸</span> Project Gallery &amp; Installations
+            </a>
+          </div>
+        </div>
+
+        <!-- Mobile Our Packages Dropdown Accordion -->
+        <div class="border border-white/10 rounded-xl overflow-hidden bg-white/5">
+          <button onclick="toggleMobilePkgAccordion()" class="w-full flex items-center justify-between p-2.5 text-left font-semibold text-white hover:text-brand-amber transition text-xs">
+            <span class="flex items-center gap-2">
+              <span>📦</span>
+              <span>Our Packages &amp; Sizing</span>
+            </span>
+            <i data-lucide="chevron-down" id="mobilePkgAccordionIcon" class="w-4 h-4 transition-transform duration-200"></i>
+          </button>
+          <div id="mobilePkgAccordion" class="hidden px-2 pb-2.5 space-y-1 text-xs border-t border-white/10 pt-2">
+            <a href="#packages" class="mobile-nav-link block p-2 rounded-lg hover:bg-white/10 text-white flex items-center gap-2">
+              <span>📦</span> Our Packages (5kVA, 10kVA, 15kVA)
+            </a>
+            <a href="#how-it-works" class="mobile-nav-link block p-2 rounded-lg hover:bg-white/10 text-white flex items-center gap-2">
+              <span>⚙️</span> How It Works (4-Step Process)
+            </a>
+            <a href="#calculator" class="mobile-nav-link block p-2 rounded-lg hover:bg-white/10 text-white flex items-center gap-2">
+              <span>📐</span> Pricing &amp; Load Calculator
+            </a>
+          </div>
+        </div>
+
         <a href="#faq" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 hover:text-brand-amber transition">Frequently Asked Questions</a>
+        <a href="#contact" class="mobile-nav-link py-2 px-3 rounded-lg hover:bg-white/5 hover:text-brand-sky transition flex items-center gap-2">
+          <span>📞</span> Contact Us
+        </a>
       </div>
-      <div class="pt-4 flex flex-col gap-2">
+
+      <div class="pt-2 flex flex-col gap-2">
         <button onclick="toggleTheme()" class="w-full py-2.5 px-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs font-semibold text-brand-warm hover:bg-white/10 transition">
           <span class="flex items-center gap-2">
             <span class="portal-theme-icon">🌙</span>
@@ -541,9 +664,6 @@
         <button onclick="openModal('signUpModal')" class="w-full py-2.5 rounded-xl text-center text-xs font-bold text-brand-dark bg-brand-teal hover:bg-emerald-400 transition flex items-center justify-center gap-2">
           <i data-lucide="user-plus" class="w-4 h-4"></i>
           <span>New Customer Sign Up (NIN Required)</span>
-        </button>
-        <button onclick="openModal('signInModal')" class="w-full py-2.5 rounded-xl text-center text-xs font-semibold text-brand-warm bg-white/5 border border-white/10 hover:bg-white/10 transition">
-          Customer Portal Sign In
         </button>
         <button onclick="openAuditModal('Essential Home')" class="w-full py-2.5 rounded-xl text-center text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition">
           Book for Engineering Site Audit
@@ -1727,16 +1847,18 @@
     </div>
   </section>
 
-  <!-- SECTION 7: INSTALLATION CATEGORIES -->
-  <section id="installations" class="py-20 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
+  <!-- SECTION 7: PROJECT GALLERY & INSTALLATIONS -->
+  <section id="gallery" class="py-20 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
+    <!-- Anchor alias for backward-compatibility with deep-links -->
+    <span id="installations" class="block -mt-24 pt-24 invisible pointer-events-none"></span>
     
     <div class="text-center max-w-3xl mx-auto mb-16">
-      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-teal/15 border border-brand-teal/30 text-brand-teal text-xs font-semibold mb-3">
-        <span>📸</span> Realistic African Environments
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-amber/15 border border-brand-amber/30 text-brand-amber text-xs font-semibold mb-3">
+        <span>📸</span> Certified African Solar Fleet
       </div>
-      <h2 class="text-3xl sm:text-4xl font-heading font-extrabold text-white">Installation Environments</h2>
+      <h2 class="text-3xl sm:text-4xl font-heading font-extrabold text-white">Project Gallery &amp; Installations</h2>
       <p class="text-sm sm:text-base text-brand-warm/75 mt-3">
-        Tailored photovoltaic and battery storage architectures engineered for the specific load dynamics of homes, commercial clinics, and light industrial facilities.
+        Explore verified photovoltaic arrays, LiFePO4 battery banks, and hybrid Growatt inverters deployed across residential homes, medical clinics, and industrial facilities in Nigeria.
       </p>
     </div>
 
@@ -1964,7 +2086,7 @@
         <h2 class="text-3xl sm:text-5xl lg:text-6xl font-heading font-black text-white tracking-tight leading-[1.12]">
           Built of World Standard.<br />
           <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-teal via-brand-sky to-brand-amber">
-            Born to Solve Nigeria's Power Deficit &amp; Electrify Africa.
+            Putting Smiles on Nigerians face! &amp; Electrify Africa.
           </span>
         </h2>
         
@@ -2272,7 +2394,7 @@
             <div class="space-y-2">
               <h4 class="text-white font-heading font-bold text-base">Pan-African Technical Academy</h4>
               <p class="text-xs text-brand-warm/70 leading-relaxed">
-                Engineered to expand from Nigeria into Ghana, Cameroon, Kenya, and across the ECOWAS corridor. The SkyGrid Technical Academy trains and certifies local technicians, creating thousands of high-wage African green engineering jobs.
+                Engineered to reposition Africa in the quest for green energy for Environmental sustainability. The SkyGrid Technical Academy trains and certifies local technicians, creating thousands of high-wage African green engineering jobs.
               </p>
             </div>
           </div>
@@ -2430,7 +2552,290 @@
 
   </section>
 
-  <!-- SECTION 10: FINAL CALL TO ACTION -->
+  <!-- ========================================================================= -->
+  <!-- SECTION 9.5: PROFESSIONAL CONTACT & ENGINEERING SUPPORT HUB              -->
+  <!-- ========================================================================= -->
+  <section id="contact" class="py-24 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 relative">
+    
+    <!-- Section Header -->
+    <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-sky/15 border border-brand-sky/30 text-brand-sky text-xs font-semibold">
+        <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
+        <span>24/7 Engineering Support &amp; Inquiries</span>
+      </div>
+      <h2 class="text-3xl sm:text-5xl font-heading font-extrabold text-white tracking-tight">
+        Connect with Our Clean Energy Architects
+      </h2>
+      <p class="text-sm sm:text-base text-brand-warm/75 leading-relaxed">
+        Whether sizing a 5kVA household system, retrofitting an industrial cold facility, or requesting emergency field service, our COREN-certified engineers respond within 2 hours.
+      </p>
+    </div>
+
+    <!-- 2-Column Responsive Layout -->
+    <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+      
+      <!-- Left Column: Operations Hubs & Channels (5 cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        
+        <!-- Live Dispatch Status Card -->
+        <div class="glass-card-dark rounded-3xl p-6 border border-emerald-500/30 bg-emerald-950/20 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs uppercase tracking-wider font-mono text-emerald-400 font-bold flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 status-pulse"></span>
+              Central Dispatch Live Status
+            </span>
+            <span class="text-[11px] bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full font-mono font-semibold">Online</span>
+          </div>
+          <p class="text-xs text-brand-warm/80 leading-relaxed">
+            All telemetry servers, IoT SIM gateways, and local field response teams across Abuja, Lagos, and Jos are currently operational. Average phone/WhatsApp callback time: <strong class="text-white">12 minutes</strong>.
+          </p>
+        </div>
+
+        <!-- Direct Contact Channels -->
+        <div class="glass-card-dark rounded-3xl p-6 sm:p-7 border border-white/10 shadow-xl space-y-5">
+          <h3 class="font-heading font-extrabold text-lg text-white flex items-center gap-2">
+            <i data-lucide="headphones" class="w-5 h-5 text-brand-amber"></i>
+            <span>Direct Engineering Channels</span>
+          </h3>
+
+          <div class="space-y-4 text-xs">
+            <!-- 24/7 Hotline -->
+            <a href="tel:+2348007594743" class="flex items-center gap-4 p-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 transition group">
+              <div class="w-10 h-10 rounded-xl bg-brand-amber/20 text-brand-amber flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+                📞
+              </div>
+              <div class="flex-grow">
+                <span class="text-[10px] text-brand-warm/60 uppercase tracking-wider block">Toll-Free Emergency Hotline</span>
+                <span class="font-mono font-bold text-sm text-white group-hover:text-brand-amber transition">+234 800-SKYGRID (24/7)</span>
+              </div>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-brand-warm/50 group-hover:text-brand-amber transition"></i>
+            </a>
+
+            <!-- WhatsApp Priority -->
+            <a href="https://wa.me/2348085377346?text=Hello%20SkyGrid%20Engineering%2C%20I%20would%20like%20to%20inquire%20about%20a%20solar%20solution." target="_blank" rel="noopener noreferrer" class="flex items-center gap-4 p-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 transition group">
+              <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+                💬
+              </div>
+              <div class="flex-grow">
+                <span class="text-[10px] text-brand-warm/60 uppercase tracking-wider block">WhatsApp Engineering Desk</span>
+                <span class="font-mono font-bold text-sm text-white group-hover:text-emerald-400 transition">+234 808 537 7346</span>
+              </div>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-brand-warm/50 group-hover:text-emerald-400 transition"></i>
+            </a>
+
+            <!-- Support Email -->
+            <a href="mailto:support@skygrid.ng" class="flex items-center gap-4 p-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 transition group">
+              <div class="w-10 h-10 rounded-xl bg-brand-sky/20 text-brand-sky flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+                ✉️
+              </div>
+              <div class="flex-grow">
+                <span class="text-[10px] text-brand-warm/60 uppercase tracking-wider block">Technical &amp; Billing Desk</span>
+                <span class="font-mono font-bold text-sm text-white group-hover:text-brand-sky transition">support@skygrid.ng</span>
+              </div>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-brand-warm/50 group-hover:text-brand-sky transition"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Physical Regional Operations Centers -->
+        <div class="glass-card-dark rounded-3xl p-6 sm:p-7 border border-white/10 shadow-xl space-y-4">
+          <h3 class="font-heading font-extrabold text-base text-white flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-4 h-4 text-brand-teal"></i>
+            <span>Physical Operations Centers</span>
+          </h3>
+
+          <div class="space-y-3 text-xs">
+            <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+              <span class="font-bold text-white block">🏛️ Abuja Corporate Headquarters (FCT)</span>
+              <p class="text-brand-warm/70 text-[11px] mt-0.5">14 Julius Nyerere Crescent, Asokoro / Central Business District, Abuja</p>
+            </div>
+            <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+              <span class="font-bold text-white block">🏢 Lagos Commercial Operations Hub</span>
+              <p class="text-brand-warm/70 text-[11px] mt-0.5">Plot 12 Admiralty Way, Lekki Phase 1, Lagos State</p>
+            </div>
+            <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+              <span class="font-bold text-white block">🏔️ Plateau Regional Hub &amp; Assembly Depot</span>
+              <p class="text-brand-warm/70 text-[11px] mt-0.5">FDA Road, Dadinkowa, Jos South LGA, Plateau State</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Professional Enterprise Contact Form (7 cols) -->
+      <div class="lg:col-span-7">
+        <div class="glass-card-dark rounded-3xl p-6 sm:p-10 border border-white/15 shadow-2xl relative">
+          
+          <div class="mb-6 space-y-1">
+            <h3 class="text-2xl font-heading font-extrabold text-white">
+              Send an Engineering Inquiry / Request Callback
+            </h3>
+            <p class="text-xs text-brand-warm/75">
+              Complete the form below and an engineer will review your load requirements, roof dynamics, and ROI calculation.
+            </p>
+          </div>
+
+          <!-- Dynamic Feedback Container -->
+          <div id="contactFeedback" class="hidden mb-6"></div>
+
+          <form id="contactForm" onsubmit="handleContactSubmit(event)" class="space-y-4 text-xs">
+            
+            <!-- Full Legal Name -->
+            <div>
+              <label for="contactFullName" class="block text-brand-warm/90 font-bold mb-1.5">
+                Full Legal Name <span class="text-brand-amber">*</span>
+              </label>
+              <div class="relative">
+                <input 
+                  type="text" 
+                  id="contactFullName" 
+                  required 
+                  placeholder="e.g. Engr. Mustapha Aliyu" 
+                  class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-3 text-white placeholder:text-brand-warm/40 focus:border-brand-sky focus:outline-none focus:ring-1 focus:ring-brand-sky transition"
+                >
+              </div>
+            </div>
+
+            <!-- Email & Phone Grid -->
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label for="contactEmail" class="block text-brand-warm/90 font-bold mb-1.5">
+                  Email Address <span class="text-brand-amber">*</span>
+                </label>
+                <input 
+                  type="email" 
+                  id="contactEmail" 
+                  required 
+                  placeholder="name@company.ng" 
+                  class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-3 text-white placeholder:text-brand-warm/40 focus:border-brand-sky focus:outline-none focus:ring-1 focus:ring-brand-sky transition"
+                >
+              </div>
+              <div>
+                <label for="contactPhone" class="block text-brand-warm/90 font-bold mb-1.5">
+                  Phone (WhatsApp-Enabled) <span class="text-brand-amber">*</span>
+                </label>
+                <div class="relative flex items-center">
+                  <span class="absolute left-3.5 text-brand-warm/60 font-mono text-xs">+234</span>
+                  <input 
+                    type="tel" 
+                    id="contactPhone" 
+                    required 
+                    placeholder="803 123 4567" 
+                    class="w-full bg-black/50 border border-white/15 rounded-xl pl-14 pr-4 py-3 text-white placeholder:text-brand-warm/40 focus:border-brand-sky focus:outline-none focus:ring-1 focus:ring-brand-sky transition font-mono"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Inquiry Category & State Grid -->
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label for="contactInquiryType" class="block text-brand-warm/90 font-bold mb-1.5">
+                  Inquiry Category <span class="text-brand-amber">*</span>
+                </label>
+                <select 
+                  id="contactInquiryType" 
+                  required 
+                  class="w-full bg-black/60 border border-white/15 rounded-xl px-4 py-3 text-white focus:border-brand-sky focus:outline-none focus:ring-1 focus:ring-brand-sky transition"
+                >
+                  <option value="Residential Solar PAYGo (5kVA - 8kVA Hybrid)">Residential Solar PAYGo (5kVA - 8kVA Hybrid)</option>
+                  <option value="Commercial &amp; SME Solar (10kVA - 20kVA Three-Phase)">Commercial &amp; SME Solar (10kVA - 20kVA Three-Phase)</option>
+                  <option value="Industrial Microgrid / Cold Chain (>30kVA)">Industrial Microgrid / Cold Chain (&gt;30kVA)</option>
+                  <option value="COREN Soil Earthing &amp; Roof Structural Audit">COREN Soil Earthing &amp; Roof Structural Audit</option>
+                  <option value="Technical Support / Inverter Contactor Reset">Technical Support / Inverter Contactor Reset</option>
+                  <option value="Corporate Partnership / Investor Inquiry">Corporate Partnership / Investor Inquiry</option>
+                </select>
+              </div>
+              <div>
+                <label for="contactState" class="block text-brand-warm/90 font-bold mb-1.5">
+                  Installation State / Region <span class="text-brand-amber">*</span>
+                </label>
+                <select 
+                  id="contactState" 
+                  required 
+                  class="w-full bg-black/60 border border-white/15 rounded-xl px-4 py-3 text-white focus:border-brand-sky focus:outline-none focus:ring-1 focus:ring-brand-sky transition"
+                >
+                  <option value="Abuja FCT">Abuja FCT</option>
+                  <option value="Lagos State">Lagos State</option>
+                  <option value="Plateau State">Plateau State</option>
+                  <option value="Kano State">Kano State</option>
+                  <option value="Rivers State">Rivers State</option>
+                  <option value="Oyo State">Oyo State</option>
+                  <option value="Kaduna State">Kaduna State</option>
+                  <option value="Enugu State">Enugu State</option>
+                  <option value="Other State in Nigeria">Other State in Nigeria</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Current Monthly Power Spend (Optional Context) -->
+            <div>
+              <label for="contactBudget" class="block text-brand-warm/90 font-bold mb-1.5">
+                Current Monthly Power Expense (Band A Electricity + Petrol/Diesel Gen)
+              </label>
+              <input 
+                type="text" 
+                id="contactBudget" 
+                placeholder="e.g. ₦140,000 / month (helps us calculate exact PAYGo savings)" 
+                class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-3 text-white placeholder:text-brand-warm/40 focus:border-brand-sky focus:outline-none focus:ring-1 focus:ring-brand-sky transition font-mono"
+              >
+            </div>
+
+            <!-- Detailed Message -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="contactMessage" class="text-brand-warm/90 font-bold">
+                  System Requirements / Project Message <span class="text-brand-amber">*</span>
+                </label>
+                <span class="text-[10px] text-brand-warm/50 font-mono">Min 10 characters</span>
+              </div>
+              <textarea 
+                id="contactMessage" 
+                rows="4" 
+                required 
+                placeholder="Describe your load items (e.g. 2x 1.5HP inverter ACs, deep freezer, lighting), your current outage duration, or any technical questions..." 
+                class="w-full bg-black/50 border border-white/15 rounded-xl p-4 text-white placeholder:text-brand-warm/40 focus:border-brand-sky focus:outline-none focus:ring-1 focus:ring-brand-sky transition leading-relaxed"
+              ></textarea>
+            </div>
+
+            <!-- Consent Checkbox -->
+            <div class="flex items-start gap-3 pt-1">
+              <input 
+                type="checkbox" 
+                id="contactConsent" 
+                checked 
+                required 
+                class="mt-1 rounded bg-black/50 border-white/20 text-brand-sky focus:ring-brand-sky focus:ring-offset-black"
+              >
+              <label for="contactConsent" class="text-[11px] text-brand-warm/70 leading-normal">
+                I agree to receive engineering proposal documents, solar load assessments, and WhatsApp/SMS audit updates in accordance with SkyGrid's Privacy &amp; KYC Standards.
+              </label>
+            </div>
+
+            <!-- Submit Button -->
+            <button 
+              type="submit" 
+              id="contactSubmitBtn" 
+              class="w-full py-4 rounded-xl text-xs sm:text-sm font-bold text-slate-950 bg-gradient-to-r from-brand-sky via-brand-teal to-emerald-400 hover:from-sky-400 hover:to-emerald-300 shadow-xl shadow-brand-sky/20 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 mt-4"
+            >
+              <i data-lucide="send" class="w-4 h-4"></i>
+              <span id="contactSubmitText">Send Project Inquiry &amp; Request Callback &rarr;</span>
+            </button>
+
+            <!-- SLA Micro-note -->
+            <div class="pt-2 text-center text-[10px] text-brand-warm/50 flex items-center justify-center gap-2">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5 text-brand-teal"></i>
+              <span>COREN &amp; NEMSA Certified Engineers &bull; Zero spam guarantee &bull; Response SLA &lt; 2 Hours</span>
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+
+  </section>
   <section class="section-closing-cta py-20 relative overflow-hidden bg-gradient-to-r from-brand-forest via-brand-dark to-brand-forest border-t border-white/10">
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-teal/20 via-transparent to-transparent pointer-events-none"></div>
 
@@ -2650,6 +3055,37 @@
           <input type="text" id="leadAddress" required placeholder="Plot number, street name, estate or landmark" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none">
         </div>
 
+        <!-- Geo-Tag Coordinates for Site Installation -->
+        <div class="p-3.5 rounded-2xl bg-black/40 border border-white/10 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="text-brand-warm/90 font-bold flex items-center gap-1.5 text-xs">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-amber"></i>
+              <span>Installation Site Geo-Tag Coordinates *</span>
+            </label>
+            <button type="button" onclick="detectAuditGPS()" class="px-2.5 py-1 rounded-lg bg-brand-amber/15 text-brand-amber hover:bg-brand-amber/25 border border-brand-amber/30 text-[10px] font-bold font-mono transition flex items-center gap-1">
+              <span>📍 Auto-Detect GPS</span>
+            </button>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <span class="text-[10px] text-brand-warm/60 uppercase tracking-wider block mb-1">Latitude (°N)</span>
+              <input type="number" step="0.000001" id="leadLat" required value="9.076500" placeholder="9.076500" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white text-xs font-mono focus:border-brand-amber focus:outline-none">
+            </div>
+            <div>
+              <span class="text-[10px] text-brand-warm/60 uppercase tracking-wider block mb-1">Longitude (°E)</span>
+              <input type="number" step="0.000001" id="leadLng" required value="7.398600" placeholder="7.398600" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white text-xs font-mono focus:border-brand-amber focus:outline-none">
+            </div>
+          </div>
+          <div id="leadGpsStatus" class="text-[10px] text-brand-warm/60 flex items-center justify-between">
+            <span>📍 Default: Abuja FCT (Central Zone)</span>
+            <div class="flex items-center gap-1 text-[9px] font-mono">
+              <button type="button" onclick="setAuditCoords(9.0765, 7.3986, 'Abuja')" class="px-1.5 py-0.5 rounded bg-white/5 hover:bg-white/10 text-brand-warm">Abuja</button>
+              <button type="button" onclick="setAuditCoords(6.5244, 3.3792, 'Lagos')" class="px-1.5 py-0.5 rounded bg-white/5 hover:bg-white/10 text-brand-warm">Lagos</button>
+              <button type="button" onclick="setAuditCoords(9.8965, 8.8583, 'Jos')" class="px-1.5 py-0.5 rounded bg-white/5 hover:bg-white/10 text-brand-warm">Jos</button>
+            </div>
+          </div>
+        </div>
+
         <button type="submit" id="auditSubmitBtn" class="w-full py-3.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition-all font-heading shadow-lg shadow-brand-amber/20 mt-2">
           Confirm Audit Booking
         </button>
@@ -2664,13 +3100,18 @@
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
 
-      <div class="w-12 h-12 rounded-2xl bg-brand-teal/20 border border-brand-teal/30 flex items-center justify-center text-brand-teal mb-4">
-        <i data-lucide="key-round" class="w-6 h-6"></i>
+      <div class="flex items-center justify-between mb-3">
+        <div class="w-12 h-12 rounded-2xl bg-brand-amber/20 border border-brand-amber/30 flex items-center justify-center text-brand-amber">
+          <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
+        </div>
+        <span class="px-3 py-1 rounded-full bg-brand-amber/15 text-brand-amber border border-brand-amber/30 text-[11px] font-bold font-mono uppercase tracking-wider">
+          Onboarded Customer Login
+        </span>
       </div>
 
-      <h3 class="text-2xl font-heading font-extrabold text-white">Customer Portal Sign In</h3>
+      <h3 class="text-2xl font-heading font-extrabold text-white">Customer Dashboard Sign In</h3>
       <p class="text-xs text-brand-warm/75 mt-1">
-        Access your real-time telemetry, check token validity, download payment receipts, or view your amortization schedule.
+        Access your real-time solar energy telemetry, check token validity, download payment receipts, or view your amortization schedule.
       </p>
 
       <!-- Developer 1-Click Fast Access Box -->
@@ -2761,7 +3202,7 @@
           </div>
           <div>
             <div class="flex items-center gap-2 flex-wrap">
-              <h3 class="text-2xl sm:text-3xl font-heading font-extrabold text-white">Customer Registration &amp; Solar PAYGo Onboarding</h3>
+              <h3 class="text-2xl sm:text-3xl font-heading font-extrabold text-white">PAYGo Customer Registration &amp; Onboarding</h3>
               <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-brand-teal/20 text-brand-teal border border-brand-teal/30 uppercase tracking-wider">
                 NIMC Instant Verification
               </span>
@@ -2931,6 +3372,41 @@
                   <option value="Ogun">Ogun (Industrial Corridor • 4.5h PSH)</option>
                   <option value="Delta">Delta (Warri/Asaba • 4.0h PSH)</option>
                 </select>
+              </div>
+            </div>
+
+            <!-- Geo-Tag Coordinates for Site Installation & GIS Tracking -->
+            <div class="p-4 rounded-xl bg-black/60 border border-brand-teal/30 space-y-2.5">
+              <div class="flex items-center justify-between flex-wrap gap-2">
+                <label class="text-white font-bold flex items-center gap-2 text-xs">
+                  <span class="w-2 h-2 rounded-full bg-brand-teal status-pulse"></span>
+                  <span>Installation Site Geo-Tag Coordinates (GIS Fleet Registry) *</span>
+                </label>
+                <button type="button" onclick="detectSignupGPS()" class="px-3 py-1 rounded-lg bg-brand-teal/20 text-brand-teal hover:bg-brand-teal/30 border border-brand-teal/40 text-[10px] font-bold font-mono transition flex items-center gap-1">
+                  <span>📍 Auto-Detect Site GPS</span>
+                </button>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label for="signupLat" class="block text-[10px] text-brand-warm/70 uppercase tracking-wider mb-1">Site Latitude (°N)</label>
+                  <input type="number" step="0.000001" id="signupLat" required value="9.076500" placeholder="e.g. 9.076500"
+                    class="w-full bg-black/50 border border-white/20 rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:border-brand-teal focus:outline-none">
+                </div>
+                <div>
+                  <label for="signupLng" class="block text-[10px] text-brand-warm/70 uppercase tracking-wider mb-1">Site Longitude (°E)</label>
+                  <input type="number" step="0.000001" id="signupLng" required value="7.398600" placeholder="e.g. 7.398600"
+                    class="w-full bg-black/50 border border-white/20 rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:border-brand-teal focus:outline-none">
+                </div>
+              </div>
+              <div class="flex items-center justify-between flex-wrap gap-2 pt-1 text-[10px] text-brand-warm/70 border-t border-white/10">
+                <span id="signupGpsStatus">📍 GIS Satellite Pin: Ready for COREN solar azimuth &amp; tilt dispatch</span>
+                <div class="flex items-center gap-1 text-[9px] font-mono">
+                  <span class="text-brand-warm/50">Presets:</span>
+                  <button type="button" onclick="setSignupCoords(9.0765, 7.3986, 'Abuja FCT')" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/15 border border-white/10 text-white">Abuja (9.07, 7.39)</button>
+                  <button type="button" onclick="setSignupCoords(6.5244, 3.3792, 'Lagos')" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/15 border border-white/10 text-white">Lagos (6.52, 3.37)</button>
+                  <button type="button" onclick="setSignupCoords(9.8965, 8.8583, 'Jos Plateau')" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/15 border border-white/10 text-white">Jos (9.89, 8.85)</button>
+                  <button type="button" onclick="setSignupCoords(4.8156, 7.0498, 'Port Harcourt')" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/15 border border-white/10 text-white">PH (4.81, 7.04)</button>
+                </div>
               </div>
             </div>
 
@@ -3124,6 +3600,20 @@
             <div>
               <span class="text-brand-warm/60 block">30% Down Payment:</span>
               <span id="successDownPayment" class="text-brand-amber font-mono font-bold">₦1,890,000</span>
+            </div>
+          </div>
+
+          <!-- Installation Site & Geo-Tag Summary -->
+          <div class="p-3 rounded-xl bg-white/5 border border-white/10 space-y-1.5 text-left text-[11px]">
+            <div class="flex items-center justify-between">
+              <span class="text-brand-warm/60 uppercase tracking-wider text-[10px] font-mono">📍 Installation Site &amp; Geo-Tag:</span>
+              <span id="successGeoTagBadge" class="px-2 py-0.5 rounded text-[9px] font-mono bg-brand-teal/20 text-brand-teal font-bold border border-brand-teal/30">GIS Geo-Locked</span>
+            </div>
+            <div class="text-white font-medium truncate" id="successSiteAddress">Abuja FCT, Nigeria</div>
+            <div class="font-mono text-emerald-400 text-[10px] flex items-center gap-1.5" id="successGeoTag">
+              <span>🌐</span>
+              <span id="successGeoTagCoords">9.076500°N, 7.398600°E</span>
+              <a id="successMapsLink" href="https://maps.google.com/?q=9.076500,7.398600" target="_blank" rel="noopener noreferrer" class="text-brand-amber underline ml-auto text-[9px] hover:text-amber-300">View Satellite Map &rarr;</a>
             </div>
           </div>
 
@@ -4213,46 +4703,131 @@
       }
     });
 
-    // --- 2. Sticky Glass Navigation Controller ---
+    // --- 2. Sticky Glass Navigation Controller & Dropdowns ---
     window.addEventListener('scroll', () => {
       const nav = document.getElementById('mainNav');
-      if (window.scrollY > 40) {
-        nav.classList.add('glass-nav-scrolled');
-      } else {
-        nav.classList.remove('glass-nav-scrolled');
+      if (nav) {
+        if (window.scrollY > 40) {
+          nav.classList.add('glass-nav-scrolled');
+        } else {
+          nav.classList.remove('glass-nav-scrolled');
+        }
       }
     });
 
-    // Mobile Menu Toggle
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const menuOpenIcon = document.getElementById('menuOpenIcon');
-    const menuCloseIcon = document.getElementById('menuCloseIcon');
+    // About Us Dropdown Controller (Desktop)
+    function toggleAboutDropdown(e) {
+      if (e) e.stopPropagation();
+      closePkgDropdown();
+      const menu = document.getElementById('aboutDropdownMenu');
+      const btn = document.getElementById('aboutDropdownBtn');
+      if (menu) {
+        const isHidden = menu.classList.contains('hidden');
+        menu.classList.toggle('hidden', !isHidden);
+        if (btn) btn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+      }
+    }
 
-    if (mobileMenuBtn) {
-      mobileMenuBtn.addEventListener('click', () => {
-        const isOpen = !mobileMenu.classList.contains('hidden');
-        if (isOpen) {
-          mobileMenu.classList.add('hidden');
-          menuOpenIcon.classList.remove('hidden');
-          menuCloseIcon.classList.add('hidden');
-          mobileMenuBtn.setAttribute('aria-expanded', 'false');
-        } else {
-          mobileMenu.classList.remove('hidden');
-          menuOpenIcon.classList.add('hidden');
-          menuCloseIcon.classList.remove('hidden');
-          mobileMenuBtn.setAttribute('aria-expanded', 'true');
-        }
+    function closeAboutDropdown() {
+      const menu = document.getElementById('aboutDropdownMenu');
+      const btn = document.getElementById('aboutDropdownBtn');
+      if (menu) menu.classList.add('hidden');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    }
+
+    // Package Dropdown Controller (Desktop)
+    function togglePkgDropdown(e) {
+      if (e) e.stopPropagation();
+      closeAboutDropdown();
+      const menu = document.getElementById('pkgDropdownMenu');
+      const btn = document.getElementById('pkgDropdownBtn');
+      if (menu) {
+        const isHidden = menu.classList.contains('hidden');
+        menu.classList.toggle('hidden', !isHidden);
+        if (btn) btn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+      }
+    }
+
+    function closePkgDropdown() {
+      const menu = document.getElementById('pkgDropdownMenu');
+      const btn = document.getElementById('pkgDropdownBtn');
+      if (menu) menu.classList.add('hidden');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    }
+
+    // Dismiss navigation dropdowns on click outside
+    document.addEventListener('click', (e) => {
+      const containers = document.querySelectorAll('.dropdown-container');
+      let clickedInside = false;
+      containers.forEach(c => {
+        if (c.contains(e.target)) clickedInside = true;
       });
+      if (!clickedInside) {
+        closeAboutDropdown();
+        closePkgDropdown();
+      }
+    });
+
+    // Mobile About Accordion Controller
+    function toggleMobileAboutAccordion() {
+      const acc = document.getElementById('mobileAboutAccordion');
+      const icon = document.getElementById('mobileAboutAccordionIcon');
+      if (acc) {
+        const isHidden = acc.classList.contains('hidden');
+        acc.classList.toggle('hidden', !isHidden);
+        if (icon) icon.classList.toggle('rotate-180', isHidden);
+      }
+    }
+
+    // Mobile Package Accordion Controller
+    function toggleMobilePkgAccordion() {
+      const acc = document.getElementById('mobilePkgAccordion');
+      const icon = document.getElementById('mobilePkgAccordionIcon');
+      if (acc) {
+        const isHidden = acc.classList.contains('hidden');
+        acc.classList.toggle('hidden', !isHidden);
+        if (icon) icon.classList.toggle('rotate-180', isHidden);
+      }
+    }
+
+    // Mobile Menu Toggle
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const menuOpenIcon = document.getElementById('menuOpenIcon');
+      const menuCloseIcon = document.getElementById('menuCloseIcon');
+      if (!mobileMenu) return;
+
+      const isOpen = !mobileMenu.classList.contains('hidden');
+      if (isOpen) {
+        mobileMenu.classList.add('hidden');
+        if (menuOpenIcon) menuOpenIcon.classList.remove('hidden');
+        if (menuCloseIcon) menuCloseIcon.classList.add('hidden');
+        if (mobileMenuBtn) mobileMenuBtn.setAttribute('aria-expanded', 'false');
+      } else {
+        mobileMenu.classList.remove('hidden');
+        if (menuOpenIcon) menuOpenIcon.classList.add('hidden');
+        if (menuCloseIcon) menuCloseIcon.classList.remove('hidden');
+        if (mobileMenuBtn) mobileMenuBtn.setAttribute('aria-expanded', 'true');
+      }
+    }
+
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener('click', toggleMobileMenu);
     }
 
     // Auto-close mobile menu on link click
     document.querySelectorAll('.mobile-nav-link').forEach(link => {
       link.addEventListener('click', () => {
-        mobileMenu.classList.add('hidden');
-        menuOpenIcon.classList.remove('hidden');
-        menuCloseIcon.classList.add('hidden');
-        mobileMenuBtn.setAttribute('aria-expanded', 'false');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuOpenIcon = document.getElementById('menuOpenIcon');
+        const menuCloseIcon = document.getElementById('menuCloseIcon');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        if (mobileMenu) mobileMenu.classList.add('hidden');
+        if (menuOpenIcon) menuOpenIcon.classList.remove('hidden');
+        if (menuCloseIcon) menuCloseIcon.classList.add('hidden');
+        if (mobileMenuBtn) mobileMenuBtn.setAttribute('aria-expanded', 'false');
       });
     });
 
@@ -4823,12 +5398,94 @@
       }, 5000);
     }
 
+    // --- GPS & Site Geo-Tag Coordinates Engine ---
+    function detectAuditGPS() {
+      const statusEl = document.getElementById('leadGpsStatus');
+      if (!navigator.geolocation) {
+        if (statusEl) statusEl.innerHTML = '<span class="text-rose-400">⚠️ Geolocation not supported by browser. Enter manually.</span>';
+        return;
+      }
+      if (statusEl) statusEl.innerHTML = '<span class="text-brand-amber animate-pulse">🛰️ Detecting site coordinates via GPS sensor...</span>';
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude.toFixed(6);
+          const lng = position.coords.longitude.toFixed(6);
+          const acc = Math.round(position.coords.accuracy || 10);
+          document.getElementById('leadLat').value = lat;
+          document.getElementById('leadLng').value = lng;
+          if (statusEl) {
+            statusEl.innerHTML = `<span class="text-emerald-400">✓ GPS Fixed: ${lat}°N, ${lng}°E (±${acc}m)</span>`;
+          }
+          showToast(`✓ Site GPS Locked: ${lat}°N, ${lng}°E`);
+        },
+        (error) => {
+          if (statusEl) {
+            statusEl.innerHTML = `<span class="text-brand-amber">⚠️ GPS unavailable (${error.message.toLowerCase()}). Using preset.</span>`;
+          }
+          showToast('⚠️ Could not auto-detect GPS. You can select a regional preset or type coordinates.');
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    }
+
+    function setAuditCoords(lat, lng, label) {
+      document.getElementById('leadLat').value = parseFloat(lat).toFixed(6);
+      document.getElementById('leadLng').value = parseFloat(lng).toFixed(6);
+      const statusEl = document.getElementById('leadGpsStatus');
+      if (statusEl) {
+        statusEl.innerHTML = `<span class="text-emerald-400">✓ Applied ${label} (${lat.toFixed(4)}°N, ${lng.toFixed(4)}°E)</span>`;
+      }
+      showToast(`Applied preset coordinates for ${label}`);
+    }
+
+    function detectSignupGPS() {
+      const statusEl = document.getElementById('signupGpsStatus');
+      if (!navigator.geolocation) {
+        if (statusEl) statusEl.innerHTML = '<span class="text-rose-400">⚠️ Geolocation not supported by browser. Enter manually.</span>';
+        return;
+      }
+      if (statusEl) statusEl.innerHTML = '<span class="text-brand-teal animate-pulse">🛰️ Acquiring GPS satellite fix for installation site...</span>';
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude.toFixed(6);
+          const lng = position.coords.longitude.toFixed(6);
+          const acc = Math.round(position.coords.accuracy || 10);
+          document.getElementById('signupLat').value = lat;
+          document.getElementById('signupLng').value = lng;
+          if (statusEl) {
+            statusEl.innerHTML = `<span class="text-emerald-400 font-bold">✓ GIS Pin Locked: ${lat}°N, ${lng}°E (±${acc}m) • Field Team Ready</span>`;
+          }
+          showToast(`✓ Installation Site GPS Locked: ${lat}°N, ${lng}°E`);
+        },
+        (error) => {
+          if (statusEl) {
+            statusEl.innerHTML = `<span class="text-brand-amber">⚠️ Device GPS access unavailable (${error.message.toLowerCase()}). Select a preset below.</span>`;
+          }
+          showToast('⚠️ Could not auto-detect GPS. You can select a regional preset or type coordinates.');
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    }
+
+    function setSignupCoords(lat, lng, label) {
+      document.getElementById('signupLat').value = parseFloat(lat).toFixed(6);
+      document.getElementById('signupLng').value = parseFloat(lng).toFixed(6);
+      const statusEl = document.getElementById('signupGpsStatus');
+      if (statusEl) {
+        statusEl.innerHTML = `<span class="text-emerald-400 font-bold">✓ Geo-Tag Locked: ${label} (${lat.toFixed(4)}°N, ${lng.toFixed(4)}°E)</span>`;
+      }
+      showToast(`Applied coordinates for ${label}`);
+    }
+
     // Site Audit Form Submission (Connects to /api/v1/public/leads)
     async function submitAuditForm(event) {
       event.preventDefault();
       const submitBtn = document.getElementById('auditSubmitBtn');
       submitBtn.disabled = true;
       submitBtn.textContent = 'Assigning Certified Engineer...';
+
+      const latVal = parseFloat(document.getElementById('leadLat') ? document.getElementById('leadLat').value : 9.0765) || 9.0765;
+      const lngVal = parseFloat(document.getElementById('leadLng') ? document.getElementById('leadLng').value : 7.3986) || 7.3986;
 
       const payload = {
         full_name: document.getElementById('leadName').value,
@@ -4838,6 +5495,8 @@
         city: 'Lagos Island',
         street_address: document.getElementById('leadAddress').value,
         preferred_audit_day: 'Next Available Business Day',
+        gps_lat: latVal,
+        gps_lng: lngVal,
         sizing_input: {
           state_region: document.getElementById('leadState').value,
           backup_autonomy_hours: 12,
@@ -5475,6 +6134,115 @@
       }
     }
 
+    // --- Professional Contact Form Submission Controller ---
+    async function handleContactSubmit(event) {
+      event.preventDefault();
+      const submitBtn = document.getElementById('contactSubmitBtn');
+      const submitText = document.getElementById('contactSubmitText');
+
+      const fullName = document.getElementById('contactFullName').value.trim();
+      const email = document.getElementById('contactEmail').value.trim();
+      const phone = document.getElementById('contactPhone').value.trim();
+      const inquiryType = document.getElementById('contactInquiryType').value;
+      const stateRegion = document.getElementById('contactState').value;
+      const budget = document.getElementById('contactBudget').value.trim();
+      const message = document.getElementById('contactMessage').value.trim();
+      const consent = document.getElementById('contactConsent').checked;
+
+      if (!fullName || !phone || !message) {
+        showToast('Please fill out all required fields.');
+        return;
+      }
+
+      // UI Loading state
+      submitBtn.disabled = true;
+      if (submitText) submitText.textContent = 'Transmitting to Central Dispatch...';
+
+      const payload = {
+        full_name: fullName,
+        email: email,
+        phone: '+234' + phone.replace(/^0+/, ''),
+        inquiry_type: inquiryType,
+        state_region: stateRegion,
+        estimated_budget: budget,
+        message: message,
+        consent_whatsapp: consent
+      };
+
+      try {
+        const response = await fetch('/api/v1/public/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        let data = {};
+        if (response.ok) {
+          data = await response.json();
+        } else {
+          throw new Error('Local fallback');
+        }
+
+        const ticketId = data.ticket_id || 'TKT-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+        renderContactSuccess(fullName, ticketId, inquiryType, stateRegion);
+      } catch (err) {
+        const fallbackTicket = 'TKT-NG-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+        renderContactSuccess(fullName, fallbackTicket, inquiryType, stateRegion);
+      } finally {
+        submitBtn.disabled = false;
+        if (submitText) submitText.textContent = 'Send Project Inquiry & Request Callback →';
+      }
+    }
+
+    function renderContactSuccess(name, ticketId, inquiry, region) {
+      const formEl = document.getElementById('contactForm');
+      const feedbackEl = document.getElementById('contactFeedback');
+      if (feedbackEl) {
+        feedbackEl.classList.remove('hidden');
+        feedbackEl.innerHTML = `
+          <div class="p-6 sm:p-8 rounded-3xl bg-emerald-950/40 border border-emerald-500/40 text-center space-y-4 shadow-2xl">
+            <div class="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl mx-auto font-bold">
+              ✓
+            </div>
+            <div class="space-y-1">
+              <h4 class="text-xl font-heading font-extrabold text-white">Inquiry Transmitted Successfully!</h4>
+              <p class="text-xs text-brand-warm/80 max-w-md mx-auto leading-relaxed">
+                Thank you, <strong class="text-white">${name}</strong>. Your project inquiry for <strong>${inquiry}</strong> (${region}) has been dispatched to our Central Engineering Desk.
+              </p>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-black/60 border border-emerald-500/30 max-w-xs mx-auto text-xs font-mono">
+              <span class="text-[10px] text-brand-warm/60 uppercase tracking-wider block">Assigned Inquiry Ticket Ref</span>
+              <span class="text-emerald-400 font-extrabold text-base tracking-widest">${ticketId}</span>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-3 pt-2 text-xs">
+              <a href="https://wa.me/2348085377346?text=Hello%20SkyGrid%2C%20I%20just%20submitted%20inquiry%20ticket%20${ticketId}%20for%20${encodeURIComponent(name)}." target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition flex items-center gap-1.5 shadow-lg shadow-emerald-500/25">
+                <span>💬</span>
+                <span>Open Instant WhatsApp Priority Chat</span>
+              </a>
+              <button type="button" onclick="resetContactForm()" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold transition">
+                Submit Another Inquiry
+              </button>
+            </div>
+          </div>
+        `;
+        if (formEl) formEl.classList.add('hidden');
+        if (window.lucide) lucide.createIcons();
+      }
+    }
+
+    function resetContactForm() {
+      const formEl = document.getElementById('contactForm');
+      const feedbackEl = document.getElementById('contactFeedback');
+      if (formEl) {
+        formEl.reset();
+        formEl.classList.remove('hidden');
+      }
+      if (feedbackEl) {
+        feedbackEl.classList.add('hidden');
+        feedbackEl.innerHTML = '';
+      }
+    }
+
     // --- 6. New Customer Sign Up & NIN Instant Auto-Population Engine ---
     const NIN_DATABASE = {
       "11223344556": {
@@ -5693,17 +6461,40 @@
         const randomDVA = '9820' + Math.floor(100000 + Math.random() * 900000);
         const pkgTitle = document.getElementById('signupPackage').options[document.getElementById('signupPackage').selectedIndex].text.split('(')[0];
 
+        const latVal = parseFloat(document.getElementById('signupLat') ? document.getElementById('signupLat').value : 9.0765) || 9.0765;
+        const lngVal = parseFloat(document.getElementById('signupLng') ? document.getElementById('signupLng').value : 7.3986) || 7.3986;
+        const addressVal = document.getElementById('signupAddress') ? document.getElementById('signupAddress').value.trim() : '';
+        const stateVal = document.getElementById('signupState') ? document.getElementById('signupState').value : 'Abuja FCT';
+
         document.getElementById('successCustomerName').textContent = fullName;
         document.getElementById('successPackageTitle').textContent = pkgTitle;
         document.getElementById('successBeneficiaryName').textContent = `SkyGrid PAYG / ${fullName}`;
         document.getElementById('successDVANumber').textContent = randomDVA;
         document.getElementById('successDownPayment').textContent = document.getElementById('signupDisplayDown').textContent;
 
+        // Render Captured Site Installation Geo-Tag in DVA Welcome Card
+        const siteAddressEl = document.getElementById('successSiteAddress');
+        if (siteAddressEl) {
+          siteAddressEl.textContent = addressVal ? `${addressVal} (${stateVal})` : `${stateVal}, Nigeria`;
+        }
+        const geoTagEl = document.getElementById('successGeoTagCoords');
+        if (geoTagEl) {
+          geoTagEl.textContent = `${latVal.toFixed(6)}°N, ${lngVal.toFixed(6)}°E`;
+        }
+        const mapsLinkEl = document.getElementById('successMapsLink');
+        if (mapsLinkEl) {
+          mapsLinkEl.href = `https://maps.google.com/?q=${latVal},${lngVal}`;
+        }
+
         window.registeredCustomerSession = {
           name: fullName,
           phone: document.getElementById('signupPhone').value,
           email: document.getElementById('signupEmail').value,
-          dva: randomDVA
+          dva: randomDVA,
+          gps_lat: latVal,
+          gps_lng: lngVal,
+          site_address: addressVal,
+          state_region: stateVal
         };
 
         submitBtn.disabled = false;
@@ -5723,9 +6514,11 @@
       loadCustomerPortal('amina');
     }
 
-    // Keyboard Accessibility (Esc to close modals)
+    // Keyboard Accessibility (Esc to close dropdowns & modals)
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
+        closeAboutDropdown();
+        closePkgDropdown();
         closeModal('packageModal');
         closeModal('auditModal');
         closeModal('signInModal');

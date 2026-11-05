@@ -151,3 +151,16 @@ type LeadCaptureRequest struct {
 	PreferredAuditDay string                   `json:"preferred_audit_day"`
 	SizingInput       SizingCalculationRequest `json:"sizing_input"`
 }
+
+// ContactInquiryRequest captures an enterprise or residential customer contact inquiry,
+// field engineering consultation, or partnership request.
+type ContactInquiryRequest struct {
+	FullName        string `json:"full_name"`
+	Email           string `json:"email"`
+	Phone           string `json:"phone"`
+	InquiryType     string `json:"inquiry_type"`
+	StateRegion     string `json:"state_region"`
+	EstimatedBudget string `json:"estimated_budget"`
+	Message         string `json:"message"`
+	ConsentWhatsApp bool   `json:"consent_whatsapp"`
+}
