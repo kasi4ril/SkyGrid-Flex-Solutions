@@ -355,13 +355,13 @@ export function EnergyAnalyticsSuite({
     });
   }, [segment, activeData]);
 
-  // SVG Chart Geometry for Section 4
-  const chartW = 740;
-  const chartH = 240;
+  // SVG Chart Geometry for Section 4 (Upgraded to Proportional Height & Crisp Geometry)
+  const chartW = 760;
+  const chartH = 320;
   const padL = 60;
-  const padR = 20;
+  const padR = 25;
   const padT = 30;
-  const padB = 40;
+  const padB = 45;
   const plotW = chartW - padL - padR;
   const plotH = chartH - padT - padB;
 
@@ -943,337 +943,517 @@ export function EnergyAnalyticsSuite({
       </section>
 
       {/* =====================================================================
-          SECTION 4: Historical Time-Variance Line Graph (1D | 1W | 1M | 1Y)
+          SECTION 4 & 6: Historical Generation vs Facility Load Demand (Left)
+                         & Triple-Source Cost & Reliability Tracker (Right)
          ===================================================================== */}
-      <section className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-sm dark:shadow-2xl space-y-6 transition-colors duration-200">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#64748B]/30 pb-4">
-          <div>
-            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
-              <span>📈</span> Historical Energy Generation vs. Facility Load Demand
-            </h2>
-            <p className="text-xs text-[#64748B] font-mono">
-              Continuous integral telemetry logged via atomic Growatt Modbus VFS store.
-            </p>
-          </div>
+      <section className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          
+          {/* LEFT COLUMN (lg:col-span-8): Historical Time-Variance Line Graph */}
+          <div className="lg:col-span-8 p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-sm dark:shadow-2xl flex flex-col justify-between space-y-5 transition-colors duration-200">
+            {/* Header + Timeframe Tabs */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#64748B]/30 pb-4">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                  <span>📈</span> Historical Energy Generation vs. Facility Load Demand
+                </h2>
+                <p className="text-xs text-[#64748B] font-mono">
+                  Continuous integral telemetry logged via atomic Growatt Modbus VFS store.
+                </p>
+              </div>
 
-          {/* Timeframe Selector Tabs */}
-          <div className="inline-flex rounded-xl p-1 bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 text-xs font-semibold">
-            {(['1D', '1W', '1M', '1Y'] as TimeframePeriod[]).map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => setTimeframe(t)}
-                className={`px-3 py-1.5 rounded-lg transition ${
-                  timeframe === t
-                    ? 'bg-[#FFBF00] text-[#0B0F19] font-bold shadow'
-                    : 'text-[#64748B] hover:text-white'
-                }`}
-              >
-                {t === '1D' ? '1 Day' : t === '1W' ? '1 Week' : t === '1M' ? '1 Month' : '1 Year'}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Period Integral KPI Cards */}
-        <div className="grid grid-cols-3 gap-3 font-mono">
-          <div className="p-3.5 rounded-2xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-1">
-            <span className="text-[11px] text-[#FFBF00] font-bold uppercase tracking-wider block">
-              Total Solar Generated
-            </span>
-            <div className="text-lg sm:text-2xl font-black text-[#FFBF00]">
-              {formatSI(activeData.periodTotals[timeframe].solarWh, 'ENERGY').full}
-            </div>
-            <span className="text-[10px] text-[#64748B] block">Clean MPPT Harvest</span>
-          </div>
-
-          <div className="p-3.5 rounded-2xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-1">
-            <span className="text-[11px] text-slate-300 font-bold uppercase tracking-wider block">
-              Facility Load Consumed
-            </span>
-            <div className="text-lg sm:text-2xl font-black text-slate-200">
-              {formatSI(activeData.periodTotals[timeframe].loadWh, 'ENERGY').full}
-            </div>
-            <span className="text-[10px] text-[#64748B] block">Total Active Appliance Use</span>
-          </div>
-
-          <div className="p-3.5 rounded-2xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-1">
-            <span className="text-[11px] text-[#10B981] font-bold uppercase tracking-wider block">
-              Solar Self-Sufficiency
-            </span>
-            <div className="text-lg sm:text-2xl font-black text-[#10B981]">
-              {Math.min(
-                100,
-                Math.round(
-                  (activeData.periodTotals[timeframe].solarWh /
-                    activeData.periodTotals[timeframe].loadWh) *
-                    100
-                )
-              )}%
-            </div>
-            <span className="text-[10px] text-[#10B981]/80 block">Zero Grid Import Needed</span>
-          </div>
-        </div>
-
-        {/* Autonomy Crossover Banner */}
-        <div className="p-3 rounded-xl bg-[#FFBF00]/10 border border-[#FFBF00]/30 flex items-center justify-between text-xs font-mono">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#FFBF00] animate-ping" />
-            <span className="font-bold text-white">◈ Solar Autonomy Transition Point:</span>
-            <span className="text-[#FFBF00] font-bold">08:30 AM Daily</span>
-          </div>
-          <span className="text-slate-300 hidden sm:inline text-[11px]">
-            Array output surpasses facility baseload; 100% autonomous battery charging begins
-          </span>
-        </div>
-
-        {/* Dual-Axis SVG Line & Area Chart */}
-        <div className="w-full overflow-x-auto relative">
-          <svg
-            viewBox={`0 0 ${chartW} ${chartH}`}
-            className="w-full h-auto select-none"
-            onMouseLeave={() => setActiveTooltip(null)}
-          >
-            <defs>
-              <linearGradient id={solarGradId} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#FFBF00" stopOpacity="0.45" />
-                <stop offset="100%" stopColor="#FFBF00" stopOpacity="0.0" />
-              </linearGradient>
-            </defs>
-
-            {/* Background Horizontal Grid Lines & Y-Axis Reference Values */}
-            {[0, 0.25, 0.5, 0.75, 1].map((pct, idx) => {
-              const y = padT + plotH * pct;
-              const val = Math.round(maxPowerW * (1 - pct));
-              return (
-                <g key={idx}>
-                  <line
-                    x1={padL}
-                    y1={y}
-                    x2={padL + plotW}
-                    y2={y}
-                    stroke="currentColor"
-                    className="text-slate-200 dark:text-slate-800/80"
-                    strokeDasharray="3 3"
-                    strokeWidth="1"
-                  />
-                  {/* Left Y-Axis Values */}
-                  <text
-                    x={padL - 10}
-                    y={y + 3}
-                    fill="currentColor"
-                    className="text-slate-600 dark:text-slate-400 font-mono"
-                    fontSize="9.5"
-                    fontFamily="monospace"
-                    textAnchor="end"
+              {/* Timeframe Selector Tabs */}
+              <div className="inline-flex rounded-xl p-1 bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 text-xs font-semibold">
+                {(['1D', '1W', '1M', '1Y'] as TimeframePeriod[]).map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setTimeframe(t)}
+                    className={`px-3 py-1.5 rounded-lg transition ${
+                      timeframe === t
+                        ? 'bg-[#FFBF00] text-[#0B0F19] font-bold shadow'
+                        : 'text-[#64748B] hover:text-white'
+                    }`}
                   >
-                    {formatSI(val, 'POWER').full}
-                  </text>
-                  {/* Y-Axis Tick on Vertical Line */}
-                  <line
-                    x1={padL - 5}
-                    y1={y}
-                    x2={padL}
-                    y2={y}
-                    stroke="currentColor"
-                    className="text-slate-400 dark:text-slate-600"
-                    strokeWidth="1.5"
-                  />
-                </g>
-              );
-            })}
+                    {t === '1D' ? '1 Day' : t === '1W' ? '1 Week' : t === '1M' ? '1 Month' : '1 Year'}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-            {/* Vertical Y-Axis (Left Hand - Generated Energy & Facility Load) */}
-            <line
-              x1={padL}
-              y1={padT - 12}
-              x2={padL}
-              y2={padT + plotH}
-              stroke="currentColor"
-              className="text-slate-400 dark:text-slate-600"
-              strokeWidth="2"
-            />
-            {/* Y-Axis Arrow Pointer (Top) */}
-            <polygon
-              points={`${padL - 3.5},${padT - 8} ${padL + 3.5},${padT - 8} ${padL},${padT - 16}`}
-              fill="#FFBF00"
-            />
-            {/* Y-Axis Label Header */}
-            <text
-              x={padL - 8}
-              y={padT - 14}
-              fill="#FFBF00"
-              fontSize="9"
-              fontFamily="monospace"
-              fontWeight="bold"
-              textAnchor="end"
-            >
-              ▲ Power (W / kW)
-            </text>
+            {/* Period Integral KPI Cards */}
+            <div className="grid grid-cols-3 gap-3 font-mono">
+              <div className="p-3.5 rounded-2xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-1">
+                <span className="text-[11px] text-[#FFBF00] font-bold uppercase tracking-wider block">
+                  Total Solar Generated
+                </span>
+                <div className="text-lg sm:text-2xl font-black text-[#FFBF00]">
+                  {formatSI(activeData.periodTotals[timeframe].solarWh, 'ENERGY').full}
+                </div>
+                <span className="text-[10px] text-[#64748B] block">Clean MPPT Harvest</span>
+              </div>
 
-            {/* Horizontal X-Axis (Bottom Axis - Time Horizon) */}
-            <line
-              x1={padL}
-              y1={padT + plotH}
-              x2={padL + plotW + 16}
-              y2={padT + plotH}
-              stroke="currentColor"
-              className="text-slate-400 dark:text-slate-600"
-              strokeWidth="2"
-            />
-            {/* X-Axis Arrow Pointer (Right) */}
-            <polygon
-              points={`${padL + plotW + 12},${padT + plotH - 3.5} ${padL + plotW + 12},${padT + plotH + 3.5} ${padL + plotW + 20},${padT + plotH}`}
-              fill="#64748B"
-            />
-            {/* X-Axis Label Header */}
-            <text
-              x={padL + plotW}
-              y={chartH - 2}
-              fill="currentColor"
-              className="text-slate-600 dark:text-slate-400 font-mono"
-              fontSize="8.5"
-              fontFamily="monospace"
-              fontWeight="bold"
-              textAnchor="end"
-            >
-              Time of Day (24-Hour Horizon) ▶
-            </text>
+              <div className="p-3.5 rounded-2xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-1">
+                <span className="text-[11px] text-slate-300 font-bold uppercase tracking-wider block">
+                  Facility Load Consumed
+                </span>
+                <div className="text-lg sm:text-2xl font-black text-slate-200">
+                  {formatSI(activeData.periodTotals[timeframe].loadWh, 'ENERGY').full}
+                </div>
+                <span className="text-[10px] text-[#64748B] block">Total Active Appliance Use</span>
+              </div>
 
-            {/* Origin Point (0,0) Intersection Indicator */}
-            <circle cx={padL} cy={padT + plotH} r="2.5" fill="#64748B" />
+              <div className="p-3.5 rounded-2xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-1">
+                <span className="text-[11px] text-[#10B981] font-bold uppercase tracking-wider block">
+                  Solar Self-Sufficiency
+                </span>
+                <div className="text-lg sm:text-2xl font-black text-[#10B981]">
+                  {Math.min(
+                    100,
+                    Math.round(
+                      (activeData.periodTotals[timeframe].solarWh /
+                        activeData.periodTotals[timeframe].loadWh) *
+                        100
+                    )
+                  )}%
+                </div>
+                <span className="text-[10px] text-[#10B981]/80 block">Zero Grid Import Needed</span>
+              </div>
+            </div>
 
-            {/* Solar Harvest Area & Line (Amber) */}
-            <polygon points={solarPolyPoints} fill={`url(#${solarGradId})`} />
-            <path d={solarLinePath} fill="none" stroke="#FFBF00" strokeWidth="2.5" />
+            {/* Autonomy Crossover Banner */}
+            <div className="p-3 rounded-xl bg-[#FFBF00]/10 border border-[#FFBF00]/30 flex items-center justify-between text-xs font-mono">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#FFBF00] animate-ping" />
+                <span className="font-bold text-white">◈ Solar Autonomy Transition Point:</span>
+                <span className="text-[#FFBF00] font-bold">08:30 AM Daily</span>
+              </div>
+              <span className="text-slate-300 hidden sm:inline text-[11px]">
+                Array output surpasses facility baseload; 100% autonomous battery charging begins
+              </span>
+            </div>
 
-            {/* Facility Load Line (Slate dashed) */}
-            <path
-              d={loadLinePath}
-              fill="none"
-              stroke="#94A3B8"
-              strokeWidth="2"
-              strokeDasharray="4 4"
-            />
+            {/* Dual-Axis SVG Line & Area Chart */}
+            <div className="w-full overflow-x-auto relative flex-1 min-h-[300px]">
+              <svg
+                viewBox={`0 0 ${chartW} ${chartH}`}
+                className="w-full h-auto select-none"
+                onMouseLeave={() => setActiveTooltip(null)}
+              >
+                <defs>
+                  <linearGradient id={solarGradId} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#FFBF00" stopOpacity="0.45" />
+                    <stop offset="100%" stopColor="#FFBF00" stopOpacity="0.0" />
+                  </linearGradient>
+                </defs>
 
-            {/* Solar Autonomy Transition Point Pin Anchor (08:30 AM) */}
-            <g transform={`translate(${crossoverX.toFixed(1)}, ${crossoverY.toFixed(1)})`}>
-              <circle r="6" fill="#FFBF00" fillOpacity="0.3" className="animate-ping" />
-              <circle r="4" fill="#FFBF00" stroke="#0F172A" strokeWidth="2" />
-              <line x1="0" y1="-5" x2="0" y2="-25" stroke="#FFBF00" strokeWidth="1.5" strokeDasharray="2 2" />
-              <rect x="-60" y="-45" width="120" height="20" rx="6" fill="#0F172A" stroke="#FFBF00" strokeWidth="1" />
-              <text x="0" y="-32" fill="#FFBF00" fontSize="9" fontFamily="monospace" fontWeight="bold" textAnchor="middle">
-                ◈ AUTONOMY: 08:30 AM
-              </text>
-            </g>
+                {/* Background Horizontal Grid Lines & Y-Axis Reference Values */}
+                {[0, 0.25, 0.5, 0.75, 1].map((pct, idx) => {
+                  const y = padT + plotH * pct;
+                  const val = Math.round(maxPowerW * (1 - pct));
+                  return (
+                    <g key={idx}>
+                      <line
+                        x1={padL}
+                        y1={y}
+                        x2={padL + plotW}
+                        y2={y}
+                        stroke="currentColor"
+                        className="text-slate-200 dark:text-slate-800/80"
+                        strokeDasharray="3 3"
+                        strokeWidth="1"
+                      />
+                      {/* Left Y-Axis Values */}
+                      <text
+                        x={padL - 10}
+                        y={y + 3}
+                        fill="currentColor"
+                        className="text-slate-600 dark:text-slate-400 font-mono"
+                        fontSize="9.5"
+                        fontFamily="monospace"
+                        textAnchor="end"
+                      >
+                        {formatSI(val, 'POWER').full}
+                      </text>
+                      {/* Y-Axis Tick on Vertical Line */}
+                      <line
+                        x1={padL - 5}
+                        y1={y}
+                        x2={padL}
+                        y2={y}
+                        stroke="currentColor"
+                        className="text-slate-400 dark:text-slate-600"
+                        strokeWidth="1.5"
+                      />
+                    </g>
+                  );
+                })}
 
-            {/* Interactive Vertical Guide Line (Tracking Generated Energy Across Hours) */}
-            {activeTooltip && (
-              <g>
+                {/* Vertical Y-Axis (Left Hand - Generated Energy & Facility Load) */}
                 <line
-                  x1={activeTooltip.x}
-                  y1={padT}
-                  x2={activeTooltip.x}
+                  x1={padL}
+                  y1={padT - 12}
+                  x2={padL}
                   y2={padT + plotH}
-                  stroke="#FFBF00"
-                  strokeWidth="1.5"
-                  strokeDasharray="2 2"
+                  stroke="currentColor"
+                  className="text-slate-400 dark:text-slate-600"
+                  strokeWidth="2"
                 />
-                <circle cx={activeTooltip.x} cy={activeTooltip.y} r="4" fill="#FFBF00" stroke="#0B0F19" strokeWidth="1.5" />
-                <rect
-                  x={Math.min(activeTooltip.x - 70, padL + plotW - 145)}
-                  y={Math.max(activeTooltip.y - 36, padT + 4)}
-                  width="145"
-                  height="26"
-                  rx="6"
-                  fill="#0B0F19"
-                  stroke="#FFBF00"
-                  strokeWidth="1"
-                />
-                <text
-                  x={Math.min(activeTooltip.x, padL + plotW - 72)}
-                  y={Math.max(activeTooltip.y - 20, padT + 20)}
+                {/* Y-Axis Arrow Pointer (Top) */}
+                <polygon
+                  points={`${padL - 3.5},${padT - 8} ${padL + 3.5},${padT - 8} ${padL},${padT - 16}`}
                   fill="#FFBF00"
+                />
+                {/* Y-Axis Label Header */}
+                <text
+                  x={padL - 8}
+                  y={padT - 14}
+                  fill="#FFBF00"
+                  fontSize="9"
+                  fontFamily="monospace"
+                  fontWeight="bold"
+                  textAnchor="end"
+                >
+                  ▲ Power (W / kW)
+                </text>
+
+                {/* Horizontal X-Axis (Bottom Axis - Time Horizon) */}
+                <line
+                  x1={padL}
+                  y1={padT + plotH}
+                  x2={padL + plotW + 16}
+                  y2={padT + plotH}
+                  stroke="currentColor"
+                  className="text-slate-400 dark:text-slate-600"
+                  strokeWidth="2"
+                />
+                {/* X-Axis Arrow Pointer (Right) */}
+                <polygon
+                  points={`${padL + plotW + 12},${padT + plotH - 3.5} ${padL + plotW + 12},${padT + plotH + 3.5} ${padL + plotW + 20},${padT + plotH}`}
+                  fill="#64748B"
+                />
+                {/* X-Axis Label Header */}
+                <text
+                  x={padL + plotW}
+                  y={chartH - 4}
+                  fill="currentColor"
+                  className="text-slate-600 dark:text-slate-400 font-mono"
                   fontSize="8.5"
                   fontFamily="monospace"
                   fontWeight="bold"
-                  textAnchor="middle"
+                  textAnchor="end"
                 >
-                  {activeTooltip.text}
+                  Time of Day (24-Hour Horizon) ▶
                 </text>
-              </g>
-            )}
 
-            {/* X-Axis Hour Labels & Ticks + Interactive Hover Hitboxes */}
-            {historySeries.map((d, i) => {
-              const x = padL + (i / (historySeries.length - 1)) * plotW;
-              const ySolar = padT + plotH - (d.solarW / maxPowerW) * plotH;
-              const isMajor = i % 3 === 0 || i === 23;
-              return (
-                <g key={i}>
-                  {isMajor && (
-                    <>
-                      <line
-                        x1={x}
-                        y1={padT + plotH}
-                        x2={x}
-                        y2={padT + plotH + 5}
-                        stroke="#64748B"
-                        strokeWidth="1.5"
-                      />
-                      <text
-                        x={x}
-                        y={chartH - 12}
-                        fill="currentColor"
-                        className="text-slate-600 dark:text-slate-400 font-mono"
-                        fontSize="9"
-                        fontFamily="monospace"
-                        textAnchor="middle"
-                      >
-                        {d.hour}
-                      </text>
-                    </>
-                  )}
-                  {/* Invisible Hitbox for Interactive Inspection */}
-                  <rect
-                    x={x - (plotW / 23) / 2}
-                    y={padT}
-                    width={plotW / 23}
-                    height={plotH}
-                    fill="transparent"
-                    className="cursor-pointer"
-                    onMouseEnter={() =>
-                      setActiveTooltip({
-                        x,
-                        y: ySolar,
-                        text: `${d.hour}: ${d.solarW}W Solar | ${d.loadW}W Load`,
-                      })
-                    }
-                  />
+                {/* Origin Point (0,0) Intersection Indicator */}
+                <circle cx={padL} cy={padT + plotH} r="2.5" fill="#64748B" />
+
+                {/* Solar Harvest Area & Line (Amber) */}
+                <polygon points={solarPolyPoints} fill={`url(#${solarGradId})`} />
+                <path d={solarLinePath} fill="none" stroke="#FFBF00" strokeWidth="2.5" />
+
+                {/* Facility Load Line (Slate dashed) */}
+                <path
+                  d={loadLinePath}
+                  fill="none"
+                  stroke="#94A3B8"
+                  strokeWidth="2"
+                  strokeDasharray="4 4"
+                />
+
+                {/* Solar Autonomy Transition Point Pin Anchor (08:30 AM) */}
+                <g transform={`translate(${crossoverX.toFixed(1)}, ${crossoverY.toFixed(1)})`}>
+                  <circle r="6" fill="#FFBF00" fillOpacity="0.3" className="animate-ping" />
+                  <circle r="4" fill="#FFBF00" stroke="#0F172A" strokeWidth="2" />
+                  <line x1="0" y1="-5" x2="0" y2="-25" stroke="#FFBF00" strokeWidth="1.5" strokeDasharray="2 2" />
+                  <rect x="-60" y="-45" width="120" height="20" rx="6" fill="#0F172A" stroke="#FFBF00" strokeWidth="1" />
+                  <text x="0" y="-32" fill="#FFBF00" fontSize="9" fontFamily="monospace" fontWeight="bold" textAnchor="middle">
+                    ◈ AUTONOMY: 08:30 AM
+                  </text>
                 </g>
-              );
-            })}
-          </svg>
-        </div>
 
-        {/* Legend & Axes Indicator */}
-        <div className="flex flex-wrap items-center justify-between gap-4 text-xs font-mono pt-3 border-t border-[#64748B]/30">
-          <div className="flex flex-wrap items-center gap-6">
-            <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-[#FFBF00]" />
-              <span className="text-slate-300">☀️ Solar Array Output (Y-Axis)</span>
+                {/* Interactive Vertical Guide Line (Tracking Generated Energy Across Hours) */}
+                {activeTooltip && (
+                  <g>
+                    <line
+                      x1={activeTooltip.x}
+                      y1={padT}
+                      x2={activeTooltip.x}
+                      y2={padT + plotH}
+                      stroke="#FFBF00"
+                      strokeWidth="1.5"
+                      strokeDasharray="2 2"
+                    />
+                    <circle cx={activeTooltip.x} cy={activeTooltip.y} r="4" fill="#FFBF00" stroke="#0B0F19" strokeWidth="1.5" />
+                    <rect
+                      x={Math.min(activeTooltip.x - 70, padL + plotW - 145)}
+                      y={Math.max(activeTooltip.y - 36, padT + 4)}
+                      width="145"
+                      height="26"
+                      rx="6"
+                      fill="#0B0F19"
+                      stroke="#FFBF00"
+                      strokeWidth="1"
+                    />
+                    <text
+                      x={Math.min(activeTooltip.x, padL + plotW - 72)}
+                      y={Math.max(activeTooltip.y - 20, padT + 20)}
+                      fill="#FFBF00"
+                      fontSize="8.5"
+                      fontFamily="monospace"
+                      fontWeight="bold"
+                      textAnchor="middle"
+                    >
+                      {activeTooltip.text}
+                    </text>
+                  </g>
+                )}
+
+                {/* X-Axis Hour Labels & Ticks + Interactive Hover Hitboxes */}
+                {historySeries.map((d, i) => {
+                  const x = padL + (i / (historySeries.length - 1)) * plotW;
+                  const ySolar = padT + plotH - (d.solarW / maxPowerW) * plotH;
+                  const isMajor = i % 3 === 0 || i === 23;
+                  return (
+                    <g key={i}>
+                      {isMajor && (
+                        <>
+                          <line
+                            x1={x}
+                            y1={padT + plotH}
+                            x2={x}
+                            y2={padT + plotH + 5}
+                            stroke="#64748B"
+                            strokeWidth="1.5"
+                          />
+                          <text
+                            x={x}
+                            y={chartH - 14}
+                            fill="currentColor"
+                            className="text-slate-600 dark:text-slate-400 font-mono"
+                            fontSize="9"
+                            fontFamily="monospace"
+                            textAnchor="middle"
+                          >
+                            {d.hour}
+                          </text>
+                        </>
+                      )}
+                      {/* Invisible Hitbox for Interactive Inspection */}
+                      <rect
+                        x={x - (plotW / 23) / 2}
+                        y={padT}
+                        width={plotW / 23}
+                        height={plotH}
+                        fill="transparent"
+                        className="cursor-pointer"
+                        onMouseEnter={() =>
+                          setActiveTooltip({
+                            x,
+                            y: ySolar,
+                            text: `${d.hour}: ${d.solarW}W Solar | ${d.loadW}W Load`,
+                          })
+                        }
+                      />
+                    </g>
+                  );
+                })}
+              </svg>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="w-4 h-0.5 border-t-2 border-dashed border-[#94A3B8]" />
-              <span className="text-slate-300">🏢 Connected Facility Load (Y-Axis)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#FFBF00] animate-ping" />
-              <span className="text-[#FFBF00]">◈ Solar Autonomy Crossover (08:30 AM)</span>
+
+            {/* Legend & Axes Indicator */}
+            <div className="flex flex-wrap items-center justify-between gap-4 text-xs font-mono pt-3 border-t border-[#64748B]/30">
+              <div className="flex flex-wrap items-center gap-6">
+                <div className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-[#FFBF00]" />
+                  <span className="text-slate-300">☀️ Solar Array Output (Y-Axis)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-4 h-0.5 border-t-2 border-dashed border-[#94A3B8]" />
+                  <span className="text-slate-300">🏢 Connected Facility Load (Y-Axis)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#FFBF00] animate-ping" />
+                  <span className="text-[#FFBF00]">◈ Solar Autonomy Crossover (08:30 AM)</span>
+                </div>
+              </div>
+              <div className="text-[11px] text-[#64748B] flex items-center gap-2">
+                <span className="text-[#FFBF00] font-bold">Y-Axis:</span> Power Output (W) • <span className="text-slate-300 font-bold">X-Axis:</span> 24h Timeline
+              </div>
             </div>
           </div>
-          <div className="text-[11px] text-[#64748B] flex items-center gap-2">
-            <span className="text-[#FFBF00] font-bold">Y-Axis:</span> Power Output (W) • <span className="text-slate-300 font-bold">X-Axis:</span> 24h Timeline
+
+          {/* RIGHT COLUMN (lg:col-span-4): Triple-Source Cost & Reliability Tracker */}
+          <div className="lg:col-span-4 p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-sm dark:shadow-2xl flex flex-col justify-between space-y-4 transition-colors duration-200">
+            <div className="pb-3 border-b border-[#64748B]/30">
+              <h2 className="text-base font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                <span>⚖️</span> Triple-Source Cost &amp; Reliability Tracker
+              </h2>
+              <p className="text-[11px] text-[#64748B] font-mono mt-0.5">
+                Economic comparison: Period {timeframe} ({periodKWh.toFixed(1)} kWh Displaced)
+              </p>
+            </div>
+
+            {/* 3 Source Cards Placed Vertically Below Each Other */}
+            <div className="flex flex-col gap-3 font-mono flex-1 justify-between">
+              
+              {/* Source 1: Solar PAYG */}
+              <div className="p-4 rounded-2xl bg-[#10B981]/10 border border-[#10B981]/40 space-y-2.5 shadow-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-bold text-[#10B981] uppercase tracking-wider">
+                    ☀️ Solar PAYG Asset
+                  </span>
+                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#10B981]/20 text-[#10B981]">
+                    PRIMARY
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-[#64748B] uppercase block">Levelized Cost / kWh</span>
+                  <div className="text-xl font-black text-[#10B981]">
+                    ₦118 <span className="text-xs font-normal text-[#10B981]">/ kWh</span>
+                  </div>
+                </div>
+                <div className="space-y-1 text-xs text-slate-300 pt-2 border-t border-[#10B981]/20">
+                  <div className="flex justify-between">
+                    <span>Period Outlay:</span>
+                    <strong className="text-white">{formatNaira(costComparison.solarCost)}</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Availability:</span>
+                    <strong className="text-[#10B981]">99.8% Continuous</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Asset Status:</span>
+                    <strong className="text-white">100% Own at Month 36</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Source 2: National Grid Band A */}
+              <div className="p-4 rounded-2xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-2.5 shadow-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-bold text-[#64748B] uppercase tracking-wider">
+                    ⚡ National Grid (Band A)
+                  </span>
+                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#1E293B] text-[#64748B]">
+                    DISCO
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-[#64748B] uppercase block">NERC Band A Tariff</span>
+                  <div className="text-xl font-black text-slate-200">
+                    ₦209 <span className="text-xs font-normal text-[#64748B]">/ kWh</span>
+                  </div>
+                </div>
+                <div className="space-y-1 text-xs text-[#64748B] pt-2 border-t border-[#64748B]/30">
+                  <div className="flex justify-between">
+                    <span>Baseline Spend:</span>
+                    <strong className="text-slate-200">{formatNaira(costComparison.gridCost)}</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Feeder Stability:</span>
+                    <strong className="text-[#FFBF00]">35.0% (Surge Risk)</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Blackout Risk:</span>
+                    <strong className="text-[#EF4444]">112h Outage / Month</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Source 3: Fossil Generator */}
+              <div className="p-4 rounded-2xl bg-[#EF4444]/10 border border-[#EF4444]/30 space-y-2.5 shadow-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-bold text-[#EF4444] uppercase tracking-wider">
+                    ⛽ Fossil Generator
+                  </span>
+                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#EF4444]/20 text-[#EF4444]">
+                    FOSSIL BURN
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-[#64748B] uppercase block">Specific Yield Fuel Cost</span>
+                  <div className="text-xl font-black text-[#EF4444]">
+                    ₦525 <span className="text-xs font-normal text-[#EF4444]">/ kWh</span>
+                  </div>
+                </div>
+                <div className="space-y-1 text-xs text-slate-300 pt-2 border-t border-[#EF4444]/20">
+                  <div className="flex justify-between">
+                    <span>Period Burn:</span>
+                    <strong className="text-[#EF4444]">{formatNaira(costComparison.genCost)}</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Fuel Needed:</span>
+                    <strong className="text-white">{costComparison.litersNeeded} L @ 2.8 kWh/L</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Noise &amp; Pollution:</span>
+                    <strong className="text-[#EF4444]">85 dB • High Smoke</strong>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        {/* Grouped Vertical Bar Visualization & Net Substitution Callout (Full Width Below) */}
+        <div className="p-5 rounded-2xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 flex flex-col md:flex-row items-center justify-between gap-6 font-mono shadow-sm">
+          <div className="space-y-1">
+            <span className="text-xs text-[#64748B] uppercase tracking-wider block font-bold">
+              Net Financial Substitution Gain:
+            </span>
+            <div className="text-2xl sm:text-3xl font-black text-[#10B981]">
+              +{formatNaira(costComparison.netSavingsVsGen)} Saved
+            </div>
+            <span className="text-xs text-slate-300">
+              Retained cash vs. fossil generator operation for {timeframe} interval.
+            </span>
+          </div>
+
+          {/* Proportional Bars */}
+          <div className="w-full md:w-80 space-y-2 text-xs">
+            <div>
+              <div className="flex justify-between text-[11px] mb-1">
+                <span className="text-[#10B981]">Solar Asset:</span>
+                <span className="text-white">{formatNaira(costComparison.solarCost)}</span>
+              </div>
+              <div className="h-2 rounded-full bg-[#1E293B] overflow-hidden">
+                <div
+                  className="h-full bg-[#10B981] rounded-full"
+                  style={{
+                    width: `${Math.round((costComparison.solarCost / costComparison.genCost) * 100)}%`,
+                  }}
+                />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex justify-between text-[11px] mb-1">
+                <span className="text-[#64748B]">Grid Band A:</span>
+                <span className="text-slate-300">{formatNaira(costComparison.gridCost)}</span>
+              </div>
+              <div className="h-2 rounded-full bg-[#1E293B] overflow-hidden">
+                <div
+                  className="h-full bg-[#64748B] rounded-full"
+                  style={{
+                    width: `${Math.round((costComparison.gridCost / costComparison.genCost) * 100)}%`,
+                  }}
+                />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex justify-between text-[11px] mb-1">
+                <span className="text-[#EF4444]">Generator Fuel + Servicing:</span>
+                <span className="text-[#EF4444] font-bold">{formatNaira(costComparison.genCost)}</span>
+              </div>
+              <div className="h-2 rounded-full bg-[#1E293B] overflow-hidden">
+                <div className="h-full bg-[#EF4444] rounded-full w-full" />
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -1364,182 +1544,7 @@ export function EnergyAnalyticsSuite({
         </div>
       </section>
 
-      {/* =====================================================================
-          SECTION 6: Triple-Source Substitution Tracker & Grouped Bar Chart
-         ===================================================================== */}
-      <section className="p-5 sm:p-6 rounded-3xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 shadow-sm dark:shadow-2xl space-y-6 transition-colors duration-200">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#64748B]/30 pb-4">
-          <div>
-            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
-              <span>⚖️</span> Triple-Source Substitution Tracker &bull; Financial Optimization
-            </h2>
-            <p className="text-xs text-[#64748B] font-mono">
-              Strict economic comparison: Solar PAYG vs. NERC Band A Grid vs. Petrol/Diesel Generator.
-            </p>
-          </div>
-          <span className="text-xs text-[#10B981] font-mono font-bold">
-            Period: {timeframe} ({periodKWh.toFixed(1)} kWh Displaced)
-          </span>
-        </div>
 
-        {/* 3 Source Cards Matrix */}
-        <div className="grid md:grid-cols-3 gap-4 font-mono">
-          
-          {/* Source 1: Solar PAYG */}
-          <div className="p-4 rounded-2xl bg-[#10B981]/10 border border-[#10B981]/40 space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-bold text-[#10B981] uppercase tracking-wider">
-                ☀️ Solar PAYG Asset
-              </span>
-              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#10B981]/20 text-[#10B981]">
-                PRIMARY
-              </span>
-            </div>
-            <div>
-              <span className="text-[10px] text-[#64748B] uppercase block">Levelized Cost / kWh</span>
-              <div className="text-2xl font-black text-[#10B981]">
-                ₦118 <span className="text-xs font-normal text-[#10B981]">/ kWh</span>
-              </div>
-            </div>
-            <div className="space-y-1 text-xs text-slate-300 pt-2 border-t border-[#10B981]/20">
-              <div className="flex justify-between">
-                <span>Period Outlay:</span>
-                <strong className="text-white">{formatNaira(costComparison.solarCost)}</strong>
-              </div>
-              <div className="flex justify-between">
-                <span>Availability:</span>
-                <strong className="text-[#10B981]">99.8% Continuous</strong>
-              </div>
-              <div className="flex justify-between">
-                <span>Asset Status:</span>
-                <strong className="text-white">100% Own at Month 36</strong>
-              </div>
-            </div>
-          </div>
-
-          {/* Source 2: National Grid Band A */}
-          <div className="p-4 rounded-2xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-bold text-[#64748B] uppercase tracking-wider">
-                ⚡ National Grid (Band A)
-              </span>
-              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#1E293B] text-[#64748B]">
-                DISCO
-              </span>
-            </div>
-            <div>
-              <span className="text-[10px] text-[#64748B] uppercase block">NERC Band A Tariff</span>
-              <div className="text-2xl font-black text-slate-200">
-                ₦209 <span className="text-xs font-normal text-[#64748B]">/ kWh</span>
-              </div>
-            </div>
-            <div className="space-y-1 text-xs text-[#64748B] pt-2 border-t border-[#64748B]/30">
-              <div className="flex justify-between">
-                <span>Baseline Would Spend:</span>
-                <strong className="text-slate-200">{formatNaira(costComparison.gridCost)}</strong>
-              </div>
-              <div className="flex justify-between">
-                <span>Feeder Stability:</span>
-                <strong className="text-[#FFBF00]">35.0% (Surge Risk)</strong>
-              </div>
-              <div className="flex justify-between">
-                <span>Blackout Risk:</span>
-                <strong className="text-[#EF4444]">112h Outage / Month</strong>
-              </div>
-            </div>
-          </div>
-
-          {/* Source 3: Fossil Generator */}
-          <div className="p-4 rounded-2xl bg-[#EF4444]/10 border border-[#EF4444]/30 space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-bold text-[#EF4444] uppercase tracking-wider">
-                ⛽ Fossil Generator
-              </span>
-              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#EF4444]/20 text-[#EF4444]">
-                FOSSIL BURN
-              </span>
-            </div>
-            <div>
-              <span className="text-[10px] text-[#64748B] uppercase block">Specific Yield Fuel Cost</span>
-              <div className="text-2xl font-black text-[#EF4444]">
-                ₦525 <span className="text-xs font-normal text-[#EF4444]">/ kWh</span>
-              </div>
-            </div>
-            <div className="space-y-1 text-xs text-slate-300 pt-2 border-t border-[#EF4444]/20">
-              <div className="flex justify-between">
-                <span>Period Burn &amp; Lube:</span>
-                <strong className="text-[#EF4444]">{formatNaira(costComparison.genCost)}</strong>
-              </div>
-              <div className="flex justify-between">
-                <span>Fuel Needed:</span>
-                <strong className="text-white">{costComparison.litersNeeded} L @ 2.8 kWh/L</strong>
-              </div>
-              <div className="flex justify-between">
-                <span>Noise &amp; Pollution:</span>
-                <strong className="text-[#EF4444]">85 dB • High Smoke</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Grouped Vertical Bar Visualization & Net Substitution Callout */}
-        <div className="p-4 rounded-2xl bg-slate-100/90 dark:bg-[#1E293B] border border-slate-200/80 dark:border-slate-700/70 flex flex-col md:flex-row items-center justify-between gap-6 font-mono">
-          <div className="space-y-1">
-            <span className="text-xs text-[#64748B] uppercase tracking-wider block font-bold">
-              Net Financial Substitution Gain:
-            </span>
-            <div className="text-2xl sm:text-3xl font-black text-[#10B981]">
-              +{formatNaira(costComparison.netSavingsVsGen)} Saved
-            </div>
-            <span className="text-xs text-slate-300">
-              Retained cash vs. fossil generator operation for {timeframe} interval.
-            </span>
-          </div>
-
-          {/* Proportional Bars */}
-          <div className="w-full md:w-80 space-y-2 text-xs">
-            <div>
-              <div className="flex justify-between text-[11px] mb-1">
-                <span className="text-[#10B981]">Solar Asset:</span>
-                <span className="text-white">{formatNaira(costComparison.solarCost)}</span>
-              </div>
-              <div className="h-2 rounded-full bg-[#1E293B] overflow-hidden">
-                <div
-                  className="h-full bg-[#10B981] rounded-full"
-                  style={{
-                    width: `${Math.round((costComparison.solarCost / costComparison.genCost) * 100)}%`,
-                  }}
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between text-[11px] mb-1">
-                <span className="text-[#64748B]">Grid Band A:</span>
-                <span className="text-slate-300">{formatNaira(costComparison.gridCost)}</span>
-              </div>
-              <div className="h-2 rounded-full bg-[#1E293B] overflow-hidden">
-                <div
-                  className="h-full bg-[#64748B] rounded-full"
-                  style={{
-                    width: `${Math.round((costComparison.gridCost / costComparison.genCost) * 100)}%`,
-                  }}
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between text-[11px] mb-1">
-                <span className="text-[#EF4444]">Generator Fuel + Servicing:</span>
-                <span className="text-[#EF4444] font-bold">{formatNaira(costComparison.genCost)}</span>
-              </div>
-              <div className="h-2 rounded-full bg-[#1E293B] overflow-hidden">
-                <div className="h-full bg-[#EF4444] rounded-full w-full" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* =====================================================================
           SECTION 7: Multi-Horizon Sunshine & Load Confidence-Band Chart

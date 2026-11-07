@@ -113,6 +113,59 @@ class GrowattKnowledgeIngestor:
                 "so they run directly off free solar PV without draining your overnight LiFePO4 battery bank."
             ),
         },
+        {
+            "doc_category": "MODBUS_REGISTERS",
+            "model_sku": "ALL",
+            "title": "Growatt Modbus RTU/RS485 Protocol & Register Map (0x0000–0x003B)",
+            "keywords": ["modbus", "register", "0x0000", "0x0001", "0x0008", "0x0020", "0x0029", "0x003b", "rs485", "rtu", "holding", "input"],
+            "chunk_text": (
+                "Growatt Modbus Register Map (Baud Rate 9600, 8-N-1): "
+                "Holding Register 0x0000: Inverter Status (0=Standby, 1=No PV, 2=Discharging, 3=Fault, 4=Flash, 5=PV charge, 6=AC charge, 7=Combined, 8=Line mode). "
+                "Input Register 0x0001: PV1 Voltage (0.1V/count); Input Register 0x0002: PV1 Power (0.1W/count). "
+                "Input Register 0x0008: Battery Voltage (0.01V); Input Register 0x0009: Battery SoC (1%). "
+                "Input Register 0x0020: Inverter Heat Sink Temperature (0.1°C). "
+                "Input Register 0x0029: AC Output Active Power (0.1W). "
+                "Holding Register 0x003B: Maximum Grid Utility Charge Current setting (Amps, 10A-60A)."
+            ),
+        },
+        {
+            "doc_category": "COREN_STANDARDS",
+            "model_sku": "ALL",
+            "title": "COREN & NEMSA Nigerian Solar PV Installation & Earthing Standards",
+            "keywords": ["coren", "nemsa", "earthing", "resistance", "5 ohms", "surge protection", "spd", "cable", "inspection", "safety"],
+            "chunk_text": (
+                "COREN & NEMSA Nigerian Mandatory Standards: 1. Earthing Resistance MUST be <= 5.00 Ohms measured "
+                "using an Earth Resistance Tester at the dedicated copper-bonded earth pit with bentonite earthing compound. "
+                "Values above 5.00 Ohms fail technical commissioning and void warranty. 2. Surge Protective Devices (Type II SPD) "
+                "are mandatory on both DC PV inputs and AC utility inputs. 3. Minimum 4mm2 UV-resistant DC solar cable for runs <25m, "
+                "and 6mm2 for runs >= 25m. 4. Certified COREN inspector sign-off required prior to customer handover."
+            ),
+        },
+        {
+            "doc_category": "FINANCE_REVENUE",
+            "model_sku": "ALL",
+            "title": "Finance Officer Invoicing, Moniepoint/Paystack DVA Matching & Collections Cohorts",
+            "keywords": ["invoice", "collections", "aging", "dva", "reconciliation", "unverified payments", "moniepoint", "paystack", "receivables"],
+            "chunk_text": (
+                "Finance Verification Engine Policies: 1. Invoices are automatically generated upon quotation approval (30% deposit) "
+                "and maintenance completion. 2. Payments via Moniepoint and Paystack DVAs reconcile automatically within 5 seconds. "
+                "Manual bank transfers queue in the Finance Officer Verification Queue for teller reference verification. "
+                "3. Upon verification, STS unlock tokens are issued and lease countdown clocks extended. "
+                "4. Receivables Aging Cohorts: Current (<30d), 30-60d (Soft Reminder), 60-90d (Field Notice), >90d (Hardware Lockout)."
+            ),
+        },
+        {
+            "doc_category": "OPERATIONS_DISPATCH",
+            "model_sku": "ALL",
+            "title": "Operations Manager Fleet Orchestration, GIS Watchtower & SLA Dispatch",
+            "keywords": ["operations", "dispatch", "gis", "fleet", "technician", "sla", "work order", "installations", "maintenance", "watchtower"],
+            "chunk_text": (
+                "Operations Management SLA Guidelines: 1. 16-Step Installation SLA: Site assessment scheduled within 48h of lead capture; "
+                "hardware commissioning within 5 business days of deposit. 2. 13-Step Maintenance SLA: Critical faults triaged within 2h, "
+                "technician dispatched within 6h. 3. Fleet Watchtower monitors real-time GIS status across Nigerian regional hubs: "
+                "Abuja FCT, Lagos Mainland/Island, Kano, Port Harcourt, and Ibadan. 4. Technician allocation optimized by regional proximity."
+            ),
+        },
     ]
 
     @staticmethod

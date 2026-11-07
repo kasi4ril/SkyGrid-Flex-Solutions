@@ -5,7 +5,7 @@ Semantic Vector & Fault-Code Retriever for LocalGridAgent.
 
 from __future__ import annotations
 
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 from .ingest_manuals import GrowattKnowledgeIngestor, KnowledgeChunk
 
 
@@ -24,10 +24,12 @@ class GrowattVectorRetriever:
         model_sku: str = "GROWATT_SPF_5000ES",
         top_k: int = 3,
         active_fault_code: int = 0,
+        allowed_categories: Optional[List[str]] = None,
     ) -> List[KnowledgeChunk]:
         """
         Computes cosine similarity between the user query (plus any active hardware fault code
-        from VFS `state.json`) and the indexed Growatt knowledge vectors.
+        from VFS `state.json`) and the indexed Growatt knowledge vectors, optionally filtered
+        by persona-allowed document categories.
         """
         augmented_query = query
         if active_fault_code > 0:
@@ -38,6 +40,10 @@ class GrowattVectorRetriever:
 
         scored: List[Tuple[float, KnowledgeChunk]] = []
         for chunk in self.chunks:
+            # Filter by persona-allowed categories
+            if allowed_categories is not None and chunk.doc_category not in allowed_categories:
+                continue
+
             # Filter out chunks belonging to a different inverter SKU unless marked ALL
             if chunk.model_sku not in ("ALL", model_sku):
                 continue

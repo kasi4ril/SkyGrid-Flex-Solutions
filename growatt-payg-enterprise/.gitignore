@@ -1,2 +1,5 @@
 core-backend/bin/
 bin/
+.venv/
+*.test
+*.out

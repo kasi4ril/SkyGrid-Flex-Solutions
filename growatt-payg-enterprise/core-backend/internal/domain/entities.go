@@ -164,3 +164,26 @@ type ContactInquiryRequest struct {
 	Message         string `json:"message"`
 	ConsentWhatsApp bool   `json:"consent_whatsapp"`
 }
+
+// CustomerRegistrationRequest captures a newly onboarded PAYG customer's identity,
+// credentials, chosen solar package, and site installation coordinates.
+type CustomerRegistrationRequest struct {
+	NIN               string  `json:"nin"`
+	FirstName         string  `json:"first_name"`
+	MiddleName        string  `json:"middle_name"`
+	LastName          string  `json:"last_name"`
+	DOB               string  `json:"dob"`
+	Gender            string  `json:"gender"`
+	Phone             string  `json:"phone"`
+	Email             string  `json:"email"`
+	Password          string  `json:"password"`
+	StateRegion       string  `json:"state_region"`
+	StreetAddress     string  `json:"street_address"`
+	GPSLat            float64 `json:"gps_lat"`
+	GPSLng            float64 `json:"gps_lng"`
+	PackageCode       string  `json:"package_code"`
+	PackageName       string  `json:"package_name"`
+	DownPaymentNGN    string  `json:"down_payment_ngn"`
+	MonthlyInstallNGN string  `json:"monthly_installment_ngn"`
+	TotalAssetCostNGN string  `json:"total_asset_cost_ngn"`
+}

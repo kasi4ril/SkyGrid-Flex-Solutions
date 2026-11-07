@@ -61,6 +61,15 @@ class AgentQueryRequestDTO(BaseModel):
     customer_query: str
 
 
+class AgentChatRequestDTO(BaseModel):
+    user_id: str = "anonymous"
+    role_slug: str = "customer"
+    permissions: List[str] = Field(default_factory=list)
+    query: str
+    device_id: str = "DEV-8F3A-GROWATT-00421"
+    model_sku: str = "GROWATT_SPF_5000ES"
+
+
 class DailyBriefingRequestDTO(BaseModel):
     device_id: str
     briefing_type: str = "MORNING_0700"
@@ -122,6 +131,18 @@ def query_localgrid_agent(req: AgentQueryRequestDTO) -> dict:
         device_id=req.device_id,
         model_sku=req.model_sku,
         customer_query=req.customer_query,
+    )
+
+
+@app.post("/api/v1/agent/chat")
+def chat_scoped_agent(req: AgentChatRequestDTO) -> dict:
+    return agent_assembler.answer_scoped_query(
+        user_id=req.user_id,
+        role_slug=req.role_slug,
+        permissions=req.permissions,
+        query=req.query,
+        device_id=req.device_id,
+        model_sku=req.model_sku,
     )
 
 
