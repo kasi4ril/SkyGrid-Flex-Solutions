@@ -31,6 +31,9 @@ type User struct {
 	UserType        UserType   `json:"user_type"`
 	Status          UserStatus `json:"status"`
 	EmailVerifiedAt *time.Time `json:"email_verified_at,omitempty"`
+	PhoneVerifiedAt *time.Time `json:"phone_verified_at,omitempty"`
+	MFAEnabled      bool       `json:"mfa_enabled"`
+	PreferredMFA    string     `json:"preferred_mfa,omitempty"`
 	CreatedAt       time.Time  `json:"created_at"`
 	UpdatedAt       time.Time  `json:"updated_at"`
 }
@@ -155,4 +158,39 @@ type AuditLog struct {
 	Payload      map[string]any `json:"payload,omitempty"`
 	IPAddress    string         `json:"ip_address,omitempty"`
 	CreatedAt    time.Time      `json:"created_at"`
+}
+
+// MFAChannel specifies the dispatch medium for 2FA one-time passwords.
+type MFAChannel string
+
+const (
+	MFAChannelEmailAndSMS MFAChannel = "EMAIL_AND_SMS"
+	MFAChannelEmail       MFAChannel = "EMAIL"
+	MFAChannelSMS         MFAChannel = "SMS"
+)
+
+// MFAChallenge models a transient 2FA verification challenge during login.
+type MFAChallenge struct {
+	ID             string     `json:"id"`
+	UserID         string     `json:"user_id"`
+	MFATokenHash   string     `json:"-"`
+	CodeHash       string     `json:"-"`
+	Channel        MFAChannel `json:"channel"`
+	RecipientEmail string     `json:"recipient_email,omitempty"`
+	RecipientPhone string     `json:"recipient_phone,omitempty"`
+	Attempts       int        `json:"attempts"`
+	MaxAttempts    int        `json:"max_attempts"`
+	ExpiresAt      time.Time  `json:"expires_at"`
+	CreatedAt      time.Time  `json:"created_at"`
+}
+
+// PasswordResetToken models a self-service password recovery challenge.
+type PasswordResetToken struct {
+	ID        string     `json:"id"`
+	UserID    string     `json:"user_id"`
+	TokenHash string     `json:"-"`
+	CodeHash  string     `json:"-"`
+	ExpiresAt time.Time  `json:"expires_at"`
+	UsedAt    *time.Time `json:"used_at,omitempty"`
+	CreatedAt time.Time  `json:"created_at"`
 }

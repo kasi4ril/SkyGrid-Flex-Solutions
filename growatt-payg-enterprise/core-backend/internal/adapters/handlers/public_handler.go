@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/SkyGrid-Flex-Solutions/growatt-payg-enterprise/core-backend/internal/adapters/repositories"
 	"github.com/SkyGrid-Flex-Solutions/growatt-payg-enterprise/core-backend/internal/domain"
 	"github.com/SkyGrid-Flex-Solutions/growatt-payg-enterprise/core-backend/internal/usecases"
 )
@@ -16,14 +17,27 @@ import (
 // PublicShowroomHandler serves unauthenticated public showroom requests:
 // catalog discovery, real-time electrical sizing, ROI comparison, and site audit booking.
 type PublicShowroomHandler struct {
-	calculator *usecases.SizingCalculatorService
+	calculator  *usecases.SizingCalculatorService
+	iamRepo     repositories.IAMRepository
+	authService *usecases.AuthService
 }
 
 // NewPublicShowroomHandler constructs a new PublicShowroomHandler instance.
-func NewPublicShowroomHandler(calculator *usecases.SizingCalculatorService) *PublicShowroomHandler {
-	return &PublicShowroomHandler{
+func NewPublicShowroomHandler(
+	calculator *usecases.SizingCalculatorService,
+	optionalServices ...any,
+) *PublicShowroomHandler {
+	handler := &PublicShowroomHandler{
 		calculator: calculator,
 	}
+	for _, opt := range optionalServices {
+		if repo, ok := opt.(repositories.IAMRepository); ok {
+			handler.iamRepo = repo
+		} else if auth, ok := opt.(*usecases.AuthService); ok {
+			handler.authService = auth
+		}
+	}
+	return handler
 }
 
 // HandleGetCatalog serves GET /api/v1/public/catalog
@@ -188,6 +202,40 @@ func (h *PublicShowroomHandler) HandleRegisterCustomer(w http.ResponseWriter, r 
 	stsToken := fmt.Sprintf("%04d - %04d - %04d - %04d - %04d", p1, p2, p3, p4, p5)
 
 	fullName := fmt.Sprintf("%s %s", strings.TrimSpace(req.FirstName), strings.TrimSpace(req.LastName))
+
+	// Persist customer account in IAM Repository if available
+	if h.iamRepo != nil && strings.TrimSpace(req.Email) != "" {
+		email := strings.TrimSpace(strings.ToLower(req.Email))
+		password := req.Password
+		if strings.TrimSpace(password) == "" {
+			password = "SkyGrid@Customer2026!"
+		}
+		passwordHash := password
+		if h.authService != nil {
+			if hashed, err := h.authService.HashPassword(password); err == nil {
+				passwordHash = hashed
+			}
+		}
+		now := time.Now().UTC()
+		newUser := &domain.User{
+			ID:              customerID,
+			Email:           email,
+			Phone:           strings.TrimSpace(req.Phone),
+			PasswordHash:    passwordHash,
+			UserType:        domain.UserTypeCustomer,
+			Status:          domain.UserStatusActive,
+			EmailVerifiedAt: &now,
+			PhoneVerifiedAt: &now,
+			MFAEnabled:      true,
+			PreferredMFA:    string(domain.MFAChannelEmailAndSMS),
+			CreatedAt:       now,
+			UpdatedAt:       now,
+		}
+		_ = h.iamRepo.CreateUser(r.Context(), newUser)
+		if role, err := h.iamRepo.GetRoleBySlug(r.Context(), domain.RoleCustomer); err == nil && role != nil {
+			_ = h.iamRepo.AssignRoleToUser(r.Context(), newUser.ID, role.ID, nil)
+		}
+	}
 
 	writeJSONResponse(w, http.StatusCreated, map[string]any{
 		"status":      "success",

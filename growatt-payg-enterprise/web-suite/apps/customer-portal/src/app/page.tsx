@@ -332,6 +332,18 @@ export default function CustomerAccountPortalPage() {
                   <span>🌍</span>
                   <span>About SkyGrid Charter</span>
                 </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (typeof window !== 'undefined') {
+                      window.dispatchEvent(new CustomEvent('skytron_open_change_password'));
+                    }
+                  }}
+                  className="w-full text-left p-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-semibold flex items-center gap-2 transition cursor-pointer"
+                >
+                  <span>🔑</span>
+                  <span>Change Account Password</span>
+                </button>
               </div>
             </div>
           </div>

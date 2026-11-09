@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -178,7 +179,7 @@ func TestStaffOnboarding_FullLifecycle(t *testing.T) {
 		t.Errorf("expected 400 Bad Request on re-activation attempt, got %d", w.Code)
 	}
 
-	// --- Stage 5: Staff Login ---
+	// --- Stage 5: Staff Login with 2FA / MFA ---
 	loginPayload := map[string]any{
 		"email":    applicantEmail,
 		"password": staffPassword,
@@ -194,10 +195,35 @@ func TestStaffOnboarding_FullLifecycle(t *testing.T) {
 
 	var loginResp map[string]any
 	_ = json.NewDecoder(w.Body).Decode(&loginResp)
-	accessToken := loginResp["access_token"].(string)
-	refreshToken := loginResp["refresh_token"].(string)
+	if loginResp["status"] != "mfa_required" {
+		t.Fatalf("expected status 'mfa_required', got %v", loginResp["status"])
+	}
+	mfaToken := loginResp["mfa_token"].(string)
+	devCode := loginResp["dev_code"].(string)
+	if mfaToken == "" || devCode == "" {
+		t.Fatalf("expected mfa_token and dev_code in response: %v", loginResp)
+	}
+
+	// Verify MFA OTP Code
+	mfaPayload := map[string]any{
+		"mfa_token": mfaToken,
+		"code":      devCode,
+	}
+	body, _ = json.Marshal(mfaPayload)
+	req = httptest.NewRequest(http.MethodPost, "/api/v1/auth/verify-mfa", bytes.NewReader(body))
+	w = httptest.NewRecorder()
+	h.onboardingHandler.HandleVerifyMFA(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("Stage 5 MFA Verify failed: expected 200 OK, got %d: %s", w.Code, w.Body.String())
+	}
+
+	var mfaResp map[string]any
+	_ = json.NewDecoder(w.Body).Decode(&mfaResp)
+	accessToken := mfaResp["access_token"].(string)
+	refreshToken := mfaResp["refresh_token"].(string)
 	if accessToken == "" || refreshToken == "" {
-		t.Fatal("expected valid access_token and refresh_token from login")
+		t.Fatal("expected valid access_token and refresh_token from MFA verify")
 	}
 
 	// --- Stage 6: Authenticated Identity Profile (/api/v1/auth/me) ---
@@ -613,30 +639,58 @@ func TestDeveloperTestAccounts_Login(t *testing.T) {
 				t.Fatalf("expected 200 OK for %s, got %d: %s", tc.email, w.Code, w.Body.String())
 			}
 
-			var resp struct {
-				AccessToken string   `json:"access_token"`
-				Roles       []string `json:"roles"`
-				User        struct {
-					Email string `json:"email"`
-				} `json:"user"`
-			}
-			if err := json.NewDecoder(w.Body).Decode(&resp); err != nil {
+			var rawResp map[string]any
+			if err := json.NewDecoder(w.Body).Decode(&rawResp); err != nil {
 				t.Fatalf("failed to decode login response: %v", err)
 			}
 
-			if resp.AccessToken == "" {
+			var accessToken string
+			var roles []string
+
+			if rawResp["status"] == "mfa_required" {
+				mfaToken := rawResp["mfa_token"].(string)
+				devCode := rawResp["dev_code"].(string)
+
+				mfaReq := httptest.NewRequest(http.MethodPost, "/api/v1/auth/verify-mfa", bytes.NewReader([]byte(fmt.Sprintf(`{"mfa_token":%q,"code":%q}`, mfaToken, devCode))))
+				mfaW := httptest.NewRecorder()
+				h.onboardingHandler.HandleVerifyMFA(mfaW, mfaReq)
+				if mfaW.Code != http.StatusOK {
+					t.Fatalf("expected 200 OK on MFA verify for %s, got %d", tc.email, mfaW.Code)
+				}
+				var mfaResp map[string]any
+				_ = json.NewDecoder(mfaW.Body).Decode(&mfaResp)
+				if tok, ok := mfaResp["access_token"].(string); ok {
+					accessToken = tok
+				}
+				if rList, ok := mfaResp["roles"].([]any); ok {
+					for _, r := range rList {
+						roles = append(roles, r.(string))
+					}
+				}
+			} else {
+				if tok, ok := rawResp["access_token"].(string); ok {
+					accessToken = tok
+				}
+				if rList, ok := rawResp["roles"].([]any); ok {
+					for _, r := range rList {
+						roles = append(roles, r.(string))
+					}
+				}
+			}
+
+			if accessToken == "" {
 				t.Errorf("expected non-empty access token for %s", tc.email)
 			}
 
 			hasRole := false
-			for _, r := range resp.Roles {
+			for _, r := range roles {
 				if r == tc.expectedRole || (tc.expectedRole == "field_engineer" && r == "technician") {
 					hasRole = true
 					break
 				}
 			}
 			if !hasRole {
-				t.Errorf("expected role %s in roles %v for %s", tc.expectedRole, resp.Roles, tc.email)
+				t.Errorf("expected role %s in roles %v for %s", tc.expectedRole, roles, tc.email)
 			}
 		})
 	}

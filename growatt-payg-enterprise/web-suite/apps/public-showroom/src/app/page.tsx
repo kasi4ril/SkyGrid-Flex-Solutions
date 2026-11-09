@@ -3009,7 +3009,25 @@ export default function PublicShowroomLandingPage() {
               </div>
 
               <div>
-                <label className="text-[#64748B] block mb-1 font-semibold">Access PIN / Password</label>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="text-[#64748B] font-semibold">Access PIN / Password</label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsCustomerLoginModalOpen(false);
+                      if (typeof window !== "undefined") {
+                        window.dispatchEvent(
+                          new CustomEvent("skytron_open_forgot_password", {
+                            detail: { identifier: "" },
+                          })
+                        );
+                      }
+                    }}
+                    className="text-amber-400 hover:underline font-semibold"
+                  >
+                    Forget Password?
+                  </button>
+                </div>
                 <input
                   type="password"
                   required
@@ -3025,6 +3043,26 @@ export default function PublicShowroomLandingPage() {
               >
                 Sign In to Customer Dashboard &rarr;
               </button>
+
+              {/* Dedicated Forget Password link leading to recovery */}
+              <div className="pt-1 text-center text-xs">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsCustomerLoginModalOpen(false);
+                    if (typeof window !== "undefined") {
+                      window.dispatchEvent(
+                        new CustomEvent("skytron_open_forgot_password", {
+                          detail: { identifier: "" },
+                        })
+                      );
+                    }
+                  }}
+                  className="text-amber-400 hover:text-amber-300 hover:underline font-bold inline-flex items-center gap-1 cursor-pointer"
+                >
+                  <span>🔑 Forget Password? Lead to Password Recovery &rarr;</span>
+                </button>
+              </div>
 
               <div className="pt-2 text-center text-xs text-slate-300 border-t border-[#64748B]/30">
                 <span>New Customer? </span>

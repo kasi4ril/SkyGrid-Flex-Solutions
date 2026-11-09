@@ -19,6 +19,8 @@ var (
 	ErrOnboardingNotFound    = errors.New("onboarding request not found")
 	ErrSessionNotFound       = errors.New("session not found")
 	ErrSessionExpiredOrRevoked = errors.New("session is expired or revoked")
+	ErrMFAChallengeNotFound  = errors.New("mfa challenge not found or expired")
+	ErrPasswordResetNotFound = errors.New("password reset token not found or expired")
 )
 
 // IAMRepository defines the required data access operations for enterprise IAM & RBAC.
@@ -27,7 +29,9 @@ type IAMRepository interface {
 	CreateUser(ctx context.Context, user *domain.User) error
 	GetUserByID(ctx context.Context, id string) (*domain.User, error)
 	GetUserByEmail(ctx context.Context, email string) (*domain.User, error)
+	GetUserByPhone(ctx context.Context, phone string) (*domain.User, error)
 	UpdateUser(ctx context.Context, user *domain.User) error
+	UpdateUserPassword(ctx context.Context, userID, newPasswordHash string) error
 
 	// Role & Permission operations
 	GetRoleBySlug(ctx context.Context, slug string) (*domain.Role, error)
@@ -52,10 +56,23 @@ type IAMRepository interface {
 	ReviewOnboardingTransaction(ctx context.Context, reqID string, status domain.OnboardingStatus, roleID *string, reviewerID string, notes string, actTokenHash string, expiresAt *time.Time, audit *domain.AuditLog) error
 	ActivateStaffTransaction(ctx context.Context, reqID string, user *domain.User, profile *domain.StaffProfile, roleID string, audit *domain.AuditLog) error
 
+	// Two-Factor Authentication (MFA) operations
+	CreateMFAChallenge(ctx context.Context, challenge *domain.MFAChallenge) error
+	GetMFAChallengeByTokenHash(ctx context.Context, hash string) (*domain.MFAChallenge, error)
+	UpdateMFAChallenge(ctx context.Context, challenge *domain.MFAChallenge) error
+	DeleteMFAChallenge(ctx context.Context, id string) error
+
+	// Password Recovery operations
+	CreatePasswordResetToken(ctx context.Context, token *domain.PasswordResetToken) error
+	GetPasswordResetByCodeHash(ctx context.Context, userID, codeHash string) (*domain.PasswordResetToken, error)
+	GetPasswordResetByTokenHash(ctx context.Context, hash string) (*domain.PasswordResetToken, error)
+	MarkPasswordResetUsed(ctx context.Context, id string) error
+
 	// Session & Token rotation operations
 	CreateSession(ctx context.Context, session *domain.Session) error
 	GetSessionByRefreshHash(ctx context.Context, hash string) (*domain.Session, error)
 	RevokeSession(ctx context.Context, id string) error
+	RevokeAllUserSessions(ctx context.Context, userID string) error
 	RotateSession(ctx context.Context, oldSessionID string, newSession *domain.Session) error
 
 	// Audit logging
@@ -69,6 +86,7 @@ type MemoryIAMRepository struct {
 
 	users               map[string]*domain.User
 	usersByEmail        map[string]*domain.User
+	usersByPhone        map[string]*domain.User
 	roles               map[string]*domain.Role
 	rolesBySlug         map[string]*domain.Role
 	permissions         map[string]*domain.Permission
@@ -83,27 +101,39 @@ type MemoryIAMRepository struct {
 	sessions            map[string]*domain.Session
 	sessionsByRefresh   map[string]*domain.Session
 	auditLogs           []*domain.AuditLog
+
+	mfaChallenges       map[string]*domain.MFAChallenge     // id -> challenge
+	mfaByTokenHash      map[string]*domain.MFAChallenge     // tokenHash -> challenge
+	passwordResets      map[string]*domain.PasswordResetToken // id -> token
+	passwordResetsByTokenHash map[string]*domain.PasswordResetToken
+	passwordResetsByCodeHash  map[string]*domain.PasswordResetToken
 }
 
 // NewMemoryIAMRepository constructs and seeds the in-memory enterprise IAM store.
 func NewMemoryIAMRepository() *MemoryIAMRepository {
 	repo := &MemoryIAMRepository{
-		users:              make(map[string]*domain.User),
-		usersByEmail:       make(map[string]*domain.User),
-		roles:              make(map[string]*domain.Role),
-		rolesBySlug:        make(map[string]*domain.Role),
-		permissions:        make(map[string]*domain.Permission),
-		permissionsBySlug:  make(map[string]*domain.Permission),
-		rolePermissions:    make(map[string][]string),
-		userRoles:          make(map[string][]string),
-		staffProfiles:      make(map[string]*domain.StaffProfile),
-		onboardingRequests: make(map[string]*domain.StaffOnboardingRequest),
-		onboardingByEmail:  make(map[string]*domain.StaffOnboardingRequest),
-		onboardingByVerify: make(map[string]*domain.StaffOnboardingRequest),
-		onboardingByAct:    make(map[string]*domain.StaffOnboardingRequest),
-		sessions:           make(map[string]*domain.Session),
-		sessionsByRefresh:  make(map[string]*domain.Session),
-		auditLogs:          make([]*domain.AuditLog, 0),
+		users:                     make(map[string]*domain.User),
+		usersByEmail:              make(map[string]*domain.User),
+		usersByPhone:              make(map[string]*domain.User),
+		roles:                     make(map[string]*domain.Role),
+		rolesBySlug:               make(map[string]*domain.Role),
+		permissions:               make(map[string]*domain.Permission),
+		permissionsBySlug:         make(map[string]*domain.Permission),
+		rolePermissions:           make(map[string][]string),
+		userRoles:                 make(map[string][]string),
+		staffProfiles:             make(map[string]*domain.StaffProfile),
+		onboardingRequests:        make(map[string]*domain.StaffOnboardingRequest),
+		onboardingByEmail:         make(map[string]*domain.StaffOnboardingRequest),
+		onboardingByVerify:        make(map[string]*domain.StaffOnboardingRequest),
+		onboardingByAct:           make(map[string]*domain.StaffOnboardingRequest),
+		sessions:                  make(map[string]*domain.Session),
+		sessionsByRefresh:         make(map[string]*domain.Session),
+		auditLogs:                 make([]*domain.AuditLog, 0),
+		mfaChallenges:             make(map[string]*domain.MFAChallenge),
+		mfaByTokenHash:            make(map[string]*domain.MFAChallenge),
+		passwordResets:            make(map[string]*domain.PasswordResetToken),
+		passwordResetsByTokenHash: make(map[string]*domain.PasswordResetToken),
+		passwordResetsByCodeHash:  make(map[string]*domain.PasswordResetToken),
 	}
 
 	repo.seedSystemData()
@@ -307,11 +337,17 @@ func (r *MemoryIAMRepository) seedSystemData() {
 			UserType:        acc.userType,
 			Status:          domain.UserStatusActive,
 			EmailVerifiedAt: &now,
+			PhoneVerifiedAt: &now,
+			MFAEnabled:      true,
+			PreferredMFA:    string(domain.MFAChannelEmailAndSMS),
 			CreatedAt:       now,
 			UpdatedAt:       now,
 		}
 		r.users[u.ID] = u
 		r.usersByEmail[u.Email] = u
+		if u.Phone != "" {
+			r.usersByPhone[u.Phone] = u
+		}
 
 		var roleIDs []string
 		if role, ok := r.rolesBySlug[acc.roleSlug]; ok {
@@ -369,6 +405,11 @@ func (r *MemoryIAMRepository) CreateUser(ctx context.Context, user *domain.User)
 	if _, exists := r.usersByEmail[user.Email]; exists {
 		return ErrUserAlreadyExists
 	}
+	if user.Phone != "" {
+		if _, exists := r.usersByPhone[user.Phone]; exists {
+			return ErrUserAlreadyExists
+		}
+	}
 	if user.ID == "" {
 		user.ID = newUUID()
 	}
@@ -380,6 +421,9 @@ func (r *MemoryIAMRepository) CreateUser(ctx context.Context, user *domain.User)
 	uCopy := *user
 	r.users[user.ID] = &uCopy
 	r.usersByEmail[user.Email] = &uCopy
+	if user.Phone != "" {
+		r.usersByPhone[user.Phone] = &uCopy
+	}
 	return nil
 }
 
@@ -405,6 +449,31 @@ func (r *MemoryIAMRepository) GetUserByEmail(ctx context.Context, email string) 
 	}
 	uCopy := *u
 	return &uCopy, nil
+}
+
+func (r *MemoryIAMRepository) GetUserByPhone(ctx context.Context, phone string) (*domain.User, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	u, ok := r.usersByPhone[phone]
+	if !ok {
+		return nil, ErrUserNotFound
+	}
+	uCopy := *u
+	return &uCopy, nil
+}
+
+func (r *MemoryIAMRepository) UpdateUserPassword(ctx context.Context, userID, newPasswordHash string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	u, ok := r.users[userID]
+	if !ok {
+		return ErrUserNotFound
+	}
+	u.PasswordHash = newPasswordHash
+	u.UpdatedAt = time.Now().UTC()
+	return nil
 }
 
 func (r *MemoryIAMRepository) UpdateUser(ctx context.Context, user *domain.User) error {
@@ -872,6 +941,135 @@ func (r *MemoryIAMRepository) RotateSession(ctx context.Context, oldSessionID st
 	sCopy := *newSession
 	r.sessions[newSession.ID] = &sCopy
 	r.sessionsByRefresh[newSession.RefreshTokenHash] = &sCopy
+	return nil
+}
+
+func (r *MemoryIAMRepository) RevokeAllUserSessions(ctx context.Context, userID string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	now := time.Now().UTC()
+	for _, s := range r.sessions {
+		if s.UserID == userID {
+			s.RevokedAt = &now
+			s.UpdatedAt = now
+			delete(r.sessionsByRefresh, s.RefreshTokenHash)
+		}
+	}
+	return nil
+}
+
+// MFA methods
+func (r *MemoryIAMRepository) CreateMFAChallenge(ctx context.Context, challenge *domain.MFAChallenge) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	if challenge.ID == "" {
+		challenge.ID = newUUID()
+	}
+	if challenge.CreatedAt.IsZero() {
+		challenge.CreatedAt = time.Now().UTC()
+	}
+	cCopy := *challenge
+	r.mfaChallenges[challenge.ID] = &cCopy
+	r.mfaByTokenHash[challenge.MFATokenHash] = &cCopy
+	return nil
+}
+
+func (r *MemoryIAMRepository) GetMFAChallengeByTokenHash(ctx context.Context, hash string) (*domain.MFAChallenge, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	c, ok := r.mfaByTokenHash[hash]
+	if !ok {
+		return nil, ErrMFAChallengeNotFound
+	}
+	if time.Now().UTC().After(c.ExpiresAt) {
+		return nil, ErrMFAChallengeNotFound
+	}
+	cCopy := *c
+	return &cCopy, nil
+}
+
+func (r *MemoryIAMRepository) UpdateMFAChallenge(ctx context.Context, challenge *domain.MFAChallenge) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	cCopy := *challenge
+	r.mfaChallenges[challenge.ID] = &cCopy
+	r.mfaByTokenHash[challenge.MFATokenHash] = &cCopy
+	return nil
+}
+
+func (r *MemoryIAMRepository) DeleteMFAChallenge(ctx context.Context, id string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	if c, ok := r.mfaChallenges[id]; ok {
+		delete(r.mfaByTokenHash, c.MFATokenHash)
+		delete(r.mfaChallenges, id)
+	}
+	return nil
+}
+
+// Password Reset methods
+func (r *MemoryIAMRepository) CreatePasswordResetToken(ctx context.Context, token *domain.PasswordResetToken) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	if token.ID == "" {
+		token.ID = newUUID()
+	}
+	if token.CreatedAt.IsZero() {
+		token.CreatedAt = time.Now().UTC()
+	}
+	tCopy := *token
+	r.passwordResets[token.ID] = &tCopy
+	r.passwordResetsByTokenHash[token.TokenHash] = &tCopy
+	r.passwordResetsByCodeHash[token.CodeHash] = &tCopy
+	return nil
+}
+
+func (r *MemoryIAMRepository) GetPasswordResetByCodeHash(ctx context.Context, userID, codeHash string) (*domain.PasswordResetToken, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	t, ok := r.passwordResetsByCodeHash[codeHash]
+	if !ok || (userID != "" && t.UserID != userID) {
+		return nil, ErrPasswordResetNotFound
+	}
+	if t.UsedAt != nil || time.Now().UTC().After(t.ExpiresAt) {
+		return nil, ErrPasswordResetNotFound
+	}
+	tCopy := *t
+	return &tCopy, nil
+}
+
+func (r *MemoryIAMRepository) GetPasswordResetByTokenHash(ctx context.Context, hash string) (*domain.PasswordResetToken, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	t, ok := r.passwordResetsByTokenHash[hash]
+	if !ok {
+		return nil, ErrPasswordResetNotFound
+	}
+	if t.UsedAt != nil || time.Now().UTC().After(t.ExpiresAt) {
+		return nil, ErrPasswordResetNotFound
+	}
+	tCopy := *t
+	return &tCopy, nil
+}
+
+func (r *MemoryIAMRepository) MarkPasswordResetUsed(ctx context.Context, id string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	t, ok := r.passwordResets[id]
+	if !ok {
+		return ErrPasswordResetNotFound
+	}
+	now := time.Now().UTC()
+	t.UsedAt = &now
 	return nil
 }
 

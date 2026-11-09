@@ -824,6 +824,21 @@ export default function AdminCommandCenter() {
             🌍 Charter
           </button>
 
+          {/* Change Password Button */}
+          <button
+            type="button"
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('skytron_open_change_password'));
+              }
+            }}
+            className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold px-3 py-1.5 rounded-xl border border-amber-500/40 transition flex items-center gap-1.5 text-xs shadow-md cursor-pointer"
+            title="Change Your Staff Account Password"
+          >
+            <span>🔑</span>
+            <span className="hidden sm:inline">Password</span>
+          </button>
+
           {/* Logout Button (Redirects to Refreshed Landing Page) */}
           <button
             type="button"

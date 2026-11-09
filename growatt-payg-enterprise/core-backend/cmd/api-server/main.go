@@ -49,35 +49,7 @@ func main() {
 	}
 	log.Printf("[BOOT] Batch 1 Atomic POSIX VFS mounted at %s", vfsRoot)
 
-	// 2. Initialize Batch 2: Deterministic Auto-Sizing & Nigerian ROI Calculator
-	sizingService := usecases.NewSizingCalculatorService()
-	publicHandler := handlers.NewPublicShowroomHandler(sizingService)
-
-	// 3. Initialize Batch 3: Multi-Rail Fintech Engine, Idempotent Ledger & KYC Underwriting
-	paymentEngine := payments.NewMultiRailPaymentEngine(payments.GatewaySecrets{
-		PaystackSecretKey:   getEnv("PAYSTACK_SECRET_KEY", "sk_test_paystack_secret_2026"),
-		MoniepointSecretKey: getEnv("MONIEPOINT_SECRET_KEY", "mk_test_moniepoint_2026"),
-		OPaySecretKey:       getEnv("OPAY_SECRET_KEY", "op_test_opay_2026"),
-	})
-	tokenEngine := usecases.NewOfflineTokenEngine(getEnv("STS_MASTER_SECRET", "skygrid-growatt-sts-master-key-2026"))
-	ledgerProcessor := usecases.NewLedgerProcessor(vfsManager, tokenEngine)
-	kycService := usecases.NewKYCUnderwritingService()
-	fintechHandler := handlers.NewFintechPaymentHandler(paymentEngine, ledgerProcessor, kycService)
-
-	// 4. Initialize Batch 4: Hardware Telemetry, EEPROM Guard, Commissioning & Growatt Cloud Client
-	telemetryProc := usecases.NewTelemetryHardwareProcessor(
-		vfsManager,
-		ledgerProcessor,
-		getEnv("HEARTBEAT_HMAC_SECRET", "skygrid-mqtt-heartbeat-hmac-key-2026"),
-	)
-	growattCloudClient := growatt_oss.NewClient(
-		getEnv("GROWATT_OSS_URL", "https://openapi.growatt.com/v1"),
-		getEnv("GROWATT_OSS_TOKEN", ""),
-	)
-	adminFieldHandler := handlers.NewAdminAndFieldHandler(telemetryProc)
-	analyticsHandler := handlers.NewCustomerAnalyticsHandler(vfsManager, vfsRoot)
-
-	// 5. Initialize Enterprise IAM, RBAC & Hybrid Staff Onboarding Engine
+	// 2. Initialize Enterprise IAM, RBAC & Hybrid Staff Onboarding Engine
 	jwtSecret := getEnv("JWT_SECRET", "skygrid-enterprise-jwt-master-secret-key-2026")
 	appEnv := getEnv("APP_ENV", "development")
 
@@ -103,6 +75,34 @@ func main() {
 	authService := usecases.NewAuthService(iamRepo, jwtSecret, appEnv)
 	authMiddleware := handlers.NewAuthMiddleware(authService)
 	onboardingHandler := handlers.NewStaffOnboardingHandler(iamRepo, authService)
+
+	// 3. Initialize Batch 2: Deterministic Auto-Sizing & Nigerian ROI Calculator (Persists Registered Customers)
+	sizingService := usecases.NewSizingCalculatorService()
+	publicHandler := handlers.NewPublicShowroomHandler(sizingService, iamRepo, authService)
+
+	// 4. Initialize Batch 3: Multi-Rail Fintech Engine, Idempotent Ledger & KYC Underwriting
+	paymentEngine := payments.NewMultiRailPaymentEngine(payments.GatewaySecrets{
+		PaystackSecretKey:   getEnv("PAYSTACK_SECRET_KEY", "sk_test_paystack_secret_2026"),
+		MoniepointSecretKey: getEnv("MONIEPOINT_SECRET_KEY", "mk_test_moniepoint_2026"),
+		OPaySecretKey:       getEnv("OPAY_SECRET_KEY", "op_test_opay_2026"),
+	})
+	tokenEngine := usecases.NewOfflineTokenEngine(getEnv("STS_MASTER_SECRET", "skygrid-growatt-sts-master-key-2026"))
+	ledgerProcessor := usecases.NewLedgerProcessor(vfsManager, tokenEngine)
+	kycService := usecases.NewKYCUnderwritingService()
+	fintechHandler := handlers.NewFintechPaymentHandler(paymentEngine, ledgerProcessor, kycService)
+
+	// 5. Initialize Batch 4: Hardware Telemetry, EEPROM Guard, Commissioning & Growatt Cloud Client
+	telemetryProc := usecases.NewTelemetryHardwareProcessor(
+		vfsManager,
+		ledgerProcessor,
+		getEnv("HEARTBEAT_HMAC_SECRET", "skygrid-mqtt-heartbeat-hmac-key-2026"),
+	)
+	growattCloudClient := growatt_oss.NewClient(
+		getEnv("GROWATT_OSS_URL", "https://openapi.growatt.com/v1"),
+		getEnv("GROWATT_OSS_TOKEN", ""),
+	)
+	adminFieldHandler := handlers.NewAdminAndFieldHandler(telemetryProc)
+	analyticsHandler := handlers.NewCustomerAnalyticsHandler(vfsManager, vfsRoot)
 
 	// 6. Initialize Enterprise ERP: 16-Step Installation, 13-Step Maintenance & Finance Engine
 	erpRepo := repositories.NewERPRepository(pgDB.DB())
@@ -169,12 +169,20 @@ func main() {
 	mux.HandleFunc("/api/v1/customer/ai-advisor", withCORS(handleCustomerAIAdvisorProxy(pythonEngineURL, authService)))
 	mux.HandleFunc("/api/v1/agent/chat", withCORS(handleCustomerAIAdvisorProxy(pythonEngineURL, authService)))
 
-	// --- ENTERPRISE IAM & HYBRID STAFF ONBOARDING ROUTES ---
+	// --- ENTERPRISE IAM, 2FA MFA & PASSWORD RECOVERY ROUTES ---
 	// Public Auth & Onboarding
 	mux.HandleFunc("/api/v1/auth/staff/apply", withCORS(onboardingHandler.HandleApply))
 	mux.HandleFunc("/api/v1/auth/staff/verify-email", withCORS(onboardingHandler.HandleVerifyEmail))
 	mux.HandleFunc("/api/v1/auth/staff/activate", withCORS(onboardingHandler.HandleActivate))
 	mux.HandleFunc("/api/v1/auth/login", withCORS(onboardingHandler.HandleLogin))
+	mux.HandleFunc("/api/v1/auth/verify-mfa", withCORS(onboardingHandler.HandleVerifyMFA))
+	mux.HandleFunc("/api/v1/auth/mfa/verify", withCORS(onboardingHandler.HandleVerifyMFA))
+	mux.HandleFunc("/api/v1/auth/resend-mfa-otp", withCORS(onboardingHandler.HandleResendMFA))
+	mux.HandleFunc("/api/v1/auth/mfa/resend", withCORS(onboardingHandler.HandleResendMFA))
+	mux.HandleFunc("/api/v1/auth/dev/latest-code", withCORS(onboardingHandler.HandleDevLatestCode))
+	mux.HandleFunc("/api/v1/auth/forgot-password", withCORS(onboardingHandler.HandleForgotPassword))
+	mux.HandleFunc("/api/v1/auth/reset-password", withCORS(onboardingHandler.HandleResetPassword))
+	mux.HandleFunc("/api/v1/auth/change-password", withCORS(onboardingHandler.HandleChangePassword))
 	mux.HandleFunc("/api/v1/auth/refresh", withCORS(onboardingHandler.HandleRefresh))
 	mux.HandleFunc("/api/v1/auth/sandbox-token", withCORS(onboardingHandler.HandleSandboxToken))
 	mux.HandleFunc("/api/v1/auth/sandbox-impersonate", withCORS(onboardingHandler.HandleSandboxToken))

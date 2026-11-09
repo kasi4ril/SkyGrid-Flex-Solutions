@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -80,8 +81,44 @@ type StaffActivateRequest struct {
 }
 
 type LoginRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Identifier string `json:"identifier"`
+	Email      string `json:"email"`
+	Phone      string `json:"phone"`
+	Password   string `json:"password"`
+}
+
+type VerifyMFARequest struct {
+	MFAToken string `json:"mfa_token"`
+	Code     string `json:"code"`
+}
+
+type ResendMFARequest struct {
+	MFAToken string `json:"mfa_token"`
+	Channel  string `json:"channel"`
+}
+
+type ForgotPasswordRequest struct {
+	Identifier string `json:"identifier"`
+	Email      string `json:"email"`
+	Phone      string `json:"phone"`
+}
+
+type ResetPasswordRequest struct {
+	Identifier   string `json:"identifier"`
+	Email        string `json:"email"`
+	Phone        string `json:"phone"`
+	Code         string `json:"code"`
+	RecoveryCode string `json:"recovery_code"`
+	ResetToken   string `json:"reset_token"`
+	NewPassword  string `json:"new_password"`
+}
+
+type ChangePasswordRequest struct {
+	UserID          string `json:"user_id"`
+	Identifier      string `json:"identifier"`
+	Email           string `json:"email"`
+	CurrentPassword string `json:"current_password"`
+	NewPassword     string `json:"new_password"`
 }
 
 type RefreshRequest struct {
@@ -521,11 +558,17 @@ func (h *StaffOnboardingHandler) HandleActivate(w http.ResponseWriter, r *http.R
 	// Generate unique employee code: EMP-2026-XXXX
 	empCode := fmt.Sprintf("EMP-2026-%s", strings.ToUpper(newRandomToken(2)))
 
+	now := time.Now().UTC()
 	newUser := &domain.User{
-		Email:        email,
-		Phone:        onboardingReq.ApplicantPhone,
-		PasswordHash: passwordHash,
-		UserType:     domain.UserTypeStaff,
+		Email:           email,
+		Phone:           onboardingReq.ApplicantPhone,
+		PasswordHash:    passwordHash,
+		UserType:        domain.UserTypeStaff,
+		Status:          domain.UserStatusActive,
+		EmailVerifiedAt: &now,
+		PhoneVerifiedAt: &now,
+		MFAEnabled:      true,
+		PreferredMFA:    string(domain.MFAChannelEmailAndSMS),
 	}
 
 	profile := &domain.StaffProfile{
@@ -574,7 +617,7 @@ func (h *StaffOnboardingHandler) HandleActivate(w http.ResponseWriter, r *http.R
 }
 
 // ----------------------------------------------------------------------------
-// 6. POST /api/v1/auth/login & POST /api/v1/auth/refresh
+// 6. POST /api/v1/auth/login, MFA Verification, & Password Recovery
 // ----------------------------------------------------------------------------
 func (h *StaffOnboardingHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -588,7 +631,19 @@ func (h *StaffOnboardingHandler) HandleLogin(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	authResp, err := h.authService.Login(r.Context(), req.Email, req.Password, r.RemoteAddr, r.UserAgent())
+	id := strings.TrimSpace(req.Identifier)
+	if id == "" {
+		id = strings.TrimSpace(req.Email)
+	}
+	if id == "" {
+		id = strings.TrimSpace(req.Phone)
+	}
+	if id == "" || req.Password == "" {
+		writeJSONError(w, http.StatusBadRequest, "email/phone and password are required")
+		return
+	}
+
+	challenge, err := h.authService.InitiateLogin(r.Context(), id, req.Password, r.RemoteAddr, r.UserAgent())
 	if err != nil {
 		if err == usecases.ErrInvalidCredentials || err == usecases.ErrAccountNotActive {
 			writeJSONError(w, http.StatusUnauthorized, err.Error())
@@ -598,7 +653,207 @@ func (h *StaffOnboardingHandler) HandleLogin(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
+	// If 2FA is required, return challenge response (status: "mfa_required")
+	if challenge.Status == "mfa_required" {
+		writeJSONResponse(w, http.StatusOK, challenge)
+		return
+	}
+
+	// Otherwise, return direct auth response
+	writeJSONResponse(w, http.StatusOK, challenge.AuthResponse)
+}
+
+func (h *StaffOnboardingHandler) HandleVerifyMFA(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeJSONError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	var req VerifyMFARequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeJSONError(w, http.StatusBadRequest, "invalid request payload: "+err.Error())
+		return
+	}
+
+	if strings.TrimSpace(req.MFAToken) == "" || strings.TrimSpace(req.Code) == "" {
+		writeJSONError(w, http.StatusBadRequest, "both mfa_token and verification code are required")
+		return
+	}
+
+	authResp, err := h.authService.VerifyLoginMFA(r.Context(), req.MFAToken, req.Code, r.RemoteAddr, r.UserAgent())
+	if err != nil {
+		if err == usecases.ErrInvalidMFACode || err == usecases.ErrMFAMaxAttemptsExceeded {
+			writeJSONError(w, http.StatusUnauthorized, err.Error())
+			return
+		}
+		writeJSONError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	writeJSONResponse(w, http.StatusOK, authResp)
+}
+
+func (h *StaffOnboardingHandler) HandleResendMFA(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeJSONError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	var req ResendMFARequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeJSONError(w, http.StatusBadRequest, "invalid request payload: "+err.Error())
+		return
+	}
+
+	if strings.TrimSpace(req.MFAToken) == "" {
+		writeJSONError(w, http.StatusBadRequest, "mfa_token is required")
+		return
+	}
+
+	resp, err := h.authService.ResendLoginMFA(r.Context(), req.MFAToken, req.Channel)
+	if err != nil {
+		writeJSONError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	writeJSONResponse(w, http.StatusOK, resp)
+}
+
+func (h *StaffOnboardingHandler) HandleForgotPassword(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeJSONError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	var req ForgotPasswordRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeJSONError(w, http.StatusBadRequest, "invalid request payload: "+err.Error())
+		return
+	}
+
+	id := strings.TrimSpace(req.Identifier)
+	if id == "" {
+		id = strings.TrimSpace(req.Email)
+	}
+	if id == "" {
+		id = strings.TrimSpace(req.Phone)
+	}
+	if id == "" {
+		writeJSONError(w, http.StatusBadRequest, "registered email or phone number is required")
+		return
+	}
+
+	resp, err := h.authService.RequestPasswordReset(r.Context(), id)
+	if err != nil {
+		writeJSONError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	writeJSONResponse(w, http.StatusOK, resp)
+}
+
+func (h *StaffOnboardingHandler) HandleResetPassword(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeJSONError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	var req ResetPasswordRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeJSONError(w, http.StatusBadRequest, "invalid request payload: "+err.Error())
+		return
+	}
+
+	id := strings.TrimSpace(req.Identifier)
+	if id == "" {
+		id = strings.TrimSpace(req.Email)
+	}
+	if id == "" {
+		id = strings.TrimSpace(req.Phone)
+	}
+
+	if strings.TrimSpace(req.NewPassword) == "" {
+		writeJSONError(w, http.StatusBadRequest, "new_password is required")
+		return
+	}
+	reqCode := strings.TrimSpace(req.Code)
+	if reqCode == "" {
+		reqCode = strings.TrimSpace(req.RecoveryCode)
+	}
+	if reqCode == "" && strings.TrimSpace(req.ResetToken) == "" {
+		writeJSONError(w, http.StatusBadRequest, "recovery code or reset_token is required")
+		return
+	}
+
+	err := h.authService.ResetPassword(r.Context(), id, reqCode, req.ResetToken, req.NewPassword)
+	if err != nil {
+		if err == usecases.ErrInvalidResetCode || strings.Contains(err.Error(), "characters") {
+			writeJSONError(w, http.StatusBadRequest, err.Error())
+			return
+		}
+		writeJSONError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	writeJSONResponse(w, http.StatusOK, map[string]any{
+		"status":  "success",
+		"message": "Password updated successfully. You may now log in with your new credentials.",
+	})
+}
+
+func (h *StaffOnboardingHandler) HandleChangePassword(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeJSONError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	var req ChangePasswordRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeJSONError(w, http.StatusBadRequest, "invalid request payload: "+err.Error())
+		return
+	}
+
+	claims, hasClaims := GetClaims(r.Context())
+	uid := strings.TrimSpace(req.UserID)
+	if uid == "" && hasClaims && claims != nil {
+		uid = claims.UserID
+	}
+
+	id := strings.TrimSpace(req.Identifier)
+	if id == "" {
+		id = strings.TrimSpace(req.Email)
+	}
+	if id == "" && hasClaims && claims != nil {
+		id = claims.Email
+	}
+
+	currentPass := strings.TrimSpace(req.CurrentPassword)
+	newPass := strings.TrimSpace(req.NewPassword)
+
+	if (uid == "" && id == "") || currentPass == "" || newPass == "" {
+		writeJSONError(w, http.StatusBadRequest, "Current password, new password, and user identity are required.")
+		return
+	}
+
+	if len(newPass) < 8 {
+		writeJSONError(w, http.StatusBadRequest, "New password must be at least 8 characters long.")
+		return
+	}
+
+	err := h.authService.ChangePassword(r.Context(), uid, id, currentPass, newPass)
+	if err != nil {
+		if errors.Is(err, usecases.ErrInvalidCredentials) {
+			writeJSONError(w, http.StatusUnauthorized, "Current password is incorrect.")
+			return
+		}
+		writeJSONError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	writeJSONResponse(w, http.StatusOK, map[string]any{
+		"status":  "success",
+		"message": "Password changed successfully.",
+	})
 }
 
 func (h *StaffOnboardingHandler) HandleRefresh(w http.ResponseWriter, r *http.Request) {
@@ -702,6 +957,33 @@ func (h *StaffOnboardingHandler) HandleMe(w http.ResponseWriter, r *http.Request
 		"permissions": claims.Permissions,
 		"customer_id": claims.CustomerID,
 	})
+}
+
+// ----------------------------------------------------------------------------
+// 9. GET /api/v1/auth/dev/latest-code (Developer Testing Verification Code Access)
+// ----------------------------------------------------------------------------
+func (h *StaffOnboardingHandler) HandleDevLatestCode(w http.ResponseWriter, r *http.Request) {
+	if strings.EqualFold(h.authService.Environment(), "production") {
+		writeJSONError(w, http.StatusNotFound, "developer endpoints disabled in production")
+		return
+	}
+	id := strings.TrimSpace(r.URL.Query().Get("identifier"))
+	if id == "" {
+		id = strings.TrimSpace(r.URL.Query().Get("email"))
+	}
+	if id == "" {
+		id = strings.TrimSpace(r.URL.Query().Get("phone"))
+	}
+	if id == "" {
+		writeJSONError(w, http.StatusBadRequest, "identifier, email or phone query parameter required")
+		return
+	}
+	record, found := h.authService.GetLatestDevCode(id)
+	if !found {
+		writeJSONError(w, http.StatusNotFound, "no active verification code found for identifier")
+		return
+	}
+	writeJSONResponse(w, http.StatusOK, record)
 }
 
 // newRandomToken returns secure random hex string.

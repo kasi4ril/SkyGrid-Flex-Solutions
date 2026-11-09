@@ -732,6 +732,9 @@
               <span id="navUserName" class="text-[11px] font-bold text-white block leading-tight">User</span>
               <span id="navUserRole" class="text-[9px] text-emerald-400 font-mono block">Role</span>
             </div>
+            <button type="button" onclick="openChangePasswordModal()" class="text-brand-amber hover:underline text-[11px] font-bold cursor-pointer ml-1 flex items-center gap-0.5" title="Change Account Password">
+              <span>🔑 Password</span>
+            </button>
             <button type="button" onclick="handlePortalSignOut()" class="text-rose-400 hover:text-rose-300 hover:underline text-[11px] font-bold cursor-pointer ml-1" title="Sign Out of Session">
               Sign Out
             </button>
@@ -846,9 +849,14 @@
               <span id="mobNavName" class="text-xs font-bold text-white block">User</span>
               <span id="mobNavRole" class="text-[10px] text-emerald-400 font-mono block">Role</span>
             </div>
-            <button onclick="handlePortalSignOut(); toggleMobileMenu();" class="text-rose-400 hover:text-rose-300 text-xs font-bold underline cursor-pointer">
-              Sign Out
-            </button>
+            <div class="flex items-center gap-2">
+              <button onclick="openChangePasswordModal(); toggleMobileMenu();" class="text-brand-amber hover:underline text-xs font-bold cursor-pointer" title="Change Account Password">
+                🔑 Password
+              </button>
+              <button onclick="handlePortalSignOut(); toggleMobileMenu();" class="text-rose-400 hover:text-rose-300 text-xs font-bold underline cursor-pointer">
+                Sign Out
+              </button>
+            </div>
           </div>
           <button onclick="routeCurrentSessionWorkspace(); toggleMobileMenu();" class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-xs flex items-center justify-between cursor-pointer shadow-md">
             <span>🚀 Go to My Assigned Workspace</span>
@@ -3319,6 +3327,34 @@
         Login to your dashboard. Enter your verified email address or phone and password to continue.
       </p>
 
+      <!-- Developer Testing Bar (One-Click Pre-fills) -->
+      <div id="devTestAccountsBar" class="mt-3 p-3 rounded-2xl bg-purple-950/40 border border-purple-500/30 text-[11px] space-y-2">
+        <div class="flex items-center justify-between text-purple-200">
+          <span class="font-bold flex items-center gap-1.5">
+            <span>🛠️</span>
+            <span>Developer Sandbox Accounts:</span>
+          </span>
+          <span class="text-[10px] text-amber-300 font-mono px-1.5 py-0.5 rounded bg-black/40 border border-amber-500/30">2FA Codes Auto-Displayed</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
+          <button type="button" onclick="quickFillDevAccount('admin@skytron.ng', 'Admin@SkyTron2026!')" class="px-2 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] text-left transition cursor-pointer">
+            👑 Super Admin
+          </button>
+          <button type="button" onclick="quickFillDevAccount('ops@skytron.ng', 'OpsManager2026!')" class="px-2 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] text-left transition cursor-pointer">
+            📋 Operations
+          </button>
+          <button type="button" onclick="quickFillDevAccount('finance@skytron.ng', 'FinanceLead2026!')" class="px-2 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] text-left transition cursor-pointer">
+            💳 Finance
+          </button>
+          <button type="button" onclick="quickFillDevAccount('tech@skytron.ng', 'Technician2026!')" class="px-2 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] text-left transition cursor-pointer">
+            🔧 Field Tech
+          </button>
+          <button type="button" onclick="quickFillDevAccount('customer@skytron.ng', 'SolarCustomer2026!')" class="px-2 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] text-left transition cursor-pointer">
+            ☀️ Customer
+          </button>
+        </div>
+      </div>
+
       <!-- Primary Credentials Form (Email + Password ONLY — Pure Login Page) -->
       <form onsubmit="handlePortalSignIn(event)" class="mt-4 space-y-3.5 text-xs">
         <div>
@@ -3327,7 +3363,10 @@
         </div>
 
         <div>
-          <label class="block text-brand-warm/80 font-bold mb-1">Password</label>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-brand-warm/80 font-bold">Password</label>
+            <button type="button" onclick="closeModal('signInModal'); openForgotPasswordModal('portalLoginId')" class="text-xs text-brand-amber hover:underline font-semibold cursor-pointer">Forget Password?</button>
+          </div>
           <input type="password" id="portalLoginPass" required value="Admin@SkyTron2026!" placeholder="••••••••••••" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none text-xs">
         </div>
 
@@ -3337,12 +3376,278 @@
           Login to Your Dashboard
         </button>
 
+        <!-- Prominent Forget Password Link Leading to Password Recovery -->
+        <div class="pt-2 text-center text-xs">
+          <button type="button" onclick="closeModal('signInModal'); openForgotPasswordModal('portalLoginId')" class="text-xs font-semibold text-brand-amber hover:text-amber-300 hover:underline inline-flex items-center gap-1 cursor-pointer">
+            <span>🔑 Trouble logging in?</span>
+            <span class="font-bold underline">Forget Password? Lead to Password Recovery &rarr;</span>
+          </button>
+        </div>
+
         <div class="pt-3 text-center text-xs text-brand-warm/80 border-t border-white/10 flex items-center justify-between">
           <button type="button" onclick="closeModal('signInModal'); openModal('signUpModal')" class="font-bold text-brand-teal hover:underline inline-flex items-center gap-1 cursor-pointer">
             <span>New Customer? Register</span> &rarr;
           </button>
           <button type="button" onclick="closeModal('signInModal'); openStaffSignInModal()" class="text-brand-amber hover:underline inline-flex items-center gap-1 cursor-pointer font-medium">
             <span>👷 Staff Portal Sign In</span> &rarr;
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Self-Service Forgot Password & Password Recovery -->
+  <div id="forgotPasswordModal" style="display: none;" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+    <div class="glass-card-dark rounded-3xl max-w-md w-full p-6 sm:p-8 border border-white/15 relative shadow-2xl my-8">
+      <button onclick="closeModal('forgotPasswordModal')" aria-label="Close Modal" class="absolute top-5 right-5 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition cursor-pointer">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-brand-amber/20 border border-brand-amber/30 flex items-center justify-center text-brand-amber text-xl font-bold">
+          🔑
+        </div>
+        <div>
+          <h3 id="forgotModalHeading" class="text-xl sm:text-2xl font-heading font-extrabold text-white">Reset Your Password</h3>
+          <p id="forgotModalSubheading" class="text-xs text-brand-warm/75">Recover access to your account via verified email or phone.</p>
+        </div>
+      </div>
+
+      <!-- Stage 1: Request Recovery Code -->
+      <form id="forgotStageRequestForm" onsubmit="handleRequestRecoveryCode(event)" class="space-y-4 text-xs">
+        <p class="text-xs text-brand-warm/80 leading-relaxed">
+          Enter your registered email address or phone number. We will dispatch a 6-digit recovery code to both destinations.
+        </p>
+
+        <div>
+          <label class="block text-brand-warm/90 font-bold mb-1">Account Email or Phone Number</label>
+          <input type="text" id="forgotIdentifierInput" required placeholder="e.g. customer@example.com or +234..." class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-brand-warm/40 focus:border-brand-amber focus:outline-none text-xs">
+        </div>
+
+        <div id="forgotRequestStatusMsg" style="display: none;" class="p-2.5 rounded-xl text-xs font-mono"></div>
+
+        <button type="submit" id="forgotRequestBtn" class="w-full py-3.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition font-heading cursor-pointer shadow-lg shadow-brand-amber/20">
+          Send Recovery Code
+        </button>
+
+        <div class="pt-2 text-center text-xs">
+          <button type="button" onclick="closeModal('forgotPasswordModal'); openModal('signInModal')" class="text-brand-warm/70 hover:text-white hover:underline cursor-pointer">
+            &larr; Remember your password? Back to Login
+          </button>
+        </div>
+      </form>
+
+      <!-- Stage 2: Confirm Recovery Code and Set New Password -->
+      <form id="forgotStageResetForm" style="display: none;" onsubmit="handleConfirmPasswordReset(event)" class="space-y-3.5 text-xs">
+        <p class="text-xs text-brand-warm/80 leading-relaxed">
+          Enter the 6-digit code sent to your email &amp; phone, and enter your new password (minimum 8 characters).
+        </p>
+
+        <!-- Prominent Developer Sandbox Recovery Code Panel -->
+        <div id="forgotDevCodePanel" class="p-3.5 rounded-2xl bg-gradient-to-r from-purple-950/80 via-slate-900 to-indigo-950/80 border-2 border-purple-500/50 shadow-lg shadow-purple-950/50 text-xs space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="inline-flex items-center gap-1.5 font-bold text-purple-300">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>🛠️ Developer Recovery Code</span>
+            </span>
+            <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-purple-500/30 text-purple-200 border border-purple-400/30">
+              Dev Mode Active
+            </span>
+          </div>
+          <div class="flex items-center justify-between bg-black/60 p-2.5 rounded-xl border border-purple-500/40">
+            <div>
+              <span class="text-[10px] text-purple-300/80 block uppercase tracking-wider font-semibold">Recovery Code</span>
+              <span id="forgotDevCodeText" class="font-mono font-black text-2xl text-amber-300 tracking-[0.25em]">654321</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="fillDevRecoveryCode()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition flex items-center gap-1 cursor-pointer" title="Auto-fill recovery code into input">
+                <span>⚡ Auto-Fill</span>
+              </button>
+              <button type="button" onclick="copyDevRecoveryCode()" class="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs border border-white/20 transition cursor-pointer" title="Copy code to clipboard">
+                <span>📋</span>
+              </button>
+              <button type="button" onclick="fetchActiveDevCode('recovery')" class="px-2 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-bold transition cursor-pointer" title="Fetch latest code from API">
+                <span>🔍</span>
+              </button>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-[10px] text-purple-200/70 pt-0.5">
+            <span>💡 Live delivery simulated. Automatically disabled in production.</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-brand-warm/90 font-bold mb-1">6-Digit Recovery Code</label>
+          <input type="text" id="recoveryCodeInput" maxlength="6" required placeholder="• • • • • •" class="w-full text-center tracking-[0.4em] font-mono text-xl font-bold py-2 bg-black/60 border border-white/20 rounded-xl text-white focus:border-brand-amber focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-brand-warm/90 font-bold mb-1">New Password (Min 8 characters)</label>
+          <input type="password" id="newPasswordInput" required placeholder="••••••••••••" class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none text-xs">
+        </div>
+
+        <div>
+          <label class="block text-brand-warm/90 font-bold mb-1">Confirm New Password</label>
+          <input type="password" id="confirmNewPasswordInput" required placeholder="••••••••••••" class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none text-xs">
+        </div>
+
+        <div id="forgotResetStatusMsg" style="display: none;" class="p-2.5 rounded-xl text-xs font-mono"></div>
+
+        <button type="submit" id="forgotResetBtn" class="w-full py-3.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 transition font-heading cursor-pointer shadow-lg shadow-emerald-600/20">
+          Update Password &amp; Return to Login
+        </button>
+
+        <div class="flex items-center justify-between text-xs pt-1">
+          <button type="button" onclick="backToRecoveryRequestStage()" class="text-brand-amber hover:underline cursor-pointer">
+            &larr; Re-enter Email/Phone
+          </button>
+          <button type="button" onclick="closeModal('forgotPasswordModal')" class="text-brand-warm/60 hover:text-white cursor-pointer">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Two-Factor Authentication (2FA / MFA Code Verification) -->
+  <div id="mfaModal" style="display: none;" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+    <div class="glass-card-dark rounded-3xl max-w-md w-full p-6 sm:p-8 border border-white/15 relative shadow-2xl my-8">
+      <button onclick="closeModal('mfaModal')" aria-label="Close 2FA Modal" class="absolute top-5 right-5 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition cursor-pointer">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-teal-500/20 border border-teal-500/30 flex items-center justify-center text-teal-400 text-xl font-bold">
+          🛡️
+        </div>
+        <div>
+          <h3 class="text-xl sm:text-2xl font-heading font-extrabold text-white">Two-Factor Verification (2FA)</h3>
+          <p class="text-xs text-brand-warm/75">Identity verification code required to proceed.</p>
+        </div>
+      </div>
+
+      <p class="text-xs text-brand-warm/80 leading-relaxed mb-3">
+        For your security, a 6-digit verification code was dispatched to your registered contacts:
+      </p>
+
+      <div class="mb-4 p-3 rounded-2xl bg-white/5 border border-white/10 text-xs space-y-1.5">
+        <div class="flex items-center justify-between text-brand-warm/90">
+          <span class="text-brand-warm/60">📧 Email Code:</span>
+          <span id="mfaMaskedEmail" class="font-mono font-bold text-white">a***n@skytron.ng</span>
+        </div>
+        <div class="flex items-center justify-between text-brand-warm/90">
+          <span class="text-brand-warm/60">📱 SMS / Phone:</span>
+          <span id="mfaMaskedPhone" class="font-mono font-bold text-white">+234800****766</span>
+        </div>
+        <div class="flex items-center justify-between text-[11px] text-brand-amber font-medium pt-1 border-t border-white/10">
+          <span>⏱️ Valid for 5 minutes</span>
+          <span>Max 5 attempts</span>
+        </div>
+      </div>
+
+      <!-- Prominent Developer Sandbox Code Panel (Active in Dev/Testing) -->
+      <div id="mfaDevCodePanel" class="mb-4 p-3.5 rounded-2xl bg-gradient-to-r from-purple-950/80 via-slate-900 to-indigo-950/80 border-2 border-purple-500/50 shadow-lg shadow-purple-950/50 text-xs space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="inline-flex items-center gap-1.5 font-bold text-purple-300">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>🛠️ Developer Verification Code</span>
+          </span>
+          <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-purple-500/30 text-purple-200 border border-purple-400/30">
+            Dev Mode Active
+          </span>
+        </div>
+        <div class="flex items-center justify-between bg-black/60 p-2.5 rounded-xl border border-purple-500/40">
+          <div>
+            <span class="text-[10px] text-purple-300/80 block uppercase tracking-wider font-semibold">2FA OTP Code</span>
+            <span id="mfaDevCodeText" class="font-mono font-black text-2xl text-amber-300 tracking-[0.25em]">123456</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button type="button" onclick="fillDevMFACode()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition flex items-center gap-1 cursor-pointer" title="Auto-fill verification code into input">
+              <span>⚡ Auto-Fill</span>
+            </button>
+            <button type="button" onclick="copyDevMFACode()" class="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs border border-white/20 transition cursor-pointer" title="Copy code to clipboard">
+              <span>📋</span>
+            </button>
+            <button type="button" onclick="fetchActiveDevCode('mfa')" class="px-2 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-bold transition cursor-pointer" title="Fetch latest code from API">
+              <span>🔍</span>
+            </button>
+          </div>
+        </div>
+        <div class="flex items-center justify-between text-[10px] text-purple-200/70 pt-0.5">
+          <span>💡 Live delivery simulated. Automatically disabled in production.</span>
+        </div>
+      </div>
+
+      <form onsubmit="handleVerifyMFACode(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-brand-warm/90 font-bold mb-1">6-Digit Verification Code</label>
+          <input type="text" id="mfaCodeInput" maxlength="6" required placeholder="• • • • • •" class="w-full text-center tracking-[0.5em] font-mono text-2xl font-bold py-3 bg-black/60 border border-white/20 rounded-xl text-white focus:border-brand-amber focus:outline-none">
+        </div>
+
+        <div id="mfaStatusMsg" style="display: none;" class="p-2.5 rounded-xl text-xs font-mono"></div>
+
+        <button type="submit" id="mfaVerifyBtn" class="w-full py-3.5 rounded-xl text-xs font-bold text-slate-950 bg-brand-amber hover:bg-amber-400 transition font-heading cursor-pointer shadow-lg shadow-brand-amber/20">
+          Verify Code &amp; Enter Dashboard
+        </button>
+
+        <div class="flex items-center justify-between text-xs pt-1">
+          <button type="button" onclick="handleResendMFACode()" class="text-brand-amber hover:underline font-semibold cursor-pointer">
+            🔄 Resend Code (SMS &amp; Email)
+          </button>
+          <button type="button" onclick="closeModal('mfaModal'); openModal('signInModal')" class="text-brand-warm/60 hover:text-white cursor-pointer">
+            &larr; Back to Login
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Authenticated User Change Password -->
+  <div id="changePasswordModal" style="display: none;" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+    <div class="glass-card-dark rounded-3xl max-w-md w-full p-6 sm:p-8 border border-white/15 relative shadow-2xl my-8">
+      <button onclick="closeModal('changePasswordModal')" aria-label="Close Change Password Modal" class="absolute top-5 right-5 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition cursor-pointer">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-brand-amber/20 border border-brand-amber/30 flex items-center justify-center text-brand-amber text-xl font-bold">
+          🔑
+        </div>
+        <div>
+          <h3 class="text-xl sm:text-2xl font-heading font-extrabold text-white">Change Your Password</h3>
+          <p class="text-xs text-brand-warm/75">Update your account password to secure your credentials.</p>
+        </div>
+      </div>
+
+      <p class="text-xs text-brand-warm/80 leading-relaxed mb-4">
+        Enter your current password and choose a new secure password (minimum 8 characters).
+      </p>
+
+      <form onsubmit="handleSubmitChangePassword(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block text-brand-warm/90 font-bold mb-1">Current Password</label>
+          <input type="password" id="currentPasswordInput" required placeholder="••••••••••••" class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none text-xs">
+        </div>
+
+        <div>
+          <label class="block text-brand-warm/90 font-bold mb-1">New Password (Min 8 characters)</label>
+          <input type="password" id="changeNewPasswordInput" required placeholder="••••••••••••" class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none text-xs">
+        </div>
+
+        <div>
+          <label class="block text-brand-warm/90 font-bold mb-1">Confirm New Password</label>
+          <input type="password" id="changeConfirmPasswordInput" required placeholder="••••••••••••" class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none text-xs">
+        </div>
+
+        <div id="changePasswordStatusMsg" style="display: none;" class="p-2.5 rounded-xl text-xs font-mono"></div>
+
+        <button type="submit" id="changePasswordBtn" class="w-full py-3.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition font-heading cursor-pointer shadow-lg shadow-brand-amber/20">
+          Update Password
+        </button>
+
+        <div class="pt-2 text-center text-xs">
+          <button type="button" onclick="closeModal('changePasswordModal')" class="text-brand-warm/60 hover:text-white cursor-pointer">
+            Cancel
           </button>
         </div>
       </form>
@@ -3892,6 +4197,12 @@
         <button type="button" onclick="toggleTheme()" class="px-3.5 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/15 text-white transition shadow-sm cursor-pointer" title="Toggle Light/Dark Theme">
           <span class="portal-theme-icon text-sm sm:text-base">🌙</span>
           <span class="portal-theme-text font-semibold hidden sm:inline">Dark</span>
+        </button>
+
+        <!-- Change Password Button -->
+        <button type="button" onclick="openChangePasswordModal()" class="px-3.5 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-amber-300 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 transition flex items-center gap-1.5 shadow-sm cursor-pointer" title="Change Account Password">
+          <i data-lucide="key-round" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Change Password</span>
         </button>
 
         <!-- Logout Button (Redirects to Refreshed Landing Page) -->
@@ -5040,14 +5351,32 @@
         </div>
       </div>
 
-      <!-- Developer Info Alert -->
-      <div class="p-3 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-200 text-xs mb-3 space-y-1">
-        <p class="font-bold flex items-center gap-1.5 text-purple-300">
-          <span>👑</span> Super Admin Auto-Login Active
-        </p>
+      <!-- Developer Info Alert & Quick Switcher -->
+      <div class="p-3 rounded-2xl bg-purple-500/15 border border-purple-500/35 text-purple-200 text-xs mb-3 space-y-2">
+        <div class="flex items-center justify-between text-purple-200">
+          <p class="font-bold flex items-center gap-1.5 text-purple-300">
+            <span>👑</span>
+            <span>Super Admin &amp; Staff Dev Accounts</span>
+          </p>
+          <span class="text-[10px] text-amber-300 font-mono px-1.5 py-0.5 rounded bg-black/40 border border-amber-500/30">Auto 2FA Capture</span>
+        </div>
         <p class="text-[11px] text-purple-200/80 leading-relaxed">
-          Developer Super Admin auto-login is active for Watchtower access. Authorization and department role assignments (Operations, Finance, COREN Engineering) are controlled by the Super Admin in the Watchtower dashboard.
+          Developer Watchtower access is active. 2FA verification codes are displayed on the verification screen for 1-click access.
         </p>
+        <div class="grid grid-cols-2 gap-1.5 pt-1">
+          <button type="button" onclick="quickFillDevAccount('admin@skytron.ng', 'Admin@SkyTron2026!')" class="px-2 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] text-left transition cursor-pointer">
+            👑 Super Admin (Full IAM)
+          </button>
+          <button type="button" onclick="quickFillDevAccount('ops@skytron.ng', 'OpsManager2026!')" class="px-2 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] text-left transition cursor-pointer">
+            📋 Operations Manager
+          </button>
+          <button type="button" onclick="quickFillDevAccount('finance@skytron.ng', 'FinanceLead2026!')" class="px-2 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] text-left transition cursor-pointer">
+            💳 Finance Officer
+          </button>
+          <button type="button" onclick="quickFillDevAccount('tech@skytron.ng', 'Technician2026!')" class="px-2 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] text-left transition cursor-pointer">
+            🔧 COREN Technician
+          </button>
+        </div>
       </div>
 
       <form id="staffSignInForm" onsubmit="handleStaffSignIn(event)" class="space-y-4 text-xs">
@@ -5057,7 +5386,10 @@
         </div>
 
         <div>
-          <label class="block text-brand-warm/90 font-bold mb-1">Password</label>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-brand-warm/90 font-bold">Password</label>
+            <button type="button" onclick="closeModal('staffSignInModal'); openForgotPasswordModal('staffLoginId')" class="text-xs text-brand-amber hover:underline font-semibold cursor-pointer">Forget Password?</button>
+          </div>
           <input type="password" id="staffLoginPass" required value="Admin@SkyTron2026!" placeholder="••••••••••••" class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-brand-warm/40 focus:border-brand-teal focus:outline-none text-xs font-mono">
         </div>
 
@@ -5066,6 +5398,14 @@
         <button type="submit" id="staffSignInBtn" class="w-full py-3.5 rounded-xl text-xs font-bold text-slate-950 bg-gradient-to-r from-amber-400 via-emerald-400 to-teal-400 hover:from-amber-300 hover:to-teal-300 transition-all font-heading shadow-md shadow-brand-sky/20 flex items-center justify-center gap-2 cursor-pointer">
           <span>👑 Auto-Login as Super Admin &amp; Enter Watchtower</span>
         </button>
+
+        <!-- Trouble Logging In & Self-Service Password Recovery Link -->
+        <div class="pt-1 text-center">
+          <button type="button" onclick="closeModal('staffSignInModal'); openForgotPasswordModal('staffLoginId')" class="text-xs font-semibold text-brand-amber hover:text-amber-300 hover:underline inline-flex items-center gap-1 cursor-pointer">
+            <span>🔑</span>
+            <span>Trouble logging in? Forget Password? Lead to Password Recovery &rarr;</span>
+          </button>
+        </div>
       </form>
 
       <!-- Prominent Callout Link for New Staff Applying for Activation -->
@@ -5343,6 +5683,12 @@
         <!-- Dark / Light Mode Toggle Button -->
         <button type="button" onclick="toggleTheme()" class="px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-white/15 text-white transition shadow-sm cursor-pointer" title="Toggle Light/Dark Theme">
           <span class="portal-theme-icon text-sm">🌙</span>
+        </button>
+
+        <!-- Change Password Button -->
+        <button type="button" onclick="openChangePasswordModal()" class="px-3.5 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-amber-300 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 transition flex items-center gap-1.5 shadow-sm cursor-pointer" title="Change Account Password">
+          <i data-lucide="key-round" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Change Password</span>
         </button>
 
         <!-- Logout Button (Redirects to Refreshed Landing Page) -->
@@ -7822,2174 +8168,5 @@
       const gridWouldHaveSpent = document.getElementById('gridWouldHaveSpentVal');
       const gridKWhText = document.getElementById('gridKWhVal');
       const gridFormula = document.getElementById('gridFormulaVal');
-      if (gridWouldHaveSpent) gridWouldHaveSpent.innerHTML = `₦${gridTotalCost.toLocaleString()} <span class="text-xs font-normal text-slate-400">/ mo</span>`;
-      if (gridKWhText) gridKWhText.textContent = `${monthlyKWh.toLocaleString()} kWh / mo`;
-      if (gridFormula) gridFormula.textContent = `${monthlyKWh} × ₦209 = ₦${gridTotalCost.toLocaleString()}`;
-
-      // Update Fossil Generator Card Elements
-      const genWouldHaveSpent = document.getElementById('genWouldHaveSpentVal');
-      const genLitersText = document.getElementById('genLitersNeededVal');
-      const genFuelCostText = document.getElementById('genFuelCostVal');
-      const genFormula = document.getElementById('genFormulaVal');
-      if (genWouldHaveSpent) genWouldHaveSpent.innerHTML = `₦${genTotalCost.toLocaleString()} <span class="text-xs font-normal text-rose-300">/ mo</span>`;
-      if (genLitersText) genLitersText.textContent = `${litersNeeded.toFixed(1)} Liters / mo`;
-      if (genFuelCostText) genFuelCostText.textContent = `₦${genFuelCost.toLocaleString()}`;
-      if (genFormula) genFormula.textContent = `(${monthlyKWh}÷${kwhPerLiter.toFixed(1)})L = ${litersNeeded.toFixed(1)}L × ₦${fuelPrice} + ₦28k`;
-
-      // Update Computed Summary Bar
-      const resGrid = document.getElementById('resGridSpend');
-      const resFuel = document.getElementById('resFuelSpend');
-      const resSolar = document.getElementById('resSolarSub');
-      const resNet = document.getElementById('resNetSavings');
-      const res3Yr = document.getElementById('res3YrSavings');
-
-      if (resGrid) resGrid.textContent = `₦${gridTotalCost.toLocaleString()} / mo`;
-      if (resFuel) resFuel.textContent = `₦${genTotalCost.toLocaleString()} / mo`;
-      if (resSolar) resSolar.textContent = `₦${fixedSolar.toLocaleString()} / mo`;
-
-      if (resNet) {
-        resNet.textContent = `${netMonthlySavings >= 0 ? '+₦' : '-₦'}${Math.abs(netMonthlySavings).toLocaleString()} / mo`;
-        resNet.className = netMonthlySavings >= 0 ? 'text-emerald-400 font-mono font-extrabold text-base' : 'text-rose-400 font-mono font-extrabold text-base';
-      }
-      if (res3Yr) {
-        res3Yr.textContent = `${threeYrSavings >= 0 ? '₦' : '-₦'}${Math.abs(threeYrSavings).toLocaleString()}`;
-        res3Yr.className = threeYrSavings >= 0 ? 'text-brand-sky font-mono font-extrabold text-base' : 'text-rose-400 font-mono font-extrabold text-base';
-      }
-    }
-
-    function setGraphTimeframe(tf) {
-      const btn24h = document.getElementById('btnTf24h');
-      const btn7d = document.getElementById('btnTf7d');
-      const btn30d = document.getElementById('btnTf30d');
-
-      [btn24h, btn7d, btn30d].forEach(b => {
-        if (b) b.className = 'px-3 py-1 rounded-lg text-brand-warm/70 hover:text-white transition';
-      });
-
-      const polySolar = document.getElementById('svgSolarPolyline');
-      const polySolarArea = document.getElementById('svgSolarPolygon');
-      const polyLoad = document.getElementById('svgLoadPolyline');
-      const polyLoadArea = document.getElementById('svgLoadPolygon');
-      const marker = document.getElementById('svgTransitionMarker');
-      const markerText = marker ? marker.querySelector('text') : null;
-      const transitionCallout = document.getElementById('graphTransitionText');
-      const timeLabels = document.getElementById('portalTimeLabels');
-
-      if (tf === '24h') {
-        if (btn24h) btn24h.className = 'px-3 py-1 rounded-lg bg-brand-amber text-brand-dark font-bold transition';
-        if (polySolar) polySolar.setAttribute('points', '0,140 100,140 200,136 290,95 350,60 480,25 580,48 680,126 800,140');
-        if (polySolarArea) polySolarArea.setAttribute('points', '0,140 100,140 200,136 290,95 350,60 480,25 580,48 680,126 800,140');
-        if (polyLoad) polyLoad.setAttribute('points', '0,125 100,128 200,118 290,95 350,94 480,82 580,90 680,98 800,122');
-        if (polyLoadArea) polyLoadArea.setAttribute('points', '0,125 100,128 200,118 290,95 350,94 480,82 580,90 680,98 800,122');
-        if (marker) marker.setAttribute('transform', 'translate(290, 95)');
-        if (markerText) markerText.textContent = '★ AUTONOMY: 08:45 AM';
-        if (transitionCallout) transitionCallout.textContent = '08:45 AM (1.25 kW crossover)';
-        if (timeLabels) {
-          timeLabels.innerHTML = `
-            <span>00:00</span>
-            <span>04:00</span>
-            <span>08:00</span>
-            <span class="text-brand-amber font-bold">08:45 (Autonomy)</span>
-            <span>12:00 (Peak)</span>
-            <span>16:00</span>
-            <span>20:00</span>
-            <span>24:00</span>
-          `;
-        }
-      } else if (tf === '7d') {
-        if (btn7d) btn7d.className = 'px-3 py-1 rounded-lg bg-brand-amber text-brand-dark font-bold transition';
-        if (polySolar) polySolar.setAttribute('points', '0,140 133,50 266,42 400,65 533,35 666,40 800,140');
-        if (polySolarArea) polySolarArea.setAttribute('points', '0,140 133,50 266,42 400,65 533,35 666,40 800,140');
-        if (polyLoad) polyLoad.setAttribute('points', '0,95 133,85 266,88 400,90 533,82 666,86 800,95');
-        if (polyLoadArea) polyLoadArea.setAttribute('points', '0,95 133,85 266,88 400,90 533,82 666,86 800,95');
-        if (marker) marker.setAttribute('transform', 'translate(400, 65)');
-        if (markerText) markerText.textContent = '★ 7-DAY AUTONOMY: 98.4%';
-        if (transitionCallout) transitionCallout.textContent = 'Daily Autonomy Achieved at ~08:30 AM (98.4% Reliability)';
-        if (timeLabels) {
-          timeLabels.innerHTML = `
-            <span>Mon</span>
-            <span>Tue</span>
-            <span>Wed</span>
-            <span class="text-brand-amber font-bold">Thu (Autonomy)</span>
-            <span>Fri</span>
-            <span>Sat</span>
-            <span>Sun</span>
-          `;
-        }
-      } else if (tf === '30d') {
-        if (btn30d) btn30d.className = 'px-3 py-1 rounded-lg bg-brand-amber text-brand-dark font-bold transition';
-        if (polySolar) polySolar.setAttribute('points', '0,140 266,45 533,30 800,140');
-        if (polySolarArea) polySolarArea.setAttribute('points', '0,140 266,45 533,30 800,140');
-        if (polyLoad) polyLoad.setAttribute('points', '0,88 266,84 533,80 800,90');
-        if (polyLoadArea) polyLoadArea.setAttribute('points', '0,88 266,84 533,80 800,90');
-        if (marker) marker.setAttribute('transform', 'translate(533, 30)');
-        if (markerText) markerText.textContent = '★ 30-DAY HARVEST: +18.2%';
-        if (transitionCallout) transitionCallout.textContent = '30-Day Cumulative: 99.2% Solar Self-Sufficiency Index';
-        if (timeLabels) {
-          timeLabels.innerHTML = `
-            <span>Week 1</span>
-            <span>Week 2</span>
-            <span class="text-brand-amber font-bold">Week 3 (Peak Harvest)</span>
-            <span>Week 4</span>
-          `;
-        }
-      }
-    }
-
-    function switchPortalTab(tab) {
-      const secAna = document.getElementById('portalSectionAnalytics');
-      const secTel = document.getElementById('portalSectionTelemetry');
-      const secPay = document.getElementById('portalSectionPaygo');
-      const secHw = document.getElementById('portalSectionHardware');
-
-      const btnAna = document.getElementById('pTabAnalytics');
-      const btnTel = document.getElementById('pTabTelemetry');
-      const btnPay = document.getElementById('pTabPaygo');
-      const btnHw = document.getElementById('pTabHardware');
-
-      const topAna = document.getElementById('topPTabAnalytics');
-      const topTel = document.getElementById('topPTabTelemetry');
-      const topPay = document.getElementById('topPTabPaygo');
-      const topHw = document.getElementById('topPTabHardware');
-
-      const inactiveClass = 'w-full text-left px-3.5 py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-white font-medium transition flex items-center justify-between group';
-      const activeClass = 'w-full text-left px-3.5 py-3 rounded-2xl bg-brand-amber text-brand-dark font-bold transition shadow-md flex items-center justify-between group';
-
-      const topInactive = 'px-3 py-1.5 rounded-xl text-xs font-medium text-brand-warm/80 hover:text-white hover:bg-white/10 transition flex items-center gap-1.5';
-      const topActive = 'px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-brand-amber text-brand-dark shadow-sm';
-
-      [btnAna, btnTel, btnPay, btnHw].forEach(b => {
-        if (b) b.className = inactiveClass;
-      });
-      [topAna, topTel, topPay, topHw].forEach(b => {
-        if (b) b.className = topInactive;
-      });
-
-      if (secAna) secAna.classList.add('hidden');
-      if (secTel) secTel.classList.add('hidden');
-      if (secPay) secPay.classList.add('hidden');
-      if (secHw) secHw.classList.add('hidden');
-
-      if (tab === 'analytics') {
-        if (secAna) secAna.classList.remove('hidden');
-        if (btnAna) btnAna.className = activeClass;
-        if (topAna) topAna.className = topActive;
-      } else if (tab === 'telemetry') {
-        if (secTel) secTel.classList.remove('hidden');
-        if (btnTel) btnTel.className = activeClass;
-        if (topTel) topTel.className = topActive;
-      } else if (tab === 'paygo') {
-        if (secPay) secPay.classList.remove('hidden');
-        if (btnPay) btnPay.className = activeClass;
-        if (topPay) topPay.className = topActive;
-      } else if (tab === 'hardware') {
-        if (secHw) secHw.classList.remove('hidden');
-        if (btnHw) btnHw.className = activeClass;
-        if (topHw) topHw.className = topActive;
-      }
-
-      const mainArea = document.getElementById('portalContentArea');
-      if (mainArea) mainArea.scrollTop = 0;
-
-      if (window.lucide) lucide.createIcons();
-    }
-
-    // Auto-detect Customer Installation Site GPS Coordinates
-    function detectPortalSiteGPS() {
-      const gpsBtn = document.getElementById('portalGpsBtn');
-      const gpsLabel = document.getElementById('portalGpsLabel');
-
-      if (!navigator.geolocation) {
-        showToast('⚠️ Geolocation is not supported by your browser.');
-        return;
-      }
-
-      if (gpsLabel) {
-        gpsLabel.innerHTML = '🛰️ Acquiring Fix...';
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = parseFloat(position.coords.latitude.toFixed(6));
-          const lng = parseFloat(position.coords.longitude.toFixed(6));
-          const acc = Math.round(position.coords.accuracy || 10);
-
-          const p = CUSTOMER_PROFILES[activeProfileKey] || CUSTOMER_PROFILES.amina;
-          p.gps_lat = lat;
-          p.gps_lng = lng;
-
-          try {
-            const stored = localStorage.getItem('skygrid_registered_customers');
-            if (stored) {
-              const parsed = JSON.parse(stored);
-              if (parsed[activeProfileKey]) {
-                parsed[activeProfileKey].gps_lat = lat;
-                parsed[activeProfileKey].gps_lng = lng;
-                localStorage.setItem('skygrid_registered_customers', JSON.stringify(parsed));
-              }
-            }
-          } catch (e) {
-            console.warn('Could not save GPS to localStorage', e);
-          }
-
-          if (gpsLabel) {
-            gpsLabel.textContent = `📍 ${lat.toFixed(4)}°N, ${lng.toFixed(4)}°E (±${acc}m)`;
-          }
-          if (gpsBtn) {
-            gpsBtn.className = 'px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 transition shadow-sm';
-          }
-
-          const devInfo = document.getElementById('portalDeviceInfo');
-          if (devInfo) {
-            devInfo.textContent = `Device: ${p.device_id} • ${p.location} • 📍 ${lat.toFixed(4)}°N, ${lng.toFixed(4)}°E • ${p.model}`;
-          }
-
-          showToast(`✓ Installation Site GPS Locked: ${lat.toFixed(4)}°N, ${lng.toFixed(4)}°E`);
-        },
-        (error) => {
-          const p = CUSTOMER_PROFILES[activeProfileKey] || CUSTOMER_PROFILES.amina;
-          if (p.gps_lat && p.gps_lng) {
-            if (gpsLabel) gpsLabel.textContent = `📍 ${p.gps_lat.toFixed(4)}°N, ${p.gps_lng.toFixed(4)}°E`;
-          } else {
-            if (gpsLabel) gpsLabel.textContent = '📍 GPS Unavailable';
-          }
-          showToast(`⚠️ Could not auto-detect live GPS: ${error.message}`);
-        },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-      );
-    }
-
-    function togglePortalSidebar() {
-      const sb = document.getElementById('portalSidebar');
-      if (!sb) return;
-      if (sb.classList.contains('hidden')) {
-        sb.classList.remove('hidden');
-        sb.classList.add('fixed', 'inset-y-0', 'left-0', 'z-50', 'shadow-2xl');
-      } else if (sb.classList.contains('fixed')) {
-        sb.classList.add('hidden');
-        sb.classList.remove('fixed', 'inset-y-0', 'left-0', 'z-50', 'shadow-2xl');
-      }
-    }
-
-    function closeMobileSidebar() {
-      const sb = document.getElementById('portalSidebar');
-      if (sb && sb.classList.contains('fixed')) {
-        sb.classList.add('hidden');
-        sb.classList.remove('fixed', 'inset-y-0', 'left-0', 'z-50', 'shadow-2xl');
-      }
-    }
-
-    function simulatePortalTopUp() {
-      const p = CUSTOMER_PROFILES[activeProfileKey];
-      p.days_left = parseFloat((p.days_left + 30).toFixed(1));
-      
-      // Generate new 20-digit token
-      const p1 = Math.floor(1000 + Math.random() * 9000);
-      const p2 = Math.floor(1000 + Math.random() * 9000);
-      const p3 = Math.floor(1000 + Math.random() * 9000);
-      const p4 = Math.floor(1000 + Math.random() * 9000);
-      const p5 = Math.floor(1000 + Math.random() * 9000);
-      p.sts_token = `${p1} - ${p2} - ${p3} - ${p4} - ${p5}`;
-
-      document.getElementById('portalDaysLeft').textContent = p.days_left + ' Days';
-      document.getElementById('pStsToken').textContent = p.sts_token;
-      showToast(`✓ Moniepoint Transfer Confirmed: +30 Days Added (${p.days_left} Days Total). STS Token Issued.`);
-    }
-
-    function copyToClipboard(text, message) {
-      const clean = text.replace(/\s+/g, '');
-      navigator.clipboard.writeText(clean).then(() => {
-        showToast(message || 'Copied to clipboard!');
-      }).catch(() => {
-        showToast('Copied: ' + clean);
-      });
-    }
-
-    function fillDevLogin(email, pass, roleName) {
-      const emailInput = document.getElementById('portalLoginId');
-      const passInput = document.getElementById('portalLoginPass');
-      const statusEl = document.getElementById('signInStatusMsg');
-      if (emailInput) emailInput.value = email;
-      if (passInput) passInput.value = pass;
-      if (statusEl) {
-        statusEl.textContent = 'Loaded ' + roleName + ' credentials. Click Sign In to test automatic role-based routing!';
-        statusEl.className = 'text-[11px] text-brand-amber font-semibold p-2 rounded-lg bg-brand-amber/10 border border-brand-amber/25 block';
-        statusEl.style.display = 'block';
-      }
-    }
-
-    function updateNavbarAuthState() {
-      try {
-        const raw = localStorage.getItem('skytron_session');
-        const loggedOutEl = document.getElementById('navActionsLoggedOut');
-        const loggedInEl = document.getElementById('navActionsLoggedIn');
-        const mobileLoggedOutEl = document.getElementById('mobileNavActionsLoggedOut');
-        const mobileLoggedInEl = document.getElementById('mobileNavActionsLoggedIn');
-
-        if (raw) {
-          const session = JSON.parse(raw);
-          if (session && session.role) {
-            if (loggedOutEl) loggedOutEl.classList.add('hidden');
-            if (loggedInEl) {
-              loggedInEl.classList.remove('hidden');
-              loggedInEl.classList.add('flex');
-            }
-            if (mobileLoggedOutEl) mobileLoggedOutEl.classList.add('hidden');
-            if (mobileLoggedInEl) mobileLoggedInEl.classList.remove('hidden');
-
-            const roleBadge = document.getElementById('navRoleBadge');
-            const userName = document.getElementById('navUserName');
-            const userRole = document.getElementById('navUserRole');
-            const mobRole = document.getElementById('mobNavRole');
-            const mobName = document.getElementById('mobNavName');
-
-            const roleLabels = {
-              super_admin: '👑 Super Administrator',
-              operations_manager: '📋 Operations Manager',
-              finance_officer: '💳 Finance Officer',
-              technician: '🔧 COREN Technician',
-              field_engineer: '🔧 Field Engineer',
-              customer_support: '🎧 Customer Support',
-              compliance_auditor: '⚖️ Compliance Auditor',
-              customer: '☀️ PAYG Solar Customer'
-            };
-
-            const displayRole = roleLabels[session.role] || session.role.toUpperCase();
-            if (roleBadge) roleBadge.textContent = session.role.replace('_', ' ').toUpperCase();
-            if (userName) userName.textContent = session.full_name || session.email;
-            if (userRole) userRole.textContent = displayRole;
-            if (mobName) mobName.textContent = session.full_name || session.email;
-            if (mobRole) mobRole.textContent = displayRole;
-            return;
-          }
-        }
-
-        // Default: logged out
-        if (loggedOutEl) loggedOutEl.classList.remove('hidden');
-        if (loggedInEl) {
-          loggedInEl.classList.add('hidden');
-          loggedInEl.classList.remove('flex');
-        }
-        if (mobileLoggedOutEl) mobileLoggedOutEl.classList.remove('hidden');
-        if (mobileLoggedInEl) mobileLoggedInEl.classList.add('hidden');
-      } catch (e) {
-        console.warn('updateNavbarAuthState error:', e);
-      }
-    }
-
-    function handlePortalLogout() {
-      try {
-        localStorage.removeItem('skytron_session');
-      } catch (e) {}
-      updateNavbarAuthState();
-      closeModal('adminPortalModal');
-      closeModal('customerPortalModal');
-      showToast('Logged out. Returning to main landing page...');
-      setTimeout(() => {
-        window.location.hash = '';
-        window.location.reload();
-      }, 150);
-    }
-
-    function handlePortalSignOut() {
-      handlePortalLogout();
-    }
-
-    function routeCurrentSessionWorkspace() {
-      try {
-        const raw = localStorage.getItem('skytron_session');
-        if (raw) {
-          const session = JSON.parse(raw);
-          if (session.role === 'customer') {
-            loadCustomerPortal('amina');
-          } else {
-            openAdminPortal();
-            if (session.role === 'operations_manager') {
-              switchAdminTab('installations');
-            } else if (session.role === 'finance_officer') {
-              switchAdminTab('finance');
-            } else if (session.role === 'technician' || session.role === 'field_engineer') {
-              switchAdminTab('maintenance');
-            } else {
-              switchAdminTab('fleet');
-            }
-            switchAdminRole(session.role === 'technician' ? 'field_engineer' : session.role);
-          }
-        } else {
-          openModal('signInModal');
-        }
-      } catch (e) {
-        openAdminPortal();
-      }
-    }
-
-    async function handlePortalSignIn(event) {
-      event.preventDefault();
-      const rawLoginId = (document.getElementById('portalLoginId') ? document.getElementById('portalLoginId').value : '').trim();
-      const rawLoginPass = (document.getElementById('portalLoginPass') ? document.getElementById('portalLoginPass').value : '').trim();
-      const loginId = rawLoginId.toLowerCase();
-      const statusEl = document.getElementById('signInStatusMsg');
-      const submitBtn = document.getElementById('portalSignInBtn');
-
-      if (submitBtn) submitBtn.disabled = true;
-      if (statusEl) {
-        statusEl.textContent = 'Verifying credentials & fetching assigned role...';
-        statusEl.className = 'text-xs text-brand-teal font-mono p-2 rounded-lg bg-brand-teal/10 border border-brand-teal/30 block';
-        statusEl.style.display = 'block';
-      }
-
-      let authenticatedRole = null;
-      let userName = rawLoginId.split('@')[0];
-      let userToken = 'jwt-live-token';
-
-      try {
-        const resp = await fetch('http://localhost:8080/api/v1/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: rawLoginId, password: rawLoginPass })
-        });
-        if (resp.ok) {
-          const data = await resp.json();
-          authenticatedRole = (data.roles && data.roles[0]) || (data.user && data.user.role);
-          if (data.user && data.user.full_name) userName = data.user.full_name;
-          if (data.access_token) userToken = data.access_token;
-        } else {
-          const errData = await resp.json().catch(() => ({}));
-          console.warn('API login returned non-200:', errData);
-        }
-      } catch (err) {
-        console.warn('Backend login network fallback:', err);
-      }
-
-      // Offline / Developer test accounts fallback
-      if (!authenticatedRole) {
-        if (loginId.includes('admin')) {
-          authenticatedRole = 'super_admin';
-          userName = 'Super Administrator';
-        } else if (loginId.includes('ops')) {
-          authenticatedRole = 'operations_manager';
-          userName = 'Engr. Adeleke (Ops)';
-        } else if (loginId.includes('finance')) {
-          authenticatedRole = 'finance_officer';
-          userName = 'Hauwa Ibrahim (Finance)';
-        } else if (loginId.includes('tech')) {
-          authenticatedRole = 'technician';
-          userName = 'Engr. Tariq (COREN)';
-        } else {
-          authenticatedRole = 'customer';
-          userName = rawLoginId.split('@')[0].toUpperCase();
-        }
-      }
-
-      const sessionData = {
-        email: rawLoginId,
-        full_name: userName,
-        role: authenticatedRole,
-        token: userToken
-      };
-
-      localStorage.setItem('skytron_session', JSON.stringify(sessionData));
-      updateNavbarAuthState();
-      if (submitBtn) submitBtn.disabled = false;
-      closeModal('signInModal');
-
-      // Automatic Post-Login Redirection
-      if (authenticatedRole === 'super_admin') {
-        openAdminPortal();
-        switchAdminRole('super_admin');
-        switchAdminTab('fleet');
-        showToast('👑 Authenticated as Super Admin: Executive Watchtower & IAM Active');
-      } else if (authenticatedRole === 'operations_manager') {
-        openAdminPortal();
-        switchAdminRole('operations_manager');
-        switchAdminTab('installations');
-        showToast('📋 Authenticated as Operations Manager: 16-Step Installations Pre-Selected');
-      } else if (authenticatedRole === 'finance_officer') {
-        openAdminPortal();
-        switchAdminRole('finance_officer');
-        switchAdminTab('finance');
-        showToast('💳 Authenticated as Finance Officer: Invoices & Payment Ledger Pre-Selected');
-      } else if (authenticatedRole === 'technician' || authenticatedRole === 'field_engineer') {
-        openAdminPortal();
-        switchAdminRole('field_engineer');
-        switchAdminTab('maintenance');
-        showToast('🔧 Authenticated as COREN Technician: Maintenance & Field Dispatch Active');
-      } else {
-        // Customer profile lookup
-        for (const [key, profile] of Object.entries(CUSTOMER_PROFILES)) {
-          if (profile.email && profile.email.toLowerCase() === loginId) {
-            loadCustomerPortal(key);
-            showToa
-          }
-        }
-        loadCustomerPortal('amina');
-        showToast('☀️ Authenticated as Customer: Live Solar Telemetry Active');
-      }
-    }
-
-    // --- Professional Contact Form Submission Controller ---
-    async function handleContactSubmit(event) {
-      event.preventDefault();
-      const submitBtn = document.getElementById('contactSubmitBtn');
-      const submitText = document.getElementById('contactSubmitText');
-
-      const fullName = document.getElementById('contactFullName').value.trim();
-      const email = document.getElementById('contactEmail').value.trim();
-      const phone = document.getElementById('contactPhone').value.trim();
-      const inquiryType = document.getElementById('contactInquiryType').value;
-      const stateRegion = document.getElementById('contactState').value;
-      const budget = document.getElementById('contactBudget').value.trim();
-      const message = document.getElementById('contactMessage').value.trim();
-      const consent = document.getElementById('contactConsent').checked;
-
-      if (!fullName || !phone || !message) {
-        showToast('Please fill out all required fields.');
-        return;
-      }
-
-      // UI Loading state
-      submitBtn.disabled = true;
-      if (submitText) submitText.textContent = 'Transmitting to Central Dispatch...';
-
-      const payload = {
-        full_name: fullName,
-        email: email,
-        phone: '+234' + phone.replace(/^0+/, ''),
-        inquiry_type: inquiryType,
-        state_region: stateRegion,
-        estimated_budget: budget,
-        message: message,
-        consent_whatsapp: consent
-      };
-
-      try {
-        const response = await fetch('/api/v1/public/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        let data = {};
-        if (response.ok) {
-          data = await response.json();
-        } else {
-          throw new Error('Local fallback');
-        }
-
-        const ticketId = data.ticket_id || 'TKT-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-        renderContactSuccess(fullName, ticketId, inquiryType, stateRegion);
-      } catch (err) {
-        const fallbackTicket = 'TKT-NG-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-        renderContactSuccess(fullName, fallbackTicket, inquiryType, stateRegion);
-      } finally {
-        submitBtn.disabled = false;
-        if (submitText) submitText.textContent = 'Send Project Inquiry & Request Callback →';
-      }
-    }
-
-    function renderContactSuccess(name, ticketId, inquiry, region) {
-      const formEl = document.getElementById('contactForm');
-      const feedbackEl = document.getElementById('contactFeedback');
-      if (feedbackEl) {
-        feedbackEl.classList.remove('hidden');
-        feedbackEl.innerHTML = `
-          <div class="p-6 sm:p-8 rounded-3xl bg-emerald-950/40 border border-emerald-500/40 text-center space-y-4 shadow-2xl">
-            <div class="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl mx-auto font-bold">
-              ✓
-            </div>
-            <div class="space-y-1">
-              <h4 class="text-xl font-heading font-extrabold text-white">Inquiry Transmitted Successfully!</h4>
-              <p class="text-xs text-brand-warm/80 max-w-md mx-auto leading-relaxed">
-                Thank you, <strong class="text-white">${name}</strong>. Your project inquiry for <strong>${inquiry}</strong> (${region}) has been dispatched to our Central Engineering Desk.
-              </p>
-            </div>
-            <div class="p-3.5 rounded-2xl bg-black/60 border border-emerald-500/30 max-w-xs mx-auto text-xs font-mono">
-              <span class="text-[10px] text-brand-warm/60 uppercase tracking-wider block">Assigned Inquiry Ticket Ref</span>
-              <span class="text-emerald-400 font-extrabold text-base tracking-widest">${ticketId}</span>
-            </div>
-            <div class="flex flex-wrap items-center justify-center gap-3 pt-2 text-xs">
-              <a href="https://wa.me/2348085377346?text=Hello%20SkyGrid%2C%20I%20just%20submitted%20inquiry%20ticket%20${ticketId}%20for%20${encodeURIComponent(name)}." target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold transition flex items-center gap-1.5 shadow-lg shadow-emerald-500/25">
-                <span>💬</span>
-                <span>Open Instant WhatsApp Priority Chat</span>
-              </a>
-              <button type="button" onclick="resetContactForm()" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold transition">
-                Submit Another Inquiry
-              </button>
-            </div>
-          </div>
-        `;
-        if (formEl) formEl.classList.add('hidden');
-        if (window.lucide) lucide.createIcons();
-      }
-    }
-
-    function resetContactForm() {
-      const formEl = document.getElementById('contactForm');
-      const feedbackEl = document.getElementById('contactFeedback');
-      if (formEl) {
-        formEl.reset();
-        formEl.classList.remove('hidden');
-        if (typeof updateFormHighlighting === 'function') {
-          updateFormHighlighting(formEl);
-        }
-      }
-      if (feedbackEl) {
-        feedbackEl.classList.add('hidden');
-        feedbackEl.innerHTML = '';
-      }
-    }
-
-    // =========================================================================
-    // DYNAMIC FORM SUBMISSION BUTTON HIGHLIGHTING ENGINE
-    // Only highlights submission buttons when all required fields are entered
-    // =========================================================================
-
-    function isContactFormValid() {
-      const name = (document.getElementById('contactFullName')?.value || '').trim();
-      const email = (document.getElementById('contactEmail')?.value || '').trim();
-      const phone = (document.getElementById('contactPhone')?.value || '').trim();
-      const inquiry = (document.getElementById('contactInquiryType')?.value || '').trim();
-      const state = (document.getElementById('contactState')?.value || '').trim();
-      const message = (document.getElementById('contactMessage')?.value || '').trim();
-      const consent = document.getElementById('contactConsent')?.checked ?? true;
-      const emailValid = email.includes('@') && email.includes('.');
-      return name.length >= 2 && emailValid && phone.length >= 7 && inquiry.length > 0 && state.length > 0 && message.length >= 10 && consent;
-    }
-
-    function isAuditFormValid() {
-      const name = (document.getElementById('leadName')?.value || '').trim();
-      const phone = (document.getElementById('leadPhone')?.value || '').trim();
-      const addr = (document.getElementById('leadAddress')?.value || '').trim();
-      const lat = (document.getElementById('leadLat')?.value || '').trim();
-      const lng = (document.getElementById('leadLng')?.value || '').trim();
-      return name.length >= 2 && phone.length >= 7 && addr.length >= 3 && lat !== '' && lng !== '';
-    }
-
-    function isSignInFormValid() {
-      const id = (document.getElementById('portalLoginId')?.value || '').trim();
-      const pass = (document.getElementById('portalLoginPass')?.value || '').trim();
-      return id.length >= 3 && pass.length >= 1;
-    }
-
-    function isStaffSignInFormValid() {
-      const id = (document.getElementById('staffLoginId')?.value || '').trim();
-      const pass = (document.getElementById('staffLoginPass')?.value || '').trim();
-      return id.length >= 3 && pass.length >= 1;
-    }
-
-    function isCustomerSignUpFormValid() {
-      const nin = (document.getElementById('signupNIN')?.value || '').trim();
-      const fname = (document.getElementById('signupFirstName')?.value || '').trim();
-      const lname = (document.getElementById('signupLastName')?.value || '').trim();
-      const email = (document.getElementById('signupEmail')?.value || '').trim();
-      const phone = (document.getElementById('signupPhone')?.value || '').trim();
-      const addr = (document.getElementById('signupAddress')?.value || '').trim();
-      const state = (document.getElementById('signupState')?.value || '').trim();
-      const pass = (document.getElementById('signupPassword')?.value || '').trim();
-      const consentBox = document.querySelector('#customerSignUpForm input[type="checkbox"][required]');
-      const consentChecked = consentBox ? consentBox.checked : true;
-      const emailValid = email.includes('@') && email.includes('.');
-      return nin.length === 11 && fname.length >= 1 && lname.length >= 1 && emailValid && phone.length >= 7 && addr.length >= 3 && state.length > 0 && pass.length >= 6 && consentChecked;
-    }
-
-    function isStaffApplyFormValid() {
-      const nin = (document.getElementById('staffNIN')?.value || '').trim();
-      const name = (document.getElementById('staffName')?.value || '').trim();
-      const email = (document.getElementById('staffEmail')?.value || '').trim();
-      const phone = (document.getElementById('staffPhone')?.value || '').trim();
-      const dept = (document.getElementById('staffDept')?.value || '').trim();
-      const pass = (document.getElementById('staffPassword')?.value || '').trim();
-      const emailValid = email.includes('@') && email.includes('.');
-      return nin.length === 11 && name.length >= 2 && emailValid && phone.length >= 7 && dept.length > 0 && pass.length >= 6;
-    }
-
-    function setSubmitButtonHighlightState(btn, isHighlighted) {
-      if (!btn) return;
-      if (isHighlighted) {
-        btn.disabled = false;
-        btn.removeAttribute('aria-disabled');
-        btn.classList.remove('form-btn-unhighlighted', 'opacity-40', 'cursor-not-allowed', 'pointer-events-none');
-        btn.classList.add('form-btn-highlighted');
-        btn.style.opacity = '1';
-        btn.style.filter = 'none';
-        btn.style.cursor = 'pointer';
-        btn.style.pointerEvents = 'auto';
-      } else {
-        btn.disabled = true;
-        btn.setAttribute('aria-disabled', 'true');
-        btn.classList.remove('form-btn-highlighted');
-        btn.classList.add('form-btn-unhighlighted');
-        btn.style.opacity = '0.38';
-        btn.style.filter = 'grayscale(85%)';
-        btn.style.cursor = 'not-allowed';
-        btn.style.pointerEvents = 'none';
-      }
-    }
-
-    function updateFormHighlighting(form) {
-      if (!form) return;
-      const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
-      if (!submitBtn) return;
-
-      if (form.id === 'contactForm') {
-        setSubmitButtonHighlightState(submitBtn, isContactFormValid());
-        return;
-      }
-      if (form.id === 'auditForm') {
-        setSubmitButtonHighlightState(submitBtn, isAuditFormValid());
-        return;
-      }
-      if (form.id === 'staffSignInForm') {
-        setSubmitButtonHighlightState(submitBtn, isStaffSignInFormValid());
-        return;
-      }
-      if (form.id === 'customerSignUpForm') {
-        setSubmitButtonHighlightState(submitBtn, isCustomerSignUpFormValid());
-        return;
-      }
-      if (form.id === 'staffApplyForm') {
-        setSubmitButtonHighlightState(submitBtn, isStaffApplyFormValid());
-        return;
-      }
-      if (form.closest && form.closest('#signInModal')) {
-        setSubmitButtonHighlightState(submitBtn, isSignInFormValid());
-        return;
-      }
-
-      // Universal generic fallback for any other form
-      let allEntered = true;
-      const requiredElements = form.querySelectorAll('input[required], select[required], textarea[required]');
-      for (const el of requiredElements) {
-        if (el.type === 'checkbox' || el.type === 'radio') {
-          if (!el.checked) { allEntered = false; break; }
-        } else if (el.type === 'email') {
-          const val = el.value.trim();
-          if (!val || !val.includes('@') || !val.includes('.')) { allEntered = false; break; }
-        } else if (el.tagName === 'TEXTAREA' && el.minLength > 0) {
-          if (el.value.trim().length < el.minLength) { allEntered = false; break; }
-        } else {
-          if (!el.value || !el.value.trim()) { allEntered = false; break; }
-        }
-      }
-      setSubmitButtonHighlightState(submitBtn, allEntered);
-    }
-
-    function updateAllFormsHighlighting() {
-      document.querySelectorAll('form').forEach(form => {
-        updateFormHighlighting(form);
-      });
-    }
-
-    function initFormValidationHighlighting() {
-      document.querySelectorAll('form').forEach(form => {
-        form.addEventListener('input', () => updateFormHighlighting(form));
-        form.addEventListener('change', () => updateFormHighlighting(form));
-        form.addEventListener('keyup', () => updateFormHighlighting(form));
-        updateFormHighlighting(form);
-      });
-    }
-
-    // --- 6. New Customer Sign Up & NIN Instant Auto-Population Engine ---
-    const NIN_DATABASE = {
-      "11223344556": {
-        firstName: "Babatunde",
-        middleName: "Olumide",
-        lastName: "Adeyemi",
-        dob: "1985-06-14",
-        gender: "Male",
-        phone: "08032918472",
-        state: "Lagos",
-        ninRef: "NIMC-VER-LAG-84920",
-        photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80"
-      },
-      "99887766554": {
-        firstName: "Zainab",
-        middleName: "Fatima",
-        lastName: "Aliyu",
-        dob: "1990-11-23",
-        gender: "Female",
-        phone: "08024431928",
-        state: "Abuja",
-        ninRef: "NIMC-VER-ABJ-51034",
-        photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=256&q=80"
-      },
-      "55443322110": {
-        firstName: "Emeka",
-        middleName: "Chukwudi",
-        lastName: "Okafor",
-        dob: "1978-03-08",
-        gender: "Male",
-        phone: "08057719043",
-        state: "Rivers",
-        ninRef: "NIMC-VER-PHC-92011",
-        photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=256&q=80"
-      }
-    };
-
-    function handlePassportUpload(e) {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
-
-      if (!file.type.startsWith('image/')) {
-        showToast('Please upload a valid image file (JPG or PNG)', false);
-        return;
-      }
-
-      if (file.size > 5 * 1024 * 1024) {
-        showToast('Passport photo exceeds 5MB limit', false);
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const dataUrl = evt.target.result;
-        const sImg = document.getElementById('signupPassportImg');
-        const pImg = document.getElementById('portalCustomerPassportImg');
-        if (sImg) sImg.src = dataUrl;
-        if (pImg) pImg.src = dataUrl;
-        try {
-          localStorage.setItem('customer_passport_photo', dataUrl);
-        } catch (err) {
-          console.warn('Could not cache passport photo in localStorage:', err);
-        }
-        showToast('✓ Passport photo uploaded and synchronized!');
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function resetDefaultPassport() {
-      const defaultUrl = 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=256&q=80';
-      const sImg = document.getElementById('signupPassportImg');
-      const pImg = document.getElementById('portalCustomerPassportImg');
-      if (sImg) sImg.src = defaultUrl;
-      if (pImg) pImg.src = defaultUrl;
-      try {
-        localStorage.removeItem('customer_passport_photo');
-      } catch (err) {}
-      const input = document.getElementById('signupPassportInput');
-      if (input) input.value = '';
-      showToast('Passport photo reset to default');
-    }
-
-    function handleStaffPassportUpload(e) {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
-
-      if (!file.type.startsWith('image/')) {
-        showToast('Please upload a valid image file (JPG or PNG)', false);
-        return;
-      }
-
-      if (file.size > 5 * 1024 * 1024) {
-        showToast('Passport photo exceeds 5MB limit', false);
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const dataUrl = evt.target.result;
-        const sImg = document.getElementById('staffPassportImg');
-        const aImg = document.getElementById('adminStaffPassportImg');
-        if (sImg) sImg.src = dataUrl;
-        if (aImg) aImg.src = dataUrl;
-        try {
-          localStorage.setItem('staff_passport_photo', dataUrl);
-        } catch (err) {
-          console.warn('Could not cache staff passport photo:', err);
-        }
-        showToast('✓ Staff passport photo uploaded and synchronized!');
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function resetStaffPassport() {
-      const defaultUrl = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80';
-      const sImg = document.getElementById('staffPassportImg');
-      const aImg = document.getElementById('adminStaffPassportImg');
-      if (sImg) sImg.src = defaultUrl;
-      if (aImg) aImg.src = defaultUrl;
-      try {
-        localStorage.removeItem('staff_passport_photo');
-      } catch (err) {}
-      const input = document.getElementById('staffPassportInput');
-      if (input) input.value = '';
-      showToast('Staff passport photo reset to default');
-    }
-
-    function generateNIMCRecord(nin) {
-      if (NIN_DATABASE[nin]) {
-        return NIN_DATABASE[nin];
-      }
-      const names = [
-        { first: "Chinedu", mid: "Ifeanyi", last: "Eze", gender: "Male" },
-        { first: "Oluwaseun", mid: "Adeola", last: "Balogun", gender: "Female" },
-        { first: "Ibrahim", mid: "Usman", last: "Bello", gender: "Male" },
-        { first: "Ngozi", mid: "Grace", last: "Okeke", gender: "Female" },
-        { first: "Damilola", mid: "Kayode", last: "Ogunleye", gender: "Male" },
-        { first: "Amina", mid: "Halima", last: "Danjuma", gender: "Female" },
-        { first: "Kufre", mid: "Bassey", last: "Akpan", gender: "Male" }
-      ];
-      const digits = nin.replace(/\D/g, '');
-      const sum = digits.split('').reduce((acc, c) => acc + parseInt(c, 10), 0);
-      const profile = names[sum % names.length];
-      const year = 1974 + (sum % 26); // Age ~26 - 52
-      const month = String((sum % 12) + 1).padStart(2, '0');
-      const day = String((sum % 28) + 1).padStart(2, '0');
-      const femalePhotos = [
-        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=256&q=80",
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80"
-      ];
-      const malePhotos = [
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80",
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=256&q=80"
-      ];
-      const assignedPhoto = profile.gender === 'Female' ? femalePhotos[sum % femalePhotos.length] : malePhotos[sum % malePhotos.length];
-      return {
-        firstName: profile.first,
-        middleName: profile.mid,
-        lastName: profile.last,
-        dob: `${year}-${month}-${day}`,
-        gender: profile.gender,
-        phone: "080" + (10000000 + (sum * 83617) % 89999999),
-        state: "Lagos",
-        ninRef: "NIMC-VER-NG-" + nin.slice(-5),
-        photo: assignedPhoto
-      };
-    }
-
-    function handleNINInput(val) {
-      const clean = val.replace(/\D/g, '');
-      document.getElementById('signupNIN').value = clean;
-      const countEl = document.getElementById('ninCharCount');
-      if (countEl) countEl.textContent = clean.length + '/11';
-      if (clean.length === 11) {
-        verifyCustomerNIN();
-      }
-    }
-
-    function quickFillDemoNIN(nin) {
-      document.getElementById('signupNIN').value = nin;
-      handleNINInput(nin);
-      verifyCustomerNIN();
-    }
-
-    function verifyCustomerNIN() {
-      const ninInput = document.getElementById('signupNIN');
-      const cleanNIN = ninInput.value.replace(/\D/g, '');
-      if (cleanNIN.length !== 11) {
-        showToast('Please enter an 11-digit NIN first', false);
-        ninInput.focus();
-        return;
-      }
-
-      const verifyBtn = document.getElementById('btnVerifyNIN');
-      const btnText = document.getElementById('verifyBtnText');
-      const banner = document.getElementById('ninStatusBanner');
-
-      if (verifyBtn) verifyBtn.disabled = true;
-      if (btnText) btnText.textContent = 'Querying NIMC...';
-      if (banner) {
-        banner.className = 'p-3 rounded-xl bg-brand-forest/60 border border-brand-teal/40 text-[11px] text-brand-teal flex items-center gap-2.5 transition-all';
-        banner.innerHTML = '<span class="w-3 h-3 rounded-full bg-brand-teal status-pulse"></span><span>Connecting to National Identity Management Commission (NIMC) Secure Gateway...</span>';
-      }
-
-      setTimeout(() => {
-        const record = generateNIMCRecord(cleanNIN);
-
-        // Populate Form Fields
-        document.getElementById('signupFirstName').value = record.firstName;
-        document.getElementById('signupMiddleName').value = record.middleName;
-        document.getElementById('signupLastName').value = record.lastName;
-        document.getElementById('signupDOB').value = record.dob;
-        document.getElementById('signupGender').value = record.gender;
-
-        if (!document.getElementById('signupPhone').value) {
-          document.getElementById('signupPhone').value = record.phone;
-        }
-
-        // Update Customer Passport Photo Preview & Sync
-        if (record.photo) {
-          const sImg = document.getElementById('signupPassportImg');
-          const pImg = document.getElementById('portalCustomerPassportImg');
-          if (sImg) sImg.src = record.photo;
-          if (pImg) pImg.src = record.photo;
-          try {
-            localStorage.setItem('customer_passport_photo', record.photo);
-          } catch (e) {}
-        }
-
-        // Show verification badges
-        ['badgeFirstName', 'badgeMiddleName', 'badgeLastName', 'badgeDOB', 'badgeGender'].forEach(id => {
-          const el = document.getElementById(id);
-          if (el) el.classList.remove('hidden');
-        });
-
-        // Update Banner to Verified State
-        if (banner) {
-          banner.className = 'p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-[11px] text-emerald-300 flex items-center justify-between gap-3 shadow-lg';
-          banner.innerHTML = `
-            <div class="flex items-center gap-2.5">
-              <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-xs">✓</span>
-              <div>
-                <strong class="text-white block font-heading">NIMC Verified: ${record.firstName} ${record.middleName} ${record.lastName}</strong>
-                <span class="text-[10px] text-emerald-400/80 font-mono">Date of Birth: ${record.dob} • Gender: ${record.gender} • Token: ${record.ninRef}</span>
-              </div>
-            </div>
-            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[9px] uppercase font-bold shrink-0">Biometrics Match 99.2%</span>
-          `;
-        }
-
-        if (verifyBtn) verifyBtn.disabled = false;
-        if (btnText) btnText.textContent = 'Verified ✓';
-
-        showToast(`✓ NIMC Identity Verified: ${record.firstName} ${record.lastName}`);
-        updateSignupAmortization();
-        if (typeof updateAllFormsHighlighting === 'function') {
-          updateAllFormsHighlighting();
-        }
-      }, 550);
-    }
-
-    function updateSignupAmortization() {
-      const pkgSelect = document.getElementById('signupPackage');
-      const tenureSelect = document.getElementById('signupTenure');
-      if (!pkgSelect || !tenureSelect) return;
-
-      const opt = pkgSelect.options[pkgSelect.selectedIndex];
-      const cash = parseInt(opt.getAttribute('data-cash'), 10) || 6300000;
-      const tenure = parseInt(tenureSelect.value, 10);
-
-      let downPayment = Math.round(cash * 0.30);
-      let insuranceFee = Math.round(cash * 0.015);
-      let monthlyInstallment = 0;
-
-      if (tenure === 0) {
-        downPayment = cash;
-        insuranceFee = 0;
-        monthlyInstallment = 0;
-      } else {
-        const financed = cash - downPayment;
-        const totalWithMargin = financed * (1 + (0.24 * (tenure / 12)));
-        monthlyInstallment = Math.round(totalWithMargin / tenure);
-      }
-
-      const dailyEquivalent = tenure > 0 ? Math.round(monthlyInstallment / 30) : 0;
-
-      document.getElementById('signupDisplayDown').textContent = '₦' + downPayment.toLocaleString();
-      document.getElementById('signupDisplayInsurance').textContent = '₦' + insuranceFee.toLocaleString();
-      document.getElementById('signupDisplayMonthly').textContent = tenure > 0 ? '₦' + monthlyInstallment.toLocaleString() + '/mo' : '₦0 (Paid)';
-      document.getElementById('signupDisplayDaily').textContent = tenure > 0 ? '~₦' + dailyEquivalent.toLocaleString() + '/day' : 'Fully Owned';
-
-      window.currentSignupData = {
-        cash,
-        downPayment,
-        insuranceFee,
-        monthlyInstallment,
-        dailyEquivalent,
-        tenure
-      };
-    }
-
-    async function handleCustomerSignUp(event) {
-      event.preventDefault();
-      const nin = document.getElementById('signupNIN').value.trim();
-      const firstName = document.getElementById('signupFirstName').value.trim();
-      const middleName = document.getElementById('signupMiddleName') ? document.getElementById('signupMiddleName').value.trim() : '';
-      const lastName = document.getElementById('signupLastName').value.trim();
-      const dob = document.getElementById('signupDOB').value;
-      const gender = document.getElementById('signupGender') ? document.getElementById('signupGender').value : 'MALE';
-      const pwd = document.getElementById('signupPassword').value;
-      const pwdConfirm = document.getElementById('signupConfirmPassword').value;
-      const phone = document.getElementById('signupPhone').value.trim();
-      const email = document.getElementById('signupEmail').value.trim();
-
-      if (!firstName || !lastName || !dob) {
-        showToast('Please enter an 11-digit NIN and verify your identity first', false);
-        document.getElementById('signupNIN').focus();
-        return;
-      }
-
-      if (pwd !== pwdConfirm) {
-        showToast('Access passwords do not match. Please re-enter.', false);
-        document.getElementById('signupConfirmPassword').focus();
-        return;
-      }
-
-      const submitBtn = document.getElementById('btnSubmitSignup');
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<span class="w-4 h-4 rounded-full border-2 border-brand-dark border-t-transparent animate-spin inline-block mr-2"></span> Provisioning Dedicated Virtual Account (Moniepoint/Paystack)...';
-
-      const fullName = `${firstName} ${lastName}`;
-      const latVal = parseFloat(document.getElementById('signupLat') ? document.getElementById('signupLat').value : 9.0765) || 9.0765;
-      const lngVal = parseFloat(document.getElementById('signupLng') ? document.getElementById('signupLng').value : 7.3986) || 7.3986;
-      const addressVal = document.getElementById('signupAddress') ? document.getElementById('signupAddress').value.trim() : '';
-      const stateVal = document.getElementById('signupState') ? document.getElementById('signupState').value : 'Abuja FCT';
-      const pkgSelect = document.getElementById('signupPackage');
-      const pkgCode = pkgSelect ? pkgSelect.value : 'GW-5000ES-5KWH';
-      const pkgTitle = pkgSelect ? pkgSelect.options[pkgSelect.selectedIndex].text.split('(')[0].trim() : '5.4 kWp Executive Solar Home';
-      const totalCost = document.getElementById('signupDisplayTotal') ? document.getElementById('signupDisplayTotal').textContent : '₦6,300,000';
-      const downPayment = document.getElementById('signupDisplayDown') ? document.getElementById('signupDisplayDown').textContent : '₦1,890,000';
-      const monthlyInstallment = document.getElementById('signupDisplayMonthly') ? document.getElementById('signupDisplayMonthly').textContent : '₦175,000';
-
-      const payload = {
-        nin: nin,
-        first_name: firstName,
-        middle_name: middleName,
-        last_name: lastName,
-        dob: dob,
-        gender: gender,
-        phone: phone,
-        email: email,
-        password: pwd,
-        state_region: stateVal,
-        street_address: addressVal,
-        gps_lat: latVal,
-        gps_lng: lngVal,
-        package_code: pkgCode,
-        package_name: pkgTitle,
-        down_payment_ngn: downPayment,
-        monthly_installment_ngn: monthlyInstallment,
-        total_asset_cost_ngn: totalCost
-      };
-
-      let apiData = null;
-      try {
-        const resp = await fetch('/api/v1/public/register-customer', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        if (resp.ok) {
-          apiData = await resp.json();
-        }
-      } catch (err) {
-        console.warn('Backend API registration fallback to local synthesis:', err);
-      }
-
-      const randomDVA = (apiData && apiData.dva && apiData.dva.account_number) ? apiData.dva.account_number : '9820' + Math.floor(100000 + Math.random() * 900000);
-      const deviceId = (apiData && apiData.device_id) ? apiData.device_id : `DEV-${Math.random().toString(36).substring(2,6).toUpperCase()}-GROWATT-${Math.floor(10000+Math.random()*90000)}`;
-      const contractId = (apiData && apiData.contract_id) ? apiData.contract_id : `CTR-${stateVal.substring(0,3).toUpperCase()}-2026-${Math.floor(100+Math.random()*900)}`;
-      const stsToken = (apiData && apiData.package && apiData.package.sts_token) ? apiData.package.sts_token : '4820 - 9912 - 3840 - 1109 - 7104';
-
-      const profileKey = 'cust_' + (nin ? nin.slice(-4) : phone.slice(-4) || 'user');
-
-      // Create Full Customer Profile in CUSTOMER_PROFILES
-      const userPassportPhoto = document.getElementById('signupPassportImg')?.src || localStorage.getItem('customer_passport_photo') || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=256&q=80';
-      const newProfile = {
-        name: fullName,
-        photo: userPassportPhoto,
-        device_id: deviceId,
-        contract_id: contractId,
-        location: addressVal ? `${addressVal}, ${stateVal}` : `${stateVal}, Nigeria`,
-        gps_lat: latVal,
-        gps_lng: lngVal,
-        model: 'Growatt SPF 5000ES (10.24kWh LiFePO4)',
-        package_name: `${pkgTitle} (${stateVal})`,
-        package_arch: `${pkgTitle} + LiFePO4 Storage Architecture`,
-        package_tier_label: '🏡 Customer Subscribed Plan',
-        package_batt_label: '10.24 kWh LiFePO4',
-        segment: 'residential',
-        status: 'ACTIVE',
-        status_label: '● ACTIVE LEASE',
-        status_color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-        total_asset_cost: totalCost,
-        accumulated_paid: downPayment,
-        balance_left: '₦4,410,000',
-        installments_paid_text: 'Down Payment Settled (30.0% Capital)',
-        installments_remaining_text: '36 Installments Remaining to Title Deed Transfer',
-        monthly_kwh_consumed: 650,
-        monthly_amount_raw: parseInt(monthlyInstallment.replace(/\D/g, '') || 175000),
-        monthly_ngn: monthlyInstallment + ' / month',
-        days_left: 30.0,
-        pv_watts: '3,850 W',
-        soc_pct: '94%',
-        batt_detail: '10.24 kWh • 53.2V • 28°C',
-        load_watts: '1,200 W',
-        temp_c: '36.8 °C',
-        dva_account: randomDVA,
-        dva_name: `SkyGrid / ${fullName}`,
-        sts_token: stsToken,
-        equity_text: 'Month 1 of 36 (30% Equity Owned via Down Payment)',
-        equity_pct: '30%',
-        inv_type: 'Hybrid Off-Grid / Grid-Interactive Pure Sine Wave Inverter',
-        inv_model: 'Growatt SPF 5000ES (Dual MPPT High-Voltage)',
-        inv_size: '5,000W Cont. / 10,000VA Surge (Dual MPPT)',
-        inv_serial: `GW-SPF5000ES-${Math.floor(10000+Math.random()*90000)}`,
-        batt_type: 'LiFePO4 Lithium Iron Phosphate (Grade-A Prismatic Cells, Active Smart BMS)',
-        batt_model: 'Felicity / Growatt GBLI 5001 Rack-Mount Module',
-        batt_size: '10.24 kWh / 200Ah @ 51.2V DC (90% DoD, 6,000 Cycles @ 80% EoL)',
-        batt_serial: `LFP-512V-100AH-${Math.floor(100+Math.random()*900)}`,
-        panels_type: 'Tier-1 Monocrystalline PERC Half-Cell Bifacial Glass-Glass',
-        panels_rating: '550W per Module (41.8V Vmp, 13.16A Imp)',
-        panels_number: '10 Panels (5.5 kWp Total Solar Array)',
-        panels_config: '2 Parallel Strings of 5 Panels in Series',
-        prot_dc: '600V 32A Dual-Pole DC Rotary Isolator',
-        prot_spd: 'Type II 600V DC Photovoltaic SPD + Class II 275V AC SPD',
-        prot_ac: 'ABB 32A 2-Pole Curve-C MCB + 63A Automatic Transfer Switch (ATS)',
-        prot_batt: '125A 80V DC High-Rupture Capacity (HRC) Fuse & Isolator',
-        earthing_ohms: '1.85 Ω (< 5.0Ω COREN Standard)',
-        seal_serial: `SEAL-NG-${Math.floor(10000+Math.random()*90000)} (NEMSA Certified Steel Wire Seal)`,
-        installer_name: 'Engr. Emmanuel O. Danladi, FNSE, MNIEEE',
-        coren_no: 'COREN Reg. No: R.48291/ELECT',
-        nemsa_no: 'NEMSA Certified Inspector Cat-A: NEMSA/HQ/0391/2024',
-        office_location: `${addressVal || 'Installation Site'}, ${stateVal} • SkyGrid Field Operations`,
-        phone: phone,
-        email: email,
-        password: pwd,
-        nin: nin
-      };
-
-      CUSTOMER_PROFILES[profileKey] = newProfile;
-      window.activeRegisteredCustomerKey = profileKey;
-
-      // Save to localStorage for persistence across browser sessions & restarts
-      try {
-        const stored = JSON.parse(localStorage.getItem('skygrid_registered_customers') || '{}');
-        stored[profileKey] = newProfile;
-        localStorage.setItem('skygrid_registered_customers', JSON.stringify(stored));
-      } catch (err) {
-        console.warn('localStorage error:', err);
-      }
-
-      renderQuickAccessList();
-
-      setTimeout(() => {
-        // Transition to Success & DVA View
-        document.getElementById('signupFormView').classList.add('hidden');
-        document.getElementById('signupSuccessView').classList.remove('hidden');
-
-        document.getElementById('successCustomerName').textContent = fullName;
-        document.getElementById('successPackageTitle').textContent = pkgTitle;
-        document.getElementById('successBeneficiaryName').textContent = `SkyGrid PAYG / ${fullName}`;
-        document.getElementById('successDVANumber').textContent = randomDVA;
-        document.getElementById('successDownPayment').textContent = downPayment;
-
-        // Render Captured Site Installation Geo-Tag in DVA Welcome Card
-        const siteAddressEl = document.getElementById('successSiteAddress');
-        if (siteAddressEl) {
-          siteAddressEl.textContent = addressVal ? `${addressVal} (${stateVal})` : `${stateVal}, Nigeria`;
-        }
-        const geoTagEl = document.getElementById('successGeoTagCoords');
-        if (geoTagEl) {
-          geoTagEl.textContent = `${latVal.toFixed(6)}°N, ${lngVal.toFixed(6)}°E`;
-        }
-        const mapsLinkEl = document.getElementById('successMapsLink');
-        if (mapsLinkEl) {
-          mapsLinkEl.href = `https://maps.google.com/?q=${latVal},${lngVal}`;
-        }
-
-        window.registeredCustomerSession = {
-          name: fullName,
-          phone: phone,
-          email: email,
-          dva: randomDVA,
-          gps_lat: latVal,
-          gps_lng: lngVal,
-          site_address: addressVal,
-          state_region: stateVal,
-          profile_key: profileKey
-        };
-
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i data-lucide="check-circle" class="w-5 h-5"></i><span>Complete Registration & Provision Dedicated Virtual Account</span>';
-        if (window.lucide) lucide.createIcons();
-        showToast('🎉 Customer account verified & DVA provisioned successfully!');
-        const modalContainer = document.querySelector('#signUpModal > div');
-        if (modalContainer) modalContainer.scrollTop = 0;
-      }, 500);
-    }
-
-    function copyDVANumber() {
-      const dva = document.getElementById('successDVANumber').textContent.trim();
-      copyToClipboard(dva, 'Virtual Account Number copied to clipboard!');
-    }
-
-    function launchCustomerPortalFromSignup() {
-      closeModal('signUpModal');
-      loadCustomerPortal(window.activeRegisteredCustomerKey || 'amina');
-    }
-
-    // Keyboard Accessibility (Esc to close dropdowns & modals)
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeAboutDropdown();
-        closePkgDropdown();
-        closeModal('packageModal');
-        closeModal('auditModal');
-        closeModal('signInModal');
-        closeModal('customerPortalModal');
-        closeModal('signUpModal');
-        closeModal('staffSignInModal');
-        closeModal('staffApplyModal');
-      }
-    });
-
-    // --- Staff Sign In Modal Controller ---
-    function openStaffSignInModal() {
-      const idEl = document.getElementById('staffLoginId');
-      const passEl = document.getElementById('staffLoginPass');
-      if (idEl) idEl.value = 'admin@skytron.ng';
-      if (passEl) passEl.value = 'Admin@SkyTron2026!';
-      openModal('staffSignInModal');
-    }
-
-    async function handleStaffSignIn(event) {
-      if (event && event.preventDefault) event.preventDefault();
-      const rawLoginId = (document.getElementById('staffLoginId') ? document.getElementById('staffLoginId').value : '').trim() || 'admin@skytron.ng';
-      const rawLoginPass = (document.getElementById('staffLoginPass') ? document.getElementById('staffLoginPass').value : '').trim() || 'Admin@SkyTron2026!';
-      const statusEl = document.getElementById('staffSignInStatusMsg');
-      const submitBtn = document.getElementById('staffSignInBtn');
-
-      if (submitBtn) submitBtn.disabled = true;
-      if (statusEl) {
-        statusEl.textContent = 'Authenticating Super Admin developer credentials...';
-        statusEl.className = 'text-xs text-brand-teal font-mono p-2.5 rounded-xl bg-brand-teal/10 border border-brand-teal/30 block';
-        statusEl.style.display = 'block';
-      }
-
-      let authenticatedRole = null;
-      let userName = rawLoginId.split('@')[0];
-      let userToken = 'jwt-staff-live-token';
-
-      try {
-        const resp = await fetch('/api/v1/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: rawLoginId, password: rawLoginPass })
-        });
-        if (resp.ok) {
-          const data = await resp.json();
-          authenticatedRole = (data.roles && data.roles[0]) || (data.user && data.user.role);
-          if (data.user && data.user.full_name) userName = data.user.full_name;
-          if (data.access_token) userToken = data.access_token;
-        } else {
-          const errData = await resp.json().catch(() => ({}));
-          console.warn('Staff login API returned non-200:', errData);
-        }
-      } catch (err) {
-        console.warn('Staff backend login network fallback:', err);
-      }
-
-      // Offline / Developer test accounts fallback
-      if (!authenticatedRole) {
-        const loginId = rawLoginId.toLowerCase();
-        if (loginId.includes('admin') || !loginId || loginId === 'admin@skytron.ng') {
-          authenticatedRole = 'super_admin';
-          userName = 'Super Administrator (Developer)';
-        } else if (loginId.includes('ops')) {
-          authenticatedRole = 'operations_manager';
-          userName = 'Engr. Adeleke (Ops)';
-        } else if (loginId.includes('finance')) {
-          authenticatedRole = 'finance_officer';
-          userName = 'Hauwa Ibrahim (Finance)';
-        } else if (loginId.includes('tech')) {
-          authenticatedRole = 'technician';
-          userName = 'Engr. Tariq (COREN)';
-        } else {
-          authenticatedRole = 'super_admin';
-          userName = 'Super Administrator (Developer)';
-        }
-      }
-
-      const sessionData = {
-        email: rawLoginId,
-        full_name: userName,
-        role: authenticatedRole,
-        token: userToken
-      };
-
-      try {
-        localStorage.setItem('skytron_session', JSON.stringify(sessionData));
-      } catch (e) {
-        console.warn('localStorage not accessible', e);
-      }
-      updateNavbarAuthState();
-      if (submitBtn) submitBtn.disabled = false;
-      closeModal('staffSignInModal');
-
-      // Post-Login Automatic Routing to Staff/Admin Watchtower
-      openAdminPortal();
-      if (authenticatedRole === 'super_admin') {
-        switchAdminRole('super_admin');
-        switchAdminTab('fleet');
-        showToast('👑 Auto-Logged in as Super Admin. Role authorizations active in Watchtower Dashboard.');
-      } else if (authenticatedRole === 'operations_manager') {
-        switchAdminRole('operations_manager');
-        switchAdminTab('installations');
-        showToast('📋 Authenticated as Operations Manager: 16-Step Installations Active');
-      } else if (authenticatedRole === 'finance_officer') {
-        switchAdminRole('finance_officer');
-        switchAdminTab('finance');
-        showToast('💳 Authenticated as Finance Officer: Invoices & Payment Ledger Active');
-      } else if (authenticatedRole === 'technician' || authenticatedRole === 'field_engineer') {
-        switchAdminRole('field_engineer');
-        switchAdminTab('maintenance');
-        showToast('🔧 Authenticated as COREN Technician: Maintenance & Field Dispatch Active');
-      } else {
-        switchAdminRole('operations_manager');
-        switchAdminTab('installations');
-        showToast('👷 Authenticated to Staff Workspace: ' + userName);
-      }
-    }
-
-    window.autoLoginSuperAdmin = function() {
-      const idEl = document.getElementById('staffLoginId');
-      const passEl = document.getElementById('staffLoginPass');
-      if (idEl) idEl.value = 'admin@skytron.ng';
-      if (passEl) passEl.value = 'Admin@SkyTron2026!';
-      handleStaffSignIn({ preventDefault: () => {} });
-    };
-
-    // --- Staff NIN Identity Verification & Auto-Population ---
-    function handleStaffNINInput(val) {
-      const clean = (val || '').replace(/\D/g, '').slice(0, 11);
-      const inputEl = document.getElementById('staffNIN');
-      if (inputEl) inputEl.value = clean;
-      const countEl = document.getElementById('staffNinCharCount');
-      if (countEl) countEl.textContent = clean.length + '/11';
-      if (clean.length === 11) {
-        verifyStaffNIN();
-      }
-    }
-
-    function quickFillStaffDemoNIN(nin) {
-      const inputEl = document.getElementById('staffNIN');
-      if (inputEl) inputEl.value = nin;
-      handleStaffNINInput(nin);
-      verifyStaffNIN();
-    }
-
-    async function verifyStaffNIN() {
-      const ninInput = document.getElementById('staffNIN');
-      if (!ninInput) return;
-      const cleanNIN = ninInput.value.replace(/\D/g, '');
-      if (cleanNIN.length !== 11) {
-        showToast('Please enter an 11-digit NIN first', false);
-        ninInput.focus();
-        return;
-      }
-
-      const verifyBtn = document.getElementById('btnVerifyStaffNIN');
-      const btnText = document.getElementById('verifyStaffBtnText');
-      const banner = document.getElementById('staffNINStatusBanner');
-
-      if (verifyBtn) verifyBtn.disabled = true;
-      if (btnText) btnText.textContent = 'Querying NIMC...';
-      if (banner) {
-        banner.className = 'p-3 rounded-xl bg-brand-forest/60 border border-brand-teal/40 text-[11px] text-brand-teal flex items-center gap-2.5 transition-all';
-        banner.innerHTML = '<span class="w-3 h-3 rounded-full bg-brand-teal status-pulse"></span><span>Connecting to National Identity Management Commission (NIMC) Secure Gateway...</span>';
-      }
-
-      let record = null;
-      try {
-        const res = await fetch('/api/v1/public/verify-nin', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nin: cleanNIN })
-        });
-        if (res.ok) {
-          const data = await res.json();
-          record = {
-            fullName: data.full_name || (data.first_name + ' ' + (data.middle_name ? data.middle_name + ' ' : '') + data.last_name),
-            dob: data.date_of_birth || data.dob,
-            gender: data.gender,
-            phone: data.phone_number || data.phone,
-            ninRef: data.nin_ref || ('NIMC-VER-NG-' + cleanNIN.slice(-5))
-          };
-        }
-      } catch (err) {
-        console.warn('Backend verify-nin fetch failed, using deterministic NIMC fallback:', err);
-      }
-
-      if (!record) {
-        const gen = generateNIMCRecord(cleanNIN);
-        record = {
-          fullName: gen.firstName + ' ' + (gen.middleName ? gen.middleName + ' ' : '') + gen.lastName,
-          dob: gen.dob,
-          gender: gen.gender,
-          phone: gen.phone,
-          ninRef: gen.ninRef
-        };
-      }
-
-      // Auto-Populate Staff Identity Columns
-      const nameEl = document.getElementById('staffName');
-      const dobEl = document.getElementById('staffDOB');
-      const genderEl = document.getElementById('staffGender');
-      const phoneEl = document.getElementById('staffPhone');
-
-      if (nameEl) nameEl.value = record.fullName;
-      if (dobEl) dobEl.value = record.dob;
-      if (genderEl) genderEl.value = record.gender;
-      if (phoneEl && !phoneEl.value) phoneEl.value = record.phone;
-
-      // Update Staff Passport Photo Preview & Sync
-      if (record.photo) {
-        const sImg = document.getElementById('staffPassportImg');
-        const aImg = document.getElementById('adminStaffPassportImg');
-        if (sImg) sImg.src = record.photo;
-        if (aImg) aImg.src = record.photo;
-        try {
-          localStorage.setItem('staff_passport_photo', record.photo);
-        } catch (e) {}
-      }
-
-      // Unhide Verification Badges
-      ['badgeStaffName', 'badgeStaffDOB', 'badgeStaffGender'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.remove('hidden');
-      });
-
-      // Update Banner to Verified State
-      if (banner) {
-        banner.className = 'p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-[11px] text-emerald-300 flex items-center justify-between gap-3 shadow-lg';
-        banner.innerHTML = `
-          <div class="flex items-center gap-2.5">
-            <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-xs">✓</span>
-            <div>
-              <strong class="text-white block font-heading">NIMC Verified: ${record.fullName}</strong>
-              <span class="text-[10px] text-emerald-400/80 font-mono">DOB: ${record.dob} • Gender: ${record.gender} • Token: ${record.ninRef}</span>
-            </div>
-          </div>
-          <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[9px] uppercase font-bold shrink-0">Identity Verified</span>
-        `;
-      }
-
-      if (verifyBtn) verifyBtn.disabled = false;
-      if (btnText) btnText.textContent = 'Verified ✓';
-
-      showToast(`✓ NIMC Identity Verified: ${record.fullName}`);
-      if (typeof updateAllFormsHighlighting === 'function') {
-        updateAllFormsHighlighting();
-      }
-    }
-
-    // --- Staff Onboarding Application Handler ---
-    async function handleStaffApply(e) {
-      e.preventDefault();
-      const nin = (document.getElementById('staffNIN') ? document.getElementById('staffNIN').value : '').replace(/\D/g, '');
-      const name = document.getElementById('staffName') ? document.getElementById('staffName').value.trim() : '';
-      const dob = document.getElementById('staffDOB') ? document.getElementById('staffDOB').value.trim() : '';
-      const gender = document.getElementById('staffGender') ? document.getElementById('staffGender').value.trim() : '';
-      const email = document.getElementById('staffEmail') ? document.getElementById('staffEmail').value.trim() : '';
-      const phone = document.getElementById('staffPhone') ? document.getElementById('staffPhone').value.trim() : '';
-      const dept = document.getElementById('staffDept') ? document.getElementById('staffDept').value : 'ENGINEERING_COREN';
-      const coren = document.getElementById('staffCoren') ? document.getElementById('staffCoren').value.trim() : '';
-      const pwd = document.getElementById('staffPassword') ? document.getElementById('staffPassword').value : '';
-
-      if (nin.length !== 11) {
-        showToast('Please enter and verify your 11-digit NIN first', false);
-        const ninInput = document.getElementById('staffNIN');
-        if (ninInput) ninInput.focus();
-        return;
-      }
-
-      if (!name || !dob || !gender) {
-        await verifyStaffNIN();
-      }
-
-      const finalName = document.getElementById('staffName') ? document.getElementById('staffName').value.trim() : name;
-      const finalDob = document.getElementById('staffDOB') ? document.getElementById('staffDOB').value.trim() : dob;
-      const finalGender = document.getElementById('staffGender') ? document.getElementById('staffGender').value.trim() : gender;
-
-      const statusEl = document.getElementById('staffApplyStatus');
-      if (statusEl) {
-        statusEl.classList.remove('hidden');
-        statusEl.textContent = 'Submitting application to Super Admin review queue...';
-        statusEl.className = 'text-xs text-brand-amber font-mono mt-2';
-      }
-      try {
-        const res = await fetch('/api/v1/auth/staff/apply', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            nin: nin,
-            full_name: finalName,
-            date_of_birth: finalDob,
-            gender: finalGender,
-            email: email,
-            phone: phone,
-            requested_department: dept,
-            coren_number: coren,
-            password: pwd
-          })
-        });
-        if (res.ok) {
-          if (statusEl) {
-            statusEl.textContent = '✅ Application submitted successfully! Status: PENDING_SUPERADMIN_REVIEW.';
-            statusEl.className = 'text-xs text-brand-teal font-mono mt-2 font-bold';
-          }
-          setTimeout(() => { closeModal('staffApplyModal'); }, 2500);
-          showToast('✅ Application Submitted! Status: PENDING_SUPERADMIN_REVIEW. The Super Admin must approve your application before onboarding.');
-          return;
-        }
-      } catch (err) {
-        console.warn('Network submit fallback:', err);
-      }
-      if (statusEl) {
-        statusEl.textContent = '✅ Application queued! Routed for Super Admin RBAC review.';
-        statusEl.className = 'text-xs text-brand-teal font-mono mt-2 font-bold';
-      }
-      setTimeout(() => { closeModal('staffApplyModal'); }, 2500);
-      showToast('✅ Application Submitted! Status: PENDING_SUPERADMIN_REVIEW. The Super Admin must approve your application before onboarding.');
-    }
-
-    // --- 6. Dark / Light Mode Theme Controller ---
-    function toggleTheme() {
-      const isLight = document.documentElement.classList.contains('light');
-      const nextTheme = isLight ? 'dark' : 'light';
-      if (nextTheme === 'light') {
-        document.documentElement.classList.add('light');
-        document.documentElement.classList.remove('dark');
-      } else {
-        document.documentElement.classList.add('dark');
-        document.documentElement.classList.remove('light');
-      }
-      try {
-        localStorage.setItem('skygrid_theme', nextTheme);
-      } catch (e) {
-        console.warn('localStorage not accessible for theme persistence', e);
-      }
-      updateThemeUI(nextTheme);
-      showToast(nextTheme === 'light' ? '☀️ Switched to Light Mode' : '🌙 Switched to Dark Mode');
-    }
-
-    function updateThemeUI(theme) {
-      const isLight = theme === 'light';
-      const sun = document.getElementById('themeIconSun');
-      const moon = document.getElementById('themeIconMoon');
-      const label = document.getElementById('themeLabelText');
-      if (sun && moon) {
-        sun.classList.toggle('hidden', !isLight);
-        moon.classList.toggle('hidden', isLight);
-        if (label) label.textContent = isLight ? 'Light Mode' : 'Dark Mode';
-      }
-      document.querySelectorAll('.mobile-theme-sun').forEach(el => el.classList.toggle('hidden', !isLight));
-      document.querySelectorAll('.mobile-theme-moon').forEach(el => el.classList.toggle('hidden', isLight));
-      document.querySelectorAll('.portal-theme-icon').forEach(el => el.textContent = isLight ? '☀️' : '🌙');
-      document.querySelectorAll('.portal-theme-text').forEach(el => el.textContent = isLight ? 'Light Mode' : 'Dark Mode');
-      if (window.lucide) lucide.createIcons();
-    }
-
-
-    // =========================================================================
-    // EXECUTIVE ADMIN & ERP CONSOLE LOGIC
-    // =========================================================================
-    let currentAdminRole = 'super_admin';
-    let currentAdminTab = 'fleet';
-    let adminFleetUnits = [
-      { id: 'DEV-8F3A-GROWATT-00421', name: 'Engr. Shwarji I. Khatang', serial: 'GW-SPF5000ES-94210', seal: 'SEAL-NG-04210', relay: 'ACTIVE_ON', tamper: 'SEALED', pv: 3420, load: 850, temp: 41.2, pin: 'GREEN', path: '/var/lib/payg-vfs/blocks/8f/3a/DEV-8F3A-GROWATT-00421/state.json' },
-      { id: 'DEV-1A9F-GROWATT-00108', name: 'Dr. Aisha Bello', serial: 'GW-SPF3000TL-10802', seal: 'SEAL-NG-01082', relay: 'ACTIVE_ON', tamper: 'SEALED', pv: 2150, load: 620, temp: 38.6, pin: 'GREEN', path: '/var/lib/payg-vfs/blocks/1a/9f/DEV-1A9F-GROWATT-00108/state.json' },
-      { id: 'DEV-4C2B-GROWATT-00389', name: 'Chief Emeka Okafor', serial: 'GW-SPF6000DVM-38914', seal: 'SEAL-NG-03894', relay: 'ACTIVE_ON', tamper: 'SEALED', pv: 4100, load: 2400, temp: 44.1, pin: 'YELLOW', path: '/var/lib/payg-vfs/blocks/4c/2b/DEV-4C2B-GROWATT-00389/state.json' },
-      { id: 'DEV-9D7E-GROWATT-00512', name: 'Alhaji Musa Danjuma', serial: 'GW-MAX10000-51201', seal: 'SEAL-NG-05121', relay: 'STANDBY_LOCKED', tamper: 'TRIPPED', pv: 6800, load: 0, temp: 46.5, pin: 'RED', path: '/var/lib/payg-vfs/blocks/9d/7e/DEV-9D7E-GROWATT-00512/state.json' },
-    ];
-    let selectedFleetIndex = 0;
-
-    const ROLE_DEFAULT_PERMISSIONS = {
-      super_admin: [
-        'staff.view', 'staff.invite', 'staff.approve', 'staff.manage_roles',
-        'customers.view', 'customers.manage',
-        'installations.create', 'installations.assign', 'installations.update',
-        'maintenance.create', 'maintenance.assign', 'maintenance.update_status',
-        'payments.view', 'payments.verify',
-        'reports.view', 'audit.view', 'settings.manage'
-      ],
-      operations_manager: [
-        'staff.view', 'staff.invite',
-        'customers.view', 'customers.manage',
-        'installations.create', 'installations.assign', 'installations.update',
-        'maintenance.create', 'maintenance.assign', 'maintenance.update_status',
-        'reports.view'
-      ],
-      field_engineer: [
-        'installations.update',
-        'maintenance.update_status',
-        'reports.view',
-        'audit.view'
-      ],
-      finance_officer: [
-        'customers.view',
-        'payments.view', 'payments.verify',
-        'reports.view',
-        'audit.view'
-      ],
-      customer_support: [
-        'customers.view',
-        'maintenance.create',
-        'reports.view',
-        'payments.view'
-      ],
-      compliance_auditor: [
-        'reports.view',
-        'audit.view',
-        'installations.update',
-        'payments.view',
-        'staff.view'
-      ],
-      customer: []
-    };
-
-    let activeRbacRole = 'super_admin';
-    let roleCurrentPermissions = JSON.parse(JSON.stringify(ROLE_DEFAULT_PERMISSIONS));
-
-    const ALL_17_PERMISSIONS = [
-      'staff.view', 'staff.invite', 'staff.approve', 'staff.manage_roles',
-      'customers.view', 'customers.manage',
-      'installations.create', 'installations.assign', 'installations.update',
-      'maintenance.create', 'maintenance.assign', 'maintenance.update_status',
-      'payments.view', 'payments.verify',
-      'reports.view', 'audit.view', 'settings.manage'
-    ];
-
-    function selectRbacRole(roleSlug) {
-      activeRbacRole = roleSlug;
-      const badge = document.getElementById('activeRbacBadge');
-      if (badge) badge.textContent = '👑 ' + roleSlug;
-
-      const roles = ['super_admin', 'operations_manager', 'field_engineer', 'finance_officer', 'customer_support', 'compliance_auditor'];
-      roles.forEach(r => {
-        const btn = document.getElementById('rbacRoleBtn_' + r);
-        if (btn) {
-          if (r === roleSlug) {
-            btn.className = 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold transition';
-          } else {
-            btn.className = 'px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition';
-          }
-        }
-      });
-
-      const granted = roleCurrentPermissions[roleSlug] || [];
-      ALL_17_PERMISSIONS.forEach(p => {
-        const id = 'perm_' + p.replace('.', '_');
-        const chk = document.getElementById(id);
-        if (chk) {
-          chk.checked = granted.includes(p);
-        }
-      });
-    }
-
-    function handleRbacToggle(permSlug) {
-      if (!roleCurrentPermissions[activeRbacRole]) {
-        roleCurrentPermissions[activeRbacRole] = [];
-      }
-      const list = roleCurrentPermissions[activeRbacRole];
-      const idx = list.indexOf(permSlug);
-      if (idx >= 0) {
-        list.splice(idx, 1);
-      } else {
-        list.push(permSlug);
-      }
-    }
-
-    function handleSaveRbacPolicy() {
-      const activeList = roleCurrentPermissions[activeRbacRole] || [];
-      fetch('http://localhost:8080/api/v1/auth/sandbox-impersonate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role_slug: activeRbacRole })
-      }).catch(function() {});
-
-      if (activeRbacRole === currentAdminRole) {
-        const permBadge = document.getElementById('adminPermCountBadge');
-        if (permBadge) permBadge.textContent = activeList.length + ' Perms Active';
-      }
-
-      showToast('✅ RBAC Policy Enforced: ' + activeRbacRole + ' now has ' + activeList.length + ' active permissions!');
-    }
-
-    function handleResetRbacPolicy() {
-      roleCurrentPermissions[activeRbacRole] = [...(ROLE_DEFAULT_PERMISSIONS[activeRbacRole] || [])];
-      selectRbacRole(activeRbacRole);
-      showToast('↺ Restored default permissions for ' + activeRbacRole);
-    }
-
-    function openAdminPortal() {
-      try {
-        openModal('adminPortalModal');
-        try { switchAdminTab('fleet'); } catch (e) { console.warn(e); }
-        try { selectAdminFleetUnit(0); } catch (e) { console.warn(e); }
-        try { selectRbacRole(currentAdminRole); } catch (e) { console.warn(e); }
-        try { showToast('👑 Welcome to Executive Admin & ERP Console'); } catch (e) { console.warn(e); }
-        if (window.lucide) {
-          try { lucide.createIcons(); } catch (e) {}
-        }
-      } catch (err) {
-        console.error('openAdminPortal error:', err);
-      }
-    }
-
-    function toggleAdminSidebar() {
-      const sb = document.getElementById('adminSidebar');
-      if (sb) {
-        sb.classList.toggle('-translate-x-full');
-      }
-    }
-
-    function toggleAdminRoleMenu() {
-      const el = document.getElementById('adminRoleDropdown');
-      if (el) el.classList.toggle('hidden');
-    }
-
-    function switchAdminRole(roleSlug) {
-      currentAdminRole = roleSlug;
-      const dd = document.getElementById('adminRoleDropdown');
-      if (dd) dd.classList.add('hidden');
-
-      const roleBadge = document.getElementById('adminRoleBadge');
-      const emailBadge = document.getElementById('adminUserEmail');
-      const permBadge = document.getElementById('adminPermCountBadge');
-
-      const ROLE_NAMES = {
-        super_admin: { name: '👑 Super Administrator', perms: 17 },
-        operations_manager: { name: '🛡️ Operations Manager', perms: 11 },
-        field_engineer: { name: '⚡ Field Engineer', perms: 4 },
-        finance_officer: { name: '📊 Finance Officer', perms: 5 },
-        customer_support: { name: '💬 Customer Support', perms: 4 },
-        compliance_auditor: { name: '📜 Compliance Auditor', perms: 5 },
-        customer: { name: '👤 PAYG Customer', perms: 0 },
-      };
-
-      const meta = ROLE_NAMES[roleSlug] || { name: roleSlug, perms: 4 };
-      if (roleBadge) roleBadge.textContent = meta.name;
-      if (emailBadge) emailBadge.textContent = 'sandbox.' + roleSlug + '@skygrid.energy';
-      if (permBadge) permBadge.textContent = meta.perms + ' Perms Active';
-
-      // Call Go backend impersonation endpoint asynchronously
-      fetch('http://localhost:8080/api/v1/auth/sandbox-impersonate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role_slug: roleSlug })
-      }).catch(function() {});
-
-      showToast('Switched active role to ' + meta.name);
-      selectRbacRole(roleSlug);
-    }
-
-    function switchAdminTab(tabId) {
-      currentAdminTab = tabId;
-      const tabs = ['fleet', 'staff', 'installations', 'maintenance', 'finance', 'copilot'];
-      tabs.forEach(function(t) {
-        const panel = document.getElementById('admPanel_' + t);
-        const btn = document.getElementById('admTab' + t.charAt(0).toUpperCase() + t.slice(1));
-        if (panel) {
-          panel.classList.toggle('hidden', t !== tabId);
-        }
-        if (btn) {
-          if (t === tabId) {
-            btn.className = 'w-full flex items-center gap-3 px-3.5 py-3 rounded-xl bg-indigo-600 text-white font-bold transition';
-          } else {
-            btn.className = 'w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-300 hover:bg-white/5 transition';
-          }
-        }
-      });
-      const sb = document.getElementById('adminSidebar');
-      if (sb && !sb.classList.contains('-translate-x-full')) {
-        sb.classList.add('-translate-x-full');
-      }
-      if (window.lucide) lucide.createIcons();
-    }
-
-    function selectAdminFleetUnit(idx) {
-      selectedFleetIndex = idx;
-      const u = adminFleetUnits[idx];
-      if (!u) return;
-
-      document.querySelectorAll('#admFleetList > div').forEach(function(row, i) {
-        row.classList.toggle('border-emerald-500', i === idx);
-        row.classList.toggle('border-white/10', i !== idx);
-      });
-
-      const nameEl = document.getElementById('admInspName');
-      const serialEl = document.getElementById('admInspSerial');
-      const relayEl = document.getElementById('admInspRelay');
-      const tamperEl = document.getElementById('admInspTamper');
-      const sealEl = document.getElementById('admInspSeal');
-      const pathEl = document.getElementById('admInspPath');
-      const pvEl = document.getElementById('admInspPV');
-      const loadEl = document.getElementById('admInspLoad');
-      const tempEl = document.getElementById('admInspTemp');
-      const actionBox = document.getElementById('admTamperActionBox');
-
-      if (nameEl) nameEl.textContent = u.name;
-      if (serialEl) serialEl.textContent = u.serial;
-      if (relayEl) {
-        relayEl.textContent = u.relay;
-        relayEl.className = u.relay === 'ACTIVE_ON' ? 'text-sm font-black font-mono text-emerald-400 mt-1' : 'text-sm font-black font-mono text-rose-400 mt-1';
-      }
-      if (tamperEl) {
-        tamperEl.textContent = u.tamper;
-        tamperEl.className = u.tamper === 'SEALED' ? 'text-sm font-black font-mono text-emerald-400 mt-1' : 'text-sm font-black font-mono text-rose-400 mt-1';
-      }
-      if (sealEl) sealEl.textContent = 'Seal: ' + u.seal;
-      if (pathEl) pathEl.textContent = u.path;
-      if (pvEl) pvEl.textContent = 'PV: ' + u.pv + 'W';
-      if (loadEl) loadEl.textContent = 'Load: ' + u.load + 'W';
-      if (tempEl) tempEl.textContent = 'Temp: ' + u.temp + '°C';
-
-      if (actionBox) {
-        actionBox.classList.toggle('hidden', u.tamper !== 'TRIPPED');
-      }
-    }
-
-    function handleAdminTamperClear() {
-      const u = adminFleetUnits[selectedFleetIndex];
-      if (u) {
-        u.tamper = 'SEALED';
-        u.relay = 'ACTIVE_ON';
-        u.pin = 'GREEN';
-        selectAdminFleetUnit(selectedFleetIndex);
-        const kpi = document.getElementById('admKpiTamper');
-        if (kpi) {
-          kpi.textContent = '0 Critical';
-          kpi.className = 'text-2xl sm:text-3xl font-black text-emerald-400 font-mono mt-1';
-        }
-        showToast('✅ Verified field re-seal for ' + u.id + '! Contactor relay restored to ACTIVE_ON.');
-      }
-    }
-
-    function handleCandidateApply(e) {
-      e.preventDefault();
-      var name = document.getElementById('candName').value.trim();
-      var email = document.getElementById('candEmail').value.trim();
-      var dept = document.getElementById('candDept').value;
-      if (!name || !email) return;
-
-      var list = document.getElementById('admCandidateList');
-      if (list) {
-        var item = document.createElement('div');
-        item.className = 'p-4 rounded-xl border border-white/10 bg-white/5 space-y-2';
-        var escapedName = name.replace(/'/g, "\'");
-        item.innerHTML = [
-          '<div class="flex justify-between items-start">',
-            '<div>',
-              '<h5 class="font-bold text-white text-sm">' + name + '</h5>',
-              '<p class="text-xs text-slate-400">' + email + '</p>',
-              '<p class="text-xs text-indigo-400 font-semibold mt-0.5">' + dept + '</p>',
-            '</div>',
-            '<span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-500/20 text-slate-300 border border-slate-500/30">AWAITING_EMAIL_VERIFY</span>',
-          '</div>',
-          '<div class="flex justify-between items-center pt-2 border-t border-white/10 text-xs">',
-            '<span class="text-slate-400">Verification token issued</span>',
-            '<button onclick="showToast(\'Email verified! Moved to review queue.\')" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition">',
-              'Simulate Email Verify &#8594;',
-            '</button>',
-          '</div>'
-        ].join('');
-        list.prepend(item);
-      }
-      document.getElementById('candName').value = '';
-      document.getElementById('candEmail').value = '';
-      showToast('Application submitted for ' + name + '!');
-    }
-
-    function handleAdminApproveStaff(name) {
-      showToast('🎉 Approved & Invited: ' + name + ' assigned enterprise role!');
-    }
-
-    function handleCandidateActivate(e) {
-      e.preventDefault();
-      const tok = document.getElementById('actToken').value;
-      if (!tok) return;
-      showToast('🎉 Staff Account Activated! Credentials and security PIN confirmed.');
-    }
-
-    function handleAdminVerifyPayment(id, tokenStr, days) {
-      const box = document.getElementById('payTokenBox' + id);
-      const row = document.getElementById('payActionRow' + id);
-      if (box) box.classList.remove('hidden');
-      if (row) row.classList.add('hidden');
-      showToast('✓ Payment Verified: Issued 20-digit STS token ' + tokenStr + ' (+' + days + ' days)!');
-    }
-
-    function handleAdminVerifyAuditChain() {
-      const pill = document.getElementById('admAuditStatusPill');
-      if (pill) {
-        pill.textContent = '100% CRYPTOGRAPHICALLY VERIFIED';
-        pill.className = 'text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-black';
-      }
-      showToast('🔐 Cryptographic Audit Chain Verified: 100% SHA-256 Block Integrity');
-    }
-
-    function setAdminQuery(q) {
-      const input = document.getElementById('admCopilotInput');
-      if (input) input.value = q;
-    }
-
-    function sendAdminCopilotQuery(e) {
-      e.preventDefault();
-      const input = document.getElementById('admCopilotInput');
-      if (!input || !input.value.trim()) return;
-      const q = input.value.trim();
-      input.value = '';
-
-      const stream = document.getElementById('admCopilotStream');
-      if (stream) {
-        const uMsg = document.createElement('div');
-        uMsg.className = 'p-3 rounded-2xl bg-indigo-600 text-white font-medium ml-auto max-w-[85%]';
-        uMsg.textContent = q;
-        stream.appendChild(uMsg);
-
-        const aMsg = document.createElement('div');
-        aMsg.className = 'p-3 rounded-2xl bg-white/5 border border-white/10 text-slate-200 max-w-[85%]';
-        aMsg.innerHTML = '🔒 <strong>SkyTron LocalGridAgent:</strong> Telemetry inspection confirmed. Fleet operating normally under <code>' + currentAdminRole + '</code> guardrails. Earthing ≤ 5.00Ω satisfied across all active clusters.';
-        stream.appendChild(aMsg);
-        stream.scrollTop = stream.scrollHeight;
-      }
-    }
-
-    // --- 7. Initialization on DOM Load & Global Exports ---
-    function initApplication() {
-      try {
-        let savedTheme = 'dark';
-        try {
-          savedTheme = localStorage.getItem('skygrid_theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-        } catch (e) {
-          savedTheme = 'dark';
-        }
-        if (savedTheme === 'light') {
-          document.documentElement.classList.add('light');
-          document.documentElement.classList.remove('dark');
-        } else {
-          document.documentElement.classList.add('dark');
-          document.documentElement.classList.remove('light');
-        }
-        updateThemeUI(savedTheme);
-      } catch (e) {
-        console.warn('Theme init warning:', e);
-      }
-
-      try {
-        if (window.lucide) lucide.createIcons();
-      } catch (e) {}
-
-      try {
-        startSlideshow();
-      } catch (e) {
-        console.warn('Slideshow init warning:', e);
-      }
-
-      try {
-        populateApplianceDropdown();
-      } catch (e) {
-        console.error('populateApplianceDropdown error:', e);
-      }
-
-      try {
-        renderAppliances();
-      } catch (e) {
-        console.error('renderAppliances error:', e);
-      }
-
-      try {
-        runCalculator();
-      } catch (e) {
-        console.error('runCalculator error:', e);
-      }
-
-      try {
-        initStoredCustomerProfiles();
-      } catch (e) {
-        console.warn('initStoredCustomerProfiles error:', e);
-      }
-
-      try {
-        const savedPhoto = localStorage.getItem('customer_passport_photo');
-        if (savedPhoto) {
-          const pImg = document.getElementById('portalCustomerPassportImg');
-          const sImg = document.getElementById('signupPassportImg');
-          if (pImg) pImg.src = savedPhoto;
-          if (sImg) sImg.src = savedPhoto;
-        }
-      } catch (e) {}
-
-      try {
-        const savedStaffPhoto = localStorage.getItem('staff_passport_photo');
-        if (savedStaffPhoto) {
-          const aImg = document.getElementById('adminStaffPassportImg');
-          const sImg = document.getElementById('staffPassportImg');
-          if (aImg) aImg.src = savedStaffPhoto;
-          if (sImg) sImg.src = savedStaffPhoto;
-        }
-      } catch (e) {}
-
-      try {
-        updateNavbarAuthState();
-        window.addEventListener('storage', updateNavbarAuthState);
-        window.addEventListener('skytron_auth_change', updateNavbarAuthState);
-      } catch (e) {
-        console.warn('Navbar auth state sync error:', e);
-      }
-
-      try {
-        initFormValidationHighlighting();
-      } catch (e) {
-        console.warn('Form highlighting init error:', e);
-      }
-    }
-
-    // Run immediately if DOM is already parsed, or wait for event
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initApplication);
-    } else {
-      initApplication();
-    }
-
-    // Explicitly expose all interactive handlers to window for rock-solid inline HTML compatibility
-    window.handlePassportUpload = handlePassportUpload;
-    window.resetDefaultPassport = resetDefaultPassport;
-    window.handleStaffPassportUpload = handleStaffPassportUpload;
-    window.resetStaffPassport = resetStaffPassport;
-    window.handlePortalLogout = handlePortalLogout;
-    window.openModal = openModal;
-    window.closeModal = closeModal;
-    window.updateAllFormsHighlighting = updateAllFormsHighlighting;
-    window.updateFormHighlighting = updateFormHighlighting;
-    window.initFormValidationHighlighting = initFormValidationHighlighting;
-    window.openAdminPortal = openAdminPortal;
-    window.toggleAdminSidebar = toggleAdminSidebar;
-    window.toggleAdminRoleMenu = toggleAdminRoleMenu;
-    window.switchAdminRole = switchAdminRole;
-    window.switchAdminTab = switchAdminTab;
-    window.selectAdminFleetUnit = selectAdminFleetUnit;
-    window.handleAdminTamperClear = handleAdminTamperClear;
-    window.selectRbacRole = selectRbacRole;
-    window.handleRbacToggle = handleRbacToggle;
-    window.handleSaveRbacPolicy = handleSaveRbacPolicy;
-    window.handleResetRbacPolicy = handleResetRbacPolicy;
-    window.toggleTheme = toggleTheme;
-    window.populateApplianceDropdown = populateApplianceDropdown;
-    window.renderAppliances = renderAppliances;
-    window.runCalculator = runCalculator;
-    window.addSelectedApplianceToCart = addSelectedApplianceToCart;
-    window.adjustCartQty = adjustCartQty;
-    window.updateCartItem = updateCartItem;
-    window.removeCartItem = removeCartItem;
-    window.setTenure = setTenure;
-    window.toggleCorenDrawer = toggleCorenDrawer;
-    window.toggleAboutDropdown = toggleAboutDropdown;
-    window.closeAboutDropdown = closeAboutDropdown;
-    window.togglePkgDropdown = togglePkgDropdown;
-    window.closePkgDropdown = closePkgDropdown;
-    window.toggleMobileAboutAccordion = toggleMobileAboutAccordion;
-    window.toggleMobilePkgAccordion = toggleMobilePkgAccordion;
-    window.toggleMobileMenu = toggleMobileMenu;
-    window.showToast = showToast;
-    window.loadCustomerPortal = loadCustomerPortal;
-    window.openPackageModal = openPackageModal;
-    window.openAuditModal = openAuditModal;
-    window.openAuditFromModal = openAuditFromModal;
-    window.openStaffSignInModal = openStaffSignInModal;
-    window.handleStaffSignIn = handleStaffSignIn;
-    window.handleStaffNINInput = handleStaffNINInput;
-    window.quickFillStaffDemoNIN = quickFillStaffDemoNIN;
-    window.verifyStaffNIN = verifyStaffNIN;
-    window.handleStaffApply = handleStaffApply;
-    window.fillDevLogin = fillDevLogin;
-    window.updateNavbarAuthState = updateNavbarAuthState;
-    window.handlePortalSignOut = handlePortalSignOut;
-    window.routeCurrentSessionWorkspace = routeCurrentSessionWorkspace;
-    window.handlePortalSignIn = handlePortalSignIn;
-    window.autoLoginSuperAdmin = autoLoginSuperAdmin;
-  </script>
-</body>
-</html>
+      if (gridWouldHaveSpent) gridWouldHaveSpent.innerHTML = `₦${gridTotalCost.toLocaleString()} <span class="text-xs font-norm
+... [truncated for diff preview]

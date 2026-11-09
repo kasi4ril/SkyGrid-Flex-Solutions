@@ -338,6 +338,68 @@ func (r *PostgresIAMRepository) GetUserByEmail(ctx context.Context, email string
 	return &u, nil
 }
 
+func (r *PostgresIAMRepository) GetUserByPhone(ctx context.Context, phone string) (*domain.User, error) {
+	if r.db == nil {
+		return r.fallback.GetUserByPhone(ctx, phone)
+	}
+
+	query := `
+		SELECT id, email, phone, password_hash, user_type, status, email_verified_at, created_at, updated_at
+		FROM users
+		WHERE phone = $1
+	`
+	row := r.db.QueryRowContext(ctx, query, strings.TrimSpace(phone))
+
+	var u domain.User
+	var phoneVal sql.NullString
+	var userType, status string
+	var emailVerifiedAt sql.NullTime
+
+	err := row.Scan(
+		&u.ID,
+		&u.Email,
+		&phoneVal,
+		&u.PasswordHash,
+		&userType,
+		&status,
+		&emailVerifiedAt,
+		&u.CreatedAt,
+		&u.UpdatedAt,
+	)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return r.fallback.GetUserByPhone(ctx, phone)
+		}
+		return nil, err
+	}
+
+	if phoneVal.Valid {
+		u.Phone = phoneVal.String
+	}
+	u.UserType = domain.UserType(userType)
+	u.Status = domain.UserStatus(status)
+	if emailVerifiedAt.Valid {
+		t := emailVerifiedAt.Time
+		u.EmailVerifiedAt = &t
+	}
+
+	return &u, nil
+}
+
+func (r *PostgresIAMRepository) UpdateUserPassword(ctx context.Context, userID, newPasswordHash string) error {
+	if r.db == nil {
+		return r.fallback.UpdateUserPassword(ctx, userID, newPasswordHash)
+	}
+
+	query := `UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2`
+	_, err := r.db.ExecContext(ctx, query, newPasswordHash, userID)
+	if err != nil {
+		return err
+	}
+	_ = r.fallback.UpdateUserPassword(ctx, userID, newPasswordHash)
+	return nil
+}
+
 func (r *PostgresIAMRepository) UpdateUser(ctx context.Context, u *domain.User) error {
 	if r.db == nil {
 		return r.fallback.UpdateUser(ctx, u)
@@ -1124,6 +1186,196 @@ func (r *PostgresIAMRepository) CreateAuditLog(ctx context.Context, log *domain.
 		return err
 	}
 	_ = r.fallback.CreateAuditLog(ctx, log)
+	return nil
+}
+
+func (r *PostgresIAMRepository) RevokeAllUserSessions(ctx context.Context, userID string) error {
+	if r.db == nil {
+		return r.fallback.RevokeAllUserSessions(ctx, userID)
+	}
+
+	query := `UPDATE sessions SET revoked_at = NOW(), updated_at = NOW() WHERE user_id = $1 AND revoked_at IS NULL`
+	_, err := r.db.ExecContext(ctx, query, userID)
+	if err != nil {
+		return err
+	}
+	_ = r.fallback.RevokeAllUserSessions(ctx, userID)
+	return nil
+}
+
+// MFA methods
+func (r *PostgresIAMRepository) CreateMFAChallenge(ctx context.Context, challenge *domain.MFAChallenge) error {
+	if r.db == nil {
+		return r.fallback.CreateMFAChallenge(ctx, challenge)
+	}
+
+	if challenge.ID == "" {
+		challenge.ID = newUUID()
+	}
+	if challenge.CreatedAt.IsZero() {
+		challenge.CreatedAt = time.Now().UTC()
+	}
+
+	query := `
+		INSERT INTO mfa_challenges (id, user_id, mfa_token_hash, code_hash, channel, recipient_email, recipient_phone, attempts, max_attempts, expires_at, created_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+	`
+	_, err := r.db.ExecContext(ctx, query,
+		challenge.ID, challenge.UserID, challenge.MFATokenHash, challenge.CodeHash, string(challenge.Channel),
+		challenge.RecipientEmail, challenge.RecipientPhone, challenge.Attempts, challenge.MaxAttempts, challenge.ExpiresAt, challenge.CreatedAt,
+	)
+	if err != nil {
+		return r.fallback.CreateMFAChallenge(ctx, challenge)
+	}
+	_ = r.fallback.CreateMFAChallenge(ctx, challenge)
+	return nil
+}
+
+func (r *PostgresIAMRepository) GetMFAChallengeByTokenHash(ctx context.Context, hash string) (*domain.MFAChallenge, error) {
+	if r.db == nil {
+		return r.fallback.GetMFAChallengeByTokenHash(ctx, hash)
+	}
+
+	query := `
+		SELECT id, user_id, mfa_token_hash, code_hash, channel, recipient_email, recipient_phone, attempts, max_attempts, expires_at, created_at
+		FROM mfa_challenges
+		WHERE mfa_token_hash = $1 AND expires_at > NOW()
+	`
+	row := r.db.QueryRowContext(ctx, query, hash)
+	var c domain.MFAChallenge
+	var emailVal, phoneVal sql.NullString
+	var channelVal string
+
+	err := row.Scan(
+		&c.ID, &c.UserID, &c.MFATokenHash, &c.CodeHash, &channelVal,
+		&emailVal, &phoneVal, &c.Attempts, &c.MaxAttempts, &c.ExpiresAt, &c.CreatedAt,
+	)
+	if err != nil {
+		return r.fallback.GetMFAChallengeByTokenHash(ctx, hash)
+	}
+	c.Channel = domain.MFAChannel(channelVal)
+	if emailVal.Valid {
+		c.RecipientEmail = emailVal.String
+	}
+	if phoneVal.Valid {
+		c.RecipientPhone = phoneVal.String
+	}
+	return &c, nil
+}
+
+func (r *PostgresIAMRepository) UpdateMFAChallenge(ctx context.Context, challenge *domain.MFAChallenge) error {
+	if r.db == nil {
+		return r.fallback.UpdateMFAChallenge(ctx, challenge)
+	}
+
+	query := `
+		UPDATE mfa_challenges
+		SET attempts = $1, expires_at = $2, code_hash = $3
+		WHERE id = $4
+	`
+	_, _ = r.db.ExecContext(ctx, query, challenge.Attempts, challenge.ExpiresAt, challenge.CodeHash, challenge.ID)
+	_ = r.fallback.UpdateMFAChallenge(ctx, challenge)
+	return nil
+}
+
+func (r *PostgresIAMRepository) DeleteMFAChallenge(ctx context.Context, id string) error {
+	if r.db == nil {
+		return r.fallback.DeleteMFAChallenge(ctx, id)
+	}
+
+	_, _ = r.db.ExecContext(ctx, `DELETE FROM mfa_challenges WHERE id = $1`, id)
+	_ = r.fallback.DeleteMFAChallenge(ctx, id)
+	return nil
+}
+
+// Password Reset methods
+func (r *PostgresIAMRepository) CreatePasswordResetToken(ctx context.Context, token *domain.PasswordResetToken) error {
+	if r.db == nil {
+		return r.fallback.CreatePasswordResetToken(ctx, token)
+	}
+
+	if token.ID == "" {
+		token.ID = newUUID()
+	}
+	if token.CreatedAt.IsZero() {
+		token.CreatedAt = time.Now().UTC()
+	}
+
+	query := `
+		INSERT INTO password_reset_tokens (id, user_id, token_hash, code_hash, expires_at, created_at)
+		VALUES ($1, $2, $3, $4, $5, $6)
+	`
+	_, err := r.db.ExecContext(ctx, query, token.ID, token.UserID, token.TokenHash, token.CodeHash, token.ExpiresAt, token.CreatedAt)
+	if err != nil {
+		return r.fallback.CreatePasswordResetToken(ctx, token)
+	}
+	_ = r.fallback.CreatePasswordResetToken(ctx, token)
+	return nil
+}
+
+func (r *PostgresIAMRepository) GetPasswordResetByCodeHash(ctx context.Context, userID, codeHash string) (*domain.PasswordResetToken, error) {
+	if r.db == nil {
+		return r.fallback.GetPasswordResetByCodeHash(ctx, userID, codeHash)
+	}
+
+	query := `
+		SELECT id, user_id, token_hash, code_hash, expires_at, used_at, created_at
+		FROM password_reset_tokens
+		WHERE code_hash = $1 AND used_at IS NULL AND expires_at > NOW()
+	`
+	args := []any{codeHash}
+	if userID != "" {
+		query += ` AND user_id = $2`
+		args = append(args, userID)
+	}
+
+	row := r.db.QueryRowContext(ctx, query, args...)
+	var t domain.PasswordResetToken
+	var usedAt sql.NullTime
+
+	err := row.Scan(&t.ID, &t.UserID, &t.TokenHash, &t.CodeHash, &t.ExpiresAt, &usedAt, &t.CreatedAt)
+	if err != nil {
+		return r.fallback.GetPasswordResetByCodeHash(ctx, userID, codeHash)
+	}
+	if usedAt.Valid {
+		tm := usedAt.Time
+		t.UsedAt = &tm
+	}
+	return &t, nil
+}
+
+func (r *PostgresIAMRepository) GetPasswordResetByTokenHash(ctx context.Context, hash string) (*domain.PasswordResetToken, error) {
+	if r.db == nil {
+		return r.fallback.GetPasswordResetByTokenHash(ctx, hash)
+	}
+
+	query := `
+		SELECT id, user_id, token_hash, code_hash, expires_at, used_at, created_at
+		FROM password_reset_tokens
+		WHERE token_hash = $1 AND used_at IS NULL AND expires_at > NOW()
+	`
+	row := r.db.QueryRowContext(ctx, query, hash)
+	var t domain.PasswordResetToken
+	var usedAt sql.NullTime
+
+	err := row.Scan(&t.ID, &t.UserID, &t.TokenHash, &t.CodeHash, &t.ExpiresAt, &usedAt, &t.CreatedAt)
+	if err != nil {
+		return r.fallback.GetPasswordResetByTokenHash(ctx, hash)
+	}
+	if usedAt.Valid {
+		tm := usedAt.Time
+		t.UsedAt = &tm
+	}
+	return &t, nil
+}
+
+func (r *PostgresIAMRepository) MarkPasswordResetUsed(ctx context.Context, id string) error {
+	if r.db == nil {
+		return r.fallback.MarkPasswordResetUsed(ctx, id)
+	}
+
+	_, _ = r.db.ExecContext(ctx, `UPDATE password_reset_tokens SET used_at = NOW() WHERE id = $1`, id)
+	_ = r.fallback.MarkPasswordResetUsed(ctx, id)
 	return nil
 }
 
