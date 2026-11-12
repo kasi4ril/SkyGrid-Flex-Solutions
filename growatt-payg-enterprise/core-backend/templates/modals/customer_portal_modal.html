@@ -1,0 +1,1960 @@
+{{define "modal_customer_portal"}}
+  <!-- Modal 4: Full Interactive Customer Portal Dashboard (Landing Page Architecture) -->
+  <div id="customerPortalModal" style="display: none;" class="hidden fixed inset-0 z-50 bg-[#0B0F19] text-white flex flex-col h-screen w-screen overflow-hidden">
+    
+    <!-- Top Static Header Pane (Enlarged Executive Command Header) -->
+    <header id="portalHeader" class="h-20 sm:h-24 bg-[#0E1526]/95 backdrop-blur-md border-b border-white/10 px-5 sm:px-8 flex items-center justify-between shrink-0 z-40 relative shadow-lg">
+      <!-- Left: Mobile Toggle + SkyGrid Logo + Welcome Customer Message -->
+      <div class="flex items-center gap-3.5 sm:gap-5 min-w-0">
+        <!-- Mobile Sidebar Toggle -->
+        <button type="button" onclick="togglePortalSidebar()" class="md:hidden p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white shrink-0 transition cursor-pointer" title="Toggle Navigation Sidebar">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+
+        <!-- SkyGrid Brand Mark -->
+        <div class="flex items-center gap-3 shrink-0">
+          <div class="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-gradient-to-br from-brand-amber to-brand-teal flex items-center justify-center text-brand-dark font-black text-xl sm:text-2xl shadow-lg shadow-brand-amber/25">
+            ⚡
+          </div>
+          <div class="hidden sm:block">
+            <div class="flex items-center gap-1.5">
+              <span class="font-heading font-black text-base sm:text-lg tracking-tight text-white">SKYGRID</span>
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 status-pulse"></span>
+            </div>
+            <span class="text-[10px] sm:text-[11px] uppercase tracking-widest text-brand-teal font-mono font-bold block leading-none mt-0.5">GROWATT PAYG OS</span>
+          </div>
+        </div>
+
+        <!-- Vertical Divider -->
+        <div class="h-10 w-px bg-white/15 hidden md:block shrink-0"></div>
+
+        <!-- Customer Welcome & Status Badge -->
+        <div class="min-w-0 flex flex-col justify-center">
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <span class="text-xs sm:text-sm text-brand-warm/70 hidden xl:inline font-medium">Welcome,</span>
+            <h3 id="portalCustomerName" class="font-heading font-black text-base sm:text-xl lg:text-2xl text-white truncate max-w-[180px] sm:max-w-md leading-tight">Engr. Amina Danjuma</h3>
+            <span id="portalStatusBadge" class="text-xs px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/35 font-bold font-mono whitespace-nowrap shadow-sm">
+              ● ACTIVE LEASE
+            </span>
+          </div>
+          <!-- Device Info Line -->
+          <p id="portalDeviceInfo" class="text-xs sm:text-sm text-brand-warm/75 font-mono truncate max-w-[320px] sm:max-w-xl lg:max-w-3xl mt-0.5">
+            Device: DEV-8F3A-GROWATT-00421 • Maitama, FCT Abuja • Growatt SPF 5000ES
+          </p>
+        </div>
+      </div>
+
+      <!-- Right Controls: Dark/Light Mode, Logout & Far-Right Customer Passport Photo -->
+      <div class="flex items-center gap-3 sm:gap-4 shrink-0">
+        <!-- Dark / Light Mode Toggle Button -->
+        <button type="button" onclick="toggleTheme()" class="px-3.5 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/15 text-white transition shadow-sm cursor-pointer" title="Toggle Light/Dark Theme">
+          <span class="portal-theme-icon text-sm sm:text-base">🌙</span>
+          <span class="portal-theme-text font-semibold hidden sm:inline">Dark</span>
+        </button>
+
+        <!-- Change Password Button -->
+        <button type="button" onclick="openChangePasswordModal()" class="px-3.5 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-amber-300 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 transition flex items-center gap-1.5 shadow-sm cursor-pointer" title="Change Account Password">
+          <i data-lucide="key-round" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Change Password</span>
+        </button>
+
+        <!-- Logout Button (Redirects to Refreshed Landing Page) -->
+        <button type="button" onclick="handlePortalLogout()" class="px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-rose-300 bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 transition flex items-center gap-2 shadow-sm cursor-pointer" title="Logout & Return to Main Landing Page">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Logout</span>
+        </button>
+
+        <!-- Far Right: Round Customer Passport Photo Space (Reflects Customer Onboarding Passport Photo) -->
+        <div class="relative shrink-0 ml-1" title="Customer Biometric Identity">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full p-0.5 bg-gradient-to-tr from-brand-teal via-brand-amber to-brand-sky shadow-md shadow-brand-teal/20">
+            <img id="portalCustomerPassportImg" 
+                 src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=256&q=80" 
+                 alt="Customer Passport Photo" 
+                 class="w-full h-full rounded-full object-cover border-2 border-[#0B0F19]">
+          </div>
+          <span class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#0B0F19]" title="Verified NIMC Biometric Identity"></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace Container (Static Left Sidebar + Scrollable Content Area) -->
+    <div class="flex flex-1 overflow-hidden relative">
+
+      <!-- Static Left Sidebar Pane -->
+      <aside id="portalSidebar" class="hidden md:flex flex-col w-64 md:w-72 shrink-0 bg-[#0D1322] border-r border-white/10 justify-between overflow-y-auto p-4 z-30 transition-all duration-300">
+        <div class="space-y-6">
+          <!-- Sidebar Section: Navigation Pages -->
+          <div>
+            <div class="flex items-center justify-between px-2 mb-3">
+              <span class="text-[10px] font-mono uppercase tracking-wider text-brand-warm/50 font-bold">PORTAL PAGES</span>
+              <span class="text-[9px] px-1.5 py-0.5 rounded bg-brand-teal/20 text-brand-teal font-mono font-bold">4 MODULES</span>
+            </div>
+            
+            <nav class="space-y-2">
+              <!-- Tab 1: Financial Story & Analytics -->
+              <button onclick="switchPortalTab('analytics'); closeMobileSidebar();" id="pTabAnalytics"
+                class="w-full text-left px-3.5 py-3 rounded-2xl bg-brand-amber text-brand-dark font-bold transition shadow-md flex items-center justify-between group">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-7 h-7 rounded-lg bg-black/10 flex items-center justify-center shrink-0">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold block leading-tight">Financial Story</span>
+                    <span class="text-[10px] opacity-75 font-normal block">Triple-source ROI &amp; AI</span>
+                  </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 opacity-60"></i>
+              </button>
+
+              <!-- Tab 2: Live Power Flow & Telemetry -->
+              <button onclick="switchPortalTab('telemetry'); closeMobileSidebar();" id="pTabTelemetry"
+                class="w-full text-left px-3.5 py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-white font-medium transition flex items-center justify-between group">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-7 h-7 rounded-lg bg-brand-sky/10 flex items-center justify-center shrink-0 text-brand-sky">
+                    <i data-lucide="zap" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold block leading-tight">Live Power Flow</span>
+                    <span class="text-[10px] text-brand-warm/60 block">PV, Battery, Load &amp; Grid</span>
+                  </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 opacity-60"></i>
+              </button>
+
+              <!-- Tab 3: PAYGo Wallet & STS Keypad -->
+              <button onclick="switchPortalTab('paygo'); closeMobileSidebar();" id="pTabPaygo"
+                class="w-full text-left px-3.5 py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-white font-medium transition flex items-center justify-between group">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-7 h-7 rounded-lg bg-brand-teal/10 flex items-center justify-center shrink-0 text-brand-teal">
+                    <i data-lucide="credit-card" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold block leading-tight">PAYGo Wallet</span>
+                    <span class="text-[10px] text-brand-warm/60 block">DVA, 20-digit STS &amp; Equity</span>
+                  </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 opacity-60"></i>
+              </button>
+
+              <!-- Tab 4: Hardware Passport & COREN -->
+              <button onclick="switchPortalTab('hardware'); closeMobileSidebar();" id="pTabHardware"
+                class="w-full text-left px-3.5 py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-white font-medium transition flex items-center justify-between group">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-7 h-7 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0 text-emerald-400">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <span class="text-xs font-bold block leading-tight">Hardware Passport</span>
+                    <span class="text-[10px] text-brand-warm/60 block">COREN seal, SPF &amp; LiFePO4</span>
+                  </div>
+                </div>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5 opacity-60"></i>
+              </button>
+            </nav>
+          </div>
+
+          <!-- Sidebar Section: Quick Actions & Simulations -->
+          <div>
+            <div class="px-2 mb-2.5">
+              <span class="text-[10px] font-mono uppercase tracking-wider text-brand-warm/50 font-bold">QUICK ACTIONS</span>
+            </div>
+            <div class="space-y-2">
+              <button type="button" onclick="simulatePortalTopUp()" class="w-full text-left p-2.5 rounded-xl bg-brand-teal/15 hover:bg-brand-teal/25 border border-brand-teal/30 text-brand-teal text-xs font-semibold flex items-center gap-2 transition">
+                <i data-lucide="wallet" class="w-3.5 h-3.5 shrink-0"></i>
+                <span>Simulate ₦145k Top-Up</span>
+              </button>
+              <button type="button" onclick="simulateTamperTrip()" class="w-full text-left p-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 text-xs font-semibold flex items-center gap-2 transition">
+                <i data-lucide="alert-triangle" class="w-3.5 h-3.5 shrink-0"></i>
+                <span>Simulate Tamper Trip</span>
+              </button>
+              <button type="button" onclick="closeModal('customerPortalModal'); openAdminPortal();" class="w-full text-left p-2.5 rounded-xl bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-indigo-300 text-xs font-semibold flex items-center gap-2 transition">
+                <span>👑</span>
+                <span>Open Admin ERP Console &rarr;</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar Footer Status Card -->
+        <div class="mt-6 pt-4 border-t border-white/10 space-y-3">
+          <div class="p-3 rounded-xl bg-black/40 border border-white/5 space-y-1.5">
+            <div class="flex items-center justify-between text-[11px]">
+              <span class="text-brand-warm/60">Cloud RTU Link:</span>
+              <span class="text-emerald-400 font-bold font-mono flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> ONLINE
+              </span>
+            </div>
+            <div class="flex items-center justify-between text-[11px]">
+              <span class="text-brand-warm/60">Telemetry SLA:</span>
+              <span class="text-white font-mono">8ms Inverter RTU</span>
+            </div>
+          </div>
+
+          <button onclick="closeModal('customerPortalModal')" class="w-full py-2.5 rounded-xl text-xs font-bold text-brand-teal hover:text-teal-300 bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center gap-2 transition">
+            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+            <span>Return to Showroom</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Scrollable Main Content Area -->
+      <main id="portalContentArea" class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
+
+        <!-- TAB 0: Natural-Language Storyteller & Triple-Source Analytics (PRIMARY VIEW) -->
+        <div id="portalSectionAnalytics" class="space-y-6">
+
+          <!-- A. Static Subheader Pane: Customer's Chosen Subscribed Package & Core Hardware Specs (Lapping Flush with Header Pane) -->
+          <div id="portalSubheaderFinancial" class="sticky top-0 z-20 -mt-4 sm:-mt-6 lg:-mt-8 -mx-4 sm:-mx-6 lg:-mx-8 p-4 sm:p-5 lg:px-8 bg-[#0D1527]/98 backdrop-blur-md border-b border-brand-sky/30 shadow-xl space-y-3.5 rounded-none border-x-0 border-t-0">
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/10">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-brand-sky/15 border border-brand-sky/30 flex items-center justify-center text-brand-sky shrink-0 shadow-sm">
+                  <i data-lucide="package-check" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <span class="text-brand-warm/60 font-bold uppercase tracking-wider text-[10px] block">Customer's Chosen Subscribed Package</span>
+                  <h3 id="portalPackageName" class="text-white font-heading font-extrabold text-sm sm:text-base leading-tight">5.4 kWp Executive Solar Home (Hybrid SPF 5000ES)</h3>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <span id="portalPackageTierBadge" class="text-xs px-3 py-1 rounded-full bg-brand-amber/15 text-brand-amber border border-brand-amber/30 font-mono font-bold">
+                  🏡 Residential Subscribed Plan
+                </span>
+                <span id="portalPackageHardwareBadge" class="text-xs px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-mono font-semibold">
+                  10.24 kWh LiFePO4
+                </span>
+              </div>
+            </div>
+
+            <!-- Static 4-Grid Core Specs: Solar Array Size, Battery Model & Size, Days of Token Left, Inverter Size & Model -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              <!-- 1. Solar Array Size -->
+              <div class="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                <div class="flex items-center justify-between text-brand-warm/60 text-[10px] uppercase font-bold tracking-wider">
+                  <span>Solar Array Size</span>
+                  <i data-lucide="sun" class="w-3.5 h-3.5 text-brand-amber"></i>
+                </div>
+                <div id="portalSubSolarArray" class="text-sm sm:text-base font-heading font-extrabold text-brand-amber font-mono">
+                  5.5 kWp (10x 550W)
+                </div>
+                <span class="text-[10px] text-brand-warm/60 block font-mono">Tier-1 Bifacial PV</span>
+              </div>
+
+              <!-- 2. Battery Model & Size -->
+              <div class="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                <div class="flex items-center justify-between text-brand-warm/60 text-[10px] uppercase font-bold tracking-wider">
+                  <span>Battery Model &amp; Size</span>
+                  <i data-lucide="battery-charging" class="w-3.5 h-3.5 text-brand-teal"></i>
+                </div>
+                <div id="portalSubBattery" class="text-sm sm:text-base font-heading font-extrabold text-brand-teal font-mono">
+                  10.24 kWh • GBLI 5001
+                </div>
+                <span class="text-[10px] text-brand-warm/60 block font-mono">LiFePO4 Active BMS</span>
+              </div>
+
+              <!-- 3. Days of Token Left -->
+              <div class="p-3 rounded-xl bg-brand-amber/10 border border-brand-amber/25 space-y-1">
+                <div class="flex items-center justify-between text-brand-amber text-[10px] uppercase font-bold tracking-wider">
+                  <span>Days of Token Left</span>
+                  <i data-lucide="clock" class="w-3.5 h-3.5 text-brand-amber"></i>
+                </div>
+                <div id="portalDaysLeft" class="text-sm sm:text-base font-heading font-extrabold text-brand-amber font-mono">
+                  19.4 Days
+                </div>
+                <span class="text-[10px] text-emerald-400 block font-mono">● Auto-PAYG Synchronized</span>
+              </div>
+
+              <!-- 4. Inverter Size & Model -->
+              <div class="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                <div class="flex items-center justify-between text-brand-warm/60 text-[10px] uppercase font-bold tracking-wider">
+                  <span>Inverter Size &amp; Model</span>
+                  <i data-lucide="zap" class="w-3.5 h-3.5 text-brand-sky"></i>
+                </div>
+                <div id="portalSubInverter" class="text-sm sm:text-base font-heading font-extrabold text-white font-mono">
+                  5,000W • SPF 5000ES
+                </div>
+                <span class="text-[10px] text-brand-sky block font-mono">Dual MPPT Pure Sine</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- B. Narrative Headline Panel (Natural Language Data Storyteller) -->
+          <div class="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border border-brand-sky/30 shadow-xl relative overflow-hidden">
+            <div class="flex items-start justify-between gap-4 mb-3">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-sky/15 border border-brand-sky/30 text-brand-sky text-xs font-bold uppercase tracking-wider">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-brand-sky"></i>
+                <span>Executive Energy &amp; Financial Story</span>
+              </div>
+              <span class="text-[10px] text-brand-warm/50 font-mono">Telemetry Window: Rolling 30 Days</span>
+            </div>
+            <h4 id="narrativeHeadline" class="text-lg sm:text-xl font-heading font-extrabold text-white leading-snug">
+              Zero-Interruption Clean Energy &amp; ₦39,000 Monthly Fuel Displacement
+            </h4>
+            <p id="narrativeStoryBody" class="text-xs sm:text-sm text-brand-warm/85 mt-2 leading-relaxed">
+              Your system harvested 18% more solar power this month due to clear weather. By relying on your battery storage during the evening grid collapse, you completely avoided 42 hours of utility blackouts and saved an estimated ₦39,000 that would have otherwise been spent on generator petrol.
+            </p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 pt-4 border-t border-white/10 text-xs">
+              <div class="bg-black/30 p-2.5 rounded-xl border border-white/5">
+                <span class="text-brand-warm/60 text-[10px] uppercase block">Irradiance Anomaly</span>
+                <span id="narrativeHarvestGain" class="text-brand-amber font-mono font-bold text-sm">+18.2% Harvest</span>
+              </div>
+              <div class="bg-black/30 p-2.5 rounded-xl border border-white/5">
+                <span class="text-brand-warm/60 text-[10px] uppercase block">Grid Blackouts Averted</span>
+                <span id="narrativeBlackoutHours" class="text-emerald-400 font-mono font-bold text-sm">42.0 Hours</span>
+              </div>
+              <div class="bg-black/30 p-2.5 rounded-xl border border-white/5">
+                <span class="text-brand-warm/60 text-[10px] uppercase block">Fuel Displaced</span>
+                <span id="narrativeFuelDisplaced" class="text-brand-sky font-mono font-bold text-sm">114.5 Liters</span>
+              </div>
+              <div class="bg-black/30 p-2.5 rounded-xl border border-white/5">
+                <span class="text-brand-warm/60 text-[10px] uppercase block">Net Money Saved vs Fuel</span>
+                <span id="narrativeNetSavings" class="text-emerald-400 font-mono font-extrabold text-sm">+₦39,000 / mo</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- C. Segment-Specific Visual Metrics Viewports -->
+          <div>
+            <!-- 1. Residential Viewport -->
+            <div id="portalViewportResidential" class="grid sm:grid-cols-3 gap-4">
+              <div class="bg-black/40 p-4 rounded-2xl border border-white/5 space-y-2">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                  <span>Wallet Days Remaining</span>
+                  <i data-lucide="credit-card" class="w-4 h-4 text-brand-amber"></i>
+                </div>
+                <div class="text-2xl font-heading font-extrabold text-brand-amber font-mono">19.4 <span class="text-xs font-normal">Days</span></div>
+                <div class="flex items-center justify-between text-[10px] pt-1 border-t border-white/5 text-brand-warm/70">
+                  <span>DVA: <strong class="text-white font-mono">9928174021</strong></span>
+                  <span class="text-emerald-400 font-semibold">● ACTIVE</span>
+                </div>
+              </div>
+
+              <div class="bg-black/40 p-4 rounded-2xl border border-white/5 space-y-2">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                  <span>Active Appliances Powered</span>
+                  <i data-lucide="home" class="w-4 h-4 text-brand-teal"></i>
+                </div>
+                <div class="text-2xl font-heading font-extrabold text-brand-teal font-mono">815 <span class="text-xs font-normal">W Active</span></div>
+                <p class="text-[10px] text-brand-warm/70 pt-1 border-t border-white/5">
+                  1.0HP AC (540W) • Deep Freezer (180W) • Starlink (95W)
+                </p>
+              </div>
+
+              <div class="bg-black/40 p-4 rounded-2xl border border-white/5 space-y-2">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                  <span>Household Fuel Offset</span>
+                  <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
+                </div>
+                <div class="text-2xl font-heading font-extrabold text-emerald-400 font-mono">+₦142,500 <span class="text-xs font-normal">Displaced</span></div>
+                <p class="text-[10px] text-emerald-400/80 pt-1 border-t border-white/5">
+                  Net cash retained: <strong class="text-white">+₦39,000</strong> over fixed ₦185k installment
+                </p>
+              </div>
+            </div>
+
+            <!-- 2. Commercial (SME) Viewport -->
+            <div id="portalViewportCommercial" class="hidden grid sm:grid-cols-3 gap-4">
+              <div class="bg-black/40 p-4 rounded-2xl border border-white/5 space-y-2">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                  <span>Peak Demand Shaving</span>
+                  <i data-lucide="zap-off" class="w-4 h-4 text-brand-amber"></i>
+                </div>
+                <div class="text-2xl font-heading font-extrabold text-brand-amber font-mono">4.8 <span class="text-xs font-normal">kW Shaved</span></div>
+                <p class="text-[10px] text-brand-warm/70 pt-1 border-t border-white/5">
+                  Peak window: 11:30 AM – 3:00 PM • Peak tariff surcharge bypassed
+                </p>
+              </div>
+
+              <div class="bg-black/40 p-4 rounded-2xl border border-white/5 space-y-2">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                  <span>Business Downtime Avoided</span>
+                  <i data-lucide="shield-alert" class="w-4 h-4 text-brand-teal"></i>
+                </div>
+                <div class="text-2xl font-heading font-extrabold text-brand-teal font-mono">62.0 <span class="text-xs font-normal">Hours (99.8%)</span></div>
+                <p class="text-[10px] text-brand-warm/70 pt-1 border-t border-white/5">
+                  Zero downtime for POS terminals, cold-chain vaccines &amp; labs
+                </p>
+              </div>
+
+              <div class="bg-black/40 p-4 rounded-2xl border border-white/5 space-y-2">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                  <span>Commercial Cash Savings</span>
+                  <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
+                </div>
+                <div class="text-2xl font-heading font-extrabold text-emerald-400 font-mono">+₦184,000 <span class="text-xs font-normal">/ mo</span></div>
+                <p class="text-[10px] text-emerald-400/80 pt-1 border-t border-white/5">
+                  ₦650,000 temperature-sensitive inventory loss eliminated
+                </p>
+              </div>
+            </div>
+
+            <!-- 3. Small Industrial Viewport -->
+            <div id="portalViewportIndustrial" class="hidden grid sm:grid-cols-3 gap-4">
+              <div class="bg-black/40 p-4 rounded-2xl border border-white/5 space-y-2">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                  <span>Technical Efficiency (PR)</span>
+                  <i data-lucide="cpu" class="w-4 h-4 text-brand-sky"></i>
+                </div>
+                <div class="text-2xl font-heading font-extrabold text-brand-sky font-mono">84.6% <span class="text-xs font-normal">PR</span></div>
+                <p class="text-[10px] text-brand-warm/70 pt-1 border-t border-white/5">
+                  Specific Yield: 4.82 kWh/kWp • Temperature derate: -0.38%/°C
+                </p>
+              </div>
+
+              <div class="bg-black/40 p-4 rounded-2xl border border-white/5 space-y-2">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                  <span>Power Factor Stability</span>
+                  <i data-lucide="activity" class="w-4 h-4 text-brand-teal"></i>
+                </div>
+                <div class="text-2xl font-heading font-extrabold text-brand-teal font-mono">0.98 <span class="text-xs font-normal">PF (No Penalty)</span></div>
+                <p class="text-[10px] text-brand-warm/70 pt-1 border-t border-white/5">
+                  Saved ₦92,000 kVA reactive surcharge • 50.04 Hz Frequency
+                </p>
+              </div>
+
+              <div class="bg-black/40 p-4 rounded-2xl border border-white/5 space-y-2">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                  <span>3-Phase Current Balance</span>
+                  <i data-lucide="sliders" class="w-4 h-4 text-emerald-400"></i>
+                </div>
+                <div class="text-2xl font-heading font-extrabold text-emerald-400 font-mono">2.4% <span class="text-xs font-normal">Imbalance</span></div>
+                <p class="text-[10px] text-brand-warm/70 pt-1 border-t border-white/5 font-mono">
+                  L1: 44.2A • L2: 42.1A • L3: 43.0A (IEC &lt; 5% Compliant)
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- D & E: 2-Column Split: Historical Generation Graph (Left) & Triple-Source Cards (Right) -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            
+            <!-- Left Side: Core Energy Graph (Historical Generation vs. Facility Load Demand) -->
+            <div class="lg:col-span-7 bg-black/40 p-5 sm:p-6 rounded-3xl border border-white/10 flex flex-col justify-between space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-white/10">
+                <div>
+                  <h4 class="font-heading font-bold text-white text-base sm:text-lg">
+                    Historical Generation vs. Facility Load Demand
+                  </h4>
+                  <p class="text-xs sm:text-sm text-brand-warm/70">
+                    Dual-axis telemetry tracking solar array output vs facility building consumption.
+                  </p>
+                </div>
+                <div class="inline-flex rounded-xl bg-white/5 p-1 border border-white/10 text-xs font-semibold">
+                  <button onclick="setGraphTimeframe('24h')" id="btnTf24h" class="px-3.5 py-1.5 rounded-lg bg-brand-amber text-brand-dark font-bold transition">24 Hours</button>
+                  <button onclick="setGraphTimeframe('7d')" id="btnTf7d" class="px-3.5 py-1.5 rounded-lg text-brand-warm/70 hover:text-white transition">7 Days</button>
+                  <button onclick="setGraphTimeframe('30d')" id="btnTf30d" class="px-3.5 py-1.5 rounded-lg text-brand-warm/70 hover:text-white transition">30 Days</button>
+                </div>
+              </div>
+
+              <!-- Transition Point Callout Badge -->
+              <div class="p-3.5 sm:p-4 rounded-2xl bg-brand-amber/15 border border-brand-amber/35 flex items-center justify-between gap-3 text-xs sm:text-sm">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-3 h-3 rounded-full bg-brand-amber animate-ping"></span>
+                  <span class="font-bold text-white">🌟 Solar Autonomy Transition Point:</span>
+                  <span id="graphTransitionText" class="text-brand-amber font-mono font-bold text-sm sm:text-base">08:45 AM (1.25 kW crossover)</span>
+                </div>
+                <span class="text-xs text-brand-warm/75 hidden sm:inline font-mono">
+                  100% self-supply; battery saturation
+                </span>
+              </div>
+
+              <!-- Responsive SVG Dual-Axis Chart Canvas -->
+              <div class="relative w-full flex-1 min-h-[380px] sm:min-h-[420px] bg-slate-950/80 rounded-2xl border border-white/10 p-5 sm:p-6 flex flex-col justify-between">
+                <!-- Legend & SI Suffix Indicator -->
+                <div class="flex items-center justify-between text-xs sm:text-sm text-brand-warm/80 font-medium pb-2.5 border-b border-white/5">
+                  <div class="flex items-center gap-5">
+                    <div class="flex items-center gap-2">
+                      <span class="w-3.5 h-3.5 rounded-full bg-brand-amber inline-block shadow-sm shadow-brand-amber/30"></span>
+                      <span class="text-white font-semibold">Solar Array Output (<span class="si-unit">kW</span>)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="w-3.5 h-3.5 rounded-full bg-brand-sky inline-block shadow-sm shadow-brand-sky/30"></span>
+                      <span class="text-white font-semibold">Facility Load Demand (<span class="si-unit">kW</span>)</span>
+                    </div>
+                  </div>
+                  <span class="text-xs font-mono text-brand-warm/60 px-2 py-0.5 rounded bg-white/5 border border-white/10">Auto-Scaling SI</span>
+                </div>
+
+                <!-- SVG Curve Render -->
+                <div class="w-full flex-1 min-h-[250px] sm:min-h-[290px] relative my-2">
+                  <svg id="portalDualAxisSvg" class="w-full h-full overflow-visible" viewBox="-15 -18 830 188" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="solarHarvestGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#FFBF00" stop-opacity="0.35" />
+                        <stop offset="100%" stop-color="#FFBF00" stop-opacity="0.0" />
+                      </linearGradient>
+                      <linearGradient id="facilityLoadGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#0EA5E9" stop-opacity="0.25" />
+                        <stop offset="100%" stop-color="#0EA5E9" stop-opacity="0.0" />
+                      </linearGradient>
+                    </defs>
+
+                    <!-- Horizontal Grid Lines -->
+                    <line x1="45" y1="20" x2="800" y2="20" stroke="#334155" stroke-dasharray="4,4" stroke-width="1" />
+                    <line x1="45" y1="60" x2="800" y2="60" stroke="#334155" stroke-dasharray="4,4" stroke-width="1" />
+                    <line x1="45" y1="100" x2="800" y2="100" stroke="#334155" stroke-dasharray="4,4" stroke-width="1" />
+
+                    <!-- Solid Left Vertical Y-Axis (Generated Energy & Facility Load) -->
+                    <line x1="45" y1="10" x2="45" y2="140" stroke="#64748B" stroke-width="2.5" />
+                    <!-- Top Y-Axis Arrow Pointer -->
+                    <polygon points="41,12 49,12 45,3" fill="#FFBF00" />
+                    <!-- Y-Axis Unit Header -->
+                    <text x="40" y="8" fill="#FFBF00" font-size="12" font-family="monospace" font-weight="bold" text-anchor="end">▲ Power (kW)</text>
+
+                    <!-- Y-Axis Ticks & Level Labels -->
+                    <line x1="38" y1="20" x2="45" y2="20" stroke="#64748B" stroke-width="2" />
+                    <text x="35" y="24" fill="#94A3B8" font-size="11" font-family="monospace" font-weight="bold" text-anchor="end">6.0 kW</text>
+
+                    <line x1="38" y1="60" x2="45" y2="60" stroke="#64748B" stroke-width="2" />
+                    <text x="35" y="64" fill="#94A3B8" font-size="11" font-family="monospace" font-weight="bold" text-anchor="end">4.0 kW</text>
+
+                    <line x1="38" y1="100" x2="45" y2="100" stroke="#64748B" stroke-width="2" />
+                    <text x="35" y="104" fill="#94A3B8" font-size="11" font-family="monospace" font-weight="bold" text-anchor="end">2.0 kW</text>
+
+                    <line x1="38" y1="140" x2="45" y2="140" stroke="#64748B" stroke-width="2" />
+                    <text x="35" y="144" fill="#94A3B8" font-size="11" font-family="monospace" font-weight="bold" text-anchor="end">0 kW</text>
+
+                    <!-- Solid Bottom Horizontal X-Axis (Timeline Horizon) -->
+                    <line x1="45" y1="140" x2="790" y2="140" stroke="#64748B" stroke-width="2.5" />
+                    <!-- Right X-Axis Arrow Pointer -->
+                    <polygon points="787,136 787,144 797,140" fill="#64748B" />
+                    <text x="795" y="158" fill="#94A3B8" font-size="11" font-family="monospace" font-weight="bold" text-anchor="end">Timeline ▶</text>
+
+                    <!-- Coordinate Origin Pin Circle -->
+                    <circle cx="45" cy="140" r="4.5" fill="#FFBF00" />
+
+                    <!-- Solar Harvest Area & Line (Amber #FFBF00) -->
+                    <polygon id="svgSolarPolygon" points="0,140 100,140 200,136 290,95 350,60 480,25 580,48 680,126 800,140" fill="url(#solarHarvestGrad)" />
+                    <polyline id="svgSolarPolyline" points="0,140 100,140 200,136 290,95 350,60 480,25 580,48 680,126 800,140" fill="none" stroke="#FFBF00" stroke-width="4" stroke-linecap="round" />
+
+                    <!-- Facility Load Demand Area & Line (Clean Sky Blue #0EA5E9) -->
+                    <polygon id="svgLoadPolygon" points="0,125 100,128 200,118 290,95 350,94 480,82 580,90 680,98 800,122" fill="url(#facilityLoadGrad)" />
+                    <polyline id="svgLoadPolyline" points="0,125 100,128 200,118 290,95 350,94 480,82 580,90 680,98 800,122" fill="none" stroke="#0EA5E9" stroke-width="3" stroke-dasharray="6,3" stroke-linecap="round" />
+
+                    <!-- Explicit Visual Anchor: Solar Autonomy Transition Point Pin -->
+                    <g id="svgTransitionMarker" transform="translate(290, 95)">
+                      <circle r="9" fill="#FFBF00" fill-opacity="0.3" class="animate-ping" />
+                      <circle r="5.5" fill="#FFBF00" stroke="#0F172A" stroke-width="2.5" />
+                      <line x1="0" y1="-8" x2="0" y2="-32" stroke="#FFBF00" stroke-width="2" stroke-dasharray="2,2" />
+                      <rect x="-70" y="-58" width="140" height="26" rx="7" fill="#0F172A" stroke="#FFBF00" stroke-width="1.5" />
+                      <text x="0" y="-41" fill="#FFBF00" font-size="11" font-family="monospace" font-weight="bold" text-anchor="middle">
+                        ★ AUTONOMY: 08:45 AM
+                      </text>
+                    </g>
+                  </svg>
+                </div>
+
+                <!-- Time Axis Labels -->
+                <div id="portalTimeLabels" class="flex justify-between text-xs sm:text-sm text-brand-warm/80 font-mono px-3 pt-3 border-t border-white/10 font-medium">
+                  <span>00:00</span>
+                  <span>04:00</span>
+                  <span>08:00</span>
+                  <span class="text-brand-amber font-bold">08:45 (Autonomy)</span>
+                  <span>12:00 (Peak)</span>
+                  <span>16:00</span>
+                  <span>20:00</span>
+                  <span>24:00</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Side: 3 Cards of Triple-Source Cost & Reliability Tracker Placed Below Each Other -->
+            <div class="lg:col-span-5 flex flex-col justify-between gap-4">
+              <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                <div>
+                  <h4 class="font-heading font-bold text-white text-base">
+                    Triple-Source Cost &amp; Reliability Tracker
+                  </h4>
+                  <p class="text-xs text-brand-warm/70">
+                    Solar PAYG vs. National Grid vs. Fossil Generator
+                  </p>
+                </div>
+                <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-mono font-bold border border-emerald-500/30">
+                  +68.4% Cheaper
+                </span>
+              </div>
+
+              <!-- Source 1: SkyGrid Growatt Solar PAYG -->
+              <div class="p-4 sm:p-4.5 rounded-2xl bg-emerald-950/35 border border-emerald-500/40 space-y-2">
+                <div class="flex justify-between items-center">
+                  <span class="text-xs sm:text-sm font-bold text-emerald-400 uppercase tracking-wider">1. SkyGrid Solar Asset</span>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono">PRIMARY</span>
+                </div>
+                <div>
+                  <span class="text-[11px] text-brand-warm/70 uppercase block font-medium">Levelized Cost / kWh</span>
+                  <div class="text-2xl sm:text-3xl font-heading font-black text-emerald-400 font-mono">₦68 <span class="text-xs font-normal text-emerald-300">/ kWh</span></div>
+                </div>
+                <div class="space-y-1.5 text-xs sm:text-sm text-brand-warm/85 pt-2 border-t border-emerald-500/25 font-mono">
+                  <div class="flex justify-between"><span>Monthly Outlay:</span> <strong class="text-white">₦185,000 fixed</strong></div>
+                  <div class="flex justify-between"><span>Availability:</span> <strong class="text-emerald-400">99.8% Continuous</strong></div>
+                  <div class="flex justify-between"><span>Maintenance:</span> <strong class="text-white">Included (SLA 4h)</strong></div>
+                  <div class="flex justify-between"><span>Noise &amp; Fumes:</span> <strong class="text-emerald-400">0 dB • Zero Smoke</strong></div>
+                </div>
+              </div>
+
+              <!-- Source 2: National Grid (Band A NERC) -->
+              <div class="p-4 sm:p-4.5 rounded-2xl bg-slate-900/90 border border-slate-700/80 space-y-2">
+                <div class="flex justify-between items-center">
+                  <span class="text-xs sm:text-sm font-bold text-slate-300 uppercase tracking-wider">2. National Grid (Band A)</span>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono">ERRATIC</span>
+                </div>
+                <div>
+                  <span class="text-[11px] text-brand-warm/70 uppercase block font-medium">What You Would Have Spent</span>
+                  <div id="gridWouldHaveSpentVal" class="text-2xl sm:text-3xl font-heading font-black text-slate-200 font-mono">₦127,908 <span class="text-xs font-normal text-slate-400">/ mo</span></div>
+                </div>
+                <div class="space-y-1.5 text-xs sm:text-sm text-brand-warm/80 pt-2 border-t border-slate-800 font-mono">
+                  <div class="flex justify-between"><span>Solar Energy Consumed:</span> <strong id="gridKWhVal" class="text-white">612 kWh / mo</strong></div>
+                  <div class="flex justify-between"><span>NERC Band A Tariff:</span> <strong class="text-brand-amber">₦209 / kWh</strong></div>
+                  <div class="flex justify-between"><span>Calculation Formula:</span> <strong id="gridFormulaVal" class="text-white text-xs">612 × ₦209 = ₦127,908</strong></div>
+                  <div class="flex justify-between"><span>Grid Blackout Loss:</span> <strong class="text-rose-400">42 hrs/mo unserved</strong></div>
+                </div>
+              </div>
+
+              <!-- Source 3: Petrol / Diesel Generator -->
+              <div class="p-4 sm:p-4.5 rounded-2xl bg-rose-950/35 border border-rose-800/40 space-y-2">
+                <div class="flex justify-between items-center">
+                  <span class="text-xs sm:text-sm font-bold text-rose-400 uppercase tracking-wider">3. Fossil Generator</span>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-mono">POLLUTING</span>
+                </div>
+                <div>
+                  <span class="text-[11px] text-brand-warm/70 uppercase block font-medium">What Generator Would Have Cost</span>
+                  <div id="genWouldHaveSpentVal" class="text-2xl sm:text-3xl font-heading font-black text-rose-400 font-mono">₦301,250 <span class="text-xs font-normal text-rose-300">/ mo</span></div>
+                </div>
+                <div class="space-y-1.5 text-xs sm:text-sm text-brand-warm/80 pt-2 border-t border-rose-800/35 font-mono">
+                  <div class="flex justify-between"><span>Generator Efficiency:</span> <strong class="text-brand-amber">1 Liter fuels 2.8 kWh</strong></div>
+                  <div class="flex justify-between"><span>Fuel Required:</span> <strong id="genLitersNeededVal" class="text-white">218.6 Liters / mo</strong></div>
+                  <div class="flex justify-between"><span>Fuel Cost @ ₦1,250/L:</span> <strong id="genFuelCostVal" class="text-rose-400">₦273,250</strong></div>
+                  <div class="flex justify-between"><span>Routine Engine Service:</span> <strong class="text-rose-300">₦28,000 / mo</strong></div>
+                  <div class="flex justify-between"><span>Calculation Formula:</span> <strong id="genFormulaVal" class="text-rose-300 text-xs">(612÷2.8)L × ₦1,250 + ₦28k</strong></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- The Financial Comparison Simulator Block -->
+          <div class="bg-black/40 p-5 sm:p-6 rounded-3xl border border-white/10 space-y-5">
+
+            <!-- Dynamic Interactive Fuel Cost & Generator Yield Simulator -->
+            <div class="p-4 rounded-2xl bg-slate-950/70 border border-white/5 space-y-4">
+              <span class="text-xs font-bold uppercase tracking-wider text-white block">
+                Interactive Engineering Simulator: "Energy Consumed × Tariff vs. Liter/kWh Fuel Model"
+              </span>
+              <div class="grid sm:grid-cols-3 gap-4">
+                <div>
+                  <div class="flex justify-between text-xs mb-1.5">
+                    <span class="text-brand-warm/70">Local Fuel Price:</span>
+                    <span id="labelFuelPrice" class="font-mono font-bold text-brand-amber">₦1,250 / Liter</span>
+                  </div>
+                  <input type="range" id="sliderFuelPrice" min="800" max="2200" step="50" value="1250" oninput="recalcTripleSourceSavings()"
+                    class="w-full h-2 bg-slate-800 rounded-lg cursor-pointer accent-brand-amber">
+                  <div class="flex justify-between text-[10px] text-brand-warm/50 font-mono mt-1">
+                    <span>₦800/L</span>
+                    <span>₦1,250/L</span>
+                    <span>₦2,200/L</span>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-xs mb-1.5">
+                    <span class="text-brand-warm/70">Generator Specific Yield:</span>
+                    <span id="labelGenYield" class="font-mono font-bold text-brand-sky">2.8 kWh / Liter</span>
+                  </div>
+                  <input type="range" id="sliderGenKWhPerLiter" min="2.0" max="3.5" step="0.1" value="2.8" oninput="recalcTripleSourceSavings()"
+                    class="w-full h-2 bg-slate-800 rounded-lg cursor-pointer accent-brand-sky">
+                  <div class="flex justify-between text-[10px] text-brand-warm/50 font-mono mt-1">
+                    <span>2.0 kWh/L (Small)</span>
+                    <span>2.8 kWh/L (Standard)</span>
+                    <span>3.5 kWh/L (Diesel)</span>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-xs mb-1.5">
+                    <span class="text-brand-warm/70">Monthly Solar kWh Consumed:</span>
+                    <span id="labelMonthlyKWh" class="font-mono font-bold text-emerald-400">612 kWh / Month</span>
+                  </div>
+                  <input type="range" id="sliderMonthlyKWh" min="200" max="2000" step="20" value="612" oninput="recalcTripleSourceSavings()"
+                    class="w-full h-2 bg-slate-800 rounded-lg cursor-pointer accent-emerald-400">
+                  <div class="flex justify-between text-[10px] text-brand-warm/50 font-mono mt-1">
+                    <span>200 kWh</span>
+                    <span>612 kWh</span>
+                    <span>2,000 kWh</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Computed Dynamic Net Savings -->
+              <div class="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/30 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div>
+                  <span class="text-brand-warm/70 block">National Grid Spend Averted:</span>
+                  <span id="resGridSpend" class="text-slate-200 font-mono font-bold text-sm">₦127,908 / mo</span>
+                </div>
+                <div>
+                  <span class="text-brand-warm/70 block">Generator Outlay Averted:</span>
+                  <span id="resFuelSpend" class="text-rose-400 font-mono font-bold text-sm">₦301,250 / mo</span>
+                </div>
+                <div>
+                  <span class="text-brand-warm/70 block">Fixed Solar Subscription:</span>
+                  <span id="resSolarSub" class="text-white font-mono font-bold text-sm">₦185,000 / mo</span>
+                </div>
+                <div>
+                  <span class="text-brand-warm/70 block">Net Monthly Money Saved:</span>
+                  <span id="resNetSavings" class="text-emerald-400 font-mono font-extrabold text-base">+₦116,250 / mo</span>
+                </div>
+                <div>
+                  <span class="text-brand-warm/70 block">Projected 3-Year Accumulation:</span>
+                  <span id="res3YrSavings" class="text-brand-sky font-mono font-extrabold text-base">₦4,185,000</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- TAB 1: Live Telemetry & Power Flow -->
+        <div id="portalSectionTelemetry" class="hidden space-y-6">
+          <!-- Static/Sticky 4 Telemetry Gauges Subheader -->
+          <div id="portalSubheaderTelemetry" class="sticky top-0 z-20 p-4 sm:p-5 rounded-2xl bg-[#0D1527]/95 backdrop-blur-md border border-brand-teal/30 shadow-xl">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <!-- Solar PV Ingress -->
+              <div class="p-3 sm:p-4 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60 mb-1">
+                  <span class="text-[10px] uppercase font-bold tracking-wider">Solar PV Ingress</span>
+                  <i data-lucide="sun" class="w-4 h-4 text-brand-amber"></i>
+                </div>
+                <div id="pMetricPV" class="text-xl sm:text-2xl font-heading font-extrabold text-brand-amber font-mono">3,420 <span class="text-xs font-normal">W</span></div>
+                <span class="text-[10px] text-emerald-400 mt-0.5 block">5.4 kWp Rooftop Array</span>
+              </div>
+
+              <!-- Battery SoC -->
+              <div class="p-3 sm:p-4 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60 mb-1">
+                  <span class="text-[10px] uppercase font-bold tracking-wider">Battery SoC</span>
+                  <i data-lucide="battery-charging" class="w-4 h-4 text-brand-teal"></i>
+                </div>
+                <div id="pMetricSoC" class="text-xl sm:text-2xl font-heading font-extrabold text-brand-teal font-mono">92<span class="text-xs font-normal">%</span></div>
+                <span id="pMetricBattDetail" class="text-[10px] text-brand-warm/60 mt-0.5 block font-mono">10.24 kWh • 53.1V • 27°C</span>
+              </div>
+
+              <!-- Load Demand Subheader Gauge -->
+              <div class="p-3 sm:p-4 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60 mb-1">
+                  <span class="text-[10px] uppercase font-bold tracking-wider">Load Demand</span>
+                  <i data-lucide="home" class="w-4 h-4 text-white"></i>
+                </div>
+                <div id="pMetricLoad" class="text-xl sm:text-2xl font-heading font-extrabold text-white font-mono">1,150 <span class="text-xs font-normal">W</span></div>
+                <span class="text-[10px] text-emerald-400 mt-0.5 block">100% Solar Self-Supply</span>
+              </div>
+
+              <!-- Inverter Core Temp -->
+              <div class="p-3 sm:p-4 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                <div class="flex justify-between items-center text-xs text-brand-warm/60 mb-1">
+                  <span class="text-[10px] uppercase font-bold tracking-wider">Inverter Core Temp</span>
+                  <i data-lucide="thermometer" class="w-4 h-4 text-brand-warm"></i>
+                </div>
+                <div id="pMetricTemp" class="text-xl sm:text-2xl font-heading font-extrabold text-white font-mono">37.5 <span class="text-xs font-normal">°C</span></div>
+                <span class="text-[10px] text-brand-warm/60 mt-0.5 block">Cooling Fans: Idle / Quiet</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2-Column Split: 24h Predictive Horizon Graph (Left) & CleanTech AI Advisor (Right) -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            
+            <!-- Left Side: 24-Hour Predictive Horizon Chart & KPI Tiles -->
+            <div class="lg:col-span-7 bg-black/40 p-5 sm:p-6 rounded-3xl border border-white/10 flex flex-col justify-between space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/10">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-xl bg-brand-sky/20 border border-brand-sky/30 flex items-center justify-center text-brand-sky">
+                    <i data-lucide="cpu" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-heading font-bold text-white text-xs sm:text-sm">
+                      24-Hour Predictive Horizon: Solar Generation vs. Facility Load Demand
+                    </h4>
+                    <p class="text-[11px] text-brand-warm/60">
+                      ML Intelligence Engine (LightGBM + NeuralProphet) • 96.8% Confidence Interval • Open-Meteo GHI Solar Feed
+                    </p>
+                  </div>
+                </div>
+                <span class="text-[10px] px-2.5 py-1 rounded-full bg-brand-sky/15 text-brand-sky font-mono font-bold border border-brand-sky/30">
+                  ● ML Model: LightGBM-SolarNet-v2
+                </span>
+              </div>
+
+              <!-- 4 Forecast Summary KPI Tiles -->
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+                  <span class="text-brand-warm/60 text-[10px] uppercase block">Predicted Day Harvest</span>
+                  <span id="pForecastHarvest" class="text-base font-extrabold text-brand-amber font-mono">24.5 kWh</span>
+                  <span class="text-[10px] text-emerald-400 block mt-0.5">+18.2% vs. 30d Baseline</span>
+                </div>
+
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+                  <span class="text-brand-warm/60 text-[10px] uppercase block">Projected Facility Load</span>
+                  <span id="pForecastDemand" class="text-base font-extrabold text-brand-sky font-mono">13.8 kWh</span>
+                  <span class="text-[10px] text-brand-warm/60 block mt-0.5">8.4 kWh Night Cycle</span>
+                </div>
+
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+                  <span class="text-brand-warm/60 text-[10px] uppercase block">Min Battery Sunrise Floor</span>
+                  <span id="pForecastBattFloor" class="text-base font-extrabold text-emerald-400 font-mono">64%</span>
+                  <span class="text-[10px] text-emerald-400 block mt-0.5">+44% Reserve Cushion</span>
+                </div>
+
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5">
+                  <span class="text-brand-warm/60 text-[10px] uppercase block">Gen Runtime Required</span>
+                  <span id="pForecastGenHours" class="text-base font-extrabold text-brand-teal font-mono">0.0 Hours</span>
+                  <span class="text-[10px] text-emerald-400 block mt-0.5">100% Solar Autonomy</span>
+                </div>
+              </div>
+
+              <!-- Visual 24h Horizon Predictive SVG Chart -->
+              <div class="relative w-full flex-1 min-h-[260px] bg-slate-950/80 p-4 rounded-2xl border border-white/5 flex flex-col justify-between">
+                <div class="flex items-center justify-between text-[11px] text-brand-warm/70">
+                  <div class="flex items-center gap-4">
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-1.5 rounded bg-brand-amber inline-block"></span> Forecasted Solar Generation (kW)</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-1.5 rounded bg-brand-sky inline-block"></span> Predicted Facility Load (kW)</span>
+                  </div>
+                  <span class="text-[10px] font-mono text-emerald-400">100% Self-Powered Window: 08:45 AM – 18:30 PM</span>
+                </div>
+                <div class="w-full flex-1 min-h-[180px] relative mt-2">
+                  <svg viewBox="0 0 700 120" class="w-full h-full overflow-visible" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="mlSolarGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#FFBF00" stop-opacity="0.35" />
+                        <stop offset="100%" stop-color="#FFBF00" stop-opacity="0.0" />
+                      </linearGradient>
+                    </defs>
+                    <!-- Horizontal Grid Lines -->
+                    <line x1="30" y1="20" x2="690" y2="20" stroke="#334155" stroke-dasharray="3,3" stroke-width="0.75" />
+                    <line x1="30" y1="55" x2="690" y2="55" stroke="#334155" stroke-dasharray="3,3" stroke-width="0.75" />
+                    <line x1="30" y1="85" x2="690" y2="85" stroke="#334155" stroke-dasharray="3,3" stroke-width="0.75" />
+
+                    <!-- Solid Left Vertical Y-Axis -->
+                    <line x1="30" y1="8" x2="30" y2="108" stroke="#64748B" stroke-width="1.5" />
+                    <polygon points="27,10 33,10 30,4" fill="#22D3EE" />
+                    <text x="26" y="8" fill="#22D3EE" font-size="7.5" font-family="monospace" font-weight="bold" text-anchor="end">▲ kW</text>
+
+                    <!-- Solid Bottom Horizontal X-Axis -->
+                    <line x1="30" y1="108" x2="690" y2="108" stroke="#64748B" stroke-width="1.5" />
+                    <polygon points="688,105 688,111 695,108" fill="#64748B" />
+
+                    <!-- Solar Curve -->
+                    <polygon points="30,108 100,108 180,105 250,65 350,18 450,35 540,98 620,108 690,108" fill="url(#mlSolarGrad)" />
+                    <polyline points="30,108 100,108 180,105 250,65 350,18 450,35 540,98 620,108 690,108" fill="none" stroke="#FFBF00" stroke-width="2.5" />
+                    <!-- Load Curve -->
+                    <polyline points="30,94 100,98 180,86 250,65 350,62 450,58 540,50 620,70 690,91" fill="none" stroke="#0EA5E9" stroke-width="2" stroke-dasharray="4,2" />
+                  </svg>
+                </div>
+                <div class="flex justify-between text-[10px] text-brand-warm/50 font-mono px-1 pt-1 border-t border-white/5">
+                  <span>00:00</span>
+                  <span>04:00</span>
+                  <span>08:00</span>
+                  <span class="text-brand-amber font-bold">12:00 (Peak 4.9 kW)</span>
+                  <span>16:00</span>
+                  <span class="text-brand-sky font-bold">19:30 (Evening Peak)</span>
+                  <span>24:00</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Side: AI Agent Operational Advisory & Economic Dispatch Pane -->
+            <div class="lg:col-span-5 p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border border-brand-teal/40 shadow-xl flex flex-col justify-between gap-3.5">
+              <div class="flex flex-wrap items-center justify-between gap-2.5 pb-2.5 border-b border-white/10">
+                <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-xl bg-brand-teal/20 border border-brand-teal/30 flex items-center justify-center text-brand-teal shrink-0">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-heading font-bold text-white text-xs sm:text-sm">
+                      LocalGridAgent™ AI Advisor
+                    </h4>
+                    <span class="text-[10px] text-brand-warm/60">Real-Time Autonomous Dispatch</span>
+                  </div>
+                </div>
+                <span class="text-[9px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-mono font-bold border border-emerald-500/30 flex items-center gap-1 shrink-0">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span>ACTIVE</span>
+                </span>
+              </div>
+
+              <!-- Recommendation Banner -->
+              <div class="p-3 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 flex items-center justify-between gap-2.5">
+                <div class="flex items-center gap-2">
+                  <span class="text-base">🌟</span>
+                  <div>
+                    <span class="text-[11px] sm:text-xs font-heading font-extrabold text-white block leading-tight">
+                      RECOMMENDATION: REMAIN 100% ON SOLAR
+                    </span>
+                    <span class="text-[10px] text-emerald-300">
+                      Full overnight battery self-sufficiency with 64% reserve floor.
+                    </span>
+                  </div>
+                </div>
+                <span class="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20 whitespace-nowrap shrink-0">
+                  Score: 98.4/100
+                </span>
+              </div>
+
+              <!-- 3 Economic Cards Placed Below Each Other (Stacked Vertically) -->
+              <div class="flex flex-col gap-2.5 font-mono">
+                <!-- Card 1: Solar Asset Marginal Cost -->
+                <div class="p-3 rounded-xl bg-black/40 border border-emerald-500/20 space-y-1">
+                  <div class="flex justify-between items-center">
+                    <span class="text-[10px] text-emerald-400 font-bold uppercase">1. Solar Asset Marginal Cost</span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">OPTIMAL</span>
+                  </div>
+                  <div class="text-lg font-extrabold text-white">₦0.00 <span class="text-[10px] text-brand-warm/60 font-normal">/ kWh surplus</span></div>
+                  <span class="text-[10px] text-brand-warm/70 block">Fixed asset levelized @ ₦68/kWh • Zero extra cost</span>
+                </div>
+
+                <!-- Card 2: National Grid Band A Alternative -->
+                <div class="p-3 rounded-xl bg-black/40 border border-slate-700/50 space-y-1">
+                  <div class="flex justify-between items-center">
+                    <span class="text-[10px] text-slate-400 font-bold uppercase">2. National Grid Band A</span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">ERRATIC</span>
+                  </div>
+                  <div class="text-lg font-extrabold text-slate-300">₦209.00 <span class="text-[10px] text-brand-warm/60 font-normal">/ kWh</span></div>
+                  <span class="text-[10px] text-amber-400 block">Frequent voltage sags • 42 hrs/mo blackout risk</span>
+                </div>
+
+                <!-- Card 3: Fossil Generator Alternative -->
+                <div class="p-3 rounded-xl bg-black/40 border border-rose-900/40 space-y-1">
+                  <div class="flex justify-between items-center">
+                    <span class="text-[10px] text-rose-400 font-bold uppercase">3. Fossil Generator</span>
+                    <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300">COSTLY</span>
+                  </div>
+                  <div class="text-lg font-extrabold text-rose-400">₦446.40 <span class="text-[10px] text-brand-warm/60 font-normal">/ kWh</span></div>
+                  <span class="text-[10px] text-rose-300 block">Running gen wastes ₦13,400 tonight @ ₦1,250/L</span>
+                </div>
+              </div>
+
+              <!-- Plain-Language AI Actionable Directives -->
+              <div class="p-3 rounded-2xl bg-black/50 border border-white/5 space-y-2 text-xs leading-relaxed text-brand-warm/85">
+                <p class="text-[11px]">
+                  <strong class="text-white">AI Dispatch Note:</strong> Forecast of <strong class="text-brand-amber">24.5 kWh</strong> harvest + current <strong class="text-brand-teal">92% (10.24 kWh)</strong> SoC guarantees 100% autonomy with a <strong>64% reserve floor</strong> at sunrise (06:00 AM).
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2 border-t border-white/10 text-[10px]">
+                  <div class="flex items-start gap-1">
+                    <span class="text-emerald-400 font-bold">1.</span>
+                    <span><strong class="text-white">Gen OFF:</strong> Saves 5.8L (₦7,250).</span>
+                  </div>
+                  <div class="flex items-start gap-1">
+                    <span class="text-emerald-400 font-bold">2.</span>
+                    <span><strong class="text-white">Solar Priority:</strong> AC &amp; fridge cushioned.</span>
+                  </div>
+                  <div class="flex items-start gap-1">
+                    <span class="text-emerald-400 font-bold">3.</span>
+                    <span><strong class="text-white">Surplus:</strong> Pump water 11:30–14:30.</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        <!-- TAB 2: PAYGo Contract & Repayments -->
+        <div id="portalSectionPaygo" class="hidden space-y-6">
+
+          <!-- Executive Asset Financial Scoreboard: Total Cost, Paid to Date & Balance Remaining -->
+          <div class="grid sm:grid-cols-3 gap-4">
+            <div class="bg-black/40 p-5 rounded-2xl border border-white/10 space-y-1.5">
+              <div class="flex justify-between items-center text-xs text-brand-warm/60">
+                <span>Total Cost of Asset</span>
+                <i data-lucide="package-check" class="w-4 h-4 text-brand-amber"></i>
+              </div>
+              <div id="pTotalAssetCost" class="text-2xl font-heading font-black text-white font-mono">₦6,660,000</div>
+              <span class="text-[10px] text-brand-warm/60 block">36-Month Lease-to-Own Title Agreement</span>
+            </div>
+
+            <div class="bg-black/40 p-5 rounded-2xl border border-emerald-500/30 space-y-1.5">
+              <div class="flex justify-between items-center text-xs text-emerald-400">
+                <span>Accumulated Sum Paid So Far</span>
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+              </div>
+              <div id="pAccumulatedPaid" class="text-2xl font-heading font-black text-emerald-400 font-mono">₦2,035,000</div>
+              <span id="pPaidInstallmentsText" class="text-[10px] text-emerald-300 block">11 of 36 Installments Settled (30.5% Capital)</span>
+            </div>
+
+            <div class="bg-black/40 p-5 rounded-2xl border border-brand-sky/30 space-y-1.5">
+              <div class="flex justify-between items-center text-xs text-brand-sky">
+                <span>Balance Left to Full Asset Transfer</span>
+                <i data-lucide="clock" class="w-4 h-4 text-brand-sky"></i>
+              </div>
+              <div id="pBalanceLeft" class="text-2xl font-heading font-black text-brand-sky font-mono">₦4,625,000</div>
+              <span id="pRemainingInstallmentsText" class="text-[10px] text-brand-sky/80 block">25 Installments Remaining to Title Deed Transfer</span>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-6">
+            
+            <!-- Left: Dedicated Virtual Account (DVA) Details -->
+            <div class="bg-black/40 p-6 rounded-2xl border border-white/10 space-y-4">
+              <div class="flex items-center justify-between pb-3 border-b border-white/10">
+                <span class="text-xs font-bold uppercase tracking-wider text-brand-teal">Dedicated Virtual Account (DVA)</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-brand-teal/20 text-brand-teal font-mono">Instant Auto-Recharge</span>
+              </div>
+
+              <div class="p-4 rounded-xl bg-brand-forest/40 border border-brand-teal/30 space-y-2 text-xs">
+                <div class="flex justify-between"><span class="text-brand-warm/70">Bank Name:</span> <span class="font-bold text-white">Moniepoint MFB / Wema Bank</span></div>
+                <div class="flex justify-between items-center">
+                  <span class="text-brand-warm/70">Virtual Account Number:</span>
+                  <div class="flex items-center gap-2">
+                    <span id="pDvaNumber" class="font-bold text-brand-amber font-mono text-sm">9928174021</span>
+                    <button onclick="copyToClipboard(document.getElementById('pDvaNumber').innerText, 'Virtual Account copied!')" class="px-2 py-0.5 rounded bg-white/10 hover:bg-white/20 text-[10px] text-white">Copy</button>
+                  </div>
+                </div>
+                <div class="flex justify-between"><span class="text-brand-warm/70">Beneficiary Name:</span> <span id="pDvaName" class="font-bold text-white">SkyGrid / Amina Danjuma</span></div>
+                <div class="flex justify-between"><span class="text-brand-warm/70">Monthly Instalment:</span> <span id="pMonthlyAmount" class="font-bold text-brand-amber font-mono">₦185,000 / month</span></div>
+              </div>
+
+              <div class="text-[11px] text-brand-warm/70 leading-relaxed">
+                ℹ️ Any bank transfer to this dedicated account instantly credits your PAYGo account within 60 seconds over 4G cellular IoT, extending your power availability by 30 days.
+              </div>
+
+              <button onclick="simulatePortalTopUp()" class="w-full py-3.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition shadow-lg shadow-brand-amber/20 font-heading flex items-center justify-center gap-2">
+                <span>Simulate ₦185,000 Monthly Bank Top-Up</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <!-- Right: 20-Digit Encrypted STS Offline Backup Token -->
+            <div class="bg-black/40 p-6 rounded-2xl border border-white/10 space-y-4 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between pb-3 border-b border-white/10">
+                  <span class="text-xs font-bold uppercase tracking-wider text-brand-amber">Offline STS Keypad Token</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-white/10 text-white font-mono">Zero-Network Backup</span>
+                </div>
+
+                <p class="text-xs text-brand-warm/75 mt-3 leading-relaxed">
+                  If cellular GSM coverage is ever interrupted in your area, enter this 20-digit cryptographic token directly into the Growatt inverter keypad to unlock 30 days of power offline.
+                </p>
+
+                <div class="my-4 p-4 rounded-xl bg-black/60 border border-brand-amber/40 text-center">
+                  <span class="text-[10px] text-brand-warm/60 uppercase block mb-1">Latest Generated 20-Digit STS Token</span>
+                  <div id="pStsToken" class="font-mono font-extrabold text-base sm:text-lg text-brand-amber tracking-widest py-1">
+                    4819 - 2049 - 5510 - 8291 - 7304
+                  </div>
+                  <button onclick="copyToClipboard(document.getElementById('pStsToken').innerText, 'STS Token copied!')" class="mt-2 text-[10px] text-brand-teal hover:underline font-semibold">
+                    Copy 20-Digit Token
+                  </button>
+                </div>
+
+                <!-- Amortization Ownership Progress -->
+                <div class="space-y-1.5 text-xs">
+                  <div class="flex justify-between">
+                    <span class="text-brand-warm/70">Lease-to-Own Progress:</span>
+                    <span id="pEquityStatus" class="font-bold text-white font-mono">Month 11 of 36 (30.5% Equity Owned)</span>
+                  </div>
+                  <div class="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                    <div id="pEquityBar" class="bg-gradient-to-r from-brand-amber to-brand-teal h-2 rounded-full" style="width: 30.5%"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="text-[10px] text-brand-warm/50 italic">
+                * System unlocks into 100% permanent lifetime ownership with zero ongoing fees upon payment 36.
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- TAB 3: Hardware & Engineering Passport -->
+        <div id="portalSectionHardware" class="hidden space-y-6">
+          
+          <!-- Subscribed Package Header & Validation Card -->
+          <div class="p-5 rounded-3xl bg-black/40 border border-brand-sky/20 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-brand-warm/60 tracking-wider block">Subscribed Clean Energy Package</span>
+              <h3 id="pHardwarePackageTitle" class="text-base sm:text-lg font-heading font-extrabold text-white">5.4 kWp Executive Solar Home (Hybrid SPF 5000ES)</h3>
+              <p id="pHardwarePackageArch" class="text-xs text-brand-sky font-mono mt-0.5">5.4 kWp Bifacial PV + 10.24 kWh LiFePO4 Storage Architecture</p>
+            </div>
+            <div class="flex items-center gap-2 text-xs font-mono">
+              <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold">
+                ✓ COREN &amp; NEMSA Certified
+              </span>
+              <span class="px-3 py-1 rounded-full bg-white/10 text-white font-semibold">
+                10-Year EPC Warranty
+              </span>
+            </div>
+          </div>
+
+          <!-- Comprehensive Hardware Manifest: Inverter, Battery, Panels, Protection -->
+          <div class="grid md:grid-cols-2 gap-6">
+            
+            <!-- Inverter System Details -->
+            <div class="bg-black/40 p-6 rounded-2xl border border-white/10 space-y-3 text-xs">
+              <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                <h4 class="font-heading font-bold text-white uppercase tracking-wider text-xs">1. Inverter Unit Specification</h4>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-brand-amber/15 text-brand-amber font-mono font-bold">PURE SINE WAVE</span>
+              </div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Inverter Type:</span> <strong id="pHardwareInverterType" class="text-white text-right">Hybrid Off-Grid / Grid-Interactive</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Inverter Model:</span> <strong id="pHardwareInverterModel" class="text-white font-mono text-right">Growatt SPF 5000ES (Dual MPPT)</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Rated Power Size:</span> <strong id="pHardwareInverterSize" class="text-brand-amber font-mono text-right">5,000W Cont. / 10,000VA Surge</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Inverter Serial:</span> <strong id="pHardwareInverter" class="text-white font-mono text-right">GW-SPF5000ES-99881</strong></div>
+            </div>
+
+            <!-- Battery Storage Details -->
+            <div class="bg-black/40 p-6 rounded-2xl border border-white/10 space-y-3 text-xs">
+              <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                <h4 class="font-heading font-bold text-white uppercase tracking-wider text-xs">2. Energy Storage Battery Specification</h4>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-brand-teal/20 text-brand-teal font-mono font-bold">GRADE-A LiFePO4</span>
+              </div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Battery Chemistry:</span> <strong id="pHardwareBatteryType" class="text-white text-right">LiFePO4 Lithium Iron Phosphate</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Battery Model:</span> <strong id="pHardwareBatteryModel" class="text-white font-mono text-right">Felicity / Growatt GBLI 5001</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Storage Capacity / Size:</span> <strong id="pHardwareBatterySize" class="text-brand-teal font-mono text-right">10.24 kWh / 200Ah @ 51.2V DC</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Battery Pack Serial:</span> <strong id="pHardwareBattery" class="text-white font-mono text-right">LFP-512V-100AH-441</strong></div>
+            </div>
+
+            <!-- Solar PV Generator Details -->
+            <div class="bg-black/40 p-6 rounded-2xl border border-white/10 space-y-3 text-xs">
+              <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                <h4 class="font-heading font-bold text-white uppercase tracking-wider text-xs">3. Solar PV Generator Specification</h4>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-brand-sky/20 text-brand-sky font-mono font-bold">TIER-1 MONO</span>
+              </div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Solar Panel Type:</span> <strong id="pHardwarePanelsType" class="text-white text-right">Monocrystalline PERC Half-Cell Bifacial</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Panel Power Rating:</span> <strong id="pHardwarePanelsRating" class="text-brand-amber font-mono text-right">550W per Panel (41.8V Vmp)</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Number of Panels:</span> <strong id="pHardwarePanelsNumber" class="text-white font-mono text-right">10 Panels (5.5 kWp Total Solar Array)</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">String Configuration:</span> <strong id="pHardwarePanelsConfig" class="text-white font-mono text-right">2 Strings of 5 Panels in Series</strong></div>
+            </div>
+
+            <!-- Protection & Switchgear Details -->
+            <div class="bg-black/40 p-6 rounded-2xl border border-white/10 space-y-3 text-xs">
+              <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                <h4 class="font-heading font-bold text-white uppercase tracking-wider text-xs">4. Protection Components Used</h4>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono font-bold">IEEE COMPLIANT</span>
+              </div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">DC Isolator &amp; Disconnect:</span> <strong id="pHardwareProtDC" class="text-white text-right">600V 32A Dual-Pole DC Rotary Isolator</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Surge Arrestors (SPD):</span> <strong id="pHardwareProtSPD" class="text-white text-right">Type II 600V DC SPD + 275V Class II AC SPD</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">AC Breakers &amp; Changeover:</span> <strong id="pHardwareProtAC" class="text-white text-right">ABB 32A 2-Pole MCB + 63A Automatic ATS</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Battery DC Fuse:</span> <strong id="pHardwareProtBatt" class="text-white text-right">125A 80V DC High-Rupture Fuse</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">Earth Grounding Resistance:</span> <strong id="pHardwareEarth" class="text-emerald-400 font-mono text-right">2.4 Ω (&lt; 5.0Ω COREN Standard)</strong></div>
+              <div class="flex justify-between"><span class="text-brand-warm/60">NEMSA Security Tamper Seal:</span> <strong id="pHardwareSeal" class="text-white font-mono text-right">SEAL-NG-00421 (INTACT)</strong></div>
+            </div>
+
+          </div>
+
+          <!-- Certified Field Engineer Authority -->
+          <div class="bg-black/40 p-6 rounded-2xl border border-white/10 space-y-4 text-xs">
+            <h4 class="font-heading font-bold text-white uppercase tracking-wider text-xs pb-2 border-b border-white/10">5. Certified Field Engineering Crew &amp; Authority</h4>
+            <div class="grid md:grid-cols-2 gap-4">
+              <div class="p-3.5 rounded-xl bg-white/5 border border-white/5 space-y-1.5 font-mono">
+                <div class="flex justify-between"><span class="text-brand-warm/60">Lead Engineer:</span> <strong id="pHardwareInstallerName" class="text-white">Engr. Emmanuel O. Danladi, FNSE</strong></div>
+                <div class="flex justify-between"><span class="text-brand-warm/60">COREN Registration:</span> <strong id="pHardwareCoren" class="text-brand-amber">COREN Reg. R.48291/ELECT</strong></div>
+                <div class="flex justify-between"><span class="text-brand-warm/60">NEMSA Certification:</span> <strong id="pHardwareNemsa" class="text-brand-teal">NEMSA Cert #PL-0391/2024</strong></div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-white/5 border border-white/5 space-y-1.5 font-mono">
+                <span class="text-brand-warm/60 block">Accredited Office Location:</span>
+                <p id="pHardwareOffice" class="text-white text-xs leading-relaxed font-sans">
+                  SkyGrid Renewable Systems Ltd, Plot 14 Commercial Area, Yakubu Gowon Way, Jos, Plateau State / Maitama Regional Hub, Abuja
+                </p>
+              </div>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-3 pt-2">
+              <button onclick="showToast('✓ Inspection Dispatched: Lead Engineer will contact within SLA (4h).')" class="w-full py-2.5 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition">
+                Request Field Engineer Inspection
+              </button>
+              <button onclick="showToast('✓ Official Certified Engineering Passport Downloaded (PDF).')" class="w-full py-2.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition">
+                Download Certified Engineering Passport
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Bottom Footer Status -->
+        <div class="mt-8 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between text-[11px] text-brand-warm/60">
+          <span>Connected to Growatt Cloud Telemetry Engine • Encryption: TLS 1.3 AES-256 • Active Node: Jos HQ / Maitama DC</span>
+          <div class="flex items-center gap-4">
+            <button onclick="closeModal('customerPortalModal'); openAdminPortal();" class="text-indigo-400 hover:text-indigo-300 hover:underline font-semibold flex items-center gap-1">
+              <span>👑 Open Executive Admin &rarr;</span>
+            </button>
+            <button onclick="closeModal('customerPortalModal')" class="text-brand-teal hover:underline font-semibold">
+              Return to Showroom &rarr;
+            </button>
+          </div>
+        </div>
+
+
+        <!-- ============================================================== -->
+        <!-- 6-TIER ENTERPRISE ROLE PANELS                                  -->
+        <!-- ============================================================== -->
+
+        <!-- SUPER ADMIN: Global Pricing & System Settings -->
+        <div id="admPanel_sa_settings" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-amber-400 uppercase">SUPER ADMIN MASTER CONTROL</span>
+              <h3 class="text-xl font-black text-white mt-1">Global Pricing, Tariffs &amp; System Settings</h3>
+              <p class="text-xs text-slate-400 mt-1">Configure global lease financing APR, NERC tariff benchmarks, and COREN compliance parameters.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs px-3 py-1 rounded-xl bg-purple-500/20 text-purple-300 font-mono font-bold border border-purple-500/30">
+                👑 Super Admin Authority
+              </span>
+            </div>
+          </div>
+
+          <div class="grid lg:grid-cols-2 gap-6">
+            <div class="glass-card-dark p-5 rounded-2xl border border-white/10 space-y-4">
+              <h4 class="text-sm font-bold text-white border-b border-white/10 pb-2">Leasing &amp; Financial Parameters</h4>
+              <div class="grid sm:grid-cols-2 gap-4 text-xs">
+                <div>
+                  <label class="block text-slate-400 font-semibold mb-1">PAYG Financing APR (%)</label>
+                  <input type="number" id="settingApr" value="18.5" step="0.1" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white font-mono">
+                </div>
+                <div>
+                  <label class="block text-slate-400 font-semibold mb-1">Minimum Down Payment (%)</label>
+                  <input type="number" id="settingDownPct" value="15" step="1" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white font-mono">
+                </div>
+                <div>
+                  <label class="block text-slate-400 font-semibold mb-1">VAT on Solar Hardware (%)</label>
+                  <input type="number" id="settingVat" value="7.5" step="0.1" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white font-mono">
+                </div>
+                <div>
+                  <label class="block text-slate-400 font-semibold mb-1">STS Token Grace Period (Days)</label>
+                  <input type="number" id="settingGraceDays" value="3" step="1" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white font-mono">
+                </div>
+              </div>
+            </div>
+
+            <div class="glass-card-dark p-5 rounded-2xl border border-white/10 space-y-4">
+              <h4 class="text-sm font-bold text-white border-b border-white/10 pb-2">Utility &amp; Regulatory Baselines</h4>
+              <div class="grid sm:grid-cols-2 gap-4 text-xs">
+                <div>
+                  <label class="block text-slate-400 font-semibold mb-1">NERC Band-A Tariff (₦/kWh)</label>
+                  <input type="number" id="settingNercTariff" value="209" step="1" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white font-mono">
+                </div>
+                <div>
+                  <label class="block text-slate-400 font-semibold mb-1">Fuel Reference Price (₦/Liter)</label>
+                  <input type="number" id="settingFuelPrice" value="1250" step="10" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white font-mono">
+                </div>
+                <div>
+                  <label class="block text-slate-400 font-semibold mb-1">COREN Max Earth Resistance (Ω)</label>
+                  <input type="number" id="settingMaxEarth" value="5.00" step="0.1" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white font-mono">
+                </div>
+                <div>
+                  <label class="block text-slate-400 font-semibold mb-1">NEMSA Seal Serial Prefix</label>
+                  <input type="text" id="settingSealPrefix" value="SEAL-NG-" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white font-mono">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="saSettingsActionRow" class="p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between">
+            <span class="text-xs text-slate-400 font-mono">Modifications trigger cryptographic audit block and require Super Admin approval notes.</span>
+            <button onclick="handleAdminSaveGlobalSettings()" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition shadow-lg shadow-amber-500/20 cursor-pointer">
+              💾 Save Global Settings &amp; Commit to SHA-256 Ledger
+            </button>
+          </div>
+        </div>
+
+        <!-- FINANCE: Treasury & Reconciliation Desk -->
+        <div id="admPanel_fin_treasury" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-emerald-400 uppercase">TREASURY &amp; RECONCILIATION</span>
+              <h3 class="text-xl font-black text-white mt-1">Bank Gateway Webhooks vs. DVA Accounts</h3>
+              <p class="text-xs text-slate-400 mt-1">Automated reconciliation matching between Moniepoint MFB, Paystack, and Dynamic Virtual Accounts (DVA).</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-400 font-mono font-bold">
+                100% Ledger Synced
+              </span>
+            </div>
+          </div>
+
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 space-y-4">
+            <h4 class="text-sm font-bold text-white border-b border-white/10 pb-2 flex justify-between items-center">
+              <span>Incoming Payment Webhook Reconciliation Stream</span>
+              <span class="text-xs text-slate-400 font-mono">Auto-Matched: 98.6%</span>
+            </h4>
+            <div class="space-y-3" id="admTreasuryQueue">
+              <div id="treasuryRow1" class="p-3.5 rounded-xl bg-white/5 border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono font-bold text-emerald-400">₦185,000</span>
+                    <span class="font-semibold text-white">Engr. Amina Danjuma</span>
+                    <span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 font-mono">DVA: 9928174021</span>
+                  </div>
+                  <p class="text-slate-400 text-[11px] mt-0.5">Gateway: Moniepoint MFB • Session Ref: MP-TX-998821 • Synced 12m ago</p>
+                </div>
+                <div id="treasuryAction1" class="flex items-center gap-2">
+                  <span class="text-[11px] text-emerald-400 font-mono font-bold">✓ AUTO-RECONCILED</span>
+                  <button onclick="handleAdminMakerCheckerAction('treasuryRow1', 'RECONCILED', 'Hauwa Ibrahim (Finance Lead)', 'Auto-matched DVA hash with Moniepoint settlement API.')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition cursor-pointer">
+                    Audit Stamp
+                  </button>
+                </div>
+              </div>
+
+              <div id="treasuryRow2" class="p-3.5 rounded-xl bg-white/5 border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono font-bold text-amber-400">₦340,000</span>
+                    <span class="font-semibold text-white">St. Mary Clinic &amp; Maternity</span>
+                    <span class="px-2 py-0.5 rounded text-[10px] bg-amber-500/20 text-amber-300 font-mono">DVA: 9928174034</span>
+                  </div>
+                  <p class="text-slate-400 text-[11px] mt-0.5">Gateway: Zenith Direct Deposit • Ref: ZENITH-TELLER-77123 • Awaiting Treasury Verification</p>
+                </div>
+                <div id="treasuryAction2" class="flex items-center gap-2">
+                  <button onclick="handleAdminMakerCheckerAction('treasuryRow2', 'VERIFIED_FINANCE', 'Hauwa Ibrahim (Finance Lead)', 'Verified bank teller slip matches Zenith corporate statement.')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition cursor-pointer">
+                    ✓ Verify &amp; Authorize Token
+                  </button>
+                  <button onclick="handleAdminMakerCheckerAction('treasuryRow2', 'REJECTED', 'Hauwa Ibrahim (Finance Lead)', 'Bank teller reference unconfirmed.')" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs transition cursor-pointer">
+                    ✕ Reject Transfer
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FINANCE: Invoices & Aging Cohorts -->
+        <div id="admPanel_fin_invoices" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-cyan-400 uppercase">PORTFOLIO AGING ANALYSIS</span>
+              <h3 class="text-xl font-black text-white mt-1">Invoices &amp; Portfolio-at-Risk (PAR) Cohorts</h3>
+              <p class="text-xs text-slate-400 mt-1">Monitor active PAYG leasing installment aging across residential, commercial, and clinical accounts.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs px-3 py-1 rounded-xl bg-cyan-500/20 text-cyan-300 font-mono font-bold">
+                PAR &gt; 30d: 1.8%
+              </span>
+            </div>
+          </div>
+
+          <div class="grid sm:grid-cols-4 gap-4">
+            <div class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+              <span class="text-[11px] text-emerald-400 font-bold block">Current (0 Days Due)</span>
+              <span class="text-2xl font-black font-mono text-white mt-1 block">₦3,120,000</span>
+              <span class="text-[10px] text-emerald-300">92 Active Contracts</span>
+            </div>
+            <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30">
+              <span class="text-[11px] text-amber-400 font-bold block">1 - 30 Days Aging</span>
+              <span class="text-2xl font-black font-mono text-white mt-1 block">₦285,000</span>
+              <span class="text-[10px] text-amber-300">3 Invoices in Grace</span>
+            </div>
+            <div class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30">
+              <span class="text-[11px] text-rose-400 font-bold block">31 - 60 Days PAR</span>
+              <span class="text-2xl font-black font-mono text-white mt-1 block">₦132,000</span>
+              <span class="text-[10px] text-rose-300">1 Contract (Lekki Tamper)</span>
+            </div>
+            <div class="p-4 rounded-xl bg-purple-500/10 border border-purple-500/30">
+              <span class="text-[11px] text-purple-400 font-bold block">60+ Days Default</span>
+              <span class="text-2xl font-black font-mono text-white mt-1 block">₦0.00</span>
+              <span class="text-[10px] text-purple-300">Zero Critical Write-offs</span>
+            </div>
+          </div>
+
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 space-y-4">
+            <h4 class="text-sm font-bold text-white border-b border-white/10 pb-2">Active Installment Invoices Queue</h4>
+            <div class="space-y-3" id="admInvoicesList">
+              <div id="invoiceRow1" class="p-3.5 rounded-xl bg-white/5 border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono font-bold text-white">INV-2026-00421</span>
+                    <span class="font-semibold text-slate-200">Engr. Amina Danjuma</span>
+                    <span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 font-mono">₦185,000</span>
+                  </div>
+                  <p class="text-slate-400 text-[11px] mt-0.5">Due: 28th Nov 2026 • 19.4 Days Active Credit • Status: SETTLED</p>
+                </div>
+                <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold font-mono text-[11px]">PAID &amp; TOKEN ISSUED</span>
+              </div>
+
+              <div id="invoiceRow2" class="p-3.5 rounded-xl bg-white/5 border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono font-bold text-white">INV-2026-00933</span>
+                    <span class="font-semibold text-slate-200">Lekki Phase 1 Pharmacy</span>
+                    <span class="px-2 py-0.5 rounded text-[10px] bg-amber-500/20 text-amber-400 font-mono">₦132,000</span>
+                  </div>
+                  <p class="text-slate-400 text-[11px] mt-0.5">Due: 18th Nov 2026 • 8.5 Days Active • Tamper Hold: STANDBY</p>
+                </div>
+                <div id="invoiceAction2" class="flex items-center gap-2">
+                  <button onclick="handleAdminMakerCheckerAction('invoiceRow2', 'APPROVED', 'Hauwa Ibrahim (Finance Lead)', 'Approved 3-day grace period token extension pending tech tamper visit.')" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition cursor-pointer">
+                    Issue 3-Day Grace STS Token
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FINANCE: Revenue & Collections Analytics -->
+        <div id="admPanel_fin_analytics" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-emerald-400 uppercase">REVENUE VELOCITY</span>
+              <h3 class="text-xl font-black text-white mt-1">Collections Breakdown &amp; Financial Reports</h3>
+              <p class="text-xs text-slate-400 mt-1">Aggregated collections analytics by regional hub, payment rail, and solar tier.</p>
+            </div>
+            <button onclick="showToast('Exported Q4 2026 Collections CSV Report')" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+              📥 Export Financial CSV
+            </button>
+          </div>
+
+          <div class="grid lg:grid-cols-3 gap-6">
+            <div class="glass-card-dark p-5 rounded-2xl border border-white/10 space-y-3">
+              <h4 class="text-xs font-bold text-slate-400 uppercase">Collections by Hub (Nov 2026)</h4>
+              <div class="space-y-2 text-xs">
+                <div class="flex justify-between items-center">
+                  <span class="text-slate-300">FCT Abuja Hub</span>
+                  <span class="font-mono font-bold text-emerald-400">₦1,850,000 (53.6%)</span>
+                </div>
+                <div class="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                  <div class="bg-emerald-400 h-full" style="width: 53.6%"></div>
+                </div>
+
+                <div class="flex justify-between items-center pt-2">
+                  <span class="text-slate-300">Lagos Peninsula Hub</span>
+                  <span class="font-mono font-bold text-cyan-400">₦980,000 (28.4%)</span>
+                </div>
+                <div class="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                  <div class="bg-cyan-400 h-full" style="width: 28.4%"></div>
+                </div>
+
+                <div class="flex justify-between items-center pt-2">
+                  <span class="text-slate-300">Middle Belt (Jos / Benue Hub)</span>
+                  <span class="font-mono font-bold text-amber-400">₦620,000 (18.0%)</span>
+                </div>
+                <div class="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                  <div class="bg-amber-400 h-full" style="width: 18.0%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lg:col-span-2 glass-card-dark p-5 rounded-2xl border border-white/10 space-y-3">
+              <h4 class="text-xs font-bold text-slate-400 uppercase">Daily Collections Trajectory (Nov 1 - Nov 9, 2026)</h4>
+              <div class="h-44 flex items-end gap-2 pt-4 px-2">
+                <div class="flex-1 bg-emerald-500/30 hover:bg-emerald-500/50 rounded-t h-[40%] relative group transition"><span class="hidden group-hover:block absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-mono bg-black px-1.5 py-0.5 rounded text-white">₦240k</span></div>
+                <div class="flex-1 bg-emerald-500/30 hover:bg-emerald-500/50 rounded-t h-[60%] relative group transition"><span class="hidden group-hover:block absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-mono bg-black px-1.5 py-0.5 rounded text-white">₦360k</span></div>
+                <div class="flex-1 bg-emerald-500/30 hover:bg-emerald-500/50 rounded-t h-[55%] relative group transition"><span class="hidden group-hover:block absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-mono bg-black px-1.5 py-0.5 rounded text-white">₦330k</span></div>
+                <div class="flex-1 bg-emerald-500/30 hover:bg-emerald-500/50 rounded-t h-[80%] relative group transition"><span class="hidden group-hover:block absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-mono bg-black px-1.5 py-0.5 rounded text-white">₦480k</span></div>
+                <div class="flex-1 bg-emerald-500/30 hover:bg-emerald-500/50 rounded-t h-[70%] relative group transition"><span class="hidden group-hover:block absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-mono bg-black px-1.5 py-0.5 rounded text-white">₦420k</span></div>
+                <div class="flex-1 bg-emerald-500/30 hover:bg-emerald-500/50 rounded-t h-[95%] relative group transition"><span class="hidden group-hover:block absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-mono bg-black px-1.5 py-0.5 rounded text-white">₦570k</span></div>
+                <div class="flex-1 bg-emerald-500/30 hover:bg-emerald-500/50 rounded-t h-[85%] relative group transition"><span class="hidden group-hover:block absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-mono bg-black px-1.5 py-0.5 rounded text-white">₦510k</span></div>
+                <div class="flex-1 bg-emerald-500/30 hover:bg-emerald-500/50 rounded-t h-[65%] relative group transition"><span class="hidden group-hover:block absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-mono bg-black px-1.5 py-0.5 rounded text-white">₦390k</span></div>
+                <div class="flex-1 bg-emerald-500 hover:bg-emerald-400 rounded-t h-[90%] relative group transition"><span class="hidden group-hover:block absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-mono bg-black px-1.5 py-0.5 rounded text-white">₦540k</span></div>
+              </div>
+              <div class="flex justify-between text-[10px] text-slate-400 font-mono pt-2 border-t border-white/10">
+                <span>Nov 1</span><span>Nov 3</span><span>Nov 5</span><span>Nov 7</span><span class="text-emerald-400 font-bold">Nov 9 (Today)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- OPERATIONS: Field Workforce & Regional Allocations -->
+        <div id="admPanel_ops_workforce" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-amber-400 uppercase">FIELD WORKFORCE DEPLOYMENT</span>
+              <h3 class="text-xl font-black text-white mt-1">Engineers &amp; Regional Hub Allocations</h3>
+              <p class="text-xs text-slate-400 mt-1">Manage COREN registered engineers, field service capacity, and work order assignment loads.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs px-3 py-1 rounded-xl bg-amber-500/20 text-amber-400 font-mono font-bold">
+                8 Active Certified Techs
+              </span>
+            </div>
+          </div>
+
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 space-y-4">
+            <h4 class="text-sm font-bold text-white border-b border-white/10 pb-2">Certified Field Technicians Roster</h4>
+            <div class="space-y-3" id="admWorkforceList">
+              <div id="techRow1" class="p-3.5 rounded-xl bg-white/5 border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-white">Engr. Tariq Bello</span>
+                    <span class="text-emerald-400 font-mono text-[11px]">COREN R.48201/ELECT</span>
+                    <span class="px-2 py-0.5 rounded text-[10px] bg-indigo-500/20 text-indigo-300 font-mono">Abuja Hub</span>
+                  </div>
+                  <p class="text-slate-400 text-[11px] mt-0.5">Assigned to: 3 Active Work Orders • Earthing Test Certified: Yes • NEMSA Cat-A</p>
+                </div>
+                <div id="techAction1" class="flex items-center gap-2">
+                  <span class="text-emerald-400 text-[11px] font-mono font-bold">● DISPATCHED</span>
+                  <button onclick="handleAdminMakerCheckerAction('techRow1', 'DISPATCHED_OPS', 'Engr. Babatunde Adeleke (Operations)', 'Allocated WO-2026-104 Gwarinpa installation.')" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition cursor-pointer">
+                    Allocate New WO
+                  </button>
+                </div>
+              </div>
+
+              <div id="techRow2" class="p-3.5 rounded-xl bg-white/5 border border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-white">Engr. Emmanuel O. Danladi</span>
+                    <span class="text-emerald-400 font-mono text-[11px]">COREN R.48291/ELECT</span>
+                    <span class="px-2 py-0.5 rounded text-[10px] bg-purple-500/20 text-purple-300 font-mono">Middle Belt (Jos Hub)</span>
+                  </div>
+                  <p class="text-slate-400 text-[11px] mt-0.5">Assigned to: 2 Commercial Cold-Chain Sites • Earthing Test Certified: Yes</p>
+                </div>
+                <div id="techAction2" class="flex items-center gap-2">
+                  <span class="text-cyan-400 text-[11px] font-mono font-bold">● AVAILABLE</span>
+                  <button onclick="handleAdminMakerCheckerAction('techRow2', 'DISPATCHED_OPS', 'Engr. Babatunde Adeleke (Operations)', 'Assigned Benue agro-processing site assessment.')" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition cursor-pointer">
+                    Dispatch to Site
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- OPERATIONS: Inventory & Serialized BOM Monitor -->
+        <div id="admPanel_ops_inventory" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-cyan-400 uppercase">SERIALIZED INVENTORY REPOSITORY</span>
+              <h3 class="text-xl font-black text-white mt-1">Inverter Serials &amp; Bill of Materials (BOM)</h3>
+              <p class="text-xs text-slate-400 mt-1">Track physical Growatt inverters, LiFePO4 batteries, and NEMSA security wire seals.</p>
+            </div>
+            <button onclick="showToast('Inventory audit synced with central warehouse.')" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+              🔄 Sync Warehouse RFID
+            </button>
+          </div>
+
+          <div class="grid sm:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/30">
+              <span class="text-[11px] text-indigo-400 font-bold block">Growatt SPF 5000ES Inverters</span>
+              <span class="text-2xl font-black font-mono text-white mt-1 block">18 In Stock</span>
+              <span class="text-[10px] text-slate-400">4 Allocated • 14 Available</span>
+            </div>
+            <div class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+              <span class="text-[11px] text-emerald-400 font-bold block">10.24 kWh LiFePO4 Racks</span>
+              <span class="text-2xl font-black font-mono text-white mt-1 block">22 Units</span>
+              <span class="text-[10px] text-slate-400">Smart Active BMS Pre-flashed</span>
+            </div>
+            <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30">
+              <span class="text-[11px] text-amber-400 font-bold block">NEMSA Certified Steel Seals</span>
+              <span class="text-2xl font-black font-mono text-white mt-1 block">140 Seals</span>
+              <span class="text-[10px] text-slate-400">Serialized Cat-A Wire Seals</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- COREN QA: Safety & Compliance Watchtower -->
+        <div id="admPanel_coren_safety" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-rose-400 uppercase">COREN QA &amp; SAFETY WATCHTOWER</span>
+              <h3 class="text-xl font-black text-white mt-1">National Electrical Safety &amp; Earthing Matrix</h3>
+              <p class="text-xs text-slate-400 mt-1">Regulatory enforcement of Nigerian Electricity Supply Industry (NESI) and COREN ≤ 5.0Ω rules.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-400 font-mono font-bold">
+                COREN Safety Index: 99.4%
+              </span>
+            </div>
+          </div>
+
+          <div class="grid sm:grid-cols-3 gap-4">
+            <div class="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+              <span class="text-[11px] text-emerald-400 font-bold block">Earthing Compliance Rate</span>
+              <span class="text-2xl font-black font-mono text-white mt-1 block">100% Passed</span>
+              <span class="text-[10px] text-emerald-300">All Active Arrays ≤ 5.0Ω</span>
+            </div>
+            <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30">
+              <span class="text-[11px] text-amber-400 font-bold block">Pending COREN Commissioning</span>
+              <span class="text-2xl font-black font-mono text-white mt-1 block">2 Sites</span>
+              <span class="text-[10px] text-amber-300">Awaiting QA Inspector Sign-Off</span>
+            </div>
+            <div class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30">
+              <span class="text-[11px] text-rose-400 font-bold block">Microswitch Tamper Trips</span>
+              <span class="text-2xl font-black font-mono text-white mt-1 block">1 Active Lock</span>
+              <span class="text-[10px] text-rose-300">Cabinet Shroud Open (Lekki)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- COREN QA: Earthing & Commissioning Sign-Off -->
+        <div id="admPanel_coren_earthing" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-emerald-400 uppercase">DIGITAL EARTHING SIGN-OFF</span>
+              <h3 class="text-xl font-black text-white mt-1">Earth Resistance Verification (≤ 5.0Ω Gate)</h3>
+              <p class="text-xs text-slate-400 mt-1">Review calibrated earth resistance readings before granting power energization clearance.</p>
+            </div>
+          </div>
+
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 space-y-4">
+            <h4 class="text-sm font-bold text-white border-b border-white/10 pb-2">Pending Commissioning Sign-Offs</h4>
+            <div class="space-y-3" id="admEarthingQueue">
+              <div id="earthRow1" class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3 text-xs">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <span class="font-bold text-white text-sm">Site: Maitama Residential Array (DEV-8F3A)</span>
+                    <p class="text-slate-400 text-xs">Client: Engr. Amina Danjuma • Megger 4-Point Earth Test</p>
+                  </div>
+                  <div class="text-right">
+                    <span class="font-mono text-xl font-black text-emerald-400">1.8 Ω</span>
+                    <span class="block text-[10px] text-emerald-300 font-semibold font-mono">PASSED (&lt; 5.0Ω COREN)</span>
+                  </div>
+                </div>
+                <div id="earthAction1" class="flex gap-2 pt-2 border-t border-white/10">
+                  <button onclick="handleAdminMakerCheckerAction('earthRow1', 'APPROVED_COREN', 'Engr. Tariq Bello (COREN Inspector R.48201)', 'Verified earth resistance of 1.8Ω is well within standard. Authorized energization.')" class="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition cursor-pointer">
+                    ⚡ Approve COREN Compliance (1.8Ω Verified)
+                  </button>
+                  <button onclick="handleAdminMakerCheckerAction('earthRow1', 'REJECTED_COREN', 'Engr. Tariq Bello (COREN Inspector)', 'Rejected site earthing.')" class="px-3 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs transition cursor-pointer">
+                    ✕ Reject Pit
+                  </button>
+                </div>
+              </div>
+
+              <div id="earthRow2" class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3 text-xs">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <span class="font-bold text-white text-sm">Site: Sagamu Agro-Industrial Mill (DEV-AGRO-001)</span>
+                    <p class="text-slate-400 text-xs">Contractor: Odua Renewables • Megger Earth Spike Reading</p>
+                  </div>
+                  <div class="text-right">
+                    <span class="font-mono text-xl font-black text-rose-400">6.4 Ω</span>
+                    <span class="block text-[10px] text-rose-300 font-semibold font-mono">NON-COMPLIANT (&gt; 5.0Ω)</span>
+                  </div>
+                </div>
+                <div id="earthAction2" class="flex gap-2 pt-2 border-t border-white/10">
+                  <button onclick="handleAdminMakerCheckerAction('earthRow2', 'REJECTED_COREN', 'Engr. Tariq Bello (COREN Inspector R.48201)', 'Earth pit resistance 6.4Ω violates COREN max 5.0Ω rule. Installation paused for chemical bentonite treatment.')" class="flex-1 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs transition cursor-pointer">
+                    ✕ Reject - Earthing Pit Defective (6.4Ω &gt; 5.0Ω Limit)
+                  </button>
+                  <button onclick="handleAdminMakerCheckerAction('earthRow2', 'APPROVED_COREN', 'Engr. Tariq Bello (COREN Inspector)', 'Approved with exception.')" class="px-3 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs transition cursor-pointer">
+                    Override
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COREN QA: Hardware Tamper Clearance Queue -->
+        <div id="admPanel_coren_tamper" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-rose-400 uppercase">HARDWARE TAMPER CLEARANCE</span>
+              <h3 class="text-xl font-black text-white mt-1">Lower Cabinet Microswitch Tamper Queue</h3>
+              <p class="text-xs text-slate-400 mt-1">Investigate physical cabinet intrusion alarms and authorize cryptographic tamper clearance tokens.</p>
+            </div>
+          </div>
+
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 space-y-4">
+            <h4 class="text-sm font-bold text-white border-b border-white/10 pb-2 flex justify-between items-center">
+              <span>Active Tamper Lockouts</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 font-mono font-bold">1 Alarm Tripped</span>
+            </h4>
+            <div id="corenTamperRow1" class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3 text-xs">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="font-bold text-white text-sm">DEV-9E04-GROWATT-00933 (Lekki Pharmacy)</span>
+                  <p class="text-slate-400 text-xs">Tripped: 2026-11-06 17:15 UTC • Microswitch Shroud Open</p>
+                  <p class="text-amber-300 text-[11px] font-mono mt-1">Current State: STANDBY_LOCKED • Inverter AC Disengaged</p>
+                </div>
+                <span class="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 font-bold font-mono text-[10px]">
+                  CRITICAL TAMPER
+                </span>
+              </div>
+              <div id="corenTamperAction1" class="flex gap-2 pt-2 border-t border-white/10">
+                <button onclick="handleAdminMakerCheckerAction('corenTamperRow1', 'APPROVED_TAMPER_CLEAR', 'Engr. Tariq Bello (COREN Safety Lead)', 'Site physical inspection complete. Seal intact and tamper reset token 9921-4819-0021-3412-8871 generated.')" class="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition cursor-pointer">
+                  🔓 Authorize Tamper Clearance &amp; Generate Reset STS Token
+                </button>
+                <button onclick="handleAdminMakerCheckerAction('corenTamperRow1', 'REJECTED_TAMPER', 'Engr. Tariq Bello', 'Tamper confirmed malicious - legal recovery initiated.')" class="px-3 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs transition cursor-pointer">
+                  ✕ Lockout Permanently
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COREN QA: Regulatory Standards -->
+        <div id="admPanel_coren_standards" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-cyan-400 uppercase">STANDARDS &amp; CERTIFICATIONS</span>
+              <h3 class="text-xl font-black text-white mt-1">Regulatory Standards &amp; Compliance Library</h3>
+              <p class="text-xs text-slate-400 mt-1">Certified Nigerian national grid and solar installation codes.</p>
+            </div>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-4 text-xs">
+            <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+              <span class="text-emerald-400 font-mono font-bold block">NEMSA Category-A Installation Rules</span>
+              <p class="text-slate-300">Mandates Type-II DC &amp; AC Surge Protection, Class-A galvanized earthing pits, and certified wire locking seals.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+              <span class="text-cyan-400 font-mono font-bold block">IEEE 1547 Grid Interconnection Standard</span>
+              <p class="text-slate-300">Anti-islanding protection (&lt; 2.0s trip upon grid de-energization), voltage ride-through, and reactive power control.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- TECHNICIAN: My Assigned Work Orders -->
+        <div id="admPanel_tech_orders" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-indigo-400 uppercase">FIELD TECHNICIAN WORKSPACE</span>
+              <h3 class="text-xl font-black text-white mt-1">My Assigned Work Orders</h3>
+              <p class="text-xs text-slate-400 mt-1">View active field dispatch tickets, site directions, and installation assignments.</p>
+            </div>
+            <span class="text-xs px-3 py-1 rounded-xl bg-indigo-500/20 text-indigo-300 font-mono font-bold">
+              2 Active Jobs Assigned
+            </span>
+          </div>
+
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 space-y-4">
+            <h4 class="text-sm font-bold text-white border-b border-white/10 pb-2">Active Field Jobs</h4>
+            <div class="space-y-3" id="admTechOrdersQueue">
+              <div id="techOrderRow1" class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3 text-xs">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <span class="font-bold text-white text-sm">WO-2026-104: 5.4 kWp Solar Home Installation</span>
+                    <p class="text-slate-400 text-xs">Client: Engr. Amina Danjuma • Maitama, FCT Abuja</p>
+                    <p class="text-emerald-400 text-[11px] font-mono mt-1">Status: STAGE 4 - COMMISSIONING &amp; EARTHING CHECK</p>
+                  </div>
+                  <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono font-bold text-[10px]">IN PROGRESS</span>
+                </div>
+                <div id="techOrderAction1" class="flex gap-2 pt-2 border-t border-white/10">
+                  <button onclick="switchAdminTab('tech_logger')" class="flex-1 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition cursor-pointer">
+                    🛠️ Open 16-Step Checklist &amp; Logger
+                  </button>
+                  <button onclick="handleAdminMakerCheckerAction('techOrderRow1', 'EXECUTED_TECH', 'Engr. Emmanuel Danladi (COREN Tech)', 'Submitted final installation checklist for COREN QA sign-off.')" class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition cursor-pointer">
+                    ✓ Submit for COREN QA
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TECHNICIAN: Job Execution & BOM Logger -->
+        <div id="admPanel_tech_logger" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-emerald-400 uppercase">JOB EXECUTION &amp; SERIAL LOGGER</span>
+              <h3 class="text-xl font-black text-white mt-1">16-Step Commissioning Checklist &amp; Serialized BOM</h3>
+              <p class="text-xs text-slate-400 mt-1">Record verified serial numbers, barcode scans, and measured earthing resistance.</p>
+            </div>
+          </div>
+
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 space-y-4">
+            <h4 class="text-sm font-bold text-white border-b border-white/10 pb-2">Digital Commissioning Checklist</h4>
+            <div class="space-y-3 text-xs">
+              <label class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 cursor-pointer">
+                <input type="checkbox" checked class="w-4 h-4 text-emerald-500 rounded">
+                <span>1. Structural Mounting &amp; Roof Anodized Aluminum Rail Clamping Verified</span>
+              </label>
+              <label class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 cursor-pointer">
+                <input type="checkbox" checked class="w-4 h-4 text-emerald-500 rounded">
+                <span>2. PV String Polarity &amp; Open-Circuit Voltage (Voc = 209V DC) Verified</span>
+              </label>
+              <label class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 cursor-pointer">
+                <input type="checkbox" checked class="w-4 h-4 text-emerald-500 rounded">
+                <span>3. LiFePO4 Smart BMS CAN/RS485 Handshake &amp; Active Balancing Confirmed</span>
+              </label>
+              <label class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 cursor-pointer">
+                <input type="checkbox" checked class="w-4 h-4 text-emerald-500 rounded">
+                <span>4. Earth Resistance Pit Measured at 1.8Ω (&le; 5.0Ω COREN Gate)</span>
+              </label>
+            </div>
+
+            <div id="techLoggerActionRow" class="pt-2 border-t border-white/10 flex justify-end">
+              <button onclick="handleAdminMakerCheckerAction('techLoggerActionRow', 'EXECUTED_TECH', 'Engr. Emmanuel Danladi (Field Tech)', 'All 16 steps completed with 1.8Ω earth test. Sent to COREN Inspector.')" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition shadow-lg cursor-pointer">
+                ✓ Submit Commissioning Checklist for COREN QA Review
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TECHNICIAN: Field AI Copilot (LocalGridAgent) -->
+        <div id="admPanel_tech_copilot" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-amber-400 uppercase">OFFLINE INVERTER DIAGNOSTICS</span>
+              <h3 class="text-xl font-black text-white mt-1">Field AI Copilot (LocalGridAgent)</h3>
+              <p class="text-xs text-slate-400 mt-1">Instant Growatt error code troubleshooting assistant powered by local offline heuristics.</p>
+            </div>
+          </div>
+
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 space-y-4">
+            <div class="grid sm:grid-cols-3 gap-4 text-xs">
+              <div>
+                <label class="block text-slate-400 font-semibold mb-1">Inverter Model</label>
+                <select id="techInverterModel" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white">
+                  <option>Growatt SPF 5000ES</option>
+                  <option>Growatt SPH 10000TL</option>
+                  <option>Growatt MIN 3000TL-X</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-slate-400 font-semibold mb-1">Observed Error Code</label>
+                <input type="text" id="techErrorCodeInput" value="Error 04" placeholder="e.g. Error 04, Error 20" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white font-mono">
+              </div>
+              <div class="flex items-end">
+                <button onclick="handleRunTechDiagnosis()" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition cursor-pointer">
+                  🔍 Diagnose Fault
+                </button>
+              </div>
+            </div>
+
+            <div id="techDiagnosisResult" class="p-4 rounded-xl bg-white/5 border border-white/10 text-xs space-y-2">
+              <div class="flex items-center gap-2 text-amber-400 font-bold">
+                <span>⚠️</span>
+                <span>Diagnosis: Error 04 - Battery Low Voltage Trip</span>
+              </div>
+              <p class="text-slate-300 leading-relaxed">
+                Battery string voltage dropped below 44.0V DC. Recommended Field Protocol:
+                <br>1. Check LiFePO4 active breaker.
+                <br>2. Confirm CAN bus communication cable pinout (Pins 4/5 for Growatt BMS).
+                <br>3. Engage DC solar pre-charge mode to bring cells above 48.0V before closing AC relay.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- TECHNICIAN: Field Evidence & Photo Upload -->
+        <div id="admPanel_tech_evidence" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-cyan-400 uppercase">FIELD EVIDENCE REPOSITORY</span>
+              <h3 class="text-xl font-black text-white mt-1">Field Photo &amp; Commissioning Evidence Upload</h3>
+              <p class="text-xs text-slate-400 mt-1">Capture mandatory photographic audit evidence for COREN Cat-A compliance.</p>
+            </div>
+          </div>
+
+          <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+            <div class="p-4 rounded-xl bg-white/5 border border-dashed border-white/20 text-center space-y-2">
+              <span class="text-2xl block">📍</span>
+              <span class="font-bold text-white block">Earthing Pit Reading</span>
+              <p class="text-slate-400 text-[10px]">Photo of Megger display showing &le; 5.0Ω</p>
+              <button onclick="showToast('Earthing pit photo uploaded.')" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-[11px] cursor-pointer">Upload Photo</button>
+            </div>
+            <div class="p-4 rounded-xl bg-white/5 border border-dashed border-white/20 text-center space-y-2">
+              <span class="text-2xl block">⚡</span>
+              <span class="font-bold text-white block">DB Wiring &amp; SPD</span>
+              <p class="text-slate-400 text-[10px]">AC/DC breaker neat cable lacing</p>
+              <button onclick="showToast('DB wiring photo uploaded.')" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-[11px] cursor-pointer">Upload Photo</button>
+            </div>
+            <div class="p-4 rounded-xl bg-white/5 border border-dashed border-white/20 text-center space-y-2">
+              <span class="text-2xl block">☀️</span>
+              <span class="font-bold text-white block">PV Array Rails</span>
+              <p class="text-slate-400 text-[10px]">Rooftop clamps and module bonding</p>
+              <button onclick="showToast('Rooftop array photo uploaded.')" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-[11px] cursor-pointer">Upload Photo</button>
+            </div>
+            <div class="p-4 rounded-xl bg-white/5 border border-dashed border-white/20 text-center space-y-2">
+              <span class="text-2xl block">🔒</span>
+              <span class="font-bold text-white block">NEMSA Wire Seal</span>
+              <p class="text-slate-400 text-[10px]">Intact serialized wire seal photo</p>
+              <button onclick="showToast('NEMSA wire seal photo uploaded.')" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-[11px] cursor-pointer">Upload Photo</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CUSTOMER SUPPORT: Helpdesk & Subscriber Lookup -->
+        <div id="admPanel_sup_helpdesk" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-teal-400 uppercase">SUBSCRIBER HELPDESK</span>
+              <h3 class="text-xl font-black text-white mt-1">Subscriber Search &amp; Telemetry Lookup</h3>
+              <p class="text-xs text-slate-400 mt-1">Instant search by subscriber legal name, verified NIN, phone, or inverter serial.</p>
+            </div>
+          </div>
+
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 space-y-4">
+            <div class="flex gap-2">
+              <input type="text" id="supSearchInput" value="Amina Danjuma" placeholder="Search by subscriber name, phone, NIN, or device ID..." class="flex-1 bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white text-xs font-mono">
+              <button onclick="showToast('Found 1 active subscriber match.')" class="px-5 py-2.5 rounded-xl bg-brand-teal text-brand-dark font-bold text-xs cursor-pointer">
+                🔍 Lookup
+              </button>
+            </div>
+
+            <div class="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs">
+              <div>
+                <span class="font-bold text-white text-sm">Engr. Amina Danjuma</span>
+                <p class="text-slate-400">DEV-8F3A-GROWATT-00421 • Maitama, FCT Abuja • NIN: 2091-8841-002</p>
+                <p class="text-emerald-400 font-mono mt-0.5">● 19.4 Days Active Lease • 92% Battery SoC • 3,420W Solar Harvest</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="switchAdminTab('sup_tokens')" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs cursor-pointer">
+                  ⚡ Resend Token
+                </button>
+                <button onclick="switchAdminTab('sup_chat')" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-bold text-xs cursor-pointer">
+                  💬 Open Chat
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CUSTOMER SUPPORT: Quick STS Token Resend & Diagnostics -->
+        <div id="admPanel_sup_tokens" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-amber-400 uppercase">QUICK STS TOKEN RESEND</span>
+              <h3 class="text-xl font-black text-white mt-1">One-Click STS Token Dispatch Desk</h3>
+              <p class="text-xs text-slate-400 mt-1">Resend encrypted 20-digit STS tokens to customer via SMS gateway or WhatsApp API.</p>
+            </div>
+          </div>
+
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 space-y-4">
+            <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3 text-xs">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="font-bold text-white text-sm">Latest Active STS Token (Engr. Amina Danjuma)</span>
+                  <p class="text-slate-400 text-xs">Device: DEV-8F3A-GROWATT-00421 • Meter Class: STS-192</p>
+                  <p class="font-mono text-base font-black text-amber-300 tracking-widest mt-1">4819 - 2049 - 5510 - 8291 - 7304</p>
+                </div>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold">VALID TOKEN</span>
+              </div>
+              <div id="supTokenActionRow" class="flex gap-2 pt-2 border-t border-white/10">
+                <button onclick="handleAdminMakerCheckerAction('supTokenActionRow', 'DISPATCHED_SMS', 'Chidi Nnamdi (Customer Care)', 'Dispatched 20-digit token to +2348039988112 via SMS.')" class="flex-1 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition cursor-pointer">
+                  📱 Resend via SMS Webhook
+                </button>
+                <button onclick="handleAdminMakerCheckerAction('supTokenActionRow', 'DISPATCHED_WHATSAPP', 'Chidi Nnamdi (Customer Care)', 'Dispatched 20-digit token to WhatsApp API.')" class="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition cursor-pointer">
+                  💬 Resend via WhatsApp API
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CUSTOMER SUPPORT: Live Customer Chat & Communications -->
+        <div id="admPanel_sup_chat" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-teal-400 uppercase">LIVE COMMUNICATIONS DESK</span>
+              <h3 class="text-xl font-black text-white mt-1">Live Subscriber Messaging Desk</h3>
+              <p class="text-xs text-slate-400 mt-1">Real-time messaging with subscribers for rapid dispute and query resolution.</p>
+            </div>
+            <span class="text-xs px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-400 font-mono font-bold">
+              ● Online &amp; Ready
+            </span>
+          </div>
+
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 space-y-4">
+            <div class="h-48 overflow-y-auto space-y-2 p-3 bg-black/40 rounded-xl text-xs font-sans">
+              <div class="p-2 rounded-lg bg-white/10 max-w-sm">
+                <span class="font-bold text-teal-400 text-[10px] block">Engr. Amina Danjuma</span>
+                <span>Good afternoon, please can you re-confirm my latest token? I mistyped digit 12.</span>
+              </div>
+              <div class="p-2 rounded-lg bg-indigo-600/40 border border-indigo-500/30 max-w-sm ml-auto text-right">
+                <span class="font-bold text-indigo-300 text-[10px] block">Support Rep (You)</span>
+                <span>Hello Engr. Amina, your valid token is 4819-2049-5510-8291-7304. We also resent it to your SMS.</span>
+              </div>
+            </div>
+
+            <div class="flex gap-2">
+              <input type="text" id="supChatInput" placeholder="Type response to subscriber..." class="flex-1 bg-black/50 border border-white/15 rounded-xl px-4 py-2 text-white text-xs">
+              <button onclick="handleSendSupportChatMessage()" class="px-4 py-2 rounded-xl bg-brand-teal text-brand-dark font-bold text-xs cursor-pointer">
+                Send 💬
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+
+
+{{end}}

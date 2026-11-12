@@ -1,0 +1,495 @@
+{{define "modal_signup"}}
+  <!-- Modal 5: New Customer Solar PAYGo Sign Up & NIN Auto-Verification Portal -->
+  <div id="signUpModal" style="display: none;" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+    <div class="glass-card-dark rounded-3xl max-w-4xl w-full p-5 sm:p-8 md:p-10 border border-white/15 relative shadow-2xl max-h-[94vh] overflow-y-auto flex flex-col justify-between">
+      
+      <!-- Close Button -->
+      <button onclick="closeModal('signUpModal')" aria-label="Close Registration Modal" class="absolute top-5 right-5 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition focus:outline-none focus:ring-2 focus:ring-brand-teal">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Sign Up Form View -->
+      <div id="signupFormView">
+        <!-- Header Banner -->
+        <div class="flex items-start gap-4 pb-6 border-b border-white/10">
+          <div class="w-12 h-12 rounded-2xl bg-brand-teal/20 border border-brand-teal/30 flex items-center justify-center text-brand-teal shrink-0">
+            <i data-lucide="user-plus" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h3 class="text-2xl sm:text-3xl font-heading font-extrabold text-white">PAYGo Customer Registration &amp; Onboarding</h3>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-brand-teal/20 text-brand-teal border border-brand-teal/30 uppercase tracking-wider">
+                NIMC Instant Verification
+              </span>
+            </div>
+            <p class="text-xs sm:text-sm text-brand-warm/75 mt-1">
+              Complete your verification in under 60 seconds. Enter your National Identification Number (NIN) to automatically populate and verify your identity credentials.
+            </p>
+          </div>
+        </div>
+
+        <form id="customerSignUpForm" onsubmit="handleCustomerSignUp(event)" class="mt-6 space-y-6 text-xs">
+          
+          <!-- STEP 1: IDENTITY & AUTOMATIC NIN VERIFICATION -->
+          <div class="p-5 rounded-2xl bg-black/40 border border-brand-teal/30 space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-brand-teal text-brand-dark font-bold text-xs flex items-center justify-center">1</span>
+                <h4 class="text-sm font-heading font-bold text-white uppercase tracking-wider">National Identity &amp; Biometric KYC</h4>
+              </div>
+              <span class="text-[11px] text-brand-teal font-mono">Government Identity Registry (NIMC)</span>
+            </div>
+
+            <!-- Customer Biometric Passport Photo Space (Reflects in Customer Portal Top Pane Header) -->
+            <div class="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10">
+              <div class="relative shrink-0 group cursor-pointer" onclick="document.getElementById('signupPassportInput').click()" title="Click to upload/change customer passport photo">
+                <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full p-1 bg-gradient-to-tr from-brand-teal via-brand-amber to-brand-sky shadow-lg shadow-brand-teal/25">
+                  <img id="signupPassportImg" 
+                       src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=256&q=80" 
+                       alt="Customer Passport Photo" 
+                       class="w-full h-full rounded-full object-cover border-2 border-slate-900">
+                </div>
+                <!-- Camera badge -->
+                <div class="absolute bottom-1 right-1 w-7 h-7 rounded-full bg-brand-amber text-slate-950 flex items-center justify-center font-bold text-xs shadow-md border-2 border-[#0B0F19] group-hover:scale-110 transition-transform">
+                  📷
+                </div>
+                <!-- Hover overlay -->
+                <div class="absolute inset-0 rounded-full bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white text-[10px] font-bold p-2 text-center pointer-events-none">
+                  <span>Change Photo</span>
+                </div>
+              </div>
+              <input type="file" id="signupPassportInput" accept="image/*" onchange="handlePassportUpload(event)" class="hidden">
+              <div class="space-y-1 text-center sm:text-left flex-1">
+                <div class="flex items-center gap-2 justify-center sm:justify-start">
+                  <h5 class="text-white font-bold text-sm">Customer Biometric Passport Photo</h5>
+                  <span class="text-[9px] px-2 py-0.5 rounded-full bg-brand-teal/20 text-brand-teal font-mono font-bold">NIMC Biometric</span>
+                </div>
+                <p class="text-[11px] text-brand-warm/75 leading-relaxed">
+                  Upload a clear, front-facing circular customer passport photo. This is verified against NIMC facial biometric records and synchronizes live to your Customer Portal top header pane.
+                </p>
+                <div class="flex items-center gap-2 justify-center sm:justify-start pt-1">
+                  <button type="button" onclick="document.getElementById('signupPassportInput').click()" class="px-3.5 py-1.5 rounded-xl bg-brand-teal/20 hover:bg-brand-teal/30 border border-brand-teal/40 text-brand-teal text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+                    <i data-lucide="camera" class="w-3.5 h-3.5"></i>
+                    <span>Upload Passport Photo</span>
+                  </button>
+                  <button type="button" onclick="resetDefaultPassport()" class="px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-brand-warm/70 hover:text-white text-xs transition cursor-pointer">
+                    Reset
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- NIN Input Field with Integrated Verification Action -->
+            <div>
+              <label for="signupNIN" class="block text-brand-warm/90 font-bold mb-1.5">
+                National Identification Number (NIN) <span class="text-brand-amber">* (11 Digits)</span>
+              </label>
+              <div class="flex flex-col sm:flex-row gap-2">
+                <div class="relative flex-1">
+                  <input type="text" id="signupNIN" maxlength="11" required
+                    placeholder="Enter 11-digit NIN (e.g. 11223344556)"
+                    oninput="handleNINInput(this.value)"
+                    class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-brand-warm/40 focus:border-brand-teal focus:ring-1 focus:ring-brand-teal focus:outline-none font-mono text-sm tracking-widest font-bold">
+                  <span id="ninCharCount" class="absolute right-3 top-3 text-[10px] text-brand-warm/50 font-mono">0/11</span>
+                </div>
+                <button type="button" id="btnVerifyNIN" onclick="verifyCustomerNIN()"
+                  class="px-5 py-3 rounded-xl bg-brand-teal hover:bg-emerald-400 text-brand-dark font-heading font-bold text-xs flex items-center justify-center gap-2 transition shadow-md shadow-brand-teal/20 shrink-0">
+                  <i data-lucide="shield-check" id="verifyBtnIcon" class="w-4 h-4"></i>
+                  <span id="verifyBtnText">Verify with NIMC</span>
+                </button>
+              </div>
+
+              <!-- Quick Demo 1-Click Verification Chips -->
+              <div class="mt-2.5 flex items-center gap-2 flex-wrap text-[10px] text-brand-warm/70">
+                <span class="font-medium text-brand-amber">⚡ Instant Demo Test Profiles:</span>
+                <button type="button" onclick="quickFillDemoNIN('11223344556')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 text-brand-warm hover:text-white transition font-mono">
+                  Babatunde Adeyemi (11223344556)
+                </button>
+                <button type="button" onclick="quickFillDemoNIN('99887766554')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 text-brand-warm hover:text-white transition font-mono">
+                  Dr. Zainab Aliyu (99887766554)
+                </button>
+                <button type="button" onclick="quickFillDemoNIN('55443322110')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 text-brand-warm hover:text-white transition font-mono">
+                  Chief Emeka Okafor (55443322110)
+                </button>
+              </div>
+            </div>
+
+            <!-- Dynamic Verification Banner -->
+            <div id="ninStatusBanner" class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-brand-warm/75 flex items-center gap-2.5 transition-all">
+              <i data-lucide="info" class="w-4 h-4 text-brand-teal shrink-0"></i>
+              <span>Enter your 11-digit NIN above or select a demo profile. Your legal names and date of birth will be securely queried and populated automatically.</span>
+            </div>
+
+            <!-- Auto-Populated Identity Columns (Grid) -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+              <div>
+                <label for="signupFirstName" class="block text-brand-warm/70 font-semibold mb-1 flex items-center justify-between">
+                  <span>First Name</span>
+                  <span id="badgeFirstName" class="text-[9px] text-brand-teal font-mono hidden">✓ NIMC Verified</span>
+                </label>
+                <input type="text" id="signupFirstName" required readonly placeholder="Auto-populated from NIN"
+                  class="w-full bg-black/40 border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-medium focus:outline-none cursor-default">
+              </div>
+
+              <div>
+                <label for="signupMiddleName" class="block text-brand-warm/70 font-semibold mb-1 flex items-center justify-between">
+                  <span>Middle Name</span>
+                  <span id="badgeMiddleName" class="text-[9px] text-brand-teal font-mono hidden">✓ NIMC Verified</span>
+                </label>
+                <input type="text" id="signupMiddleName" readonly placeholder="Auto-populated from NIN"
+                  class="w-full bg-black/40 border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-medium focus:outline-none cursor-default">
+              </div>
+
+              <div>
+                <label for="signupLastName" class="block text-brand-warm/70 font-semibold mb-1 flex items-center justify-between">
+                  <span>Surname / Last Name</span>
+                  <span id="badgeLastName" class="text-[9px] text-brand-teal font-mono hidden">✓ NIMC Verified</span>
+                </label>
+                <input type="text" id="signupLastName" required readonly placeholder="Auto-populated from NIN"
+                  class="w-full bg-black/40 border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-medium focus:outline-none cursor-default">
+              </div>
+            </div>
+
+            <!-- Date of Birth & Gender & Identity Tracking Token -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label for="signupDOB" class="block text-brand-warm/70 font-semibold mb-1 flex items-center justify-between">
+                  <span>Date of Birth</span>
+                  <span id="badgeDOB" class="text-[9px] text-brand-teal font-mono hidden">✓ NIMC Verified</span>
+                </label>
+                <input type="date" id="signupDOB" required readonly
+                  class="w-full bg-black/40 border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-mono focus:outline-none cursor-default">
+              </div>
+
+              <div>
+                <label for="signupGender" class="block text-brand-warm/70 font-semibold mb-1 flex items-center justify-between">
+                  <span>Gender</span>
+                  <span id="badgeGender" class="text-[9px] text-brand-teal font-mono hidden">✓ NIMC Verified</span>
+                </label>
+                <input type="text" id="signupGender" readonly placeholder="Gender from NIN"
+                  class="w-full bg-black/40 border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-medium focus:outline-none cursor-default">
+              </div>
+
+              <div>
+                <label for="signupBVN" class="block text-brand-warm/70 font-semibold mb-1">
+                  Bank Verification Number (BVN) <span class="text-brand-warm/40">(Optional)</span>
+                </label>
+                <input type="text" id="signupBVN" maxlength="11" placeholder="11-digit BVN for tier-2 credit"
+                  class="w-full bg-black/50 border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-mono focus:border-brand-teal focus:outline-none">
+              </div>
+            </div>
+
+          </div>
+
+          <!-- STEP 2: CONTACT & INSTALLATION SITE DETAILS -->
+          <div class="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-4">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-brand-amber text-brand-dark font-bold text-xs flex items-center justify-center">2</span>
+              <h4 class="text-sm font-heading font-bold text-white uppercase tracking-wider">Contact &amp; Installation Site Engineering</h4>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="signupPhone" class="block text-brand-warm/80 font-semibold mb-1">
+                  Primary Mobile Phone * <span class="text-brand-teal font-mono text-[10px]">(Token &amp; SMS delivery)</span>
+                </label>
+                <input type="tel" id="signupPhone" required placeholder="e.g. 0803 123 4567"
+                  class="w-full bg-black/50 border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-mono focus:border-brand-amber focus:outline-none">
+              </div>
+
+              <div>
+                <label for="signupEmail" class="block text-brand-warm/80 font-semibold mb-1">
+                  Email Address * <span class="text-brand-warm/40 text-[10px]">(Monthly statement &amp; deed)</span>
+                </label>
+                <input type="email" id="signupEmail" required placeholder="e.g. name@domain.com"
+                  class="w-full bg-black/50 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-amber focus:outline-none">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="sm:col-span-2">
+                <label for="signupAddress" class="block text-brand-warm/80 font-semibold mb-1">Installation Physical Address &amp; Nearest Landmark *</label>
+                <input type="text" id="signupAddress" required placeholder="e.g. Plot 18, Admiralty Way, Lekki Phase 1"
+                  class="w-full bg-black/50 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-amber focus:outline-none">
+              </div>
+
+              <div>
+                <label for="signupState" class="block text-brand-warm/80 font-semibold mb-1">State &amp; Solar Irradiance Zone *</label>
+                <select id="signupState" required onchange="updateSignupAmortization()"
+                  class="w-full bg-black/70 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-amber focus:outline-none">
+                  <option value="Lagos">Lagos (Coastal Zone • 4.5h PSH)</option>
+                  <option value="Abuja" selected>Abuja FCT (Middle Belt • 5.2h PSH)</option>
+                  <option value="Rivers">Rivers / Port Harcourt (Niger Delta • 3.8h PSH)</option>
+                  <option value="Kano">Kano / Northern Sahel (6.0h PSH)</option>
+                  <option value="Oyo">Oyo / Ibadan (South West • 4.8h PSH)</option>
+                  <option value="Enugu">Enugu (South East • 4.6h PSH)</option>
+                  <option value="Ogun">Ogun (Industrial Corridor • 4.5h PSH)</option>
+                  <option value="Delta">Delta (Warri/Asaba • 4.0h PSH)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Geo-Tag Coordinates for Site Installation & GIS Tracking -->
+            <div class="p-4 rounded-xl bg-black/60 border border-brand-teal/30 space-y-2.5">
+              <div class="flex items-center justify-between flex-wrap gap-2">
+                <label class="text-white font-bold flex items-center gap-2 text-xs">
+                  <span class="w-2 h-2 rounded-full bg-brand-teal status-pulse"></span>
+                  <span>Installation Site Geo-Tag Coordinates (GIS Fleet Registry) *</span>
+                </label>
+                <button type="button" onclick="detectSignupGPS()" class="px-3 py-1 rounded-lg bg-brand-teal/20 text-brand-teal hover:bg-brand-teal/30 border border-brand-teal/40 text-[10px] font-bold font-mono transition flex items-center gap-1">
+                  <span>📍 Auto-Detect Site GPS</span>
+                </button>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label for="signupLat" class="block text-[10px] text-brand-warm/70 uppercase tracking-wider mb-1">Site Latitude (°N)</label>
+                  <input type="number" step="0.000001" id="signupLat" required value="9.076500" placeholder="e.g. 9.076500"
+                    class="w-full bg-black/50 border border-white/20 rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:border-brand-teal focus:outline-none">
+                </div>
+                <div>
+                  <label for="signupLng" class="block text-[10px] text-brand-warm/70 uppercase tracking-wider mb-1">Site Longitude (°E)</label>
+                  <input type="number" step="0.000001" id="signupLng" required value="7.398600" placeholder="e.g. 7.398600"
+                    class="w-full bg-black/50 border border-white/20 rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:border-brand-teal focus:outline-none">
+                </div>
+              </div>
+              <div class="flex items-center justify-between flex-wrap gap-2 pt-1 text-[10px] text-brand-warm/70 border-t border-white/10">
+                <span id="signupGpsStatus">📍 GIS Satellite Pin: Ready for COREN solar azimuth &amp; tilt dispatch</span>
+                <div class="flex items-center gap-1 text-[9px] font-mono">
+                  <span class="text-brand-warm/50">Presets:</span>
+                  <button type="button" onclick="setSignupCoords(9.0765, 7.3986, 'Abuja FCT')" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/15 border border-white/10 text-white">Abuja (9.07, 7.39)</button>
+                  <button type="button" onclick="setSignupCoords(6.5244, 3.3792, 'Lagos')" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/15 border border-white/10 text-white">Lagos (6.52, 3.37)</button>
+                  <button type="button" onclick="setSignupCoords(9.8965, 8.8583, 'Jos Plateau')" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/15 border border-white/10 text-white">Jos (9.89, 8.85)</button>
+                  <button type="button" onclick="setSignupCoords(4.8156, 7.0498, 'Port Harcourt')" class="px-2 py-0.5 rounded bg-white/5 hover:bg-white/15 border border-white/10 text-white">PH (4.81, 7.04)</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label for="signupPropertyType" class="block text-brand-warm/80 font-semibold mb-1">Property Ownership</label>
+                <select id="signupPropertyType" class="w-full bg-black/70 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-amber focus:outline-none">
+                  <option value="OWNER">Owner-Occupied (Private Residence)</option>
+                  <option value="COMMERCIAL_OWNER">Commercial Freehold (Business Owner)</option>
+                  <option value="TENANT">Tenant (With Landlord Solar Consent)</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="signupBuildingType" class="block text-brand-warm/80 font-semibold mb-1">Facility / Building Category</label>
+                <select id="signupBuildingType" class="w-full bg-black/70 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-amber focus:outline-none">
+                  <option value="RESIDENTIAL_DUPLEX">4–5 Bedroom Duplex</option>
+                  <option value="RESIDENTIAL_FLAT">2–3 Bedroom Flat / Apartment</option>
+                  <option value="CLINIC_HOSPITAL">Medical Clinic / Maternity Home</option>
+                  <option value="PHARMACY_RETAIL">Pharmacy / Retail Supermarket</option>
+                  <option value="OFFICE_SCHOOL">Corporate Office / School</option>
+                  <option value="LIGHT_INDUSTRY">Light Industrial / Agro-processing</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="signupGridBand" class="block text-brand-warm/80 font-semibold mb-1">Current Grid Supply</label>
+                <select id="signupGridBand" class="w-full bg-black/70 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-amber focus:outline-none">
+                  <option value="BAND_A">Band A (20+ Hours DISCO Power)</option>
+                  <option value="BAND_B">Band B (16–20 Hours DISCO Power)</option>
+                  <option value="BAND_C_D">Band C/D (Under 16 Hours Supply)</option>
+                  <option value="OFF_GRID">100% Off-Grid (Generator Only)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3: SOLAR PACKAGE SELECTION & AMORTIZATION TERMS -->
+          <div class="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-4">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-brand-teal text-brand-dark font-bold text-xs flex items-center justify-center">3</span>
+              <h4 class="text-sm font-heading font-bold text-white uppercase tracking-wider">Solar System &amp; PAYGo Lease Terms</h4>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="signupPackage" class="block text-brand-warm/80 font-semibold mb-1">Target Solar Architecture</label>
+                <select id="signupPackage" onchange="updateSignupAmortization()"
+                  class="w-full bg-black/70 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-teal focus:outline-none font-medium">
+                  <option value="3kVA" data-cash="2850000" data-down="855000" data-monthly="78500">3.0 kVA / 5.12 kWh LiFePO4 (Essential Home — ₦78,500/mo)</option>
+                  <option value="5kVA" selected data-cash="6300000" data-down="1890000" data-monthly="172000">5.0 kVA / 10.24 kWh LiFePO4 (Family Hybrid — ₦172,000/mo) ★ Recommended</option>
+                  <option value="10kVA" data-cash="11800000" data-down="3540000" data-monthly="325000">10.0 kVA / 20.48 kWh LiFePO4 (Business Solar — ₦325,000/mo)</option>
+                  <option value="20kVA" data-cash="24000000" data-down="7200000" data-monthly="650000">20.0 kVA+ Commercial 3-Phase Scalable (Structured PPA)</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="signupTenure" class="block text-brand-warm/80 font-semibold mb-1">Payment Mode &amp; Lease Tenure</label>
+                <select id="signupTenure" onchange="updateSignupAmortization()"
+                  class="w-full bg-black/70 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-teal focus:outline-none">
+                  <option value="36" selected>36-Month Lease-to-Own (Lowest Monthly Installment)</option>
+                  <option value="24">24-Month Accelerated Lease-to-Own</option>
+                  <option value="12">12-Month Fast-Track Lease-to-Own</option>
+                  <option value="0">Outright Cash Purchase (100% Immediate Ownership)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Real-Time Amortization & Deposit Breakdown Summary Card -->
+            <div class="p-4 rounded-xl bg-brand-forest/40 border border-brand-teal/30 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+              <div>
+                <span class="block text-[10px] text-brand-warm/60 uppercase tracking-wider">Required Down Payment (30%)</span>
+                <span id="signupDisplayDown" class="text-base sm:text-lg font-heading font-extrabold text-brand-amber font-mono">₦1,890,000</span>
+              </div>
+              <div>
+                <span class="block text-[10px] text-brand-warm/60 uppercase tracking-wider">Equipment Insurance (1.5%)</span>
+                <span id="signupDisplayInsurance" class="text-base sm:text-lg font-heading font-extrabold text-white font-mono">₦94,500</span>
+              </div>
+              <div>
+                <span class="block text-[10px] text-brand-warm/60 uppercase tracking-wider">Monthly Installment</span>
+                <span id="signupDisplayMonthly" class="text-base sm:text-lg font-heading font-extrabold text-brand-teal font-mono">₦172,000/mo</span>
+              </div>
+              <div>
+                <span class="block text-[10px] text-brand-warm/60 uppercase tracking-wider">Est. Daily Equivalent</span>
+                <span id="signupDisplayDaily" class="text-base sm:text-lg font-heading font-extrabold text-emerald-400 font-mono">~₦5,733/day</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 4: ACCOUNT SECURITY & HARDWARE ANTI-TAMPER CONSENT -->
+          <div class="p-5 rounded-2xl bg-black/40 border border-white/10 space-y-4">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-brand-amber text-brand-dark font-bold text-xs flex items-center justify-center">4</span>
+              <h4 class="text-sm font-heading font-bold text-white uppercase tracking-wider">Portal Security &amp; Hardware Agreement</h4>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="signupPassword" class="block text-brand-warm/80 font-semibold mb-1">Create Access Password *</label>
+                <input type="password" id="signupPassword" required minlength="6" placeholder="At least 6 characters"
+                  class="w-full bg-black/50 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-teal focus:outline-none">
+              </div>
+
+              <div>
+                <label for="signupConfirmPassword" class="block text-brand-warm/80 font-semibold mb-1">Confirm Access Password *</label>
+                <input type="password" id="signupConfirmPassword" required minlength="6" placeholder="Repeat your password"
+                  class="w-full bg-black/50 border border-white/15 rounded-xl px-3.5 py-2.5 text-white focus:border-brand-teal focus:outline-none">
+              </div>
+            </div>
+
+            <!-- Mandatory Global PAYG Regulatory & Hardware Anti-Tamper Checkboxes -->
+            <div class="space-y-2.5 pt-2 text-[11px] text-brand-warm/80">
+              <label class="flex items-start gap-2.5 cursor-pointer">
+                <input type="checkbox" required class="mt-0.5 rounded border-white/30 text-brand-teal focus:ring-brand-teal shrink-0">
+                <span>
+                  <strong class="text-white">Hardware Anti-Tamper &amp; Stay-Alive Protocol:</strong> I understand that the lower Growatt breaker shroud is sealed with serialized meter security cables, and an edge Modbus microcontroller enforces automated AC power delivery based on cleared token credits.
+                </span>
+              </label>
+
+              <label class="flex items-start gap-2.5 cursor-pointer">
+                <input type="checkbox" required class="mt-0.5 rounded border-white/30 text-brand-teal focus:ring-brand-teal shrink-0">
+                <span>
+                  <strong class="text-white">Credit &amp; Identity Verification Authorization:</strong> I authorize SkyGrid Flex Solutions and licensed credit bureau partners to verify my National Identification Number (NIN) with NIMC and assess credit eligibility under Central Bank of Nigeria (CBN) regulations.
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Final Submit Button -->
+          <div class="pt-2 flex flex-col gap-3">
+            <button type="submit" id="btnSubmitSignup" disabled aria-disabled="true"
+              class="w-full py-4 rounded-xl text-sm font-heading font-extrabold text-brand-dark bg-brand-teal hover:bg-emerald-400 shadow-xl shadow-brand-teal/20 transition-all hover:scale-[1.01] flex items-center justify-center gap-2 form-btn-unhighlighted">
+              <i data-lucide="check-circle" class="w-5 h-5"></i>
+              <span>Complete Registration &amp; Provision Dedicated Virtual Account</span>
+            </button>
+
+            <div class="text-center text-xs text-brand-warm/70">
+              Already registered? 
+              <button type="button" onclick="closeModal('signUpModal'); openModal('signInModal')" class="font-bold text-brand-amber hover:underline ml-1">
+                Sign In to Existing Account &rarr;
+              </button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Sign Up Success / Dedicated Virtual Account (DVA) Welcome View -->
+      <div id="signupSuccessView" class="hidden text-center py-6 sm:py-10 space-y-6">
+        <div class="w-16 h-16 rounded-3xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mx-auto text-2xl shadow-lg shadow-emerald-500/20">
+          ✓
+        </div>
+
+        <div class="space-y-2">
+          <span class="px-3 py-1 rounded-full text-xs font-bold bg-brand-teal/20 text-brand-teal border border-brand-teal/30 uppercase tracking-widest font-mono">
+            NIMC Identity Verified • Account Active
+          </span>
+          <h3 class="text-2xl sm:text-3xl font-heading font-extrabold text-white">
+            Welcome to SkyGrid, <span id="successCustomerName" class="text-brand-amber">Customer</span>!
+          </h3>
+          <p class="text-xs sm:text-sm text-brand-warm/80 max-w-lg mx-auto">
+            Your application for the <strong id="successPackageTitle" class="text-white">Growatt Solar System</strong> has been approved. Your Dedicated Virtual Account (DVA) is live:
+          </p>
+        </div>
+
+        <!-- Dedicated Virtual Account (DVA) Banking Card -->
+        <div class="max-w-md mx-auto p-6 rounded-2xl bg-black/60 border border-brand-teal/40 text-left space-y-4 shadow-2xl">
+          <div class="flex items-center justify-between pb-3 border-b border-white/10">
+            <div>
+              <span class="text-[10px] text-brand-warm/60 uppercase tracking-wider block">Dedicated Virtual Account (DVA)</span>
+              <span class="text-xs font-bold text-brand-teal">Moniepoint MFB / Paystack Titan</span>
+            </div>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/20 text-emerald-400">Instant Automated Credit</span>
+          </div>
+
+          <div class="space-y-1">
+            <span class="text-[11px] text-brand-warm/70 block">Virtual Account Number:</span>
+            <div class="flex items-center justify-between bg-white/5 p-3 rounded-xl border border-white/10">
+              <span id="successDVANumber" class="text-2xl font-mono font-extrabold text-brand-amber tracking-wider">9820-384-912</span>
+              <button type="button" onclick="copyDVANumber()" class="px-3 py-1.5 rounded-lg bg-brand-teal/20 text-brand-teal hover:bg-brand-teal hover:text-brand-dark transition text-[11px] font-bold">
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-[11px]">
+            <div>
+              <span class="text-brand-warm/60 block">Beneficiary Name:</span>
+              <span id="successBeneficiaryName" class="text-white font-semibold">SkyGrid PAYG / Customer</span>
+            </div>
+            <div>
+              <span class="text-brand-warm/60 block">30% Down Payment:</span>
+              <span id="successDownPayment" class="text-brand-amber font-mono font-bold">₦1,890,000</span>
+            </div>
+          </div>
+
+          <!-- Installation Site & Geo-Tag Summary -->
+          <div class="p-3 rounded-xl bg-white/5 border border-white/10 space-y-1.5 text-left text-[11px]">
+            <div class="flex items-center justify-between">
+              <span class="text-brand-warm/60 uppercase tracking-wider text-[10px] font-mono">📍 Installation Site &amp; Geo-Tag:</span>
+              <span id="successGeoTagBadge" class="px-2 py-0.5 rounded text-[9px] font-mono bg-brand-teal/20 text-brand-teal font-bold border border-brand-teal/30">GIS Geo-Locked</span>
+            </div>
+            <div class="text-white font-medium truncate" id="successSiteAddress">Abuja FCT, Nigeria</div>
+            <div class="font-mono text-emerald-400 text-[10px] flex items-center gap-1.5" id="successGeoTag">
+              <span>🌐</span>
+              <span id="successGeoTagCoords">9.076500°N, 7.398600°E</span>
+              <a id="successMapsLink" href="https://maps.google.com/?q=9.076500,7.398600" target="_blank" rel="noopener noreferrer" class="text-brand-amber underline ml-auto text-[9px] hover:text-amber-300">View Satellite Map &rarr;</a>
+            </div>
+          </div>
+
+          <div class="p-2.5 rounded-xl bg-brand-forest/60 border border-brand-teal/20 text-[10px] text-brand-warm/80">
+            Transfer your down payment directly from any Nigerian bank app. Your hardware commissioning team will be dispatched immediately upon payment confirmation.
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
+          <button type="button" onclick="launchCustomerPortalFromSignup()"
+            class="px-8 py-3.5 rounded-xl text-xs sm:text-sm font-heading font-extrabold text-brand-dark bg-brand-amber hover:bg-amber-400 transition-all hover:scale-105 shadow-lg shadow-brand-amber/20">
+            Open Your Live Customer Portal &rarr;
+          </button>
+          <button type="button" onclick="closeModal('signUpModal')"
+            class="px-6 py-3.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/15 transition">
+            Close &amp; Return to Home
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+{{end}}

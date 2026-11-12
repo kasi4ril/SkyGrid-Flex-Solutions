@@ -1,0 +1,94 @@
+{{define "modal_audit"}}
+  <!-- Modal 2: Site Audit & Lead Capture Modal -->
+  <div id="auditModal" style="display: none;" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-card-dark rounded-3xl max-w-lg w-full p-6 sm:p-8 border border-white/15 relative shadow-2xl">
+      <button onclick="closeModal('auditModal')" class="absolute top-5 right-5 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-2 mb-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-brand-amber status-pulse"></span>
+        <span class="text-xs uppercase font-bold text-brand-amber tracking-wider">Field Engineering Dispatch</span>
+      </div>
+
+      <h3 class="text-2xl font-heading font-extrabold text-white">Book Free Site Audit</h3>
+      <p class="text-xs text-brand-warm/75 mt-1">
+        A COREN-certified engineer/technician will inspect your roof structure, electrical distribution board, and verify your load profile.
+      </p>
+
+      <form id="auditForm" onsubmit="submitAuditForm(event)" class="mt-6 space-y-4 text-xs">
+        <div>
+          <label class="block text-brand-warm/80 font-bold mb-1">Full Legal Name *</label>
+          <input type="text" id="leadName" required placeholder="e.g. Dr. Babatunde Adeleke" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-brand-warm/80 font-bold mb-1">Phone Number (WhatsApp) *</label>
+            <input type="tel" id="leadPhone" required placeholder="0803 123 4567" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none font-mono">
+          </div>
+          <div>
+            <label class="block text-brand-warm/80 font-bold mb-1">Email Address</label>
+            <input type="email" id="leadEmail" placeholder="name@example.com" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-brand-warm/80 font-bold mb-1">Installation State *</label>
+            <select id="leadState" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2.5 text-white focus:border-brand-amber focus:outline-none">
+              <option value="ABUJA">Abuja (FCT)</option>
+              <option value="RIVERS">Jos (Plateau State)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-brand-warm/80 font-bold mb-1">Target Solar Package</label>
+            <input type="text" id="leadPackage" readonly class="w-full bg-white/5 border border-white/15 rounded-xl px-3 py-2.5 text-brand-amber font-semibold font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-brand-warm/80 font-bold mb-1">Physical Site Address / Landmark *</label>
+          <input type="text" id="leadAddress" required placeholder="Plot number, street name, estate or landmark" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none">
+        </div>
+
+        <!-- Geo-Tag Coordinates for Site Installation -->
+        <div class="p-3.5 rounded-2xl bg-black/40 border border-white/10 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="text-brand-warm/90 font-bold flex items-center gap-1.5 text-xs">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-amber"></i>
+              <span>Installation Site Geo-Tag Coordinates *</span>
+            </label>
+            <button type="button" onclick="detectAuditGPS()" class="px-2.5 py-1 rounded-lg bg-brand-amber/15 text-brand-amber hover:bg-brand-amber/25 border border-brand-amber/30 text-[10px] font-bold font-mono transition flex items-center gap-1">
+              <span>📍 Auto-Detect GPS</span>
+            </button>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <span class="text-[10px] text-brand-warm/60 uppercase tracking-wider block mb-1">Latitude (°N)</span>
+              <input type="number" step="0.000001" id="leadLat" required value="9.076500" placeholder="9.076500" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white text-xs font-mono focus:border-brand-amber focus:outline-none">
+            </div>
+            <div>
+              <span class="text-[10px] text-brand-warm/60 uppercase tracking-wider block mb-1">Longitude (°E)</span>
+              <input type="number" step="0.000001" id="leadLng" required value="7.398600" placeholder="7.398600" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white text-xs font-mono focus:border-brand-amber focus:outline-none">
+            </div>
+          </div>
+          <div id="leadGpsStatus" class="text-[10px] text-brand-warm/60 flex items-center justify-between">
+            <span>📍 Default: Abuja FCT (Central Zone)</span>
+            <div class="flex items-center gap-1 text-[9px] font-mono">
+              <button type="button" onclick="setAuditCoords(9.0765, 7.3986, 'Abuja')" class="px-1.5 py-0.5 rounded bg-white/5 hover:bg-white/10 text-brand-warm">Abuja</button>
+              <button type="button" onclick="setAuditCoords(6.5244, 3.3792, 'Lagos')" class="px-1.5 py-0.5 rounded bg-white/5 hover:bg-white/10 text-brand-warm">Lagos</button>
+              <button type="button" onclick="setAuditCoords(9.8965, 8.8583, 'Jos')" class="px-1.5 py-0.5 rounded bg-white/5 hover:bg-white/10 text-brand-warm">Jos</button>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" id="auditSubmitBtn" disabled aria-disabled="true" class="w-full py-3.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition-all font-heading shadow-lg shadow-brand-amber/20 mt-2 form-btn-unhighlighted">
+          Confirm Audit Booking
+        </button>
+      </form>
+    </div>
+  </div>
+
+
+{{end}}

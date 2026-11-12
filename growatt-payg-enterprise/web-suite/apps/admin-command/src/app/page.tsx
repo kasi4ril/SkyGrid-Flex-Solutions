@@ -312,13 +312,105 @@ const INITIAL_FLEET: FleetUnit[] = [
   },
 ];
 
+
+// ============================================================================
+// 6-TIER ENTERPRISE ROLE DASHBOARD SPECIFICATIONS
+// ============================================================================
+export interface RoleDashboardPage {
+  id: string;
+  label: string;
+  icon: string;
+}
+
+export const ROLE_DASHBOARD_PAGES: Record<string, RoleDashboardPage[]> = {
+  super_admin: [
+    { id: 'sa_executive', label: '🛡️ Executive Control Tower', icon: '🛡️' },
+    { id: 'sa_staff_rbac', label: '👥 Staff Onboarding & RBAC Matrix', icon: '👥' },
+    { id: 'sa_settings', label: '⚙️ Global Pricing & System Settings', icon: '⚙️' },
+    { id: 'sa_audit_ledger', label: '⛓️ SHA-256 Ledger Audit Watch', icon: '⛓️' },
+  ],
+  finance_officer: [
+    { id: 'fin_treasury', label: '💳 Treasury & Reconciliation Desk', icon: '💳' },
+    { id: 'fin_invoices', label: '🧾 Invoices & Aging Cohorts', icon: '🧾' },
+    { id: 'fin_verification', label: '🔍 Manual Payment & Token Verification', icon: '🔍' },
+    { id: 'fin_analytics', label: '📊 Revenue & Collections Analytics', icon: '📊' },
+  ],
+  operations_manager: [
+    { id: 'ops_fleet_gis', label: '🗺️ National GIS Fleet Command', icon: '🗺️' },
+    { id: 'ops_dispatch', label: '☀️ 16-Step Installation Dispatch Board', icon: '☀️' },
+    { id: 'ops_workforce', label: '👷 Field Workforce & Region Allocations', icon: '👷' },
+    { id: 'ops_inventory', label: '📦 Inventory & Serialized BOM Monitor', icon: '📦' },
+  ],
+  coren_inspector: [
+    { id: 'coren_safety', label: '🛡️ Safety & Compliance Watchtower', icon: '🛡️' },
+    { id: 'coren_earthing', label: '⚡ Earthing & Commissioning Sign-Off', icon: '⚡' },
+    { id: 'coren_tamper', label: '🔓 Hardware Tamper Clearance Queue', icon: '🔓' },
+    { id: 'coren_standards', label: '📜 Regulatory Certifications & Standards', icon: '📜' },
+  ],
+  technician: [
+    { id: 'tech_orders', label: '📋 My Assigned Work Orders', icon: '📋' },
+    { id: 'tech_logger', label: '🛠️ Job Execution & BOM Logger', icon: '🛠️' },
+    { id: 'tech_copilot', label: '🤖 Field AI Copilot (LocalGridAgent)', icon: '🤖' },
+    { id: 'tech_evidence', label: '📸 Field Evidence & Photo Upload', icon: '📸' },
+  ],
+  customer_support: [
+    { id: 'sup_helpdesk', label: '🎧 Helpdesk & Subscriber Lookup', icon: '🎧' },
+    { id: 'sup_tickets', label: '🎫 Support Ticket & Fault Queue', icon: '🎫' },
+    { id: 'sup_tokens', label: '⚡ Quick STS Token Resend & Diagnostics', icon: '⚡' },
+    { id: 'sup_chat', label: '💬 Live Customer Chat & Communications', icon: '💬' },
+  ],
+};
+
+export interface AuditStampInfo {
+  actorName: string;
+  actorRole: string;
+  status: string;
+  notes: string;
+  timestamp: string;
+  blockHash: string;
+}
+
 export default function AdminCommandCenter() {
   // Navigation & Theme
-  const [activeConsoleTab, setActiveConsoleTab] = useState<'fleet' | 'staff' | 'installations' | 'maintenance' | 'finance' | 'copilot'>('fleet');
+  const [activeConsoleTab, setActiveConsoleTab] = useState<string>('sa_executive');
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [persona, setPersona] = useState<UserPersona>('operations');
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [makerCheckerStamps, setMakerCheckerStamps] = useState<Record<string, AuditStampInfo>>({});
+
+  const normalizedRole = useMemo(() => {
+    if (activeRole === 'field_engineer') return 'technician';
+    if (activeRole === 'compliance_auditor') return 'coren_inspector';
+    return activeRole || 'super_admin';
+  }, [activeRole]);
+
+  const rolePages = useMemo(() => {
+    return ROLE_DASHBOARD_PAGES[normalizedRole] || ROLE_DASHBOARD_PAGES.super_admin;
+  }, [normalizedRole]);
+
+  useEffect(() => {
+    const validIds = (ROLE_DASHBOARD_PAGES[normalizedRole] || ROLE_DASHBOARD_PAGES.super_admin).map((p) => p.id);
+    if (!validIds.includes(activeConsoleTab)) {
+      setActiveConsoleTab(validIds[0]);
+    }
+  }, [normalizedRole]);
+
+  const handleMakerCheckerStamp = (rowId: string, status: string, defaultNotes: string, actionLabel: string) => {
+    const notes = typeof window !== 'undefined' ? (window.prompt(`Enter review notes for [${actionLabel}]:`, defaultNotes) || defaultNotes) : defaultNotes;
+    const nowUtc = new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+    const stamp: AuditStampInfo = {
+      actorName: activeUserEmail.split('@')[0].toUpperCase(),
+      actorRole: normalizedRole.replace('_', ' ').toUpperCase(),
+      status,
+      notes,
+      timestamp: nowUtc,
+      blockHash: 'SHA256:' + Math.random().toString(16).substring(2, 12),
+    };
+    setMakerCheckerStamps((prev) => ({ ...prev, [rowId]: stamp }));
+    showToast(`✓ ${actionLabel} recorded with Maker-Checker Audit Stamp.`);
+  };
+
 
   // Active Authenticated Role State (Instant Sandbox Impersonator)
   const [activeRole, setActiveRole] = useState<string>('super_admin');
@@ -878,28 +970,22 @@ export default function AdminCommandCenter() {
         </div>
       )}
 
-      {/* 3. ENTERPRISE 6-TAB CONSOLE NAVIGATION */}
+      {/* 3. ENTERPRISE DYNAMIC 4-PAGE ROLE CONSOLE NAVIGATION */}
       <div className="bg-white/90 dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800 px-6 py-2.5 flex items-center gap-2 overflow-x-auto backdrop-blur-md sticky top-16 z-40">
-        {[
-          { id: 'fleet', label: '🗺️ Fleet Watchtower & GIS Map' },
-          { id: 'staff', label: '👥 Staff Onboarding & RBAC' },
-          { id: 'installations', label: '☀️ 16-Step Installation Pipeline' },
-          { id: 'maintenance', label: '🔧 13-Step Maintenance & Tickets' },
-          { id: 'finance', label: '💳 Finance & Payment Verification' },
-          { id: 'copilot', label: '🤖 SkyTron Copilot & Audit Chain' },
-        ].map((tab) => {
+        {rolePages.map((tab) => {
           const isActive = activeConsoleTab === tab.id;
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveConsoleTab(tab.id as any)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition flex items-center gap-1.5 ${
+              onClick={() => setActiveConsoleTab(tab.id)}
+              className={`px-4 py-2 rounded-xl text-xs font-bold shrink-0 transition flex items-center gap-1.5 cursor-pointer ${
                 isActive
-                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20 dark:bg-emerald-500 dark:text-slate-950'
+                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20 dark:bg-emerald-500 dark:text-slate-950 font-black'
                   : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60'
               }`}
             >
-              {tab.label}
+              <span className="text-sm">{tab.icon}</span>
+              <span>{tab.label.replace(/^[^\s]+\s*/, '')}</span>
             </button>
           );
         })}
@@ -911,7 +997,7 @@ export default function AdminCommandCenter() {
         {/* ================================================================== */}
         {/* TAB 1: FLEET WATCHTOWER & GIS MAP                                  */}
         {/* ================================================================== */}
-        {activeConsoleTab === 'fleet' && (
+        {(activeConsoleTab === 'fleet' || activeConsoleTab === 'sa_executive' || activeConsoleTab === 'ops_fleet_gis') && (
           <div className="space-y-6">
             {/* Executive KPI Cards */}
             <section className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -1102,7 +1188,7 @@ export default function AdminCommandCenter() {
         {/* ================================================================== */}
         {/* TAB 2: STAFF ONBOARDING & RBAC MANAGEMENT                          */}
         {/* ================================================================== */}
-        {activeConsoleTab === 'staff' && (
+        {(activeConsoleTab === 'staff' || activeConsoleTab === 'sa_staff_rbac') && (
           <div className="space-y-6">
             {/* Header / Intro */}
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl flex flex-wrap items-center justify-between gap-4">
@@ -1419,7 +1505,7 @@ export default function AdminCommandCenter() {
         {/* ================================================================== */}
         {/* TAB 3: 16-STEP INSTALLATION PIPELINE                               */}
         {/* ================================================================== */}
-        {activeConsoleTab === 'installations' && (
+        {(activeConsoleTab === 'installations' || activeConsoleTab === 'ops_dispatch') && (
           <div className="space-y-6">
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl flex flex-wrap items-center justify-between gap-4">
               <div>
@@ -1645,7 +1731,7 @@ export default function AdminCommandCenter() {
         {/* ================================================================== */}
         {/* TAB 4: 13-STEP MAINTENANCE & FAULT WORK ORDERS                     */}
         {/* ================================================================== */}
-        {activeConsoleTab === 'maintenance' && (
+        {(activeConsoleTab === 'maintenance' || activeConsoleTab === 'sup_tickets') && (
           <div className="space-y-6">
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl flex flex-wrap items-center justify-between gap-4">
               <div>
@@ -1851,7 +1937,7 @@ export default function AdminCommandCenter() {
         {/* ================================================================== */}
         {/* TAB 5: FINANCE, INVOICES & PAYMENT VERIFICATION                    */}
         {/* ================================================================== */}
-        {activeConsoleTab === 'finance' && (
+        {(activeConsoleTab === 'finance' || activeConsoleTab === 'fin_verification') && (
           <div className="space-y-6">
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl flex flex-wrap items-center justify-between gap-4">
               <div>
@@ -1995,7 +2081,7 @@ export default function AdminCommandCenter() {
         {/* ================================================================== */}
         {/* TAB 6: MULTI-PERSONA SKYTRON COPILOT & AUDIT CHAIN                 */}
         {/* ================================================================== */}
-        {activeConsoleTab === 'copilot' && (
+        {(activeConsoleTab === 'copilot' || activeConsoleTab === 'sa_audit_ledger') && (
           <div className="space-y-6">
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl flex flex-wrap items-center justify-between gap-4">
               <div>
@@ -2180,6 +2266,379 @@ export default function AdminCommandCenter() {
                   Every privileged state change generates a SHA-256 hash linked to previous block.
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+
+        {/* ============================================================== */}
+        {/* SUPER ADMIN: Global Pricing & System Settings                  */}
+        {/* ============================================================== */}
+        {activeConsoleTab === 'sa_settings' && (
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <span className="text-xs font-mono font-bold text-amber-500 uppercase tracking-wider">Super Admin Master Controls</span>
+                <h3 className="text-xl font-black text-slate-900 dark:text-white mt-1">Global Pricing, Tariffs &amp; System Settings</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Configure global lease financing APR, NERC tariff benchmarks, and COREN compliance parameters.</p>
+              </div>
+              <span className="px-3 py-1 rounded-xl bg-purple-500/20 text-purple-600 dark:text-purple-300 font-mono font-bold text-xs border border-purple-500/30">
+                👑 Super Admin Authority
+              </span>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-6">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4">
+                <h4 className="text-sm font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-2">Leasing &amp; Financial Parameters</h4>
+                <div className="grid sm:grid-cols-2 gap-4 text-xs">
+                  <div>
+                    <label className="block text-slate-500 dark:text-slate-400 font-semibold mb-1">PAYG Financing APR (%)</label>
+                    <input type="number" defaultValue="18.5" step="0.1" className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white font-mono" />
+                  </div>
+                  <div>
+                    <label className="block text-slate-500 dark:text-slate-400 font-semibold mb-1">Minimum Down Payment (%)</label>
+                    <input type="number" defaultValue="15" step="1" className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white font-mono" />
+                  </div>
+                  <div>
+                    <label className="block text-slate-500 dark:text-slate-400 font-semibold mb-1">VAT on Solar Hardware (%)</label>
+                    <input type="number" defaultValue="7.5" step="0.1" className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white font-mono" />
+                  </div>
+                  <div>
+                    <label className="block text-slate-500 dark:text-slate-400 font-semibold mb-1">STS Token Grace Period (Days)</label>
+                    <input type="number" defaultValue="3" step="1" className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white font-mono" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4">
+                <h4 className="text-sm font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-2">Utility &amp; Regulatory Baselines</h4>
+                <div className="grid sm:grid-cols-2 gap-4 text-xs">
+                  <div>
+                    <label className="block text-slate-500 dark:text-slate-400 font-semibold mb-1">NERC Band-A Tariff (₦/kWh)</label>
+                    <input type="number" defaultValue="209" step="1" className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white font-mono" />
+                  </div>
+                  <div>
+                    <label className="block text-slate-500 dark:text-slate-400 font-semibold mb-1">Fuel Reference Price (₦/Liter)</label>
+                    <input type="number" defaultValue="1250" step="10" className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white font-mono" />
+                  </div>
+                  <div>
+                    <label className="block text-slate-500 dark:text-slate-400 font-semibold mb-1">COREN Max Earth Resistance (Ω)</label>
+                    <input type="number" defaultValue="5.00" step="0.1" className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white font-mono" />
+                  </div>
+                  <div>
+                    <label className="block text-slate-500 dark:text-slate-400 font-semibold mb-1">NEMSA Seal Prefix</label>
+                    <input type="text" defaultValue="SEAL-NG-" className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white font-mono" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
+              <span className="text-xs text-slate-500 font-mono">Modifications trigger cryptographic audit block and require Super Admin approval notes.</span>
+              <button
+                onClick={() => handleMakerCheckerStamp('sa_settings_row', 'CONFIG_COMMITTED', 'Updated global leasing parameters and NERC tariff benchmarks.', 'Save Global Settings')}
+                className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition shadow-md shadow-amber-500/20 cursor-pointer"
+              >
+                💾 Save Global Settings &amp; Commit to SHA-256 Ledger
+              </button>
+            </div>
+            {makerCheckerStamps['sa_settings_row'] && (
+              <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs font-mono space-y-1">
+                <div className="flex justify-between items-center text-emerald-400 font-bold">
+                  <span>✓ {makerCheckerStamps['sa_settings_row'].status}: {makerCheckerStamps['sa_settings_row'].actorName}</span>
+                  <span className="text-[10px] text-slate-400">{makerCheckerStamps['sa_settings_row'].timestamp}</span>
+                </div>
+                <p className="text-slate-300">{makerCheckerStamps['sa_settings_row'].notes}</p>
+                <p className="text-[10px] text-indigo-400 pt-1 border-t border-slate-700">{makerCheckerStamps['sa_settings_row'].blockHash}</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* FINANCE: Treasury & Invoices & Analytics                        */}
+        {/* ============================================================== */}
+        {activeConsoleTab === 'fin_treasury' && (
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex justify-between items-center">
+              <div>
+                <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Treasury &amp; Reconciliation Desk</span>
+                <h3 className="text-xl font-black text-slate-900 dark:text-white mt-1">Bank Gateway Webhooks vs. DVA Accounts</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Automated reconciliation matching between Moniepoint MFB, Paystack, and Dynamic Virtual Accounts (DVA).</p>
+              </div>
+              <span className="px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-mono font-bold text-xs">
+                100% Ledger Synced
+              </span>
+            </div>
+
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4">
+              <h4 className="text-sm font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-2">Incoming Payment Webhooks</h4>
+              <div className="space-y-3">
+                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">₦185,000</span>
+                      <span className="font-semibold text-slate-900 dark:text-white">Engr. Amina Danjuma</span>
+                      <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-mono text-[10px]">DVA: 9928174021</span>
+                    </div>
+                    <p className="text-slate-500 dark:text-slate-400 text-[11px] mt-0.5">Gateway: Moniepoint MFB • Ref: MP-TX-998821 • Synced 12m ago</p>
+                  </div>
+                  {makerCheckerStamps['treasury_1'] ? (
+                    <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">✓ {makerCheckerStamps['treasury_1'].status} ({makerCheckerStamps['treasury_1'].timestamp})</span>
+                  ) : (
+                    <button
+                      onClick={() => handleMakerCheckerStamp('treasury_1', 'RECONCILED', 'Auto-matched DVA hash with Moniepoint settlement API.', 'Reconcile Transfer')}
+                      className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs cursor-pointer"
+                    >
+                      ✓ Reconcile &amp; Stamp
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeConsoleTab === 'fin_invoices' && (
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex justify-between items-center">
+              <div>
+                <span className="text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">Portfolio Aging Analysis</span>
+                <h3 className="text-xl font-black text-slate-900 dark:text-white mt-1">Invoices &amp; Portfolio-at-Risk (PAR) Cohorts</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Active lease installment tracking with aging categories.</p>
+              </div>
+              <span className="px-3 py-1 rounded-xl bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-mono font-bold text-xs">
+                PAR &gt; 30d: 1.8%
+              </span>
+            </div>
+
+            <div className="grid sm:grid-cols-4 gap-4">
+              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+                <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold block">Current (0d Due)</span>
+                <span className="text-2xl font-black font-mono text-slate-900 dark:text-white mt-1 block">₦3,120,000</span>
+                <span className="text-[10px] text-emerald-600 dark:text-emerald-300">92 Contracts</span>
+              </div>
+              <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30">
+                <span className="text-[11px] text-amber-600 dark:text-amber-400 font-bold block">1 - 30d Aging</span>
+                <span className="text-2xl font-black font-mono text-slate-900 dark:text-white mt-1 block">₦285,000</span>
+                <span className="text-[10px] text-amber-600 dark:text-amber-300">3 in Grace</span>
+              </div>
+              <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30">
+                <span className="text-[11px] text-rose-600 dark:text-rose-400 font-bold block">31 - 60d PAR</span>
+                <span className="text-2xl font-black font-mono text-slate-900 dark:text-white mt-1 block">₦132,000</span>
+                <span className="text-[10px] text-rose-600 dark:text-rose-300">1 Tamper Hold</span>
+              </div>
+              <div className="p-4 rounded-xl bg-purple-500/10 border border-purple-500/30">
+                <span className="text-[11px] text-purple-600 dark:text-purple-400 font-bold block">60+ Days Default</span>
+                <span className="text-2xl font-black font-mono text-slate-900 dark:text-white mt-1 block">₦0.00</span>
+                <span className="text-[10px] text-purple-600 dark:text-purple-300">Zero Critical</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeConsoleTab === 'fin_analytics' && (
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex justify-between items-center">
+              <div>
+                <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Revenue Analytics Desk</span>
+                <h3 className="text-xl font-black text-slate-900 dark:text-white mt-1">Cash Collections vs. Amortization Curves</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Portfolio recovery velocity and regional payment efficiencies.</p>
+              </div>
+              <button onClick={() => showToast('Exported collections CSV.')} className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-xs font-bold transition">
+                📥 Export CSV
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* OPERATIONS: Workforce & Inventory                              */}
+        {/* ============================================================== */}
+        {activeConsoleTab === 'ops_workforce' && (
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex justify-between items-center">
+              <div>
+                <span className="text-xs font-mono font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Workforce Management</span>
+                <h3 className="text-xl font-black text-slate-900 dark:text-white mt-1">Field Workforce &amp; Regional Hub Allocations</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Manage technician schedules across Abuja, Jos, Otukpo, and Lagos.</p>
+              </div>
+              <span className="px-3 py-1 rounded-xl bg-amber-500/20 text-amber-700 dark:text-amber-300 font-mono font-bold text-xs">
+                8 Active Certified Techs
+              </span>
+            </div>
+          </div>
+        )}
+
+        {activeConsoleTab === 'ops_inventory' && (
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex justify-between items-center">
+              <div>
+                <span className="text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">BOM Warehouse</span>
+                <h3 className="text-xl font-black text-slate-900 dark:text-white mt-1">Inventory &amp; Serialized BOM Monitor</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Track store stock of inverters, LiFePO4 batteries, and security seals.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* COREN QA & SAFETY: Earthing & Tamper Clearance                 */}
+        {/* ============================================================== */}
+        {activeConsoleTab === 'coren_safety' && (
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex justify-between items-center">
+              <div>
+                <span className="text-xs font-mono font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">COREN Watchtower</span>
+                <h3 className="text-xl font-black text-slate-900 dark:text-white mt-1">Safety &amp; Compliance Watchtower</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Real-time stream of physical security shroud tamper alerts (TAMPER_OPEN).</p>
+              </div>
+              <span className="px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-mono font-bold text-xs">
+                100% Earthing Compliance
+              </span>
+            </div>
+          </div>
+        )}
+
+        {activeConsoleTab === 'coren_earthing' && (
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex justify-between items-center">
+              <div>
+                <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">COREN Commissioning Gate</span>
+                <h3 className="text-xl font-black text-slate-900 dark:text-white mt-1">Earthing &amp; Commissioning Sign-Off (≤ 5.0Ω Gate)</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Review technician-submitted photos and earthing resistance measurements for Stage 13.</p>
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm space-y-4">
+              <h4 className="text-sm font-bold text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-2">Pending Commissioning Queue</h4>
+              <div className="space-y-3">
+                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div>
+                    <span className="font-bold text-slate-900 dark:text-white text-sm">Site: Maitama Array (DEV-8F3A)</span>
+                    <p className="text-slate-500 dark:text-slate-400">Client: Engr. Amina Danjuma • Megger Reading: 1.8Ω (Passed ≤ 5.0Ω Gate)</p>
+                  </div>
+                  {makerCheckerStamps['earth_1'] ? (
+                    <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">✓ {makerCheckerStamps['earth_1'].status} ({makerCheckerStamps['earth_1'].timestamp})</span>
+                  ) : (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleMakerCheckerStamp('earth_1', 'APPROVED_COREN_COMPLIANCE', 'Verified 1.8Ω earth reading satisfies COREN standards.', 'Approve COREN Compliance')}
+                        className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs cursor-pointer"
+                      >
+                        ⚡ Approve COREN Compliance (≤ 5.0Ω Verified)
+                      </button>
+                      <button
+                        onClick={() => handleMakerCheckerStamp('earth_1', 'REJECTED_PIT', 'Pit resistance defective.', 'Reject Pit')}
+                        className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs cursor-pointer"
+                      >
+                        ✕ Reject
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeConsoleTab === 'coren_tamper' && (
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex justify-between items-center">
+              <div>
+                <span className="text-xs font-mono font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">Tamper Recovery Desk</span>
+                <h3 className="text-xl font-black text-slate-900 dark:text-white mt-1">Hardware Tamper Clearance Queue</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Authorize cryptographic resets for inverters locked out due to shroud intrusion.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeConsoleTab === 'coren_standards' && (
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm">
+              <h3 className="text-xl font-black text-slate-900 dark:text-white">Regulatory Certifications &amp; Standards</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">NEMSA Cat-A, IEEE 1547, and Nigerian Electricity Supply Industry rules.</p>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* TECHNICIAN: Orders, Logger, Copilot & Evidence                 */}
+        {/* ============================================================== */}
+        {activeConsoleTab === 'tech_orders' && (
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm flex justify-between items-center">
+              <div>
+                <span className="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">Field Technician Dispatch</span>
+                <h3 className="text-xl font-black text-slate-900 dark:text-white mt-1">My Assigned Work Orders</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Active installation and maintenance jobs assigned to your technician profile.</p>
+              </div>
+              <span className="px-3 py-1 rounded-xl bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 font-mono font-bold text-xs">
+                2 Active Jobs
+              </span>
+            </div>
+          </div>
+        )}
+
+        {activeConsoleTab === 'tech_logger' && (
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm">
+              <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Hardware Logger</span>
+              <h3 className="text-xl font-black text-slate-900 dark:text-white mt-1">Job Execution &amp; BOM Logger</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Input serial numbers for installed hardware and log earthing resistance (Ω).</p>
+            </div>
+          </div>
+        )}
+
+        {activeConsoleTab === 'tech_copilot' && (
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm">
+              <span className="text-xs font-mono font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Inverter Diagnostic AI</span>
+              <h3 className="text-xl font-black text-slate-900 dark:text-white mt-1">Field AI Copilot (LocalGridAgent)</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Role-scoped RAG assistant for Growatt error codes and Modbus register maps.</p>
+            </div>
+          </div>
+        )}
+
+        {activeConsoleTab === 'tech_evidence' && (
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm">
+              <h3 className="text-xl font-black text-slate-900 dark:text-white">Field Evidence &amp; Photo Upload</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Upload commissioning photos for earthing pit, DB wiring, and security seals.</p>
+            </div>
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* CUSTOMER SUPPORT: Helpdesk, Tokens & Chat                      */}
+        {/* ============================================================== */}
+        {activeConsoleTab === 'sup_helpdesk' && (
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm">
+              <span className="text-xs font-mono font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider">Subscriber Lookup Desk</span>
+              <h3 className="text-xl font-black text-slate-900 dark:text-white mt-1">Helpdesk &amp; Subscriber Lookup</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Search subscribers by phone, email, NIN, or meter ID.</p>
+            </div>
+          </div>
+        )}
+
+        {activeConsoleTab === 'sup_tokens' && (
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm">
+              <span className="text-xs font-mono font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Token Dispatch</span>
+              <h3 className="text-xl font-black text-slate-900 dark:text-white mt-1">Quick STS Token Resend &amp; Diagnostics</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">One-click 20-digit token lookup and resend via SMS or WhatsApp webhook.</p>
+            </div>
+          </div>
+        )}
+
+        {activeConsoleTab === 'sup_chat' && (
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-sm">
+              <span className="text-xs font-mono font-bold text-teal-600 dark:text-teal-400 uppercase tracking-wider">Live Support Desk</span>
+              <h3 className="text-xl font-black text-slate-900 dark:text-white mt-1">Live Customer Chat &amp; Communications</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Live subscriber messaging interface.</p>
             </div>
           </div>
         )}

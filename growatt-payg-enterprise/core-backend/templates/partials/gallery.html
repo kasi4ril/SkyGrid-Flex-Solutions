@@ -1,0 +1,126 @@
+{{define "gallery"}}
+  <section id="gallery" class="py-20 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
+    <!-- Anchor alias for backward-compatibility with deep-links -->
+    <span id="installations" class="block -mt-24 pt-24 invisible pointer-events-none"></span>
+    
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-amber/15 border border-brand-amber/30 text-brand-amber text-xs font-semibold mb-3">
+        <span>📸</span> Certified African Solar Fleet
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-heading font-extrabold text-white">Project Gallery &amp; Installations</h2>
+      <p class="text-sm sm:text-base text-brand-warm/75 mt-3">
+        Explore verified photovoltaic arrays, LiFePO4 battery banks, and hybrid Growatt inverters deployed across residential homes, medical clinics, and industrial facilities in Nigeria.
+      </p>
+    </div>
+
+    <!-- 3 Category Cards -->
+    <div class="grid lg:grid-cols-3 gap-8">
+      
+      <!-- Category 1: Residential -->
+      <div class="glass-card-dark rounded-3xl overflow-hidden border border-white/10 group hover:border-brand-amber/50 transition duration-300 flex flex-col justify-between">
+        <div>
+          <div class="relative h-64 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1508873696983-2df5293cb395?auto=format&fit=crop&w=800&q=80" 
+                 alt="Residential modern home rooftop solar installation" 
+                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                 onerror="this.src='https://images.unsplash.com/photo-1592833159155-c62df1b65634?auto=format&fit=crop&w=800&q=80'">
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-transparent to-transparent"></div>
+            <span class="absolute top-4 left-4 bg-brand-dark/80 backdrop-blur-md text-brand-amber text-xs font-bold px-3 py-1 rounded-full border border-white/10">
+              Residential Homes
+            </span>
+          </div>
+          
+          <div class="p-6">
+            <h3 class="font-heading font-extrabold text-xl text-white mb-2">Modern Home Energy Storage</h3>
+            <p class="text-xs text-brand-warm/75 leading-relaxed mb-4">
+              Silent, reliable rooftop power for flats and duplexes. Protect your family from grid outages, power air conditioning with peace of mind, and eliminate generator noise and fumes forever.
+            </p>
+            <div class="space-y-1.5 text-xs text-brand-warm/70">
+              <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-amber"></i> 0ms Seamless Automatic Transfer</div>
+              <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-amber"></i> Quiet indoor LiFePO4 battery enclosures</div>
+              <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-amber"></i> Rapid 48-Hour Professional Deployment</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-6 pt-0">
+          <button onclick="openAuditModal('Residential')" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition">
+            Explore Residential Plans &rarr;
+          </button>
+        </div>
+      </div>
+
+      <!-- Category 2: Commercial -->
+      <div class="glass-card-dark rounded-3xl overflow-hidden border border-white/10 group hover:border-brand-teal/50 transition duration-300 flex flex-col justify-between">
+        <div>
+          <div class="relative h-64 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1497440001374-f26997328c1b?auto=format&fit=crop&w=800&q=80" 
+                 alt="Commercial clinic and office rooftop solar installation" 
+                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                 onerror="this.src='https://images.unsplash.com/photo-1548337138-e87d889cc369?auto=format&fit=crop&w=800&q=80'">
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-transparent to-transparent"></div>
+            <span class="absolute top-4 left-4 bg-brand-dark/80 backdrop-blur-md text-brand-teal text-xs font-bold px-3 py-1 rounded-full border border-white/10">
+              Commercial &amp; SMEs
+            </span>
+          </div>
+          
+          <div class="p-6">
+            <h3 class="font-heading font-extrabold text-xl text-white mb-2">Clinics, Retail &amp; Corporate Hubs</h3>
+            <p class="text-xs text-brand-warm/75 leading-relaxed mb-4">
+              Uninterrupted continuity for diagnostic centers, pharmacies, supermarkets, schools, and offices. Protect refrigerated medications and eliminate massive fuel bills during daylight business hours.
+            </p>
+            <div class="space-y-1.5 text-xs text-brand-warm/70">
+              <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-teal"></i> Refrigerated cold-chain protection</div>
+              <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-teal"></i> Daytime direct solar self-consumption</div>
+              <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-teal"></i> Tax-deductible clean energy leasing</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-6 pt-0">
+          <button onclick="openAuditModal('Commercial SME')" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition">
+            Explore Commercial Plans &rarr;
+          </button>
+        </div>
+      </div>
+
+      <!-- Category 3: Light Industrial -->
+      <div class="glass-card-dark rounded-3xl overflow-hidden border border-white/10 group hover:border-purple-400/50 transition duration-300 flex flex-col justify-between">
+        <div>
+          <div class="relative h-64 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1584271854089-9bb3e5168e32?auto=format&fit=crop&w=800&q=80" 
+                 alt="Light-industrial warehouse and factory solar microgrid" 
+                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                 onerror="this.src='https://images.unsplash.com/photo-1521618755572-156ae0cdd74d?auto=format&fit=crop&w=800&q=80'">
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-transparent to-transparent"></div>
+            <span class="absolute top-4 left-4 bg-brand-dark/80 backdrop-blur-md text-purple-400 text-xs font-bold px-3 py-1 rounded-full border border-white/10">
+              Industrial &amp; Agro
+            </span>
+          </div>
+          
+          <div class="p-6">
+            <h3 class="font-heading font-extrabold text-xl text-white mb-2">Agro-Processing &amp; Warehouses</h3>
+            <p class="text-xs text-brand-warm/75 leading-relaxed mb-4">
+              High-yield 3-phase microgrids for grain milling, manufacturing workshops, cold storage hubs, and logistics facilities. Built with heavy surge tolerances for inductive motor loads.
+            </p>
+            <div class="space-y-1.5 text-xs text-brand-warm/70">
+              <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-purple-400"></i> Balanced 3-Phase 400V Distribution</div>
+              <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-purple-400"></i> Containerized Modular LiFePO4 Banks</div>
+              <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-purple-400"></i> Dedicated 4-Hour On-Site SLA Response</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-6 pt-0">
+          <button onclick="openAuditModal('Industrial Microgrid')" class="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition">
+            Explore Industrial Plans &rarr;
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+
+{{end}}

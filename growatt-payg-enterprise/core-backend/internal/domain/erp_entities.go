@@ -95,6 +95,11 @@ type InstallationWorkOrder struct {
 	DeviceID               string              `json:"device_id,omitempty"`
 	GrowattSerial          string              `json:"growatt_serial,omitempty"`
 	BatterySerial          string              `json:"battery_serial,omitempty"`
+	ApprovedByUserID       string              `json:"approved_by_user_id,omitempty"`
+	ApprovedByStaffName    string              `json:"approved_by_staff_name,omitempty"`
+	ApprovalStatus         string              `json:"approval_status,omitempty"`
+	ApprovalNotes          string              `json:"approval_notes,omitempty"`
+	ReviewedAt             *time.Time          `json:"reviewed_at,omitempty"`
 	Notes                  string              `json:"notes,omitempty"`
 	CreatedAt              time.Time           `json:"created_at"`
 	UpdatedAt              time.Time           `json:"updated_at"`
@@ -167,6 +172,11 @@ type MaintenanceTicket struct {
 	SupervisorUserID       string            `json:"supervisor_user_id,omitempty"`
 	SupervisorNotes        string            `json:"supervisor_notes,omitempty"`
 	SupervisorVerifiedAt   *time.Time        `json:"supervisor_verified_at,omitempty"`
+	ApprovedByUserID       string            `json:"approved_by_user_id,omitempty"`
+	ApprovedByStaffName    string            `json:"approved_by_staff_name,omitempty"`
+	ApprovalStatus         string            `json:"approval_status,omitempty"`
+	ApprovalNotes          string            `json:"approval_notes,omitempty"`
+	ReviewedAt             *time.Time        `json:"reviewed_at,omitempty"`
 	CustomerNotifiedAt     *time.Time        `json:"customer_notified_at,omitempty"`
 	ClosedAt               *time.Time        `json:"closed_at,omitempty"`
 	CreatedAt              time.Time         `json:"created_at"`
@@ -225,6 +235,11 @@ type FinancePayment struct {
 	Status              PaymentStatus `json:"status"`
 	VerifiedByUserID    string        `json:"verified_by_user_id,omitempty"`
 	VerifiedAt          *time.Time    `json:"verified_at,omitempty"`
+	ApprovedByUserID    string        `json:"approved_by_user_id,omitempty"`
+	ApprovedByStaffName string        `json:"approved_by_staff_name,omitempty"`
+	ApprovalStatus      string        `json:"approval_status,omitempty"`
+	ApprovalNotes       string        `json:"approval_notes,omitempty"`
+	ReviewedAt          *time.Time    `json:"reviewed_at,omitempty"`
 	STSTokenIssued      string        `json:"sts_token_issued,omitempty"`
 	CreditDaysExtended  float64       `json:"credit_days_extended"`
 	RejectionReason     string        `json:"rejection_reason,omitempty"`

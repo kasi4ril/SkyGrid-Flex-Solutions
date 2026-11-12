@@ -1,0 +1,331 @@
+{{define "modal_auth"}}
+  <!-- Modal 3: Unified IAM & Workspace Sign In Modal -->
+  <div id="signInModal" style="display: none;" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-card-dark rounded-3xl max-w-lg w-full p-6 sm:p-8 border border-white/15 relative shadow-2xl my-8">
+      <button onclick="closeModal('signInModal')" class="absolute top-5 right-5 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center justify-between mb-3">
+        <div class="w-12 h-12 rounded-2xl bg-brand-amber/20 border border-brand-amber/30 flex items-center justify-center text-brand-amber">
+          <i data-lucide="lock" class="w-6 h-6"></i>
+        </div>
+        <span class="px-3 py-1 rounded-full bg-brand-amber/15 text-brand-amber border border-brand-amber/30 text-[11px] font-bold font-mono uppercase tracking-wider">
+          Secure Access
+        </span>
+      </div>
+
+      <h3 class="text-2xl font-heading font-extrabold text-white">Customer Solar Portal Login</h3>
+      <p class="text-xs text-brand-warm/75 mt-1">
+        Enter your registered email address or phone and password to access your personal energy telemetry, STS tokens, and PAYG account.
+      </p>
+
+      <!-- Customer Testing Bar (One-Click Pre-fill) -->
+      <div id="devTestAccountsBar" class="mt-3 p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-[11px] space-y-2">
+        <div class="flex items-center justify-between text-amber-300">
+          <span class="font-bold flex items-center gap-1.5">
+            <span>☀️</span>
+            <span>Customer Sandbox Account:</span>
+          </span>
+          <span class="text-[10px] text-amber-300 font-mono px-1.5 py-0.5 rounded bg-black/40 border border-amber-500/30">2FA Verified</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="quickFillDevAccount('customer@skytron.ng', 'SolarCustomer2026!')" class="w-full px-3 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-mono text-xs text-center transition cursor-pointer border border-amber-500/30 font-bold">
+            ☀️ Customer Test Account (customer@skytron.ng)
+          </button>
+        </div>
+      </div>
+
+      <!-- Primary Credentials Form (Email + Password ONLY — Pure Customer Login) -->
+      <form onsubmit="handlePortalSignIn(event)" class="mt-4 space-y-3.5 text-xs">
+        <div>
+          <label class="block text-brand-warm/80 font-bold mb-1">Customer Email Address or Registered Phone</label>
+          <input type="text" id="portalLoginId" required value="customer@skytron.ng" placeholder="e.g. customer@skytron.ng or +234..." class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none font-mono text-xs">
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block text-brand-warm/80 font-bold">Password</label>
+            <button type="button" onclick="closeModal('signInModal'); openForgotPasswordModal('portalLoginId')" class="text-xs text-brand-amber hover:underline font-semibold cursor-pointer">Forgot Password?</button>
+          </div>
+          <input type="password" id="portalLoginPass" required value="SolarCustomer2026!" placeholder="••••••••••••" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none text-xs">
+        </div>
+
+        <div id="signInStatusMsg" style="display: none;" class="p-2.5 rounded-xl text-xs font-mono"></div>
+
+        <button type="submit" id="portalSignInBtn" class="w-full py-3.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition font-heading cursor-pointer shadow-lg shadow-brand-amber/20">
+          ☀️ Login to Customer Portal
+        </button>
+
+        <div class="pt-3 text-center text-xs text-brand-warm/80 border-t border-white/10 flex items-center justify-between">
+          <button type="button" onclick="closeModal('signInModal'); openModal('signUpModal')" class="font-bold text-brand-teal hover:underline inline-flex items-center gap-1 cursor-pointer">
+            <span>✨ New Customer? Register with NIN</span> &rarr;
+          </button>
+          <button type="button" onclick="closeModal('signInModal'); openStaffSignInModal()" class="text-brand-amber hover:underline inline-flex items-center gap-1 cursor-pointer font-bold">
+            <span>👷 Staff &amp; Executive Watchtower Sign In</span> &rarr;
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Self-Service Forgot Password & Password Recovery -->
+  <div id="forgotPasswordModal" style="display: none; z-index: 9999 !important;" class="hidden fixed inset-0 z-[9999] overflow-y-auto bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+    <div class="glass-card-dark rounded-3xl max-w-md w-full p-6 sm:p-8 border border-white/15 relative shadow-2xl my-8">
+      <button onclick="closeModal('forgotPasswordModal')" aria-label="Close Modal" class="absolute top-5 right-5 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition cursor-pointer">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-brand-amber/20 border border-brand-amber/30 flex items-center justify-center text-brand-amber text-xl font-bold">
+          🔑
+        </div>
+        <div>
+          <h3 id="forgotModalHeading" class="text-xl sm:text-2xl font-heading font-extrabold text-white">Reset Your Password</h3>
+          <p id="forgotModalSubheading" class="text-xs text-brand-warm/75">Recover access to your account via verified email or phone.</p>
+        </div>
+      </div>
+
+      <!-- Stage 1: Request Recovery Code -->
+      <form id="forgotStageRequestForm" onsubmit="handleRequestRecoveryCode(event)" class="space-y-4 text-xs">
+        <p class="text-xs text-brand-warm/80 leading-relaxed">
+          Enter your registered email address or phone number. We will dispatch a 6-digit recovery code to both destinations.
+        </p>
+
+        <div>
+          <label class="block text-brand-warm/90 font-bold mb-1">Account Email or Phone Number</label>
+          <input type="text" id="forgotIdentifierInput" required placeholder="e.g. customer@example.com or +234..." class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-brand-warm/40 focus:border-brand-amber focus:outline-none text-xs">
+        </div>
+
+        <div id="forgotRequestStatusMsg" style="display: none;" class="p-2.5 rounded-xl text-xs font-mono"></div>
+
+        <button type="submit" id="forgotRequestBtn" class="w-full py-3.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition font-heading cursor-pointer shadow-lg shadow-brand-amber/20">
+          Send Recovery Code
+        </button>
+
+        <div class="pt-2 text-center text-xs">
+          <button type="button" onclick="closeModal('forgotPasswordModal'); openModal('signInModal')" class="text-brand-warm/70 hover:text-white hover:underline cursor-pointer">
+            &larr; Remember your password? Back to Login
+          </button>
+        </div>
+      </form>
+
+      <!-- Stage 2: Confirm Recovery Code and Set New Password -->
+      <form id="forgotStageResetForm" style="display: none;" onsubmit="handleConfirmPasswordReset(event)" class="space-y-3.5 text-xs">
+        <p class="text-xs text-brand-warm/80 leading-relaxed">
+          Enter the 6-digit code sent to your email &amp; phone, and enter your new password (minimum 8 characters).
+        </p>
+
+        <!-- Prominent Developer Sandbox Recovery Code Panel -->
+        <div id="forgotDevCodePanel" class="p-3.5 rounded-2xl bg-gradient-to-r from-purple-950/80 via-slate-900 to-indigo-950/80 border-2 border-purple-500/50 shadow-lg shadow-purple-950/50 text-xs space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="inline-flex items-center gap-1.5 font-bold text-purple-300">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>🛠️ Developer Recovery Code</span>
+            </span>
+            <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-purple-500/30 text-purple-200 border border-purple-400/30">
+              Dev Mode Active
+            </span>
+          </div>
+          <div class="flex items-center justify-between bg-black/60 p-2.5 rounded-xl border border-purple-500/40">
+            <div>
+              <span class="text-[10px] text-purple-300/80 block uppercase tracking-wider font-semibold">Recovery Code</span>
+              <span id="forgotDevCodeText" class="font-mono font-black text-2xl text-amber-300 tracking-[0.25em]">654321</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="fillDevRecoveryCode()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition flex items-center gap-1 cursor-pointer" title="Auto-fill recovery code into input">
+                <span>⚡ Auto-Fill</span>
+              </button>
+              <button type="button" onclick="copyDevRecoveryCode()" class="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs border border-white/20 transition cursor-pointer" title="Copy code to clipboard">
+                <span>📋</span>
+              </button>
+              <button type="button" onclick="fetchActiveDevCode('recovery')" class="px-2 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-bold transition cursor-pointer" title="Fetch latest code from API">
+                <span>🔍</span>
+              </button>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-[10px] text-purple-200/70 pt-0.5">
+            <span>💡 Live delivery simulated. Automatically disabled in production.</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-brand-warm/90 font-bold mb-1">6-Digit Recovery Code</label>
+          <input type="text" id="recoveryCodeInput" maxlength="6" required placeholder="• • • • • •" class="w-full text-center tracking-[0.4em] font-mono text-xl font-bold py-2 bg-black/60 border border-white/20 rounded-xl text-white focus:border-brand-amber focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-brand-warm/90 font-bold mb-1">New Password (Min 8 characters)</label>
+          <input type="password" id="newPasswordInput" required placeholder="••••••••••••" class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none text-xs">
+        </div>
+
+        <div>
+          <label class="block text-brand-warm/90 font-bold mb-1">Confirm New Password</label>
+          <input type="password" id="confirmNewPasswordInput" required placeholder="••••••••••••" class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none text-xs">
+        </div>
+
+        <div id="forgotResetStatusMsg" style="display: none;" class="p-2.5 rounded-xl text-xs font-mono"></div>
+
+        <button type="submit" id="forgotResetBtn" class="w-full py-3.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 transition font-heading cursor-pointer shadow-lg shadow-emerald-600/20">
+          Update Password &amp; Return to Login
+        </button>
+
+        <div class="flex items-center justify-between text-xs pt-1">
+          <button type="button" onclick="backToRecoveryRequestStage()" class="text-brand-amber hover:underline cursor-pointer">
+            &larr; Re-enter Email/Phone
+          </button>
+          <button type="button" onclick="closeModal('forgotPasswordModal')" class="text-brand-warm/60 hover:text-white cursor-pointer">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Two-Factor Authentication (2FA / MFA Code Verification) -->
+  <div id="mfaModal" style="display: none; z-index: 9999 !important;" class="hidden fixed inset-0 z-[9999] overflow-y-auto bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+    <div class="glass-card-dark rounded-3xl max-w-md w-full p-6 sm:p-8 border border-white/15 relative shadow-2xl my-8">
+      <button onclick="closeModal('mfaModal')" aria-label="Close 2FA Modal" class="absolute top-5 right-5 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition cursor-pointer">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-teal-500/20 border border-teal-500/30 flex items-center justify-center text-teal-400 text-xl font-bold">
+          🛡️
+        </div>
+        <div>
+          <h3 class="text-xl sm:text-2xl font-heading font-extrabold text-white">Two-Factor Verification (2FA)</h3>
+          <p class="text-xs text-brand-warm/75">Identity verification code required to proceed.</p>
+        </div>
+      </div>
+
+      <p class="text-xs text-brand-warm/80 leading-relaxed mb-3">
+        For your security, a 6-digit verification code was dispatched to your registered contacts:
+      </p>
+
+      <div class="mb-4 p-3 rounded-2xl bg-white/5 border border-white/10 text-xs space-y-1.5">
+        <div class="flex items-center justify-between text-brand-warm/90">
+          <span class="text-brand-warm/60">📧 Email Code:</span>
+          <span id="mfaMaskedEmail" class="font-mono font-bold text-white">a***n@skytron.ng</span>
+        </div>
+        <div class="flex items-center justify-between text-brand-warm/90">
+          <span class="text-brand-warm/60">📱 SMS / Phone:</span>
+          <span id="mfaMaskedPhone" class="font-mono font-bold text-white">+234800****766</span>
+        </div>
+        <div class="flex items-center justify-between text-[11px] text-brand-amber font-medium pt-1 border-t border-white/10">
+          <span>⏱️ Valid for 5 minutes</span>
+          <span>Max 5 attempts</span>
+        </div>
+      </div>
+
+      <!-- Prominent Developer Sandbox Code Panel (Active in Dev/Testing) -->
+      <div id="mfaDevCodePanel" class="mb-4 p-3.5 rounded-2xl bg-gradient-to-r from-purple-950/80 via-slate-900 to-indigo-950/80 border-2 border-purple-500/50 shadow-lg shadow-purple-950/50 text-xs space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="inline-flex items-center gap-1.5 font-bold text-purple-300">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>🛠️ Developer Verification Code</span>
+          </span>
+          <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-purple-500/30 text-purple-200 border border-purple-400/30">
+            Dev Mode Active
+          </span>
+        </div>
+        <div class="flex items-center justify-between bg-black/60 p-2.5 rounded-xl border border-purple-500/40">
+          <div>
+            <span class="text-[10px] text-purple-300/80 block uppercase tracking-wider font-semibold">2FA OTP Code</span>
+            <span id="mfaDevCodeText" class="font-mono font-black text-2xl text-amber-300 tracking-[0.25em]">123456</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button type="button" onclick="fillDevMFACode()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition flex items-center gap-1 cursor-pointer" title="Auto-fill verification code into input">
+              <span>⚡ Auto-Fill</span>
+            </button>
+            <button type="button" onclick="copyDevMFACode()" class="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs border border-white/20 transition cursor-pointer" title="Copy code to clipboard">
+              <span>📋</span>
+            </button>
+            <button type="button" onclick="fetchActiveDevCode('mfa')" class="px-2 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-bold transition cursor-pointer" title="Fetch latest code from API">
+              <span>🔍</span>
+            </button>
+          </div>
+        </div>
+        <div class="flex items-center justify-between text-[10px] text-purple-200/70 pt-0.5">
+          <span>💡 Live delivery simulated. Automatically disabled in production.</span>
+        </div>
+      </div>
+
+      <form onsubmit="handleVerifyMFACode(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-brand-warm/90 font-bold mb-1">6-Digit Verification Code</label>
+          <input type="text" id="mfaCodeInput" maxlength="6" required placeholder="• • • • • •" class="w-full text-center tracking-[0.5em] font-mono text-2xl font-bold py-3 bg-black/60 border border-white/20 rounded-xl text-white focus:border-brand-amber focus:outline-none">
+        </div>
+
+        <div id="mfaStatusMsg" style="display: none;" class="p-2.5 rounded-xl text-xs font-mono"></div>
+
+        <button type="submit" id="mfaVerifyBtn" class="w-full py-3.5 rounded-xl text-xs font-bold text-slate-950 bg-brand-amber hover:bg-amber-400 transition font-heading cursor-pointer shadow-lg shadow-brand-amber/20">
+          Verify Code &amp; Enter Dashboard
+        </button>
+
+        <div class="flex items-center justify-between text-xs pt-1">
+          <button type="button" onclick="handleResendMFACode()" class="text-brand-amber hover:underline font-semibold cursor-pointer">
+            🔄 Resend Code (SMS &amp; Email)
+          </button>
+          <button type="button" onclick="closeModal('mfaModal'); openModal('signInModal')" class="text-brand-warm/60 hover:text-white cursor-pointer">
+            &larr; Back to Login
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Authenticated User Change Password -->
+  <div id="changePasswordModal" style="display: none; z-index: 9999 !important;" class="hidden fixed inset-0 z-[9999] overflow-y-auto bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+    <div class="glass-card-dark rounded-3xl max-w-md w-full p-6 sm:p-8 border border-white/15 relative shadow-2xl my-8">
+      <button onclick="closeModal('changePasswordModal')" aria-label="Close Change Password Modal" class="absolute top-5 right-5 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition cursor-pointer">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-brand-amber/20 border border-brand-amber/30 flex items-center justify-center text-brand-amber text-xl font-bold">
+          🔑
+        </div>
+        <div>
+          <h3 class="text-xl sm:text-2xl font-heading font-extrabold text-white">Change Your Password</h3>
+          <p class="text-xs text-brand-warm/75">Update your account password to secure your credentials.</p>
+        </div>
+      </div>
+
+      <p class="text-xs text-brand-warm/80 leading-relaxed mb-4">
+        Enter your current password and choose a new secure password (minimum 8 characters).
+      </p>
+
+      <form onsubmit="handleSubmitChangePassword(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block text-brand-warm/90 font-bold mb-1">Current Password</label>
+          <input type="password" id="currentPasswordInput" required placeholder="••••••••••••" class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none text-xs">
+        </div>
+
+        <div>
+          <label class="block text-brand-warm/90 font-bold mb-1">New Password (Min 8 characters)</label>
+          <input type="password" id="changeNewPasswordInput" required placeholder="••••••••••••" class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none text-xs">
+        </div>
+
+        <div>
+          <label class="block text-brand-warm/90 font-bold mb-1">Confirm New Password</label>
+          <input type="password" id="changeConfirmPasswordInput" required placeholder="••••••••••••" class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white focus:border-brand-amber focus:outline-none text-xs">
+        </div>
+
+        <div id="changePasswordStatusMsg" style="display: none;" class="p-2.5 rounded-xl text-xs font-mono"></div>
+
+        <button type="submit" id="changePasswordBtn" class="w-full py-3.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition font-heading cursor-pointer shadow-lg shadow-brand-amber/20">
+          Update Password
+        </button>
+
+        <div class="pt-2 text-center text-xs">
+          <button type="button" onclick="closeModal('changePasswordModal')" class="text-brand-warm/60 hover:text-white cursor-pointer">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+{{end}}

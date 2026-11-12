@@ -1,0 +1,26 @@
+{{define "base"}}<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  {{template "head" .}}
+</head>
+<body class="selection:bg-brand-amber selection:text-brand-dark antialiased min-h-screen flex flex-col">
+  {{template "navbar" .}}
+
+  {{template "content" .}}
+
+  {{template "footer" .}}
+
+  <!-- Modals & Dialogs -->
+  {{template "modal_package" .}}
+  {{template "modal_audit" .}}
+  {{template "modal_signup" .}}
+  {{template "modal_customer_portal" .}}
+  {{template "modal_staff" .}}
+  {{template "modal_admin_portal" .}}
+  {{template "modal_auth" .}}
+
+  <!-- JavaScript Application Logic -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
+{{end}}

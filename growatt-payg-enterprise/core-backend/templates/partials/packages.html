@@ -1,0 +1,231 @@
+{{define "packages"}}
+  <section id="packages" class="py-20 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
+    
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-amber/15 border border-brand-amber/30 text-brand-amber text-xs font-semibold mb-3">
+        <span>📦</span> Factory-Calibrated Hardware Packages
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-heading font-extrabold text-white">Engineered Solar Solutions</h2>
+      <p class="text-sm sm:text-base text-brand-warm/75 mt-3">
+        Choose from pre-engineered Growatt LiFePO4 packages configured for residential flats, family duplexes, commercial enterprises, and industrial facilities.
+      </p>
+    </div>
+
+    <!-- 4 Package Cards Grid -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      
+      <!-- Package 1: Essential Home -->
+      <div class="glass-card-dark rounded-3xl p-6 border border-white/10 flex flex-col justify-between hover:border-brand-amber/50 transition duration-300">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-xs font-bold uppercase tracking-wider text-brand-teal bg-brand-teal/15 px-2.5 py-1 rounded-lg">Residential Starter</span>
+            <span class="text-[11px] text-brand-warm/60">3.0 kVA</span>
+          </div>
+          
+          <h3 class="font-heading font-extrabold text-xl text-white">Essential Home</h3>
+          <p class="text-xs text-brand-warm/70 mt-1">2–3 Bedroom Flats &amp; Small Households</p>
+
+          <div class="my-5 p-4 rounded-2xl bg-black/40 border border-white/5 space-y-2 text-xs">
+            <div class="flex justify-between"><span class="text-brand-warm/60">Inverter:</span> <span class="font-semibold text-white">Growatt SPF 3000TL</span></div>
+            <div class="flex justify-between"><span class="text-brand-warm/60">Battery:</span> <span class="font-semibold text-brand-teal">5.12 kWh LiFePO4</span></div>
+            <div class="flex justify-between"><span class="text-brand-warm/60">Solar Array:</span> <span class="font-semibold text-white">2.70 kWp Mono PERC</span></div>
+            <div class="flex justify-between"><span class="text-brand-warm/60">Warranty:</span> <span class="font-semibold text-brand-amber">10-Yr Battery / 5-Yr Inv</span></div>
+          </div>
+
+          <div class="text-xs text-brand-warm/75 space-y-1.5 mb-6">
+            <p class="font-bold text-white text-[11px] uppercase tracking-wider">Supported Appliances:</p>
+            <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-teal"></i> 8x LED Bulbs &amp; Security Lights</div>
+            <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-teal"></i> 3x Standing / Ceiling Fans</div>
+            <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-teal"></i> 55" Smart TV + Starlink + Laptops</div>
+            <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-teal"></i> Inverter Refrigerator (24/7)</div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-white/10">
+          <div class="flex items-baseline justify-between mb-2">
+            <div>
+              <span class="text-[10px] uppercase text-brand-warm/60 block">Deposit (30%)</span>
+              <span class="text-base font-heading font-bold text-white">₦855,000</span>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] uppercase text-brand-amber font-semibold block">36-Mo. Instalment</span>
+              <span class="text-lg font-heading font-extrabold text-brand-amber">₦78,500<span class="text-xs font-normal text-brand-warm/60">/mo</span></span>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-2 mt-4">
+            <button onclick="openPackageModal('Essential Home', 'GW-SPF3000-LFP5', '3.0 kVA / 5.12 kWh LiFePO4', '₦2,850,000', '₦855,000', '₦78,500/mo', '2–3 Bedroom Flats')" class="w-full py-2.5 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition">
+              View Details
+            </button>
+            <button onclick="openAuditModal('Essential Home')" class="w-full py-2.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition">
+              Select Plan
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Package 2: Family Solar (Featured) -->
+      <div class="glass-card-dark rounded-3xl p-6 border-2 border-brand-amber/80 flex flex-col justify-between relative shadow-xl shadow-brand-amber/10">
+        <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-brand-amber text-brand-dark font-extrabold text-[10px] tracking-wider uppercase px-3 py-1 rounded-full shadow-md">
+          Most Popular for Duplexes
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-4 mt-1">
+            <span class="text-xs font-bold uppercase tracking-wider text-brand-amber bg-brand-amber/15 px-2.5 py-1 rounded-lg">Family Standard</span>
+            <span class="text-[11px] text-brand-warm/60">5.0 kVA</span>
+          </div>
+          
+          <h3 class="font-heading font-extrabold text-xl text-white">Family Solar</h3>
+          <p class="text-xs text-brand-warm/70 mt-1">4–5 Bedroom Duplexes &amp; Active Homes</p>
+
+          <div class="my-5 p-4 rounded-2xl bg-black/40 border border-white/5 space-y-2 text-xs">
+            <div class="flex justify-between"><span class="text-brand-warm/60">Inverter:</span> <span class="font-semibold text-white">Growatt SPF 5000ES</span></div>
+            <div class="flex justify-between"><span class="text-brand-warm/60">Battery:</span> <span class="font-semibold text-brand-teal">10.24 kWh LiFePO4</span></div>
+            <div class="flex justify-between"><span class="text-brand-warm/60">Solar Array:</span> <span class="font-semibold text-white">5.40 kWp Mono PERC</span></div>
+            <div class="flex justify-between"><span class="text-brand-warm/60">Warranty:</span> <span class="font-semibold text-brand-amber">10-Yr Battery / 5-Yr Inv</span></div>
+          </div>
+
+          <div class="text-xs text-brand-warm/75 space-y-1.5 mb-6">
+            <p class="font-bold text-white text-[11px] uppercase tracking-wider">Supported Appliances:</p>
+            <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-amber"></i> Full Essential Home Loads</div>
+            <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-amber"></i> 1x 1.0 HP Inverter AC (Day + Night)</div>
+            <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-amber"></i> Deep Chest Freezer (250W)</div>
+            <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-amber"></i> 1.0 HP Borehole Water Pump</div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-white/10">
+          <div class="flex items-baseline justify-between mb-2">
+            <div>
+              <span class="text-[10px] uppercase text-brand-warm/60 block">Deposit (30%)</span>
+              <span class="text-base font-heading font-bold text-white">₦1,890,000</span>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] uppercase text-brand-amber font-semibold block">36-Mo. Instalment</span>
+              <span class="text-lg font-heading font-extrabold text-brand-amber">₦172,000<span class="text-xs font-normal text-brand-warm/60">/mo</span></span>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-2 mt-4">
+            <button onclick="openPackageModal('Family Solar', 'GW-SPF5000-LFP10', '5.0 kVA / 10.24 kWh LiFePO4', '₦6,300,000', '₦1,890,000', '₦172,000/mo', '4–5 Bedroom Duplexes')" class="w-full py-2.5 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition">
+              View Details
+            </button>
+            <button onclick="openAuditModal('Family Solar')" class="w-full py-2.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition">
+              Select Plan
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Package 3: Business Solar -->
+      <div class="glass-card-dark rounded-3xl p-6 border border-white/10 flex flex-col justify-between hover:border-brand-teal/50 transition duration-300">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-xs font-bold uppercase tracking-wider text-brand-teal bg-brand-teal/15 px-2.5 py-1 rounded-lg">Commercial SME</span>
+            <span class="text-[11px] text-brand-warm/60">10.0 kVA</span>
+          </div>
+          
+          <h3 class="font-heading font-extrabold text-xl text-white">Business Solar</h3>
+          <p class="text-xs text-brand-warm/70 mt-1">Clinics, Pharmacies, Bakeries &amp; Tech Hubs</p>
+
+          <div class="my-5 p-4 rounded-2xl bg-black/40 border border-white/5 space-y-2 text-xs">
+            <div class="flex justify-between"><span class="text-brand-warm/60">Inverter:</span> <span class="font-semibold text-white">Growatt SPH 10000TL</span></div>
+            <div class="flex justify-between"><span class="text-brand-warm/60">Battery:</span> <span class="font-semibold text-brand-teal">20.48 kWh LiFePO4</span></div>
+            <div class="flex justify-between"><span class="text-brand-warm/60">Solar Array:</span> <span class="font-semibold text-white">9.90 kWp Mono PERC</span></div>
+            <div class="flex justify-between"><span class="text-brand-warm/60">Warranty:</span> <span class="font-semibold text-brand-amber">10-Yr Battery / 5-Yr Inv</span></div>
+          </div>
+
+          <div class="text-xs text-brand-warm/75 space-y-1.5 mb-6">
+            <p class="font-bold text-white text-[11px] uppercase tracking-wider">Supported Appliances:</p>
+            <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-teal"></i> 2x 1.5 HP Inverter ACs</div>
+            <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-teal"></i> Vaccine Reagents &amp; Cold Rooms</div>
+            <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-teal"></i> Server Racks, POS &amp; 15 Workstations</div>
+            <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-brand-teal"></i> 2 HP High-Pressure Water System</div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-white/10">
+          <div class="flex items-baseline justify-between mb-2">
+            <div>
+              <span class="text-[10px] uppercase text-brand-warm/60 block">Deposit (30%)</span>
+              <span class="text-base font-heading font-bold text-white">₦3,540,000</span>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] uppercase text-brand-amber font-semibold block">36-Mo. Instalment</span>
+              <span class="text-lg font-heading font-extrabold text-brand-amber">₦325,000<span class="text-xs font-normal text-brand-warm/60">/mo</span></span>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-2 mt-4">
+            <button onclick="openPackageModal('Business Solar', 'GW-SPH10000-LFP20', '10.0 kVA / 20.48 kWh LiFePO4', '₦11,800,000', '₦3,540,000', '₦325,000/mo', 'SME Commercial & Clinics')" class="w-full py-2.5 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition">
+              View Details
+            </button>
+            <button onclick="openAuditModal('Business Solar')" class="w-full py-2.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition">
+              Select Plan
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Package 4: Commercial & Light Industrial -->
+      <div class="glass-card-dark rounded-3xl p-6 border border-white/10 flex flex-col justify-between hover:border-brand-teal/50 transition duration-300">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-xs font-bold uppercase tracking-wider text-purple-400 bg-purple-500/15 px-2.5 py-1 rounded-lg">Industrial Microgrid</span>
+            <span class="text-[11px] text-brand-warm/60">20–100 kVA+</span>
+          </div>
+          
+          <h3 class="font-heading font-extrabold text-xl text-white">Commercial &amp; Industrial</h3>
+          <p class="text-xs text-brand-warm/70 mt-1">Warehouses, Agro-processing &amp; Estates</p>
+
+          <div class="my-5 p-4 rounded-2xl bg-black/40 border border-white/5 space-y-2 text-xs">
+            <div class="flex justify-between"><span class="text-brand-warm/60">Inverter:</span> <span class="font-semibold text-white">3-Phase Modular Parallel</span></div>
+            <div class="flex justify-between"><span class="text-brand-warm/60">Battery:</span> <span class="font-semibold text-brand-teal">30.7–120 kWh Container</span></div>
+            <div class="flex justify-between"><span class="text-brand-warm/60">Solar Array:</span> <span class="font-semibold text-white">15–80 kWp High-Yield</span></div>
+            <div class="flex justify-between"><span class="text-brand-warm/60">Warranty:</span> <span class="font-semibold text-brand-amber">15-Yr System Lifecycle</span></div>
+          </div>
+
+          <div class="text-xs text-brand-warm/75 space-y-1.5 mb-6">
+            <p class="font-bold text-white text-[11px] uppercase tracking-wider">Engineering Features:</p>
+            <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-purple-400"></i> High-Surge Inductive Motors Support</div>
+            <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-purple-400"></i> Microgrid Peak Shaving &amp; Sync</div>
+            <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-purple-400"></i> Corporate PPA &amp; Equipment Leasing</div>
+            <div class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-purple-400"></i> Dedicated 4-Hour Response SLA</div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-white/10">
+          <div class="flex items-baseline justify-between mb-2">
+            <div>
+              <span class="text-[10px] uppercase text-brand-warm/60 block">Custom Facility</span>
+              <span class="text-base font-heading font-bold text-white">Structured PPA</span>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] uppercase text-purple-400 font-semibold block">Tailored Terms</span>
+              <span class="text-base font-heading font-bold text-purple-400">Custom Financing</span>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-2 mt-4">
+            <button onclick="openPackageModal('Commercial & Light Industrial', 'GW-IND-CUSTOM', '20kVA–100kVA+ Scalable 3-Phase', 'Bespoke Quote', 'Structured', 'Custom PPA', 'Factories & Warehouses')" class="w-full py-2.5 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/10 transition">
+              View Specs
+            </button>
+            <button onclick="openAuditModal('Commercial & Light Industrial')" class="w-full py-2.5 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition">
+              Consult Team
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Transparent Disclaimer -->
+    <div class="mt-8 text-center text-[11px] text-brand-warm/60">
+      * Illustrative sample financing terms based on 36-month lease-to-own with 30% initial deposit. Monthly instalments and technical sizing finalized after physical engineering site audit.
+    </div>
+
+  </section>
+
+
+{{end}}

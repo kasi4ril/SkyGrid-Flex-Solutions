@@ -1,0 +1,132 @@
+{{define "monitoring"}}
+  <section id="monitoring" class="py-20 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
+    
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-teal/15 border border-brand-teal/30 text-brand-teal text-xs font-semibold mb-3">
+        <i data-lucide="cpu" class="w-3.5 h-3.5"></i> Telemetry &amp; AI Energy Management
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-heading font-extrabold text-white">Intelligent Energy Monitoring</h2>
+      <p class="text-sm sm:text-base text-brand-warm/75 mt-3">
+        Every system is paired with a Growatt Shine GSM/WiFi IoT gateway that streams live generation, battery health, and load analytics to our cloud engine.
+      </p>
+    </div>
+
+    <!-- High-Fidelity Interactive Dashboard Preview -->
+    <div class="glass-card-dark rounded-3xl p-6 lg:p-8 border border-white/15 shadow-2xl">
+      
+      <!-- Dashboard Top Header Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-white/10">
+        <div>
+          <div class="flex items-center gap-3">
+            <span class="font-heading font-bold text-lg text-white">Growatt Solar Hub OS</span>
+            <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 font-medium">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 status-pulse"></span> Telemetry Active
+            </span>
+          </div>
+          <p class="text-xs text-brand-warm/60 mt-1">Gateway Ref: SHINE-GSM-4G-98421 • Firmware v3.14.9</p>
+        </div>
+
+        <!-- Simulation Interactive Tabs -->
+        <div class="flex items-center gap-2 bg-black/40 p-1 rounded-xl border border-white/5 text-xs">
+          <button onclick="setDashboardMode('day')" id="dashTabDay" class="px-3 py-1.5 rounded-lg bg-brand-amber text-brand-dark font-bold transition">
+            Daytime Harvest
+          </button>
+          <button onclick="setDashboardMode('night')" id="dashTabNight" class="px-3 py-1.5 rounded-lg text-brand-warm/80 hover:text-white transition font-medium">
+            Evening Battery
+          </button>
+          <button onclick="setDashboardMode('outage')" id="dashTabOutage" class="px-3 py-1.5 rounded-lg text-brand-warm/80 hover:text-white transition font-medium">
+            Grid Outage Mode
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Dashboard Metric Cards -->
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 my-8">
+        
+        <div class="bg-black/30 p-4 rounded-2xl border border-white/5">
+          <span class="text-[11px] text-brand-warm/60 uppercase block mb-1">Solar PV</span>
+          <div id="dashSolar" class="text-2xl font-heading font-extrabold text-brand-amber font-mono">2.4 <span class="text-xs font-normal">kW</span></div>
+          <span class="text-[10px] text-emerald-400 mt-1 block">Active Ingress</span>
+        </div>
+
+        <div class="bg-black/30 p-4 rounded-2xl border border-white/5">
+          <span class="text-[11px] text-brand-warm/60 uppercase block mb-1">Battery State</span>
+          <div id="dashBattery" class="text-2xl font-heading font-extrabold text-brand-teal font-mono">86 <span class="text-xs font-normal">%</span></div>
+          <span class="text-[10px] text-brand-warm/60 mt-1 block font-mono">52.8V • 28°C</span>
+        </div>
+
+        <div class="bg-black/30 p-4 rounded-2xl border border-white/5">
+          <span class="text-[11px] text-brand-warm/60 uppercase block mb-1">Home Load</span>
+          <div id="dashLoad" class="text-2xl font-heading font-extrabold text-white font-mono">1.1 <span class="text-xs font-normal">kW</span></div>
+          <span class="text-[10px] text-emerald-400 mt-1 block">Within Capacity</span>
+        </div>
+
+        <div class="bg-black/30 p-4 rounded-2xl border border-white/5">
+          <span class="text-[11px] text-brand-warm/60 uppercase block mb-1">Payment Balance</span>
+          <div class="text-2xl font-heading font-extrabold text-brand-warm font-mono">₦0 <span class="text-xs font-normal">due</span></div>
+          <span class="text-[10px] text-brand-teal mt-1 block font-semibold">Current in Good Standing</span>
+        </div>
+
+        <div class="bg-black/30 p-4 rounded-2xl border border-white/5">
+          <span class="text-[11px] text-brand-warm/60 uppercase block mb-1">Next Instalment</span>
+          <div class="text-lg font-heading font-extrabold text-white font-mono">25 Nov</div>
+          <span class="text-[10px] text-brand-amber mt-1 block font-mono">₦78,500 (DVA Linked)</span>
+        </div>
+
+        <div class="bg-black/30 p-4 rounded-2xl border border-white/5">
+          <span class="text-[11px] text-brand-warm/60 uppercase block mb-1">System Health</span>
+          <div class="text-xl font-heading font-extrabold text-emerald-400 flex items-center gap-1.5">
+            <i data-lucide="check-circle" class="w-5 h-5"></i> 100%
+          </div>
+          <span class="text-[10px] text-brand-warm/60 mt-1 block">All Cells Balanced</span>
+        </div>
+
+      </div>
+
+      <!-- Simulated Real-time Power Flow Visualization -->
+      <div class="bg-black/40 rounded-2xl p-6 border border-white/5">
+        <div class="flex items-center justify-between text-xs text-brand-warm/70 mb-4">
+          <span class="font-bold text-white uppercase tracking-wider">Live Power Flow Routing</span>
+          <span id="dashFlowStatus" class="font-mono text-brand-amber">Solar &rarr; Home Circuits + Battery Charging</span>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-6 text-center text-xs">
+          
+          <div class="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col items-center">
+            <div class="w-10 h-10 rounded-full bg-brand-amber/20 text-brand-amber flex items-center justify-center mb-2">
+              <i data-lucide="sun" class="w-5 h-5"></i>
+            </div>
+            <span class="font-bold text-white">Solar Array (2.7 kWp)</span>
+            <span id="dashFlowPV" class="text-brand-amber font-mono font-bold mt-1">Generating 2,410 Watts</span>
+          </div>
+
+          <div class="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col items-center">
+            <div class="w-10 h-10 rounded-full bg-brand-teal/20 text-brand-teal flex items-center justify-center mb-2">
+              <i data-lucide="cpu" class="w-5 h-5"></i>
+            </div>
+            <span class="font-bold text-white">Growatt Hybrid Core</span>
+            <span class="text-brand-teal font-mono font-bold mt-1">97.8% Inverter Efficiency</span>
+          </div>
+
+          <div class="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col items-center">
+            <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-2">
+              <i data-lucide="home" class="w-5 h-5"></i>
+            </div>
+            <span class="font-bold text-white">Essential Household Load</span>
+            <span id="dashFlowHome" class="text-emerald-400 font-mono font-bold mt-1">Consuming 1,120 Watts</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="mt-4 flex items-center justify-between text-[11px] text-brand-warm/60">
+        <span>ⓘ Simulated interactive dashboard for demonstration. Actual telemetry updates every 60 seconds over 4G LTE.</span>
+        <button onclick="openModal('signInModal')" class="text-brand-teal hover:underline font-semibold">Access Full Customer Portal &rarr;</button>
+      </div>
+
+    </div>
+
+  </section>
+
+
+{{end}}

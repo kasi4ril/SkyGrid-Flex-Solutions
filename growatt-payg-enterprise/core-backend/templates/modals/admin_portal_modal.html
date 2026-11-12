@@ -1,0 +1,1078 @@
+{{define "modal_admin_portal"}}
+  <!-- Modal 6: Full Interactive Executive Admin & ERP Command Center -->
+  <div id="adminPortalModal" style="display: none;" class="hidden fixed inset-0 z-50 bg-[#0B0F19] text-white flex flex-col h-screen w-screen overflow-hidden">
+    
+    <!-- Top Static Header Pane -->
+    <header class="h-20 sm:h-24 bg-[#0E1526]/95 backdrop-blur-md border-b border-white/10 px-5 sm:px-8 flex items-center justify-between shrink-0 z-40 relative shadow-lg">
+      <!-- Left: SkyGrid Admin Mark & Status -->
+      <div class="flex items-center gap-3.5 sm:gap-6 min-w-0">
+        <!-- Mobile Sidebar Toggle -->
+        <button type="button" onclick="toggleAdminSidebar()" class="md:hidden p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white shrink-0 transition" title="Toggle Navigation Sidebar">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+
+        <div class="flex items-center gap-3 shrink-0">
+          <div class="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-xl sm:text-2xl shadow-lg shadow-indigo-500/25">
+            👑
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-heading font-black text-base sm:text-lg tracking-tight text-white">SKYGRID</span>
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 status-pulse"></span>
+            </div>
+            <span class="text-[10px] sm:text-[11px] uppercase tracking-widest text-indigo-400 font-mono font-bold block leading-none mt-0.5">EXECUTIVE ADMIN &amp; ERP</span>
+          </div>
+        </div>
+
+        <div class="h-10 w-px bg-white/15 hidden md:block shrink-0"></div>
+
+        <!-- Active Persona & Granted Perms -->
+        <div class="min-w-0 hidden sm:flex flex-col justify-center">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span id="adminRoleBadge" class="text-xs px-2.5 py-0.5 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 font-bold font-mono">
+              👑 Super Administrator
+            </span>
+            <span id="adminUserEmail" class="text-xs text-brand-warm/75 font-mono truncate max-w-xs">
+              sandbox.super_admin@skygrid.energy
+            </span>
+            <span id="adminPermCountBadge" class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold">
+              17 Perms Active
+            </span>
+          </div>
+          <p class="text-[11px] text-brand-warm/60 font-mono mt-0.5">
+            POSIX VFS Active &bull; EMQX 1883 Online &bull; Nigerian COREN Gate Enforced (&le; 5.00&Omega;)
+          </p>
+        </div>
+      </div>
+
+      <!-- Right Controls: Role Switcher, Dark/Light, Exit -->
+      <div class="flex items-center gap-2.5 sm:gap-4 shrink-0">
+        <!-- Role Impersonation Switcher Dropdown -->
+        <div class="relative">
+          <button type="button" onclick="toggleAdminRoleMenu()" class="px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/40 transition flex items-center gap-1.5 shadow-md shadow-indigo-600/30">
+            <span>🔐 Switch Role</span>
+            <span>▾</span>
+          </button>
+          
+          <div id="adminRoleDropdown" class="hidden absolute right-0 mt-2 w-64 bg-slate-900 border border-indigo-800 rounded-2xl shadow-2xl p-2 z-50 space-y-1 text-xs">
+            <div class="px-3 py-1 text-[10px] uppercase font-mono font-bold text-slate-400 border-b border-slate-800">
+              Impersonate Active Role:
+            </div>
+            <button onclick="switchAdminRole('super_admin')" class="w-full text-left px-3 py-1.5 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center justify-between">
+              <span>👑 Super Administrator</span>
+            </button>
+            <button onclick="switchAdminRole('operations_manager')" class="w-full text-left px-3 py-1.5 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center justify-between">
+              <span>🛡️ Operations Manager</span>
+            </button>
+            <button onclick="switchAdminRole('field_engineer')" class="w-full text-left px-3 py-1.5 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center justify-between">
+              <span>⚡ Field Engineer</span>
+            </button>
+            <button onclick="switchAdminRole('finance_officer')" class="w-full text-left px-3 py-1.5 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center justify-between">
+              <span>📊 Finance Officer</span>
+            </button>
+            <button onclick="switchAdminRole('customer_support')" class="w-full text-left px-3 py-1.5 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center justify-between">
+              <span>💬 Customer Support</span>
+            </button>
+            <button onclick="switchAdminRole('compliance_auditor')" class="w-full text-left px-3 py-1.5 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center justify-between">
+              <span>📜 Compliance Auditor</span>
+            </button>
+            <button onclick="switchAdminRole('customer')" class="w-full text-left px-3 py-1.5 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center justify-between">
+              <span>👤 PAYG Customer</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dark / Light Mode Toggle Button -->
+        <button type="button" onclick="toggleTheme()" class="px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-white/15 text-white transition shadow-sm cursor-pointer" title="Toggle Light/Dark Theme">
+          <span class="portal-theme-icon text-sm">🌙</span>
+        </button>
+
+        <!-- Change Password Button -->
+        <button type="button" onclick="openChangePasswordModal()" class="px-3.5 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-amber-300 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 transition flex items-center gap-1.5 shadow-sm cursor-pointer" title="Change Account Password">
+          <i data-lucide="key-round" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Change Password</span>
+        </button>
+
+        <!-- Logout Button (Redirects to Refreshed Landing Page) -->
+        <button type="button" onclick="handlePortalLogout()" class="px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold text-rose-300 bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 transition flex items-center gap-1.5 shadow-sm cursor-pointer" title="Logout & Return to Main Landing Page">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">Logout</span>
+        </button>
+
+        <!-- Far Right: Round Staff / Admin Passport Photo Space -->
+        <div class="relative shrink-0 ml-1" title="Active Staff / Admin Biometric Identity">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-full p-0.5 bg-gradient-to-tr from-indigo-500 via-purple-500 to-amber-400 shadow-md shadow-indigo-500/20">
+            <img id="adminStaffPassportImg" 
+                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80" 
+                 alt="Staff Passport Photo" 
+                 class="w-full h-full rounded-full object-cover border-2 border-[#0B0F19]">
+          </div>
+          <span class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-400 border-2 border-[#0B0F19]" title="Verified Staff Credentials"></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace Container (Sidebar + Tabs) -->
+    <div class="flex flex-1 overflow-hidden relative">
+
+      <!-- Static Left Sidebar Navigation -->
+      <aside id="adminSidebar" class="w-64 xl:w-72 bg-[#0E1526]/85 backdrop-blur-md border-r border-white/10 flex flex-col shrink-0 transition-all duration-300 z-30 fixed md:static inset-y-0 left-0 -translate-x-full md:translate-x-0">
+        <div class="p-4 border-b border-white/10">
+          <span class="text-[10px] uppercase font-mono font-bold tracking-widest text-indigo-400">OPERATIONS WORKSPACES</span>
+        </div>
+        
+        <nav class="p-3 space-y-1.5 flex-1 overflow-y-auto text-xs font-semibold">
+          <button onclick="switchAdminTab('fleet')" id="admTabFleet" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl bg-indigo-600 text-white font-bold transition">
+            <span class="text-base">🗺️</span>
+            <span>Fleet Watchtower &amp; GIS</span>
+          </button>
+          <button onclick="switchAdminTab('staff')" id="admTabStaff" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-300 hover:bg-white/5 transition">
+            <span class="text-base">👥</span>
+            <span>Staff Onboarding &amp; RBAC</span>
+          </button>
+          <button onclick="switchAdminTab('installations')" id="admTabInstallations" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-300 hover:bg-white/5 transition">
+            <span class="text-base">☀️</span>
+            <span>16-Step Installations</span>
+          </button>
+          <button onclick="switchAdminTab('maintenance')" id="admTabMaintenance" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-300 hover:bg-white/5 transition">
+            <span class="text-base">🔧</span>
+            <span>13-Step Maintenance</span>
+          </button>
+          <button onclick="switchAdminTab('finance')" id="admTabFinance" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-300 hover:bg-white/5 transition">
+            <span class="text-base">💳</span>
+            <span>Finance &amp; STS Tokens</span>
+          </button>
+          <button onclick="switchAdminTab('copilot')" id="admTabCopilot" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-slate-300 hover:bg-white/5 transition">
+            <span class="text-base">🤖</span>
+            <span>SkyTron Copilot &amp; Audit</span>
+          </button>
+        </nav>
+
+        <div class="p-4 border-t border-white/10 text-[11px] text-slate-400">
+          <div class="flex items-center justify-between">
+            <span>Backend API:</span>
+            <span class="text-emerald-400 font-mono font-bold">:8080 ONLINE</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Central Scrollable Content Area -->
+      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
+
+        <!-- TAB 1: FLEET WATCHTOWER & GIS MAP -->
+        <div id="admPanel_fleet" class="space-y-6">
+          <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="glass-card-dark p-4 rounded-2xl border border-white/10">
+              <p class="text-xs text-slate-400 font-semibold uppercase">Monitored Growatt Fleet</p>
+              <p class="text-2xl sm:text-3xl font-black text-white mt-1">4 Units</p>
+              <p class="text-xs text-emerald-400 mt-1">3 Healthy &bull; 100% LiFePO4</p>
+            </div>
+            <div class="glass-card-dark p-4 rounded-2xl border border-white/10">
+              <p class="text-xs text-slate-400 font-semibold uppercase">Sample Fleet MRR</p>
+              <p class="text-2xl sm:text-3xl font-black text-emerald-400 font-mono mt-1">₦3,450,000</p>
+              <p class="text-xs text-slate-400 mt-1">Moniepoint &bull; Paystack &bull; OPay</p>
+            </div>
+            <div class="glass-card-dark p-4 rounded-2xl border border-white/10">
+              <p class="text-xs text-slate-400 font-semibold uppercase">Collection Efficiency &amp; PAR</p>
+              <p class="text-2xl sm:text-3xl font-black text-cyan-400 font-mono mt-1">97.4%</p>
+              <p class="text-xs text-slate-400 mt-1">PAR &gt; 30 Days: 1.8% (Target &lt; 3.0%)</p>
+            </div>
+            <div class="glass-card-dark p-4 rounded-2xl border border-white/10">
+              <p class="text-xs text-slate-400 font-semibold uppercase">Lower Shroud Tamper Alerts</p>
+              <p id="admKpiTamper" class="text-2xl sm:text-3xl font-black text-rose-400 font-mono mt-1">1 Critical</p>
+              <p class="text-xs text-slate-400 mt-1">Microswitch instant lockout</p>
+            </div>
+          </div>
+
+          <div class="grid lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-7 glass-card-dark p-5 rounded-2xl border border-white/10 space-y-4">
+              <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <div>
+                  <h3 class="text-sm sm:text-base font-bold text-white">Live Nigerian Fleet &amp; Telemetry Pins</h3>
+                  <p class="text-xs text-slate-400">Click unit to inspect POSIX VFS state &amp; hardware seals</p>
+                </div>
+                <div class="flex items-center gap-1 text-xs">
+                  <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono font-bold">4 Active</span>
+                </div>
+              </div>
+
+              <div class="space-y-2.5" id="admFleetList">
+                <div onclick="selectAdminFleetUnit(0)" id="fleetRow0" class="p-3.5 rounded-xl border border-emerald-500/50 bg-emerald-500/10 cursor-pointer flex justify-between items-center transition">
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">● GREEN / ACTIVE</span>
+                      <span class="text-xs font-mono text-slate-400">DEV-8F3A-GROWATT-00421</span>
+                    </div>
+                    <p class="text-sm font-bold text-white mt-1">Engr. Shwarji I. Khatang — <span class="text-emerald-400">Jos, Plateau State</span></p>
+                    <p class="text-xs text-slate-400">GW-SPF5000-LFP5 &bull; Seal: SEAL-NG-04210 &bull; Earthing: <strong class="text-emerald-400">1.85Ω</strong></p>
+                  </div>
+                  <div class="text-right text-xs font-mono">
+                    <div class="text-white font-bold">PV: 3420W | Load: 850W</div>
+                    <div class="text-cyan-400">LiFePO4: 94%</div>
+                    <div class="text-slate-400 text-[11px]">19 Days Left</div>
+                  </div>
+                </div>
+
+                <div onclick="selectAdminFleetUnit(1)" id="fleetRow1" class="p-3.5 rounded-xl border border-white/10 bg-white/5 cursor-pointer flex justify-between items-center transition hover:border-white/20">
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">● GREEN / ACTIVE</span>
+                      <span class="text-xs font-mono text-slate-400">DEV-1A9F-GROWATT-00108</span>
+                    </div>
+                    <p class="text-sm font-bold text-white mt-1">Dr. Aisha Bello — <span class="text-emerald-400">Wuse II, Abuja FCT</span></p>
+                    <p class="text-xs text-slate-400">GW-SPF3000-LFP5 &bull; Seal: SEAL-NG-01082 &bull; Earthing: <strong class="text-emerald-400">2.1Ω</strong></p>
+                  </div>
+                  <div class="text-right text-xs font-mono">
+                    <div class="text-white font-bold">PV: 2150W | Load: 620W</div>
+                    <div class="text-cyan-400">LiFePO4: 88%</div>
+                    <div class="text-slate-400 text-[11px]">26 Days Left</div>
+                  </div>
+                </div>
+
+                <div onclick="selectAdminFleetUnit(2)" id="fleetRow2" class="p-3.5 rounded-xl border border-white/10 bg-white/5 cursor-pointer flex justify-between items-center transition hover:border-white/20">
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">● YELLOW / GRACE</span>
+                      <span class="text-xs font-mono text-slate-400">DEV-4C2B-GROWATT-00389</span>
+                    </div>
+                    <p class="text-sm font-bold text-white mt-1">Chief Emeka Okafor — <span class="text-emerald-400">Lekki Phase 1, Lagos</span></p>
+                    <p class="text-xs text-slate-400">GW-SPF6000-LFP10 &bull; Seal: SEAL-NG-03894 &bull; Earthing: <strong class="text-emerald-400">2.45Ω</strong></p>
+                  </div>
+                  <div class="text-right text-xs font-mono">
+                    <div class="text-white font-bold">PV: 4100W | Load: 2400W</div>
+                    <div class="text-cyan-400">LiFePO4: 64%</div>
+                    <div class="text-amber-400 text-[11px]">1 Day Left</div>
+                  </div>
+                </div>
+
+                <div onclick="selectAdminFleetUnit(3)" id="fleetRow3" class="p-3.5 rounded-xl border border-rose-500/40 bg-rose-500/10 cursor-pointer flex justify-between items-center transition hover:border-rose-500">
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 font-bold">● RED / TAMPER</span>
+                      <span class="text-xs font-mono text-slate-400">DEV-9D7E-GROWATT-00512</span>
+                    </div>
+                    <p class="text-sm font-bold text-white mt-1">Alhaji Musa Danjuma — <span class="text-rose-400">Bompai Industrial, Kano</span></p>
+                    <p class="text-xs text-slate-400">GW-MAX10K-LFP15 &bull; Seal: SEAL-NG-05121 &bull; Earthing: <strong class="text-emerald-400">1.6Ω</strong></p>
+                  </div>
+                  <div class="text-right text-xs font-mono">
+                    <div class="text-white font-bold">PV: 6800W | Load: 0W</div>
+                    <div class="text-rose-400">STANDBY_LOCKED</div>
+                    <div class="text-slate-400 text-[11px]">14 Days Left</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: VFS Hardware Inspector -->
+            <div class="lg:col-span-5 glass-card-dark p-5 rounded-2xl border border-white/10 space-y-4">
+              <div class="border-b border-white/10 pb-3 flex items-center justify-between">
+                <div>
+                  <span class="text-[10px] font-mono uppercase text-emerald-400 font-bold">POSIX VFS BLOCK INSPECTOR</span>
+                  <h4 id="admInspName" class="text-base font-bold text-white">Engr. Shwarji I. Khatang</h4>
+                </div>
+                <span id="admInspSerial" class="text-xs font-mono px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-300">
+                  GW-SPF5000ES-94210
+                </span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3 text-xs">
+                <div class="p-3 rounded-xl bg-white/5 border border-white/10">
+                  <span class="text-slate-400">Contactor Relay State</span>
+                  <p id="admInspRelay" class="text-sm font-black font-mono text-emerald-400 mt-1">ACTIVE_ON</p>
+                  <p class="text-[10px] text-slate-500 mt-0.5">Solar MPPT: ACTIVE</p>
+                </div>
+                <div class="p-3 rounded-xl bg-white/5 border border-white/10">
+                  <span class="text-slate-400">Shroud Tamper Switch</span>
+                  <p id="admInspTamper" class="text-sm font-black font-mono text-emerald-400 mt-1">SEALED</p>
+                  <p id="admInspSeal" class="text-[10px] text-slate-500 mt-0.5">Seal: SEAL-NG-04210</p>
+                </div>
+              </div>
+
+              <div class="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1.5 text-xs font-mono">
+                <span class="text-slate-400 font-sans font-semibold">VFS State Block Path:</span>
+                <p id="admInspPath" class="text-emerald-400 text-[11px] break-all">
+                  /var/lib/payg-vfs/blocks/8f/3a/DEV-8F3A-GROWATT-00421/state.json
+                </p>
+                <div class="grid grid-cols-3 gap-2 pt-2 border-t border-white/10 text-slate-300 text-[11px]">
+                  <span id="admInspPV">PV: 3420W</span>
+                  <span id="admInspLoad">Load: 850W</span>
+                  <span id="admInspTemp">Temp: 41.2°C</span>
+                </div>
+              </div>
+
+              <div id="admTamperActionBox" class="hidden p-4 rounded-xl bg-rose-500/10 border border-rose-500/40 space-y-3 text-xs">
+                <p class="font-bold text-rose-300">🚨 CRITICAL TAMPER LOCKOUT: Microswitch open in lower shroud terminal box!</p>
+                <p class="text-slate-300 leading-relaxed text-[11px]">
+                  AC Output is disconnected (`STANDBY_LOCKED`) while Growatt Solar MPPT charging remains active to protect battery.
+                </p>
+                <button onclick="handleAdminTamperClear()" class="w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-extrabold transition shadow-lg">
+                  Verify Field Re-Seal &amp; Clear Tamper Lockout
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: STAFF ONBOARDING & RBAC -->
+        <div id="admPanel_staff" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-emerald-400 uppercase">HYBRID ONBOARDING WORKFLOW</span>
+              <h3 class="text-xl font-black text-white mt-1">Staff Applications, Super Admin Approvals &amp; Roles</h3>
+              <p class="text-xs text-slate-400 mt-1">Step-by-step applicant verification, role selection, and activation.</p>
+            </div>
+          </div>
+
+          <div class="grid lg:grid-cols-12 gap-6">
+            <!-- Review Queue -->
+            <div class="lg:col-span-7 glass-card-dark p-5 rounded-2xl border border-white/10 space-y-4">
+              <h4 class="text-sm font-bold text-white border-b border-white/10 pb-2 flex items-center justify-between">
+                <span>📋 Super Admin Review Queue</span>
+                <span class="text-xs px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono">2 Candidates Logged</span>
+              </h4>
+
+              <div class="space-y-3" id="admCandidateList">
+                <div class="p-4 rounded-xl border border-white/10 bg-white/5 space-y-2">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <h5 class="font-bold text-white text-sm">Engr. Chinedu Eze</h5>
+                      <p class="text-xs text-slate-400">chinedu.solar@skygrid.ng &bull; +2348039988112</p>
+                      <p class="text-xs text-indigo-400 font-semibold mt-0.5">Engineering &bull; COREN/R/49182 &bull; Enugu Hub</p>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                      PENDING_SUPERADMIN_REVIEW
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-2 pt-2 border-t border-white/10">
+                    <button onclick="handleAdminApproveStaff('Engr. Chinedu Eze')" class="flex-1 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition">
+                      ✓ Approve &amp; Assign Field Engineer Role
+                    </button>
+                    <button onclick="showToast('❌ Rejected candidate')" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs transition">
+                      ✕ Reject
+                    </button>
+                  </div>
+                </div>
+
+                <div class="p-4 rounded-xl border border-white/10 bg-white/5 space-y-2">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <h5 class="font-bold text-white text-sm">Fatima Abubakar</h5>
+                      <p class="text-xs text-slate-400">fatima.finance@skygrid.ng &bull; +2348102233445</p>
+                      <p class="text-xs text-indigo-400 font-semibold mt-0.5">Finance &amp; Treasury &bull; Abuja Central</p>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-500/20 text-slate-300 border border-slate-500/30">
+                      AWAITING_EMAIL_VERIFY
+                    </span>
+                  </div>
+                  <div class="flex justify-between items-center pt-2 border-t border-white/10 text-xs">
+                    <span class="text-slate-400">Applicant received token: <code class="font-mono text-emerald-400">tok-vfy-9921</code></span>
+                    <button onclick="showToast('✓ Email verified for Fatima Abubakar! Moved to Super Admin review queue.')" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition">
+                      Simulate Email Verify &rarr;
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Application Form & Activation Box -->
+            <div class="lg:col-span-5 space-y-6">
+              <div class="glass-card-dark p-5 rounded-2xl border border-white/10 space-y-3">
+                <h4 class="text-sm font-bold text-white">📝 Submit New Staff Application</h4>
+                <form onsubmit="handleCandidateApply(event)" class="space-y-2.5 text-xs">
+                  <div>
+                    <label class="block text-slate-400 mb-1">Full Legal Name</label>
+                    <input id="candName" required placeholder="Engr. Obinna Nwosu" class="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/15 text-white">
+                  </div>
+                  <div>
+                    <label class="block text-slate-400 mb-1">Work Email</label>
+                    <input id="candEmail" required type="email" placeholder="obinna.nwosu@skygrid.ng" class="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/15 text-white">
+                  </div>
+                  <div>
+                    <label class="block text-slate-400 mb-1">Department &amp; Region</label>
+                    <select id="candDept" class="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/15 text-white">
+                      <option>Engineering &amp; Field Services</option>
+                      <option>Operations &amp; Dispatch</option>
+                      <option>Finance &amp; Treasury</option>
+                      <option>Customer Support</option>
+                    </select>
+                  </div>
+                  <button type="submit" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition shadow-md">
+                    Submit Application &rarr;
+                  </button>
+                </form>
+              </div>
+
+              <div class="glass-card-dark p-5 rounded-2xl border border-white/10 space-y-3">
+                <h4 class="text-sm font-bold text-white">🔑 Staff Account Activation</h4>
+                <form onsubmit="handleCandidateActivate(event)" class="space-y-2.5 text-xs">
+                  <div>
+                    <label class="block text-slate-400 mb-1">Activation Token</label>
+                    <input id="actToken" required placeholder="tok-act-88190" value="tok-act-88190" class="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/15 text-white font-mono">
+                  </div>
+                  <div>
+                    <label class="block text-slate-400 mb-1">Set Password</label>
+                    <input id="actPassword" required type="password" placeholder="••••••••••••" value="Secret@2026!" class="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/15 text-white">
+                  </div>
+                  <button type="submit" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition shadow-md">
+                    Complete Activation &amp; Issue Credentials
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Granular RBAC Permission Matrix & Live Role Editor -->
+          <div class="glass-card-dark p-6 rounded-2xl border border-white/10 space-y-5">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-white/10 pb-4">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-base">🛡️</span>
+                  <h4 class="text-base font-bold text-white">Granular Role-Based Access Control (RBAC) Matrix</h4>
+                  <span id="activeRbacBadge" class="text-xs px-2.5 py-0.5 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 font-mono font-bold">
+                    👑 super_admin
+                  </span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1">
+                  Configure and effect statutory operational permissions across all enterprise modules. Checked permissions are actively enforced by backend JWT middleware.
+                </p>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="flex items-center gap-2 shrink-0">
+                <button type="button" onclick="handleResetRbacPolicy()" class="px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 bg-white/5 hover:bg-white/10 border border-white/10 transition">
+                  ↺ Reset Defaults
+                </button>
+                <button type="button" onclick="handleSaveRbacPolicy()" class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-md shadow-emerald-600/30 transition flex items-center gap-1.5">
+                  <span>✓ Effect &amp; Enforce RBAC</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Role Selector Tabs -->
+            <div class="flex flex-wrap gap-2 text-xs font-semibold">
+              <span class="text-xs text-slate-400 self-center mr-1">Target Persona:</span>
+              <button type="button" onclick="selectRbacRole('super_admin')" id="rbacRoleBtn_super_admin" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold transition">
+                👑 Super Admin (17)
+              </button>
+              <button type="button" onclick="selectRbacRole('operations_manager')" id="rbacRoleBtn_operations_manager" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition">
+                🛡️ Ops Manager (11)
+              </button>
+              <button type="button" onclick="selectRbacRole('field_engineer')" id="rbacRoleBtn_field_engineer" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition">
+                ⚡ Field Engineer (4)
+              </button>
+              <button type="button" onclick="selectRbacRole('finance_officer')" id="rbacRoleBtn_finance_officer" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition">
+                📊 Finance Officer (5)
+              </button>
+              <button type="button" onclick="selectRbacRole('customer_support')" id="rbacRoleBtn_customer_support" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition">
+                💬 Support (4)
+              </button>
+              <button type="button" onclick="selectRbacRole('compliance_auditor')" id="rbacRoleBtn_compliance_auditor" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition">
+                📜 Compliance (5)
+              </button>
+            </div>
+
+            <!-- 17 Granular Permissions in 6 Module Cards -->
+            <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4 text-xs">
+              
+              <!-- Module 1: Staff & IAM -->
+              <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2.5">
+                <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                  <span class="font-bold text-white flex items-center gap-1.5">
+                    <span>👥</span> Staff &amp; IAM
+                  </span>
+                  <span class="text-[10px] text-indigo-400 font-mono font-bold">MODULE: staff</span>
+                </div>
+                <div class="space-y-2 pt-1">
+                  <label class="flex items-start gap-2.5 cursor-pointer">
+                    <input type="checkbox" id="perm_staff_view" onchange="handleRbacToggle('staff.view')" class="mt-0.5 rounded border-white/20 text-indigo-600 focus:ring-0">
+                    <div>
+                      <span class="font-mono text-white block">staff.view</span>
+                      <span class="text-[10px] text-slate-400">View internal staff roster and verification status</span>
+                    </div>
+                  </label>
+                  <label class="flex items-start gap-2.5 cursor-pointer">
+                    <input type="checkbox" id="perm_staff_invite" onchange="handleRbacToggle('staff.invite')" class="mt-0.5 rounded border-white/20 text-indigo-600 focus:ring-0">
+                    <div>
+                      <span class="font-mono text-white block">staff.invite</span>
+                      <span class="text-[10px] text-slate-400">Issue onboarding invitations to new staff</span>
+                    </div>
+                  </label>
+                  <label class="flex items-start gap-2.5 cursor-pointer">
+                    <input type="checkbox" id="perm_staff_approve" onchange="handleRbacToggle('staff.approve')" class="mt-0.5 rounded border-white/20 text-indigo-600 focus:ring-0">
+                    <div>
+                      <span class="font-mono text-white block">staff.approve</span>
+                      <span class="text-[10px] text-slate-400">Super Admin sign-off on candidate verification</span>
+                    </div>
+                  </label>
+                  <label class="flex items-start gap-2.5 cursor-pointer">
+                    <input type="checkbox" id="perm_staff_manage_roles" onchange="handleRbacToggle('staff.manage_roles')" class="mt-0.5 rounded border-white/20 text-indigo-600 focus:ring-0">
+                    <div>
+                      <span class="font-mono text-white block">staff.manage_roles</span>
+                      <span class="text-[10px] text-slate-400">Assign &amp; revoke enterprise RBAC roles</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Module 2: Customer Management -->
+              <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2.5">
+                <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                  <span class="font-bold text-white flex items-center gap-1.5">
+                    <span>👤</span> Customers &amp; Accounts
+                  </span>
+                  <span class="text-[10px] text-brand-teal font-mono font-bold">MODULE: customers</span>
+                </div>
+                <div class="space-y-2 pt-1">
+                  <label class="flex items-start gap-2.5 cursor-pointer">
+                    <input type="checkbox" id="perm_customers_view" onchange="handleRbacToggle('customers.view')" class="mt-0.5 rounded border-white/20 text-indigo-600 focus:ring-0">
+                    <div>
+                      <span class="font-mono text-white block">customers.view</span>
+                      <span class="text-[10px] text-slate-400">Query customer accounts, NIN status, and addresses</span>
+                    </div>
+                  </label>
+                  <label class="flex items-start gap-2.5 cursor-pointer">
+                    <input type="checkbox" id="perm_customers_manage" onchange="handleRbacToggle('customers.manage')" class="mt-0.5 rounded border-white/20 text-indigo-600 focus:ring-0">
+                    <div>
+                      <span class="font-mono text-white block">customers.manage</span>
+                      <span class="text-[10px] text-slate-400">Edit credit lines, suspend or reactivate PAYG leases</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Module 3: 16-Step Installation ERP -->
+              <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2.5">
+                <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                  <span class="font-bold text-white flex items-center gap-1.5">
+                    <span>☀️</span> 16-Step Installation ERP
+                  </span>
+                  <span class="text-[10px] text-amber-400 font-mono font-bold">MODULE: installations</span>
+                </div>
+                <div class="space-y-2 pt-1">
+                  <label class="flex items-start gap-2.5 cursor-pointer">
+                    <input type="checkbox" id="perm_installations_create" onchange="handleRbacToggle('installations.create')" class="mt-0.5 rounded border-white/20 text-indigo-600 focus:ring-0">
+                    <div>
+                      <span class="font-mono text-white block">installations.create</span>
+                      <span class="text-[10px] text-slate-400">Initialize work orders from sizing quotations</span>
+                    </div>
+                  </label>
+                  <label class="flex items-start gap-2.5 cursor-pointer">
+                    <input type="checkbox" id="perm_installations_assign" onchange="handleRbacToggle('installations.assign')" class="mt-0.5 rounded border-white/20 text-indigo-600 focus:ring-0">
+                    <div>
+                      <span class="font-mono text-white block">installations.assign</span>
+                      <span class="text-[10px] text-slate-400">Dispatch field engineers and installation teams</span>
+                    </div>
+                  </label>
+                  <label class="flex items-start gap-2.5 cursor-pointer">
+                    <input type="checkbox" id="perm_installations_update" onchange="handleRbacToggle('installations.update')" class="mt-0.5 rounded border-white/20 text-indigo-600 focus:ring-0">
+                    <div>
+                      <span class="font-mono text-white block">installations.update</span>
+                      <span class="text-[10px] text-slate-400">Advance 16 stages and log COREN &le; 5.00&Omega; earthing</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Module 4: 13-Step Maintenance Lifecycle -->
+              <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2.5">
+                <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                  <span class="font-bold text-white flex items-center gap-1.5">
+                    <span>🔧</span> 13-Step Maintenance ERP
+                  </span>
+                  <span class="text-[10px] text-cyan-400 font-mono font-bold">MODULE: maintenance</span>
+                </div>
+                <div class="space-y-2 pt-1">
+                  <label class="flex items-start gap-2.5 cursor-pointer">
+                    <input type="checkbox" id="perm_maintenance_create" onchange="handleRbacToggle('maintenance.create')" class="mt-0.5 rounded border-white/20 text-indigo-600 focus:ring-0">
+                    <div>
+                      <span class="font-mono text-white block">maintenance.create</span>
+                      <span class="text-[10px] text-slate-400">Report inverter/battery fault tickets and tamper trips</span>
+                    </div>
+                  </label>
+                  <label class="flex items-start gap-2.5 cursor-pointer">
+                    <input type="checkbox" id="perm_maintenance_assign" onchange="handleRbacToggle('maintenance.assign')" class="mt-0.5 rounded border-white/20 text-indigo-600 focus:ring-0">
+                    <div>
+                      <span class="font-mono text-white block">maintenance.assign</span>
+                      <span class="text-[10px] text-slate-400">Assign maintenance technicians and dispatch vans</span>
+                    </div>
+                  </label>
+                  <label class="flex items-start gap-2.5 cursor-pointer">
+                    <input type="checkbox" id="perm_maintenance_update_status" onchange="handleRbacToggle('maintenance.update_status')" class="mt-0.5 rounded border-white/20 text-indigo-600 focus:ring-0">
+                    <div>
+                      <span class="font-mono text-white block">maintenance.update_status</span>
+                      <span class="text-[10px] text-slate-400">Log spare parts, capture repair costs, close tickets</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Module 5: Finance & STS Token Verification -->
+              <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2.5">
+                <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                  <span class="font-bold text-white flex items-center gap-1.5">
+                    <span>💳</span> Finance &amp; STS Tokens
+                  </span>
+                  <span class="text-[10px] text-emerald-400 font-mono font-bold">MODULE: payments</span>
+                </div>
+                <div class="space-y-2 pt-1">
+                  <label class="flex items-start gap-2.5 cursor-pointer">
+                    <input type="checkbox" id="perm_payments_view" onchange="handleRbacToggle('payments.view')" class="mt-0.5 rounded border-white/20 text-indigo-600 focus:ring-0">
+                    <div>
+                      <span class="font-mono text-white block">payments.view</span>
+                      <span class="text-[10px] text-slate-400">View customer ledger, Moniepoint/Paystack DVAs, invoices</span>
+                    </div>
+                  </label>
+                  <label class="flex items-start gap-2.5 cursor-pointer">
+                    <input type="checkbox" id="perm_payments_verify" onchange="handleRbacToggle('payments.verify')" class="mt-0.5 rounded border-white/20 text-indigo-600 focus:ring-0">
+                    <div>
+                      <span class="font-mono text-white block">payments.verify</span>
+                      <span class="text-[10px] text-slate-400">Sign off bank transfers &amp; issue 20-digit STS tokens</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Module 6: Reports & System Administration -->
+              <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2.5">
+                <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                  <span class="font-bold text-white flex items-center gap-1.5">
+                    <span>📜</span> Reports &amp; Governance
+                  </span>
+                  <span class="text-[10px] text-purple-400 font-mono font-bold">MODULE: system</span>
+                </div>
+                <div class="space-y-2 pt-1">
+                  <label class="flex items-start gap-2.5 cursor-pointer">
+                    <input type="checkbox" id="perm_reports_view" onchange="handleRbacToggle('reports.view')" class="mt-0.5 rounded border-white/20 text-indigo-600 focus:ring-0">
+                    <div>
+                      <span class="font-mono text-white block">reports.view</span>
+                      <span class="text-[10px] text-slate-400">View financial, carbon offset, and operational KPIs</span>
+                    </div>
+                  </label>
+                  <label class="flex items-start gap-2.5 cursor-pointer">
+                    <input type="checkbox" id="perm_audit_view" onchange="handleRbacToggle('audit.view')" class="mt-0.5 rounded border-white/20 text-indigo-600 focus:ring-0">
+                    <div>
+                      <span class="font-mono text-white block">audit.view</span>
+                      <span class="text-[10px] text-slate-400">Inspect cryptographic SHA-256 audit ledger</span>
+                    </div>
+                  </label>
+                  <label class="flex items-start gap-2.5 cursor-pointer">
+                    <input type="checkbox" id="perm_settings_manage" onchange="handleRbacToggle('settings.manage')" class="mt-0.5 rounded border-white/20 text-indigo-600 focus:ring-0">
+                    <div>
+                      <span class="font-mono text-white block">settings.manage</span>
+                      <span class="text-[10px] text-slate-400">Modify global system parameters &amp; API keys</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: 16-STEP INSTALLATIONS -->
+        <div id="admPanel_installations" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-emerald-400 uppercase">CANONICAL 16-STEP WORK-ORDER PIPELINE</span>
+              <h3 class="text-xl font-black text-white mt-1">Solar Installations &amp; COREN Commissioning</h3>
+              <p class="text-xs text-slate-400 mt-1">Enforcing statutory earthing resistance &le; 5.00&Omega; before Stage 13 COREN inspection.</p>
+            </div>
+            <button onclick="showToast('☀️ New installation order created: WO-INST-2026-003')" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition shadow-md">
+              + Create Installation Order
+            </button>
+          </div>
+
+          <div class="grid lg:grid-cols-12 gap-6">
+            <!-- Orders List -->
+            <div class="lg:col-span-5 glass-card-dark p-5 rounded-2xl border border-white/10 space-y-3">
+              <h4 class="text-sm font-bold text-white border-b border-white/10 pb-2">Active Installations (2)</h4>
+              <div class="space-y-3">
+                <div class="p-3.5 rounded-xl border border-emerald-500/50 bg-emerald-500/10 cursor-pointer space-y-1.5">
+                  <div class="flex justify-between items-center text-xs">
+                    <span class="font-mono text-slate-400 font-bold">WO-INST-2026-001</span>
+                    <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono font-bold text-[10px]">Stage 14/16</span>
+                  </div>
+                  <h5 class="text-sm font-bold text-white">Engr. Shwarji I. Khatang</h5>
+                  <p class="text-xs text-slate-400">Plot 4, Rayfield Corridor, Jos &bull; 5.4 kWp / 10 kWh</p>
+                  <div class="flex justify-between items-center pt-1 border-t border-white/10 text-[11px] text-slate-400">
+                    <span>Engr. Tariq Bello (COREN)</span>
+                    <span class="font-mono font-bold text-emerald-400">1.85Ω</span>
+                  </div>
+                </div>
+
+                <div class="p-3.5 rounded-xl border border-white/10 bg-white/5 cursor-pointer space-y-1.5">
+                  <div class="flex justify-between items-center text-xs">
+                    <span class="font-mono text-slate-400 font-bold">WO-INST-2026-002</span>
+                    <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-mono font-bold text-[10px]">Stage 12/16</span>
+                  </div>
+                  <h5 class="text-sm font-bold text-white">Alhaji Bashir Umar</h5>
+                  <p class="text-xs text-slate-400">Bompai Industrial, Kano &bull; 12 kWp / 20 kWh</p>
+                  <div class="flex justify-between items-center pt-1 border-t border-white/10 text-[11px] text-slate-400">
+                    <span>Engr. Mustapha Aliyu</span>
+                    <span class="font-mono font-bold text-emerald-400">2.1Ω</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 16-Step Stepper & Gate -->
+            <div class="lg:col-span-7 glass-card-dark p-5 rounded-2xl border border-white/10 space-y-5">
+              <div class="border-b border-white/10 pb-3 flex justify-between items-center">
+                <div>
+                  <span class="text-xs font-mono text-emerald-400 font-bold">WORK ORDER INSPECTOR</span>
+                  <h4 class="text-lg font-black text-white">WO-INST-2026-001 (Engr. Shwarji I. Khatang)</h4>
+                </div>
+                <span class="px-3 py-1 rounded-xl bg-white/10 font-mono text-xs font-bold">STAGE 14: COMMISSIONED</span>
+              </div>
+
+              <!-- 16-Step Visual Ribbon -->
+              <div class="space-y-1.5">
+                <div class="flex justify-between text-xs text-slate-400 font-semibold">
+                  <span>Installation Progression</span>
+                  <span>14 of 16 Complete</span>
+                </div>
+                <div class="w-full h-2.5 bg-white/10 rounded-full overflow-hidden">
+                  <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-400" style="width: 87.5%"></div>
+                </div>
+              </div>
+
+              <!-- Earthing Resistance Check Gate -->
+              <div class="p-4 rounded-xl bg-black/40 border border-white/10 space-y-3">
+                <div class="flex justify-between items-center">
+                  <div>
+                    <h5 class="text-xs font-bold uppercase tracking-wider text-slate-300">COREN / NEMSA Earthing Resistance Gate (&le; 5.00&Omega;)</h5>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Calibrated ground clamp measurement at earth pit.</p>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <input id="instEarthingValue" type="number" step="0.05" value="1.85" class="w-20 px-2 py-1 rounded-lg bg-white/10 border border-white/20 text-center font-mono font-bold text-white">
+                    <span class="text-xs font-bold">&Omega;</span>
+                  </div>
+                </div>
+
+                <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300 font-semibold">
+                  ✅ COREN Compliant: 1.85&Omega; is well below statutory 5.00&Omega; threshold. Safe for commissioning.
+                </div>
+
+                <div class="flex gap-2 pt-2 border-t border-white/10">
+                  <button onclick="showToast('✓ Lead engineer assignment verified.')" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold transition">
+                    👤 Reassign Engineer
+                  </button>
+                  <button onclick="showToast('🚀 Advanced WO-INST-2026-001 to Stage 15: HANDOVER_SIGNED')" class="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition shadow-md">
+                    Advance to Stage 15 (Handover) &rarr;
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: 13-STEP MAINTENANCE -->
+        <div id="admPanel_maintenance" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-emerald-400 uppercase">13-STEP AFTER-SALES LIFECYCLE</span>
+              <h3 class="text-xl font-black text-white mt-1">Maintenance Tickets, Parts &amp; Supervisor Approvals</h3>
+              <p class="text-xs text-slate-400 mt-1">From customer fault notification to supervisor verification and closure.</p>
+            </div>
+            <button onclick="showToast('🔧 Logged new fault ticket: TKT-MAINT-2026-003')" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition shadow-md">
+              + Log New Fault Ticket
+            </button>
+          </div>
+
+          <div class="grid lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-5 glass-card-dark p-5 rounded-2xl border border-white/10 space-y-3">
+              <h4 class="text-sm font-bold text-white border-b border-white/10 pb-2">Active Tickets (2)</h4>
+              <div class="space-y-3">
+                <div class="p-3.5 rounded-xl border border-rose-500/50 bg-rose-500/10 cursor-pointer space-y-1.5">
+                  <div class="flex justify-between items-center text-xs">
+                    <span class="font-mono text-slate-400 font-bold">TKT-MAINT-2026-001</span>
+                    <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold text-[10px]">CRITICAL</span>
+                  </div>
+                  <h5 class="text-sm font-bold text-white">Alhaji Musa Danjuma</h5>
+                  <p class="text-xs font-mono text-rose-400">ERR_09_TAMPER_SWITCH_OPEN</p>
+                  <div class="flex justify-between items-center pt-1 border-t border-white/10 text-[11px] text-slate-400">
+                    <span>Stage 6: DIAGNOSIS_LOGGED</span>
+                    <span class="font-mono font-bold text-emerald-400">₦40,000</span>
+                  </div>
+                </div>
+
+                <div class="p-3.5 rounded-xl border border-white/10 bg-white/5 cursor-pointer space-y-1.5">
+                  <div class="flex justify-between items-center text-xs">
+                    <span class="font-mono text-slate-400 font-bold">TKT-MAINT-2026-002</span>
+                    <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold text-[10px]">MEDIUM</span>
+                  </div>
+                  <h5 class="text-sm font-bold text-white">Chief Emeka Okafor</h5>
+                  <p class="text-xs font-mono text-amber-400">WARN_04_LOW_BATTERY_RESERVE</p>
+                  <div class="flex justify-between items-center pt-1 border-t border-white/10 text-[11px] text-slate-400">
+                    <span>Stage 10: SUPERVISOR_VERIFIED</span>
+                    <span class="font-mono font-bold text-emerald-400">₦15,000</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="lg:col-span-7 glass-card-dark p-5 rounded-2xl border border-white/10 space-y-5">
+              <div class="border-b border-white/10 pb-3 flex justify-between items-center">
+                <div>
+                  <span class="text-xs font-mono text-rose-400 font-bold">ERR_09_TAMPER_SWITCH_OPEN</span>
+                  <h4 class="text-lg font-black text-white">TKT-MAINT-2026-001 (Alhaji Musa Danjuma)</h4>
+                </div>
+                <span class="px-3 py-1 rounded-xl bg-white/10 font-mono text-xs font-bold">STAGE 6: DIAGNOSIS_LOGGED</span>
+              </div>
+
+              <div class="p-4 rounded-xl bg-black/40 border border-white/10 space-y-3 text-xs">
+                <span class="text-slate-400 font-semibold block">Root-Cause Diagnosis:</span>
+                <p class="p-3 rounded-xl bg-white/5 border border-white/10 text-slate-200 leading-relaxed">
+                  Physical shroud inspection confirmed steel seal broken during third-party building AC rewiring. Microswitch validated functioning. Lower enclosure re-sealed with serial SEAL-NG-05121.
+                </p>
+
+                <div class="grid grid-cols-3 gap-2 text-center pt-2">
+                  <div class="p-2.5 rounded-xl bg-white/5 border border-white/10">
+                    <span class="text-[10px] text-slate-400 uppercase">Parts</span>
+                    <p class="font-mono font-bold text-white mt-0.5">₦15,000</p>
+                  </div>
+                  <div class="p-2.5 rounded-xl bg-white/5 border border-white/10">
+                    <span class="text-[10px] text-slate-400 uppercase">Labour</span>
+                    <p class="font-mono font-bold text-white mt-0.5">₦25,000</p>
+                  </div>
+                  <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                    <span class="text-[10px] uppercase font-bold">Total</span>
+                    <p class="font-mono font-black mt-0.5">₦40,000</p>
+                  </div>
+                </div>
+
+                <div class="flex gap-2 pt-2 border-t border-white/10">
+                  <button onclick="showToast('✓ Supervisor sign-off recorded for TKT-MAINT-2026-001!')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition">
+                    🛡️ Supervisor Sign-off
+                  </button>
+                  <button onclick="showToast('Advanced TKT-MAINT-2026-001 to Stage 7: REPAIR_IN_PROGRESS')" class="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition shadow-md">
+                    Advance Maintenance Step &rarr;
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 5: FINANCE & STS TOKENS -->
+        <div id="admPanel_finance" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-emerald-400 uppercase">FINANCIAL RECONCILIATION ENGINE</span>
+              <h3 class="text-xl font-black text-white mt-1">Payment Verifications &amp; Encrypted STS Tokens</h3>
+              <p class="text-xs text-slate-400 mt-1">Verify incoming Moniepoint, Paystack, and bank transfers with instant 20-digit STS token generation.</p>
+            </div>
+          </div>
+
+          <div class="grid lg:grid-cols-12 gap-6">
+            <!-- Verification Queue -->
+            <div class="lg:col-span-7 glass-card-dark p-5 rounded-2xl border border-white/10 space-y-4">
+              <h4 class="text-sm font-bold text-white border-b border-white/10 pb-2 flex justify-between items-center">
+                <span>⚡ Payments Verification Queue</span>
+                <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono font-bold">2 Pending</span>
+              </h4>
+
+              <div class="space-y-3" id="admPaymentQueue">
+                <div id="payCard1" class="p-4 rounded-xl border border-white/10 bg-white/5 space-y-3 text-xs">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="font-mono text-slate-400 font-bold">PAY-MP-2026-00941</span>
+                      <h5 class="text-sm font-bold text-white mt-0.5">Dr. Aisha Bello</h5>
+                      <p class="text-slate-400">Moniepoint MFB &bull; Ref: <code class="font-mono text-slate-300">MP-SESSION-992144</code></p>
+                    </div>
+                    <div class="text-right">
+                      <div class="text-base font-black text-emerald-400 font-mono">₦115,000</div>
+                      <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 font-mono">PENDING</span>
+                    </div>
+                  </div>
+
+                  <div id="payTokenBox1" class="hidden p-3 rounded-xl bg-indigo-500/15 border border-indigo-500/30 space-y-1">
+                    <span class="text-[10px] text-indigo-300 uppercase font-bold">Encrypted 20-Digit STS Token Issued:</span>
+                    <p class="font-mono text-sm font-black text-white tracking-widest">8492-1049-5521-9034-7182</p>
+                    <p class="text-[10px] text-emerald-400">+24 Days Extended &bull; Synced to Growatt Inverter</p>
+                  </div>
+
+                  <div id="payActionRow1" class="flex gap-2 pt-2 border-t border-white/10">
+                    <button onclick="handleAdminVerifyPayment(1, '8492-1049-5521-9034-7182', 24)" class="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition shadow-md">
+                      ✓ Verify Payment &amp; Issue 20-Digit STS Token
+                    </button>
+                    <button onclick="showToast('✕ Payment rejected')" class="px-3 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold transition">
+                      ✕ Reject
+                    </button>
+                  </div>
+                </div>
+
+                <div id="payCard2" class="p-4 rounded-xl border border-white/10 bg-white/5 space-y-3 text-xs">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="font-mono text-slate-400 font-bold">PAY-MAN-2026-00812</span>
+                      <h5 class="text-sm font-bold text-white mt-0.5">Chief Emeka Okafor</h5>
+                      <p class="text-slate-400">Zenith Bank Plc &bull; Ref: <code class="font-mono text-slate-300">ZENITH-TELLER-77123</code></p>
+                    </div>
+                    <div class="text-right">
+                      <div class="text-base font-black text-emerald-400 font-mono">₦220,000</div>
+                      <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 font-mono">PENDING</span>
+                    </div>
+                  </div>
+
+                  <div id="payTokenBox2" class="hidden p-3 rounded-xl bg-indigo-500/15 border border-indigo-500/30 space-y-1">
+                    <span class="text-[10px] text-indigo-300 uppercase font-bold">Encrypted 20-Digit STS Token Issued:</span>
+                    <p class="font-mono text-sm font-black text-white tracking-widest">4192-3841-9012-4412-8812</p>
+                    <p class="text-[10px] text-emerald-400">+30 Days Extended &bull; Synced to Growatt Inverter</p>
+                  </div>
+
+                  <div id="payActionRow2" class="flex gap-2 pt-2 border-t border-white/10">
+                    <button onclick="handleAdminVerifyPayment(2, '4192-3841-9012-4412-8812', 30)" class="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition shadow-md">
+                      ✓ Verify Payment &amp; Issue 20-Digit STS Token
+                    </button>
+                    <button onclick="showToast('✕ Payment rejected')" class="px-3 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold transition">
+                      ✕ Reject
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Invoices Ledger -->
+            <div class="lg:col-span-5 glass-card-dark p-5 rounded-2xl border border-white/10 space-y-4">
+              <h4 class="text-sm font-bold text-white border-b border-white/10 pb-2">Customer Receivables Ledger</h4>
+              <div class="space-y-3 text-xs">
+                <div class="p-3.5 rounded-xl border border-white/10 bg-white/5 space-y-1">
+                  <div class="flex justify-between">
+                    <span class="font-mono text-slate-400 font-bold">INV-2026-00412</span>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400">PAID</span>
+                  </div>
+                  <h5 class="text-sm font-bold text-white">Engr. Shwarji I. Khatang</h5>
+                  <div class="flex justify-between pt-1 border-t border-white/10 text-slate-400">
+                    <span>Due: 2026-11-20</span>
+                    <span class="font-mono font-bold text-white">₦145,000</span>
+                  </div>
+                </div>
+
+                <div class="p-3.5 rounded-xl border border-white/10 bg-white/5 space-y-1">
+                  <div class="flex justify-between">
+                    <span class="font-mono text-slate-400 font-bold">INV-2026-00413</span>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400">ISSUED</span>
+                  </div>
+                  <h5 class="text-sm font-bold text-white">Chief Emeka Okafor</h5>
+                  <div class="flex justify-between pt-1 border-t border-white/10 text-slate-400">
+                    <span>Due: 2026-11-08</span>
+                    <span class="font-mono font-bold text-white">₦220,000</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 6: COPILOT & AUDIT CHAIN -->
+        <div id="admPanel_copilot" class="hidden space-y-6">
+          <div class="glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="text-[10px] font-mono font-bold tracking-wider text-emerald-400 uppercase">LOCALGRIDAGENT 2.0 &amp; CRYPTOGRAPHIC AUDIT</span>
+              <h3 class="text-xl font-black text-white mt-1">Multi-Persona Copilot &amp; SHA-256 Ledger</h3>
+              <p class="text-xs text-slate-400 mt-1">Persona-scoped diagnostic RAG queries + immutable cryptographic transaction ledger.</p>
+            </div>
+            <button onclick="handleAdminVerifyAuditChain()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-md">
+              <span>🔐</span>
+              <span>Verify Audit Chain Integrity</span>
+            </button>
+          </div>
+
+          <div class="grid lg:grid-cols-12 gap-6">
+            <!-- Copilot Chat -->
+            <div class="lg:col-span-7 glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-col h-[560px]">
+              <div class="border-b border-white/10 pb-3 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">🤖</span>
+                  <h4 class="text-sm font-bold text-white">LocalGridAgent RAG Console</h4>
+                </div>
+                <span class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400">LIVE ENGINE</span>
+              </div>
+
+              <div id="admCopilotStream" class="flex-1 overflow-y-auto p-3 space-y-3 text-xs leading-relaxed">
+                <div class="p-3 rounded-2xl bg-white/5 border border-white/10 text-slate-200">
+                  ⚡ <strong>SkyTron LocalGridAgent (Multi-Persona RAG):</strong> Role scoping is active for <code class="text-emerald-400 font-mono">super_admin</code>. Ask any telemetry, COREN earthing, or ledger question.
+                </div>
+              </div>
+
+              <div class="p-2 border-t border-white/10 flex gap-1.5 overflow-x-auto text-[11px]">
+                <button onclick="setAdminQuery('Show all active units with lower shroud tamper warnings.')" class="px-2 py-1 rounded bg-white/5 border border-white/10 hover:border-indigo-400 text-slate-300 shrink-0 transition">
+                  Tamper warnings
+                </button>
+                <button onclick="setAdminQuery('Explain COREN earthing <= 5.0 Ohm compliance check.')" class="px-2 py-1 rounded bg-white/5 border border-white/10 hover:border-indigo-400 text-slate-300 shrink-0 transition">
+                  Earthing check procedure
+                </button>
+                <button onclick="setAdminQuery('Summarize this week collection efficiency.')" class="px-2 py-1 rounded bg-white/5 border border-white/10 hover:border-indigo-400 text-slate-300 shrink-0 transition">
+                  Collection efficiency
+                </button>
+              </div>
+
+              <form onsubmit="sendAdminCopilotQuery(event)" class="p-2 border-t border-white/10 flex gap-2">
+                <input id="admCopilotInput" placeholder="Ask SkyTron Copilot..." class="flex-1 px-3 py-2 rounded-xl bg-black/50 border border-white/15 text-xs text-white">
+                <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs transition">
+                  Send &rarr;
+                </button>
+              </form>
+            </div>
+
+            <!-- SHA-256 Audit Trail -->
+            <div class="lg:col-span-5 glass-card-dark p-5 rounded-2xl border border-white/10 flex flex-col h-[560px] space-y-3">
+              <div class="border-b border-white/10 pb-2 flex justify-between items-center">
+                <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                  <span>📜</span> SHA-256 Audit Ledger
+                </h4>
+                <span id="admAuditStatusPill" class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">
+                  LEDGER INTACT
+                </span>
+              </div>
+
+              <div class="flex-1 overflow-y-auto space-y-2.5 text-xs font-mono pr-1">
+                <div class="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1">
+                  <div class="flex justify-between text-[10px] text-slate-400 font-sans">
+                    <span class="font-bold text-white">ROLE_IMPERSONATION</span>
+                    <span>2026-11-06 19:40 UTC</span>
+                  </div>
+                  <p class="text-indigo-400 text-[11px] font-sans">sandbox.super_admin@skygrid.energy</p>
+                  <p class="text-slate-400 text-[10px] break-all">Hash: <span class="text-emerald-400">e3b0c44298fc1c149afbf4c8996fb92427...</span></p>
+                </div>
+
+                <div class="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1">
+                  <div class="flex justify-between text-[10px] text-slate-400 font-sans">
+                    <span class="font-bold text-white">COREN_EARTHING_VERIFIED</span>
+                    <span>2026-11-06 19:42 UTC</span>
+                  </div>
+                  <p class="text-indigo-400 text-[11px] font-sans">tariq.bello@skygrid.energy (COREN R.48201)</p>
+                  <p class="text-slate-400 text-[10px] break-all">Hash: <span class="text-emerald-400">8f434346648f6b96df89dda901c5176b10...</span></p>
+                </div>
+
+                <div class="p-3 rounded-xl bg-black/40 border border-white/10 space-y-1">
+                  <div class="flex justify-between text-[10px] text-slate-400 font-sans">
+                    <span class="font-bold text-white">PAYMENT_VERIFIED_STS</span>
+                    <span>2026-11-06 19:45 UTC</span>
+                  </div>
+                  <p class="text-indigo-400 text-[11px] font-sans">sandbox.finance_officer@skygrid.energy</p>
+                  <p class="text-slate-400 text-[10px] break-all">Hash: <span class="text-emerald-400">9a4821a4f0012bcdaef1129938c821ea...</span></p>
+                </div>
+              </div>
+
+              <div class="pt-2 border-t border-white/10 text-[11px] text-slate-400">
+                Immutable hash chaining prevents unauthorized ledger modification.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+    <!-- Toast Notification Container -->
+  <div id="toast" class="hidden fixed bottom-6 right-6 z-50 glass-card-dark border border-brand-teal/40 rounded-2xl p-4 shadow-2xl flex items-center gap-3 max-w-md text-xs text-white">
+    <div id="toastIcon" class="w-8 h-8 rounded-xl bg-brand-teal/20 text-brand-teal flex items-center justify-center shrink-0">
+      <i data-lucide="check" class="w-4 h-4"></i>
+    </div>
+    <div id="toastMessage" class="flex-grow">Action completed successfully.</div>
+  </div>
+
+{{end}}

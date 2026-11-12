@@ -1,0 +1,132 @@
+{{define "faq"}}
+  <section id="faq" class="py-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <div class="text-center mb-14">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-teal/15 border border-brand-teal/30 text-brand-teal text-xs font-semibold mb-3">
+        <span>❓</span> Clear Answers, No Fine Print
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-heading font-extrabold text-white">Frequently Asked Questions</h2>
+      <p class="text-sm text-brand-warm/75 mt-3">
+        Everything you need to know about our PAYGo lease-to-own terms, warranties, and engineering installations.
+      </p>
+    </div>
+
+    <div class="space-y-4">
+      
+      <!-- FAQ 1 -->
+      <div class="glass-card-dark rounded-2xl border border-white/10 overflow-hidden">
+        <button onclick="toggleFaq(1)" class="w-full p-5 text-left flex items-center justify-between text-sm font-heading font-bold text-white hover:text-brand-amber transition focus:outline-none">
+          <span>1. How does the PAYGo (Pay-As-You-Go) lease-to-own model work?</span>
+          <i data-lucide="chevron-down" id="faqIcon1" class="w-4 h-4 text-brand-teal transition-transform"></i>
+        </button>
+        <div id="faqAnswer1" class="hidden px-5 pb-5 text-xs text-brand-warm/80 leading-relaxed border-t border-white/5 pt-3">
+          Our PAYGo model allows you to acquire an engineered solar plant by paying an initial 30% down payment, followed by flexible monthly instalments spread across 12, 24, or 36 months. As long as your monthly payment is active, the system generates continuous power. Once your final instalment is completed, full legal ownership transfers to you automatically with zero hidden balloon fees.
+        </div>
+      </div>
+
+      <!-- FAQ 2 -->
+      <div class="glass-card-dark rounded-2xl border border-white/10 overflow-hidden">
+        <button onclick="toggleFaq(2)" class="w-full p-5 text-left flex items-center justify-between text-sm font-heading font-bold text-white hover:text-brand-amber transition focus:outline-none">
+          <span>2. What is the required down payment, and can I pay off early?</span>
+          <i data-lucide="chevron-down" id="faqIcon2" class="w-4 h-4 text-brand-teal transition-transform"></i>
+        </button>
+        <div id="faqAnswer2" class="hidden px-5 pb-5 text-xs text-brand-warm/80 leading-relaxed border-t border-white/5 pt-3">
+          The minimum down payment floor is strictly 30% of the total system cost, which covers factory shipping, mounting hardware, electrical surge protection, and professional installation. Yes, you can pay off your remaining balance at any time before the end of the term with absolutely zero early-exit penalties or prepayment fees.
+        </div>
+      </div>
+
+      <!-- FAQ 3 -->
+      <div class="glass-card-dark rounded-2xl border border-white/10 overflow-hidden">
+        <button onclick="toggleFaq(3)" class="w-full p-5 text-left flex items-center justify-between text-sm font-heading font-bold text-white hover:text-brand-amber transition focus:outline-none">
+          <span>3. What appliances can the system run during grid blackouts?</span>
+          <i data-lucide="chevron-down" id="faqIcon3" class="w-4 h-4 text-brand-teal transition-transform"></i>
+        </button>
+        <div id="faqAnswer3" class="hidden px-5 pb-5 text-xs text-brand-warm/80 leading-relaxed border-t border-white/5 pt-3">
+          The supported appliances depend on the package you select:
+          <br><br>
+          • <strong>Essential Home (3kVA):</strong> Powers all LED lighting, fans, televisions, Wi-Fi routers, laptops, and energy-efficient inverter refrigerators.<br>
+          • <strong>Family Solar (5kVA):</strong> Powers all essential loads plus 1x 1.0 HP Inverter AC, a deep chest freezer, and a 1.0 HP borehole water pump.<br>
+          • <strong>Business Solar (10kVA):</strong> Runs multiple inverter AC units, commercial medical cold rooms, server equipment, and full office workstations.<br>
+          • <strong>Industrial (20kVA+):</strong> Engineered for 3-phase machinery and industrial inductive motor loads.
+        </div>
+      </div>
+
+      <!-- FAQ 4 -->
+      <div class="glass-card-dark rounded-2xl border border-white/10 overflow-hidden">
+        <button onclick="toggleFaq(4)" class="w-full p-5 text-left flex items-center justify-between text-sm font-heading font-bold text-white hover:text-brand-amber transition focus:outline-none">
+          <span>4. How long does professional installation and commissioning take?</span>
+          <i data-lucide="chevron-down" id="faqIcon4" class="w-4 h-4 text-brand-teal transition-transform"></i>
+        </button>
+        <div id="faqAnswer4" class="hidden px-5 pb-5 text-xs text-brand-warm/80 leading-relaxed border-t border-white/5 pt-3">
+          Once your down payment is confirmed, a COREN-certified field engineering crew arrives at your site within 48 to 72 hours. Standard residential installations (3kVA &amp; 5kVA) are fully mounted, wired, grounded, and commissioned within 1 business day. Commercial 10kVA and industrial systems require 2 to 3 days for complete testing and load balancing.
+        </div>
+      </div>
+
+      <!-- FAQ 5 -->
+      <div class="glass-card-dark rounded-2xl border border-white/10 overflow-hidden">
+        <button onclick="toggleFaq(5)" class="w-full p-5 text-left flex items-center justify-between text-sm font-heading font-bold text-white hover:text-brand-amber transition focus:outline-none">
+          <span>5. Which payment methods are accepted for monthly instalments?</span>
+          <i data-lucide="chevron-down" id="faqIcon5" class="w-4 h-4 text-brand-teal transition-transform"></i>
+        </button>
+        <div id="faqAnswer5" class="hidden px-5 pb-5 text-xs text-brand-warm/80 leading-relaxed border-t border-white/5 pt-3">
+          We provide each customer with a Dedicated Virtual Account (DVA) issued through our banking partners (Moniepoint / Wema / Paystack). You can make monthly instalments via simple bank transfer from any Nigerian bank app, USSD, debit card auto-charge, or standing order. Payments reflect in your account within 60 seconds.
+        </div>
+      </div>
+
+      <!-- FAQ 6 -->
+      <div class="glass-card-dark rounded-2xl border border-white/10 overflow-hidden">
+        <button onclick="toggleFaq(6)" class="w-full p-5 text-left flex items-center justify-between text-sm font-heading font-bold text-white hover:text-brand-amber transition focus:outline-none">
+          <span>6. What happens if I experience a financial delay or miss a payment?</span>
+          <i data-lucide="chevron-down" id="faqIcon6" class="w-4 h-4 text-brand-teal transition-transform"></i>
+        </button>
+        <div id="faqAnswer6" class="hidden px-5 pb-5 text-xs text-brand-warm/80 leading-relaxed border-t border-white/5 pt-3">
+          We understand that unexpected business or family financial delays can occur. SkyGrid provides an automatic 5-day grace period on all accounts. If payment is still outstanding after the grace period, the inverter automatically transitions into standby mode until the monthly payment is made. Once payment is received, power is restored instantaneously over the air via our IoT cellular link.
+        </div>
+      </div>
+
+      <!-- FAQ 7 -->
+      <div class="glass-card-dark rounded-2xl border border-white/10 overflow-hidden">
+        <button onclick="toggleFaq(7)" class="w-full p-5 text-left flex items-center justify-between text-sm font-heading font-bold text-white hover:text-brand-amber transition focus:outline-none">
+          <span>7. What warranty coverage is provided on the equipment?</span>
+          <i data-lucide="chevron-down" id="faqIcon7" class="w-4 h-4 text-brand-teal transition-transform"></i>
+        </button>
+        <div id="faqAnswer7" class="hidden px-5 pb-5 text-xs text-brand-warm/80 leading-relaxed border-t border-white/5 pt-3">
+          All systems come with direct OEM factory warranties:
+          <br><br>
+          • <strong>LiFePO4 Lithium Batteries:</strong> 10-Year Manufacturer Warranty (rated for 6,000 cycles to 80% Depth of Discharge).<br>
+          • <strong>Growatt Hybrid Inverters:</strong> 5-Year Replacement Warranty.<br>
+          • <strong>Monocrystalline Solar Panels:</strong> 25-Year Linear Power Output Warranty.<br>
+          • <strong>Workmanship &amp; Wiring:</strong> 2-Year Comprehensive Field Support SLA.
+        </div>
+      </div>
+
+      <!-- FAQ 8 -->
+      <div class="glass-card-dark rounded-2xl border border-white/10 overflow-hidden">
+        <button onclick="toggleFaq(8)" class="w-full p-5 text-left flex items-center justify-between text-sm font-heading font-bold text-white hover:text-brand-amber transition focus:outline-none">
+          <span>8. Does the system require 24/7 internet or cellular coverage?</span>
+          <i data-lucide="chevron-down" id="faqIcon8" class="w-4 h-4 text-brand-teal transition-transform"></i>
+        </button>
+        <div id="faqAnswer8" class="hidden px-5 pb-5 text-xs text-brand-warm/80 leading-relaxed border-t border-white/5 pt-3">
+          No. The Growatt hybrid inverter functions fully offline using an internal encrypted cryptographic token engine. For remote telemetry and automatic over-the-air recharge, the system includes a multi-network 4G/2G GSM SIM card that connects automatically to MTN, Airtel, or Glo depending on local signal strength. If all cellular signals drop, manual 20-digit STS tokens can be entered via keypad.
+        </div>
+      </div>
+
+      <!-- FAQ 9 -->
+      <div class="glass-card-dark rounded-2xl border border-white/10 overflow-hidden">
+        <button onclick="toggleFaq(9)" class="w-full p-5 text-left flex items-center justify-between text-sm font-heading font-bold text-white hover:text-brand-amber transition focus:outline-none">
+          <span>9. Who owns the solar equipment at the end of the payment tenure?</span>
+          <i data-lucide="chevron-down" id="faqIcon9" class="w-4 h-4 text-brand-teal transition-transform"></i>
+        </button>
+        <div id="faqAnswer9" class="hidden px-5 pb-5 text-xs text-brand-warm/80 leading-relaxed border-t border-white/5 pt-3">
+          You do. 100%. Upon completion of your final monthly instalment, our system issues an official Deed of Equipment Ownership, unlocks the IoT gateway into permanent lifetime mode, and transfers all manufacturer warranties directly into your legal name. You never pay another monthly dime.
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- SECTION 9.5: PROFESSIONAL CONTACT & ENGINEERING SUPPORT HUB              -->
+
+{{end}}

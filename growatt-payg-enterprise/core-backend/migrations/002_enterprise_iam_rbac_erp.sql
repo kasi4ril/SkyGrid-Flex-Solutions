@@ -104,6 +104,11 @@ CREATE TABLE IF NOT EXISTS staff_onboarding_requests (
         CHECK (status IN ('AWAITING_EMAIL_VERIFY', 'PENDING_SUPERADMIN_REVIEW', 'APPROVED_INVITED', 'REJECTED', 'ACTIVATED')),
     assigned_role_id UUID REFERENCES roles(id) ON DELETE SET NULL,
     reviewed_by_user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    approved_by_user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    approved_by_staff_name TEXT,
+    approval_status VARCHAR(20) NOT NULL DEFAULT 'PENDING' CHECK (approval_status IN ('PENDING', 'APPROVED', 'REJECTED')),
+    approval_notes TEXT,
+    reviewed_at TIMESTAMPTZ,
     review_notes TEXT,
     activation_token_hash VARCHAR(64),
     token_expires_at TIMESTAMPTZ,
@@ -138,10 +143,15 @@ CREATE INDEX IF NOT EXISTS idx_sessions_refresh_hash ON sessions(refresh_token_h
 CREATE TABLE IF NOT EXISTS audit_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     actor_user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    actor_name VARCHAR(160),
+    actor_role VARCHAR(50),
     action VARCHAR(100) NOT NULL,
     resource_type VARCHAR(100) NOT NULL,
     resource_id VARCHAR(100),
     payload JSONB,
+    payload_diff JSONB,
+    previous_hash VARCHAR(64),
+    current_hash VARCHAR(64),
     ip_address VARCHAR(45),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

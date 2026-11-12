@@ -1,0 +1,52 @@
+{{define "modal_package"}}
+  <!-- Modal 1: Package Technical Details Modal -->
+  <div id="packageModal" style="display: none;" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-card-dark rounded-3xl max-w-2xl w-full p-6 sm:p-8 border border-white/15 relative shadow-2xl">
+      <button onclick="closeModal('packageModal')" class="absolute top-5 right-5 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-2">
+        <span id="modalPkgSku" class="text-xs px-2.5 py-0.5 rounded-full bg-brand-amber/20 text-brand-amber font-mono font-semibold">SKU</span>
+        <span class="text-xs text-brand-teal font-medium">OEM Factory Certified</span>
+      </div>
+
+      <h3 id="modalPkgTitle" class="text-2xl font-heading font-extrabold text-white">Package Title</h3>
+      <p id="modalPkgTarget" class="text-xs text-brand-warm/70 mt-1">Target Profile</p>
+
+      <div class="grid sm:grid-cols-2 gap-4 my-6 text-xs">
+        <div class="bg-black/40 p-4 rounded-xl border border-white/5 space-y-2">
+          <span class="font-bold text-white block uppercase tracking-wider text-[10px]">Electrical Architecture</span>
+          <div class="flex justify-between"><span class="text-brand-warm/60">Rating:</span> <span id="modalPkgRating" class="font-bold text-white font-mono">-</span></div>
+          <div class="flex justify-between"><span class="text-brand-warm/60">MPPT Window:</span> <span class="font-bold text-white font-mono">120V – 430V DC</span></div>
+          <div class="flex justify-between"><span class="text-brand-warm/60">Transfer Time:</span> <span class="font-bold text-brand-teal font-mono">10 ms (UPS Grade)</span></div>
+          <div class="flex justify-between"><span class="text-brand-warm/60">BMS Protocol:</span> <span class="font-bold text-white font-mono">CANBus / RS485</span></div>
+        </div>
+
+        <div class="bg-black/40 p-4 rounded-xl border border-white/5 space-y-2">
+          <span class="font-bold text-white block uppercase tracking-wider text-[10px]">Financing &amp; Terms</span>
+          <div class="flex justify-between"><span class="text-brand-warm/60">Outright Price:</span> <span id="modalPkgCash" class="font-bold text-white font-mono">-</span></div>
+          <div class="flex justify-between"><span class="text-brand-warm/60">30% Down Payment:</span> <span id="modalPkgDown" class="font-bold text-brand-amber font-mono">-</span></div>
+          <div class="flex justify-between"><span class="text-brand-warm/60">36-Mo. Payment:</span> <span id="modalPkgMonthly" class="font-bold text-brand-amber font-mono">-</span></div>
+          <div class="flex justify-between"><span class="text-brand-warm/60">Ownership:</span> <span class="font-bold text-emerald-400">100% Transfer</span></div>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-xl bg-brand-forest/50 border border-brand-teal/20 text-xs text-brand-warm/80 mb-6">
+        <h4 class="font-bold text-white mb-1">Standard Inclusions:</h4>
+        <p>Package includes high-yield monocrystalline half-cell panels, aluminum anodized roof mounting rails, 4mm² double-insulated solar DC cabling, Schneider/ABB DC breaker isolators, Type II lightning surge arrestors, and complete field commissioning.</p>
+      </div>
+
+      <div class="flex gap-3">
+        <button onclick="closeModal('packageModal')" class="w-1/2 py-3 rounded-xl text-xs font-semibold text-white bg-white/10 hover:bg-white/20 transition">
+          Close
+        </button>
+        <button id="modalSelectPlanBtn" onclick="openAuditFromModal()" class="w-1/2 py-3 rounded-xl text-xs font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 transition">
+          Book Site Audit
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+{{end}}

@@ -1576,7 +1576,7 @@ export default function EnterpriseNavbar({
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <span>{mfaChallenge ? "🛡️" : "🔐"}</span>
-                <span>{mfaChallenge ? "Two-Factor Verification (2FA)" : "Login to Your Dashboard"}</span>
+                <span>{mfaChallenge ? "Two-Factor Verification (2FA)" : "Customer Solar Portal Login"}</span>
               </h3>
               <button
                 onClick={() => {
@@ -1727,51 +1727,21 @@ export default function EnterpriseNavbar({
                   Login to your dashboard. Enter your verified credentials to continue.
                 </p>
 
-                {/* Developer Sandbox Quick-Fill Accounts */}
-                <div className="mb-3 p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/25 text-xs space-y-1.5">
-                  <div className="flex items-center justify-between text-purple-700 dark:text-purple-300">
+                {/* Customer Sandbox Account */}
+                <div className="mb-3 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs space-y-1.5">
+                  <div className="flex items-center justify-between text-amber-600 dark:text-amber-300">
                     <span className="font-bold flex items-center gap-1">
-                      <span>🛠️</span> Developer Accounts:
+                      <span>☀️</span> Customer Sandbox Account:
                     </span>
-                    <span className="text-[10px] text-amber-600 dark:text-amber-400 font-mono">2FA On-Screen</span>
+                    <span className="text-[10px] text-amber-600 dark:text-amber-400 font-mono">2FA Verified</span>
                   </div>
-                  <div className="grid grid-cols-3 gap-1">
-                    <button
-                      type="button"
-                      onClick={() => { setLoginEmail("admin@skytron.ng"); setLoginPassword("Admin@SkyTron2026!"); }}
-                      className="px-1.5 py-1 rounded bg-slate-200 dark:bg-slate-800 text-[10px] font-mono text-left truncate hover:bg-purple-500 hover:text-white cursor-pointer"
-                    >
-                      👑 Admin
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { setLoginEmail("ops@skytron.ng"); setLoginPassword("OpsManager2026!"); }}
-                      className="px-1.5 py-1 rounded bg-slate-200 dark:bg-slate-800 text-[10px] font-mono text-left truncate hover:bg-purple-500 hover:text-white cursor-pointer"
-                    >
-                      📋 Ops
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { setLoginEmail("finance@skytron.ng"); setLoginPassword("FinanceLead2026!"); }}
-                      className="px-1.5 py-1 rounded bg-slate-200 dark:bg-slate-800 text-[10px] font-mono text-left truncate hover:bg-purple-500 hover:text-white cursor-pointer"
-                    >
-                      💳 Finance
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { setLoginEmail("tech@skytron.ng"); setLoginPassword("Technician2026!"); }}
-                      className="px-1.5 py-1 rounded bg-slate-200 dark:bg-slate-800 text-[10px] font-mono text-left truncate hover:bg-purple-500 hover:text-white cursor-pointer"
-                    >
-                      🔧 Tech
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { setLoginEmail("customer@skytron.ng"); setLoginPassword("SolarCustomer2026!"); }}
-                      className="px-1.5 py-1 rounded bg-slate-200 dark:bg-slate-800 text-[10px] font-mono text-left truncate hover:bg-purple-500 hover:text-white cursor-pointer"
-                    >
-                      ☀️ Customer
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => { setLoginEmail("customer@skytron.ng"); setLoginPassword("SolarCustomer2026!"); }}
+                    className="w-full py-1.5 px-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-700 dark:text-amber-300 font-mono text-xs text-center border border-amber-500/30 font-bold transition cursor-pointer"
+                  >
+                    ☀️ Customer Test Account (customer@skytron.ng)
+                  </button>
                 </div>
 
                 <form onSubmit={handleGeneralSignIn} className="space-y-4">
@@ -1839,7 +1809,7 @@ export default function EnterpriseNavbar({
                         : "bg-slate-400/30 text-slate-500 dark:text-slate-500 cursor-not-allowed opacity-40 filter grayscale pointer-events-none"
                     }`}
                   >
-                    {isSubmitting ? "Verifying Credentials..." : "Login to Your Dashboard"}
+                    {isSubmitting ? "Verifying Credentials..." : "☀️ Login to Customer Portal"}
                   </button>
 
                   {/* Dedicated Forget Password link leading to recovery */}
@@ -1901,7 +1871,7 @@ export default function EnterpriseNavbar({
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <span>{mfaChallenge ? "🛡️" : "👑"}</span>
-                <span>{mfaChallenge ? "Staff Two-Factor Verification" : "Staff & Executive Sign In"}</span>
+                <span>{mfaChallenge ? "Staff Two-Factor Verification" : "Staff & Executive Watchtower Sign In"}</span>
               </h3>
               <button
                 onClick={() => {
@@ -2049,17 +2019,64 @@ export default function EnterpriseNavbar({
             ) : (
               <>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
-                  Super Admin auto-login active for developer watchtower access.
+                  Enterprise watchtower and operations console access. Enter authorized staff credentials.
                 </p>
 
-                {/* Developer Notice Alert */}
-                <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-700 dark:text-purple-300 text-xs mb-3 space-y-1">
-                  <div className="font-bold flex items-center gap-1.5">
-                    <span>👑</span> Super Admin Auto-Login Active
+                {/* 6-Tier Staff Role Switcher */}
+                <div className="p-3 rounded-xl bg-purple-500/15 border border-purple-500/35 text-xs mb-3 space-y-2">
+                  <div className="flex items-center justify-between text-purple-700 dark:text-purple-300">
+                    <span className="font-bold flex items-center gap-1.5">
+                      <span>🛡️</span> 6-Tier Staff Role Switcher (1-Click Test Login):
+                    </span>
+                    <span className="text-[10px] text-amber-600 dark:text-amber-400 font-mono">2FA Verified</span>
                   </div>
-                  <p className="text-[11px] leading-relaxed opacity-90">
-                    Developer Super Admin auto-login is active for Watchtower access. Authorization and department role assignments (Operations, Finance, COREN Engineering) are controlled by the Super Admin in the Watchtower dashboard.
+                  <p className="text-[11px] text-slate-600 dark:text-purple-200/80 leading-relaxed">
+                    Select any role to test its dedicated 4-page dashboard, permissions, and maker-checker audit stamps.
                   </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => { setStaffLoginId("admin@skytron.ng"); setStaffLoginPassword("Admin@SkyTron2026!"); }}
+                      className="px-2 py-1.5 rounded-lg bg-slate-200 dark:bg-white/10 hover:bg-purple-500 hover:text-white dark:hover:bg-white/20 text-slate-800 dark:text-white font-mono text-[10px] text-left transition cursor-pointer"
+                    >
+                      👑 Super Admin
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setStaffLoginId("finance@skytron.ng"); setStaffLoginPassword("FinanceLead2026!"); }}
+                      className="px-2 py-1.5 rounded-lg bg-slate-200 dark:bg-white/10 hover:bg-purple-500 hover:text-white dark:hover:bg-white/20 text-slate-800 dark:text-white font-mono text-[10px] text-left transition cursor-pointer"
+                    >
+                      💳 Finance Officer
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setStaffLoginId("ops@skytron.ng"); setStaffLoginPassword("OpsManager2026!"); }}
+                      className="px-2 py-1.5 rounded-lg bg-slate-200 dark:bg-white/10 hover:bg-purple-500 hover:text-white dark:hover:bg-white/20 text-slate-800 dark:text-white font-mono text-[10px] text-left transition cursor-pointer"
+                    >
+                      📋 Operations Mgr
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setStaffLoginId("coren@skytron.ng"); setStaffLoginPassword("CORENInspector2026!"); }}
+                      className="px-2 py-1.5 rounded-lg bg-slate-200 dark:bg-white/10 hover:bg-purple-500 hover:text-white dark:hover:bg-white/20 text-slate-800 dark:text-white font-mono text-[10px] text-left transition cursor-pointer"
+                    >
+                      🛡️ COREN Inspector
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setStaffLoginId("tech@skytron.ng"); setStaffLoginPassword("Technician2026!"); }}
+                      className="px-2 py-1.5 rounded-lg bg-slate-200 dark:bg-white/10 hover:bg-purple-500 hover:text-white dark:hover:bg-white/20 text-slate-800 dark:text-white font-mono text-[10px] text-left transition cursor-pointer"
+                    >
+                      🔧 Field Tech
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setStaffLoginId("support@skytron.ng"); setStaffLoginPassword("CustomerSupport2026!"); }}
+                      className="px-2 py-1.5 rounded-lg bg-slate-200 dark:bg-white/10 hover:bg-purple-500 hover:text-white dark:hover:bg-white/20 text-slate-800 dark:text-white font-mono text-[10px] text-left transition cursor-pointer"
+                    >
+                      🎧 Support Rep
+                    </button>
+                  </div>
                 </div>
 
                 <form onSubmit={handleStaffSignIn} className="space-y-4">
@@ -2121,7 +2138,7 @@ export default function EnterpriseNavbar({
                         : "bg-slate-400/30 text-slate-500 dark:text-slate-500 cursor-not-allowed opacity-40 filter grayscale pointer-events-none"
                     }`}
                   >
-                    {isStaffSigningIn ? "Authenticating Watchtower..." : "👑 Auto-Login as Super Admin & Enter Watchtower"}
+                    {isStaffSigningIn ? "Authenticating Watchtower..." : "🔐 Sign In to Enterprise Watchtower"}
                   </button>
 
                   {/* Staff Lead to Password Recovery */}
@@ -2410,7 +2427,7 @@ export default function EnterpriseNavbar({
 
       {/* 6. CHANGE PASSWORD MODAL (Authenticated Users) */}
       {changePasswordModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 overflow-y-auto" style={{ zIndex: 9999 }}>
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl my-8">
             <div className="flex justify-between items-center mb-2">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">

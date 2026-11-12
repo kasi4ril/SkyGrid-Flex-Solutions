@@ -1,0 +1,397 @@
+{{define "calculator"}}
+  <section id="calculator" class="py-20 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
+    
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-sky/15 border border-brand-sky/35 text-brand-sky text-xs font-semibold mb-3">
+        <span>⚡</span> Interactive Electrical &amp; Financial Sizer
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-heading font-extrabold text-white">Affordability &amp; Fuel Savings Calculator</h2>
+      <p class="text-sm sm:text-base text-brand-warm/75 mt-3">
+        Select your state region and household appliances. Compare your 36-month solar lease-to-own payment directly against what you currently spend on petrol and generator maintenance.
+      </p>
+    </div>
+
+    <!-- Main Calculator Shell -->
+    <div class="glass-card-dark rounded-3xl p-6 lg:p-10 border border-white/15 shadow-2xl">
+      
+      <!-- Top Config Bar -->
+      <div class="grid md:grid-cols-3 gap-6 pb-8 border-b border-white/10">
+        
+        <!-- State Selector -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-brand-warm/80 mb-2">
+            Installation State / Geo-Zone
+          </label>
+          <select id="calcState" onchange="runCalculator()" class="w-full bg-black/50 border border-white/15 text-white rounded-xl px-4 py-2.5 text-sm font-semibold focus:border-brand-amber focus:outline-none">
+            <option value="LAGOS" data-psh="4.1" selected>Lagos (Southern Coastal - 4.1 PSH)</option>
+            <option value="ABUJA" data-psh="5.1">FCT Abuja (Middle Belt - 5.1 PSH)</option>
+            <option value="RIVERS" data-psh="3.8">Rivers / Port Harcourt (3.8 PSH)</option>
+            <option value="KANO" data-psh="5.9">Kano (Northern Sahel - 5.9 PSH)</option>
+            <option value="BENUE" data-psh="4.9">Benue / Makurdi (4.9 PSH)</option>
+            <option value="PLATEAU" data-psh="5.3">Plateau / Jos (5.3 PSH)</option>
+            <option value="ENUGU" data-psh="4.4">Enugu (4.4 PSH)</option>
+            <option value="OYO" data-psh="4.5">Oyo / Ibadan (4.5 PSH)</option>
+          </select>
+          <span class="text-[10px] text-brand-teal mt-1 block">Adjusts battery capacity to regional sun hours.</span>
+        </div>
+
+        <!-- Down Payment Slider -->
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <label class="text-xs font-bold uppercase tracking-wider text-brand-warm/80">Down Payment Floor</label>
+            <span id="calcDownPctLabel" class="text-xs font-mono font-bold text-brand-amber">30%</span>
+          </div>
+          <input type="range" id="calcDownPct" min="30" max="60" step="5" value="30" oninput="runCalculator()" class="w-full h-2 bg-white/10 rounded-lg cursor-pointer">
+          <div class="flex justify-between text-[10px] text-brand-warm/50 mt-1">
+            <span>30% (Standard)</span>
+            <span>45%</span>
+            <span>60% (Lower Instalment)</span>
+          </div>
+        </div>
+
+        <!-- Repayment Tenure -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-brand-warm/80 mb-2">
+            Repayment Tenure (Up to 5 Years)
+          </label>
+          <div class="grid grid-cols-5 gap-1.5">
+            <button type="button" onclick="setTenure(12)" id="tenure12" class="py-2 rounded-xl text-xs font-bold bg-white/5 border border-white/10 hover:bg-white/10 text-white transition">12m</button>
+            <button type="button" onclick="setTenure(24)" id="tenure24" class="py-2 rounded-xl text-xs font-bold bg-white/5 border border-white/10 hover:bg-white/10 text-white transition">24m</button>
+            <button type="button" onclick="setTenure(36)" id="tenure36" class="py-2 rounded-xl text-xs font-bold bg-brand-amber text-brand-dark transition shadow-md">36m</button>
+            <button type="button" onclick="setTenure(48)" id="tenure48" class="py-2 rounded-xl text-xs font-bold bg-white/5 border border-white/10 hover:bg-white/10 text-white transition">48m</button>
+            <button type="button" onclick="setTenure(60)" id="tenure60" class="py-2 rounded-xl text-xs font-bold bg-white/5 border border-white/10 hover:bg-white/10 text-white transition">60m</button>
+          </div>
+          <span class="text-[10px] text-brand-teal mt-1 block">Zero early termination penalties • Full title deed at term.</span>
+        </div>
+
+      </div>
+
+      <!-- Middle: Appliances Selector & Sizing Output -->
+      <div class="grid lg:grid-cols-12 gap-8 my-8">
+        
+        <!-- Left: Interactive Appliance Dropdown & Cart (7 Cols) -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="flex items-center justify-between pb-2 border-b border-white/10">
+            <div>
+              <h4 class="font-heading font-bold text-sm uppercase tracking-wider text-white">Select Connected Appliances</h4>
+              <p class="text-[11px] text-brand-warm/60">Choose equipment from dropdown and add to your active load cart</p>
+            </div>
+            <span id="cartCountBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-brand-amber/20 text-brand-amber border border-brand-amber/30 font-mono font-bold">
+              0 Items in Cart
+            </span>
+          </div>
+
+          <!-- Add Appliance Dropdown Bar -->
+          <div class="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2.5">
+            <label class="block text-xs font-bold uppercase tracking-wider text-brand-warm/90">
+              Choose Appliance &amp; Power Rating
+            </label>
+            <div class="flex flex-col sm:flex-row gap-2.5">
+              <select id="applianceDropdown" class="flex-1 bg-black/60 border border-white/20 text-white rounded-xl px-3.5 py-2.5 text-xs font-medium focus:border-brand-amber outline-none">
+                <optgroup label="❄️ Air Conditioning &amp; Fans">
+                  <option value="ac_1hp_inv">1.0 HP Inverter Split AC (850W) — 850W (1.6x Surge)</option>
+                  <option value="ac_1_5hp_inv">1.5 HP Inverter Split AC (1,250W) — 1250W (1.6x Surge)</option>
+                  <option value="ac_2hp_inv">2.0 HP Inverter Split AC (1,800W) — 1800W (1.8x Surge)</option>
+                  <option value="ac_1hp_std">1.0 HP Standard Non-Inverter AC (1,200W) — 1200W (3.2x Surge)</option>
+                  <option value="fan_ceil">Standing / Ceiling Fans (75W) — 75W (1.3x Surge)</option>
+                  <option value="fan_dc">Rechargeable / DC Solar Fan (30W) — 30W (Resistive)</option>
+                </optgroup>
+                <optgroup label="🧊 Refrigeration &amp; Freezers">
+                  <option value="fridge_inv">Inverter Refrigerator Single Door (120W) — 120W (2x Surge)</option>
+                  <option value="fridge_double">Inverter Refrigerator Double Door (180W) — 180W (2.2x Surge)</option>
+                  <option value="freezer_150l">Deep Chest Freezer Small 150L (180W) — 180W (2.5x Surge)</option>
+                  <option value="freezer_300l">Deep Chest Freezer Large 300L (250W) — 250W (2.8x Surge)</option>
+                  <option value="coldroom_chiller">Commercial Cold-Room Chiller (1,500W) — 1500W (3.5x Surge)</option>
+                </optgroup>
+                <optgroup label="🚰 Water Pumping &amp; Motors">
+                  <option value="pump_0_5hp">0.5 HP Borehole Water Pump (375W) — 375W (3x Surge)</option>
+                  <option value="pump_1hp">1.0 HP Submersible Borehole Pump (750W) — 750W (3x Surge)</option>
+                  <option value="pump_1_5hp">1.5 HP Submersible Borehole Pump (1,100W) — 1100W (3.2x Surge)</option>
+                  <option value="pump_2hp">2.0 HP Industrial Surface Water Pump (1,500W) — 1500W (3.5x Surge)</option>
+                </optgroup>
+                <optgroup label="💡 Lighting &amp; Entertainment">
+                  <option value="led_5">Energy-Saving LED Bulbs Pack (50W) — 50W (Resistive)</option>
+                  <option value="led_10">Energy-Saving LED Bulbs Pack (100W) — 100W (Resistive)</option>
+                  <option value="tv_55">55&quot; Smart 4K LED TV + Soundbar (120W) — 120W (Resistive)</option>
+                  <option value="tv_75">75&quot; 4K OLED TV + Home Theater (220W) — 220W (Resistive)</option>
+                  <option value="starlink">Starlink Terminal + WiFi 6 Router (75W) — 75W (Resistive)</option>
+                  <option value="workstation">Laptops + Dual Monitors Workstation (150W) — 150W (Resistive)</option>
+                  <option value="cctv">CCTV Security System + 8-Ch NVR (65W) — 65W (Resistive)</option>
+                </optgroup>
+                <optgroup label="⚡ Kitchen &amp; Heavy Laundry">
+                  <option value="washing_mach">Inverter Washing Machine (500W) — 500W (2x Surge)</option>
+                  <option value="microwave">Microwave Oven (1,200W) — 1200W (1.2x Surge)</option>
+                  <option value="iron">Electric Pressing Iron (1,200W) — 1200W (Resistive)</option>
+                  <option value="kettle">Electric Kettle / Air Fryer (1,500W) — 1500W (Resistive)</option>
+                  <option value="medical">Medical Centrifuge &amp; Sterilizer (650W) — 650W (2x Surge)</option>
+                </optgroup>
+              </select>
+              <button type="button" onclick="addSelectedApplianceToCart()" class="px-4 py-2.5 rounded-xl bg-brand-amber hover:bg-amber-400 text-brand-dark font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-md flex-shrink-0">
+                <span>➕</span> Add to Cart
+              </button>
+            </div>
+          </div>
+
+          <!-- Chosen Connected Appliances in Cart -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-xs font-semibold text-brand-warm/80 px-1">
+              <span>CHOSEN APPLIANCES IN LOAD CART</span>
+              <span class="text-[10px] text-brand-warm/50 font-mono">Qty • Daily Hrs • Weekly Days</span>
+            </div>
+
+            <div id="appliancesList" class="space-y-2.5">
+              <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 transition space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span class="font-bold text-white text-xs sm:text-sm">Energy-Saving LED Bulbs Pack (50W)</span>
+                    </div>
+                    <div class="text-[10px] text-brand-warm/60 font-mono">50W rating • 100W total • Weekly Est: ~1.0 kWh/wk</div>
+                  </div>
+                  <button type="button" onclick="removeCartItem(0)" class="text-xs text-rose-400 hover:text-rose-300 font-mono px-2 py-1 rounded bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition flex items-center gap-1">
+                    <span>✕</span> Remove
+                  </button>
+                </div>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 transition space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span class="font-bold text-white text-xs sm:text-sm">Standing / Ceiling Fans (75W)</span>
+                      <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-brand-amber/20 text-brand-amber border border-brand-amber/30">1.3x Surge</span>
+                    </div>
+                    <div class="text-[10px] text-brand-warm/60 font-mono">75W rating • 225W total • Weekly Est: ~20.5 kWh/wk</div>
+                  </div>
+                  <button type="button" onclick="removeCartItem(1)" class="text-xs text-rose-400 hover:text-rose-300 font-mono px-2 py-1 rounded bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition flex items-center gap-1">
+                    <span>✕</span> Remove
+                  </button>
+                </div>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 transition space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span class="font-bold text-white text-xs sm:text-sm">55" Smart 4K LED TV + Soundbar (120W)</span>
+                    </div>
+                    <div class="text-[10px] text-brand-warm/60 font-mono">120W rating • 120W total • Weekly Est: ~7.6 kWh/wk</div>
+                  </div>
+                  <button type="button" onclick="removeCartItem(2)" class="text-xs text-rose-400 hover:text-rose-300 font-mono px-2 py-1 rounded bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition flex items-center gap-1">
+                    <span>✕</span> Remove
+                  </button>
+                </div>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 transition space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span class="font-bold text-white text-xs sm:text-sm">Inverter Refrigerator Double Door (180W)</span>
+                      <span class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-brand-amber/20 text-brand-amber border border-brand-amber/30">2.2x Surge</span>
+                    </div>
+                    <div class="text-[10px] text-brand-warm/60 font-mono">180W rating • 180W total • Weekly Est: ~15.1 kWh/wk</div>
+                  </div>
+                  <button type="button" onclick="removeCartItem(3)" class="text-xs text-rose-400 hover:text-rose-300 font-mono px-2 py-1 rounded bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition flex items-center gap-1">
+                    <span>✕</span> Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Real-time Sizing & Financing Breakdown (5 Cols) -->
+        <div class="lg:col-span-5 bg-black/40 border border-white/10 rounded-3xl p-6 lg:p-7 flex flex-col justify-between space-y-6">
+          
+          <div class="space-y-5">
+            <!-- Bundle Header -->
+            <div class="flex items-center justify-between pb-3 border-b border-white/10">
+              <span class="text-xs font-bold uppercase tracking-wider text-brand-warm/80">Engineered Recommendation</span>
+              <span id="badgeBundle" class="text-xs px-3 py-1 rounded-full bg-brand-amber/20 text-brand-amber border border-brand-amber/30 font-semibold font-mono">
+                Growatt 5.0kVA Family Standard
+              </span>
+            </div>
+
+            <!-- DEDICATED SIZING REQUIREMENTS DISPLAY (Inverter Size, Battery Size & PV Power Needed) -->
+            <div class="p-4 rounded-2xl bg-black/60 border border-brand-amber/30 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-bold text-brand-amber uppercase tracking-wider font-mono">
+                  Calculated System Sizing Required
+                </span>
+                <span class="text-[10px] text-emerald-400 font-mono">COREN Electrical Standard</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2 text-xs font-mono">
+                <div class="p-2.5 rounded-xl bg-white/5 border border-white/5 space-y-0.5">
+                  <span class="text-[10px] text-brand-warm/60 block">Inverter Size</span>
+                  <div id="calcInverterSizeCard" class="text-sm font-bold text-white">5.0 kVA</div>
+                  <span id="calcInverterSurgeCard" class="text-[9px] text-brand-amber block">Surge: 6.2 kVA</span>
+                </div>
+                <div class="p-2.5 rounded-xl bg-white/5 border border-white/5 space-y-0.5">
+                  <span class="text-[10px] text-brand-warm/60 block">Battery Size</span>
+                  <div id="calcBatterySizeCard" class="text-sm font-bold text-brand-teal">10.24 kWh</div>
+                  <span class="text-[9px] text-emerald-400 block">80% DoD LiFePO4</span>
+                </div>
+                <div class="p-2.5 rounded-xl bg-white/5 border border-white/5 space-y-0.5">
+                  <span class="text-[10px] text-brand-warm/60 block">PV Power</span>
+                  <div id="calcPVPowerCard" class="text-sm font-bold text-brand-sky">5.40 kWp</div>
+                  <span class="text-[9px] text-brand-sky/80 block">Tier-1 Array</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- PRIMARY LAYER 1: Repayment Tenure Slider (12 to 60 Months / 5 Years) -->
+            <div class="space-y-1.5 p-3.5 rounded-2xl bg-white/5 border border-white/5">
+              <div class="flex justify-between items-center text-xs">
+                <span class="text-brand-warm/80 font-medium">Repayment Tenure:</span>
+                <span id="calcTenureLabel" class="font-mono font-bold text-brand-amber">36 Months (3 Years)</span>
+              </div>
+              <input type="range" id="calcTenureSlider" min="12" max="60" step="6" value="36" oninput="runCalculator()" class="w-full h-2 bg-white/10 rounded-lg cursor-pointer accent-brand-amber">
+              <div class="flex justify-between text-[10px] text-brand-warm/50 font-mono">
+                <span>12m</span>
+                <span>24m</span>
+                <span>36m</span>
+                <span>48m</span>
+                <span>60m (5 Yrs)</span>
+              </div>
+            </div>
+
+            <!-- PRIMARY LAYER 2: DisCo Band A & Generator Fuel Inputs -->
+            <div class="space-y-2.5 p-3.5 rounded-2xl bg-white/5 border border-white/5 text-xs">
+              <span class="text-[10px] uppercase font-bold tracking-wider text-brand-warm/60 block">Current Utility &amp; Generator Profile</span>
+              <div class="grid grid-cols-3 gap-2">
+                <div>
+                  <label class="text-[10px] text-brand-warm/60 block mb-1">DisCo (₦/mo)</label>
+                  <input type="number" id="calcGridBill" value="75000" oninput="runCalculator()" class="w-full bg-black/50 border border-white/15 rounded-lg p-2 text-xs font-mono text-white outline-none focus:border-brand-amber">
+                </div>
+                <div>
+                  <label class="text-[10px] text-brand-warm/60 block mb-1">Gen Run (Hrs/d)</label>
+                  <input type="number" id="calcGenHours" value="5" oninput="runCalculator()" class="w-full bg-black/50 border border-white/15 rounded-lg p-2 text-xs font-mono text-white outline-none focus:border-brand-amber">
+                </div>
+                <div>
+                  <label class="text-[10px] text-brand-warm/60 block mb-1">Fuel (₦/Liter)</label>
+                  <input type="number" id="calcFuelPrice" value="1250" oninput="runCalculator()" class="w-full bg-black/50 border border-white/15 rounded-lg p-2 text-xs font-mono text-white outline-none focus:border-brand-amber">
+                </div>
+              </div>
+            </div>
+
+            <!-- PRIMARY LAYER 3: Net Savings Summary Box -->
+            <div class="space-y-2.5 p-4 rounded-2xl bg-brand-forest/50 border border-brand-teal/30 text-xs">
+              <div class="flex justify-between items-center">
+                <span class="text-brand-warm/70">Current Monthly Generator + Grid:</span>
+                <span id="genCostMonthly" class="font-bold text-red-400 font-mono text-sm">₦240,000/mo</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-brand-warm/70">Fixed Growatt PAYG Installment:</span>
+                <span id="solarCostMonthly" class="font-bold text-brand-amber font-mono text-sm">₦128,500/mo</span>
+              </div>
+              <div class="flex justify-between items-center pt-2 border-t border-white/10">
+                <span class="font-bold text-white">Net Monthly Cash Saved:</span>
+                <span id="netMonthlySavings" class="text-xl font-heading font-extrabold text-emerald-400 font-mono">+₦111,500/mo</span>
+              </div>
+              <div class="flex justify-between items-center text-[11px] text-emerald-300">
+                <span>Projected 3-Year Cumulative Savings:</span>
+                <span id="threeYrSavings" class="font-bold font-mono">₦4,014,000 saved over 36 months!</span>
+              </div>
+            </div>
+
+            <!-- SECONDARY LAYER: COLLAPSIBLE COREN ENGINEERING DRAWER -->
+            <div class="border border-brand-sky/20 rounded-2xl overflow-hidden">
+              <button type="button" onclick="toggleCorenDrawer()" class="w-full p-3.5 bg-black/60 hover:bg-black/80 text-left text-xs font-bold text-brand-sky flex items-center justify-between transition">
+                <div class="flex items-center gap-2">
+                  <span>⚙️</span>
+                  <span>Inspect COREN Electrical Sizing &amp; Derating Math</span>
+                </div>
+                <span id="corenDrawerIndicator" class="font-mono text-[10px] px-2 py-0.5 rounded bg-brand-sky/20 border border-brand-sky/30 text-brand-sky">
+                  Show Specs ▼
+                </span>
+              </button>
+
+              <div id="corenMathDrawer" class="hidden p-4 bg-black/80 border-t border-white/10 space-y-3.5 text-xs font-mono">
+                
+                <!-- Formula 1 -->
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                  <div class="flex justify-between text-brand-warm/80 text-[11px]">
+                    <span>Peak Continuous Load (W_run):</span>
+                    <strong id="outRunningWatts" class="text-white font-bold">0 W</strong>
+                  </div>
+                  <p class="text-[10px] text-brand-warm/50">Formula: &sum;(Watts &times; Qty) across all running appliances</p>
+                </div>
+
+                <!-- Formula 2 -->
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                  <div class="flex justify-between text-brand-warm/80 text-[11px]">
+                    <span>Inverter Capacity (VA_inv):</span>
+                    <strong id="outSurgeVA" class="text-brand-amber font-bold">0 VA</strong>
+                  </div>
+                  <p class="text-[10px] text-brand-warm/50">Formula: max(W_run &times; 1.25, W_run + W_largest_motor_surge)</p>
+                </div>
+
+                <!-- Formula 3 -->
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                  <div class="flex justify-between text-brand-warm/80 text-[11px]">
+                    <span>LiFePO4 Storage (Wh_batt):</span>
+                    <strong id="outBattKWh" class="text-brand-teal font-bold">5.12 kWh</strong>
+                  </div>
+                  <p class="text-[10px] text-brand-warm/50">Formula: W_night &times; BackupHrs / (&eta;_inv(0.92) &times; DoD_LiFePO4(0.80))</p>
+                </div>
+
+                <!-- Formula 4 -->
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                  <div class="flex justify-between text-brand-warm/80 text-[11px]">
+                    <span>Derated Solar PV Array (W_pv):</span>
+                    <strong id="outPVKWp" class="text-brand-sky font-bold">2.70 kWp</strong>
+                  </div>
+                  <p class="text-[10px] text-brand-warm/50">Formula: ((Wh_batt &times; 0.80) + Wh_day) / (PeakSunHrs &times; Derating(0.78))</p>
+                </div>
+
+                <!-- Breakdown Footer -->
+                <div class="pt-2 border-t border-white/10 text-[11px] space-y-1 text-brand-warm/70">
+                  <div class="flex justify-between">
+                    <span>Daytime Energy Harvest:</span>
+                    <span id="corenDayWh" class="text-white font-bold">3,600 Wh</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Nighttime Energy Autonomy:</span>
+                    <span id="corenNightWh" class="text-white font-bold">4,200 Wh</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>1.75% All-Risk Insurance Fee:</span>
+                    <span id="corenInsurance" class="text-brand-sky font-bold">₦77,875</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Earth Grounding Standard:</span>
+                    <span id="corenEarth" class="text-brand-sky font-bold">&le; 2.5 &Omega; (COREN Standard)</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Down Payment Floor:</span>
+                    <span id="outDeposit" class="text-white font-bold">₦1,335,000</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Outright Asset Value:</span>
+                    <span id="outTotalCash" class="text-white font-bold">₦4,450,000</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Monthly Installment:</span>
+                    <span id="outMonthly" class="text-brand-amber font-bold">₦128,500/mo</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Action Button -->
+          <button onclick="bookAuditWithCurrentQuote()" class="w-full py-4 rounded-xl text-xs sm:text-sm font-bold text-brand-dark bg-brand-amber hover:bg-amber-400 shadow-xl shadow-brand-amber/25 transition-all hover:scale-105 flex items-center justify-center gap-2">
+            <span>Book Site Audit for this System</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+{{end}}

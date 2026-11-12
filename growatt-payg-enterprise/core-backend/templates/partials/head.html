@@ -1,0 +1,150 @@
+{{define "head"}}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkyGrid Solutions | Premium AI-Powered PAYGo Solar Energy Platform</title>
+  <meta name="description" content="Discover reliable solar energy for your home or business with flexible payment plans, intelligent energy monitoring, and support you can trust.">
+  <meta name="keywords" content="PAYGo solar, African solar energy, Growatt hybrid inverter, LiFePO4 battery, Nigerian solar financing, clean energy">
+  
+  <!-- Open Graph Metadata -->
+  <meta property="og:title" content="SkyGrid Flex Solutions | Premium PAYGo Solar Platform">
+  <meta property="og:description" content="Power Your Life. Pay at Your Pace. Clean, reliable solar energy with 36-month lease-to-own and 24/7 AI telemetry.">
+  <meta property="og:type" content="website">
+
+  <!-- Early Theme Initialization to Prevent FOUC -->
+  <script>
+    (function() {
+      try {
+        const savedTheme = localStorage.getItem('skygrid_theme');
+        if (savedTheme === 'light') {
+          document.documentElement.classList.add('light');
+          document.documentElement.classList.remove('dark');
+        } else {
+          document.documentElement.classList.add('dark');
+          document.documentElement.classList.remove('light');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Early Interactive Modals & Failsafe Controller (Zero-Delay Guarantee) -->
+  <script>
+    window.openModal = function(id) {
+      try {
+        var el = document.getElementById(id);
+        if (el) {
+          if (id === 'changePasswordModal' || id === 'forgotPasswordModal' || id === 'mfaModal') {
+            el.style.zIndex = '9999';
+          }
+          el.classList.remove('hidden');
+          el.style.display = 'flex';
+          document.body.style.overflow = 'hidden';
+          if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            try { window.lucide.createIcons(); } catch (e) {}
+          }
+        } else {
+          console.warn('Target modal not found:', id);
+        }
+      } catch (err) {
+        console.error('openModal error:', err);
+      }
+    };
+    window.closeModal = function(id) {
+      try {
+        var el = document.getElementById(id);
+        if (el) {
+          el.classList.add('hidden');
+          el.style.display = 'none';
+          var adminEl = document.getElementById('adminPortalModal');
+          var custEl = document.getElementById('customerPortalModal');
+          var isWorkspaceOpen = (adminEl && adminEl.style.display !== 'none' && !adminEl.classList.contains('hidden')) ||
+                                (custEl && custEl.style.display !== 'none' && !custEl.classList.contains('hidden'));
+          if (!isWorkspaceOpen) {
+            document.body.style.overflow = '';
+          }
+        }
+      } catch (err) {
+        console.error('closeModal error:', err);
+      }
+    };
+    window.openAdminPortal = function() {
+      try {
+        window.openModal('adminPortalModal');
+        if (typeof window.switchAdminTab === 'function') {
+          try { window.switchAdminTab('fleet'); } catch (e) {}
+        }
+        if (typeof window.selectAdminFleetUnit === 'function') {
+          try { window.selectAdminFleetUnit(0); } catch (e) {}
+        }
+        if (typeof window.showToast === 'function') {
+          try { window.showToast('👑 Executive Admin & ERP Command Active'); } catch (e) {}
+        }
+      } catch (err) {
+        console.error('openAdminPortal error:', err);
+      }
+    };
+    // Automatic Hash Routing (e.g. #admin, #customer, #signup, #calculator)
+    function handleUrlHash() {
+      var h = (window.location.hash || '').toLowerCase();
+      if (h === '#admin' || h === '#adminportalmodal' || h === '#admin-command') {
+        window.openAdminPortal();
+      } else if (h === '#customer' || h === '#signin' || h === '#login' || h === '#customerdashboard') {
+        window.openModal('signInModal');
+      } else if (h === '#signup' || h === '#register') {
+        window.openModal('signUpModal');
+      }
+    }
+    window.addEventListener('hashchange', handleUrlHash);
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', handleUrlHash);
+    } else {
+      setTimeout(handleUrlHash, 50);
+    }
+  </script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Tailwind CSS CDN with Custom Brand Tokens -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    if (typeof tailwind !== 'undefined') {
+      tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              forest: '#111827',
+              dark: '#0B0F19',
+              charcoal: '#1E293B',
+              amber: '#FFBF00',
+              teal: '#10B981',
+              sky: '#22D3EE',
+              skyLight: '#67E8F9',
+              skyDark: '#06B6D4',
+              skyGlow: 'rgba(34, 211, 238, 0.35)',
+              crimson: '#EF4444',
+              slate: '#64748B',
+              warm: '#F8FAF7'
+            }
+          },
+          fontFamily: {
+            heading: ['"Plus Jakarta Sans"', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    };
+    }
+  </script>
+
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="/static/css/styles.css">
+{{end}}

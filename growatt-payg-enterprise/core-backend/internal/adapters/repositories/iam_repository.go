@@ -253,6 +253,14 @@ func (r *MemoryIAMRepository) seedSystemData() {
 				domain.PermInstallationsUpdate, domain.PermMaintenanceCreate, domain.PermMaintenanceUpdateStatus, domain.PermCustomersView,
 			},
 		},
+		{
+			slug: "coren_inspector",
+			name: "COREN QA & Safety Inspector",
+			desc: "COREN/NEMSA technical audits, earthing sign-off (<=5.0 ohm), shroud tamper clearance, and safety regulatory reporting.",
+			perms: []string{
+				domain.PermAuditView, domain.PermReportsView, domain.PermInstallationsUpdate, domain.PermStaffView, domain.PermCustomersView,
+			},
+		},
 	}
 
 	for _, rDef := range roles {
@@ -325,6 +333,22 @@ func (r *MemoryIAMRepository) seedSystemData() {
 			hash:     "$2b$10$wglltUTxkZZuV3EH7.TzBO4gPbaRIK7Lp1U0i5jZW.AKyhrjHi8bm",
 			userType: domain.UserTypeCustomer,
 			roleSlug: domain.RoleCustomer,
+		},
+		{
+			id:       "usr-dev-coren-001",
+			email:    "coren@skytron.ng",
+			phone:    "+2348055678901",
+			hash:     "$2b$10$2h5PZOXqx2tzwra80qEiquaZzYUwRZYA0aK1XrS0ZtR7DoKgI7f/q",
+			userType: domain.UserTypeStaff,
+			roleSlug: "coren_inspector",
+		},
+		{
+			id:       "usr-dev-support-001",
+			email:    "support@skytron.ng",
+			phone:    "+2348066789012",
+			hash:     "$2b$10$2h5PZOXqx2tzwra80qEiquaZzYUwRZYA0aK1XrS0ZtR7DoKgI7f/q",
+			userType: domain.UserTypeStaff,
+			roleSlug: domain.RoleCustomerSupport,
 		},
 	}
 

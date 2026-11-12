@@ -1,0 +1,80 @@
+{{define "footer"}}
+  <footer class="main-footer bg-black/90 border-t border-white/10 pt-16 pb-12 text-xs text-brand-warm/70">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10">
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 pb-12 border-b border-white/10">
+        
+        <!-- Brand & Mission Column (Col 1 & 2 on Desktop) -->
+        <div class="col-span-2 space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-brand-amber flex items-center justify-center text-brand-dark font-extrabold text-lg shadow-md shadow-brand-amber/20">
+              ⚡
+            </div>
+            <span class="font-heading font-extrabold text-lg tracking-tight text-white">SkyGrid Solutions</span>
+          </div>
+          
+          <p class="text-xs text-brand-warm/75 max-w-md leading-relaxed">
+            An intelligent Pay-As-You-Go solar energy infrastructure, calibrated LiFePO4 storage systems, and AI-driven microgrid management across Nigeria and West Africa.
+          </p>
+
+          <div class="text-[11px] text-brand-warm/60 space-y-1">
+            <p><strong>Abuja Hub:</strong> Central Business District, FCT Abuja</p>
+            <p><strong>Jos Hub:</strong> FDA Road, Dadinkowa. Jos South LGA</p>
+            <p><strong>Hotline:</strong> +234(0)8085377346</p>
+          </div>
+        </div>
+
+        <!-- Solar Solutions Links -->
+        <div>
+          <h4 class="font-heading font-bold text-white uppercase tracking-wider text-xs mb-3">Solar Solutions</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="#packages" class="hover:text-brand-amber transition">Essential Home (3kW)</a></li>
+            <li><a href="#packages" class="hover:text-brand-amber transition">Family Standard (5kW-8kW)</a></li>
+            <li><a href="#packages" class="hover:text-brand-amber transition">Business Solar (10kW)</a></li>
+            <li><a href="#packages" class="hover:text-brand-amber transition">Industrial Microgrids (30kW and more)</a></li>
+            <li><a href="#installations" class="hover:text-brand-amber transition">Agricultural Cold Storage</a></li>
+          </ul>
+        </div>
+
+        <!-- Technology & Finance Links -->
+        <div>
+          <h4 class="font-heading font-bold text-white uppercase tracking-wider text-xs mb-3">Company &amp; Model</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="#about" class="text-brand-teal font-semibold hover:text-white transition flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-teal"></span>About Us (Vision &amp; African Mission)</a></li>
+            <li><a href="#how-it-works" class="hover:text-brand-amber transition">How PAYGo Lease Works</a></li>
+            <li><a href="#monitoring" class="hover:text-brand-amber transition">IoT Cloud Telemetry</a></li>
+            <li><a href="#calculator" class="hover:text-brand-amber transition">Load &amp; Savings Calculator</a></li>
+            <li><a href="#faq" class="hover:text-brand-amber transition">Warranty &amp; Service SLAs</a></li>
+            <li><a href="http://localhost:8000/docs" target="_blank" class="hover:text-brand-teal transition">AI Intelligence Engine API &rarr;</a></li>
+          </ul>
+        </div>
+
+        <!-- Compliance & Legal Links -->
+        <div>
+          <h4 class="font-heading font-bold text-white uppercase tracking-wider text-xs mb-3">Legal &amp; Trust</h4>
+          <ul class="space-y-2 text-xs">
+            <li><span class="text-brand-teal">● COREN Registered</span></li>
+            <li><span class="text-brand-teal">● NEMSA Certified</span></li>
+            <li><a href="#faq" class="hover:text-brand-amber transition">KYC &amp; Credit Terms</a></li>
+            <li><a href="#faq" class="hover:text-brand-amber transition">Data Privacy Policy</a></li>
+            <li><button onclick="openModal('signInModal')" class="hover:text-brand-amber transition">Customer Portal Login</button></li>
+            <li><button onclick="openModal('signUpModal')" class="text-brand-teal font-semibold hover:text-emerald-400 transition">New Customer Sign Up (NIN)</button></li>
+            <li><button type="button" onclick="openAdminPortal()" class="text-indigo-400 hover:text-indigo-300 font-bold flex items-center gap-1 transition">👑 Executive Admin &amp; Staff ERP</button></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Bottom Legal Disclaimer -->
+      <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-brand-warm/50">
+        <p>© 2026 SkyGrid Solutions Limited. All rights reserved. Registered under Nigerian Corporate Affairs Commission.</p>
+        <p class="text-center md:text-right">
+          Solar authorized tier-1 system integrator. Inverter &amp; LiFePO4 battery warranties backed by OEM factory certification.
+        </p>
+      </div>
+
+    </div>
+  </footer>
+
+
+{{end}}

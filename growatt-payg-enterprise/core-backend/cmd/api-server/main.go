@@ -274,28 +274,38 @@ func main() {
 		),
 	))
 
-	// --- STATIC WEB UI & SHOWROOM (static/index.html) ---
+	// --- MODULAR GO TEMPLATE WEB UI & SHOWROOM (templates/ & static/) ---
+	templateDir := getEnv("TEMPLATE_DIR", "templates")
 	staticDir := getEnv("STATIC_DIR", "static")
-	if _, err := os.Stat(staticDir); os.IsNotExist(err) {
-		if _, err := os.Stat("core-backend/static"); err == nil {
-			staticDir = "core-backend/static"
+	devMode := getEnv("DEV_MODE", "true") == "true"
+
+	webRenderer, err := handlers.NewWebRenderer(templateDir, staticDir, devMode)
+	if err != nil {
+		log.Printf("[WARN] Failed to initialize modular WebRenderer: %v (falling back to legacy static file server)", err)
+		if _, err := os.Stat(staticDir); os.IsNotExist(err) {
+			if _, err := os.Stat("core-backend/static"); err == nil {
+				staticDir = "core-backend/static"
+			}
 		}
+		fileServer := http.FileServer(http.Dir(staticDir))
+		mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			if strings.HasPrefix(r.URL.Path, "/api/") {
+				http.NotFound(w, r)
+				return
+			}
+			if r.URL.Path == "/" || r.URL.Path == "/index.html" {
+				w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+				w.Header().Set("Pragma", "no-cache")
+				w.Header().Set("Expires", "0")
+				http.ServeFile(w, r, filepath.Join(staticDir, "index.html"))
+				return
+			}
+			fileServer.ServeHTTP(w, r)
+		})
+	} else {
+		log.Printf("[BOOT] Modular Go Template WebRenderer active (templateDir: %s, staticDir: %s, devMode: %v)", templateDir, staticDir, devMode)
+		webRenderer.RegisterRoutes(mux)
 	}
-	fileServer := http.FileServer(http.Dir(staticDir))
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if strings.HasPrefix(r.URL.Path, "/api/") {
-			http.NotFound(w, r)
-			return
-		}
-		if r.URL.Path == "/" || r.URL.Path == "/index.html" {
-			w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
-			w.Header().Set("Pragma", "no-cache")
-			w.Header().Set("Expires", "0")
-			http.ServeFile(w, r, filepath.Join(staticDir, "index.html"))
-			return
-		}
-		fileServer.ServeHTTP(w, r)
-	})
 
 	srv := &http.Server{
 		Addr:         ":" + port,

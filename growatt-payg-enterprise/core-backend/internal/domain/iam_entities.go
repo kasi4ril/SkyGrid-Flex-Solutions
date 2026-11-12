@@ -63,9 +63,11 @@ const (
 	RoleSuperAdmin        = "super_admin"
 	RoleOperationsManager = "operations_manager"
 	RoleFieldEngineer     = "field_engineer"
+	RoleTechnician        = "technician"
 	RoleFinanceOfficer    = "finance_officer"
 	RoleCustomerSupport   = "customer_support"
 	RoleComplianceAuditor = "compliance_auditor"
+	RoleCORENInspector    = "coren_inspector"
 	RoleCustomer          = "customer"
 )
 
@@ -128,6 +130,11 @@ type StaffOnboardingRequest struct {
 	Status                OnboardingStatus `json:"status"`
 	AssignedRoleID        *string          `json:"assigned_role_id,omitempty"`
 	ReviewedByUserID      *string          `json:"reviewed_by_user_id,omitempty"`
+	ApprovedByUserID      *string          `json:"approved_by_user_id,omitempty"`
+	ApprovedByStaffName   string           `json:"approved_by_staff_name,omitempty"`
+	ApprovalStatus        string           `json:"approval_status,omitempty"`
+	ApprovalNotes         string           `json:"approval_notes,omitempty"`
+	ReviewedAt            *time.Time       `json:"reviewed_at,omitempty"`
 	ReviewNotes           string           `json:"review_notes,omitempty"`
 	ActivationTokenHash   string           `json:"-"`
 	TokenExpiresAt        *time.Time       `json:"token_expires_at,omitempty"`
@@ -152,10 +159,15 @@ type Session struct {
 type AuditLog struct {
 	ID           string         `json:"id"`
 	ActorUserID  *string        `json:"actor_user_id,omitempty"`
+	ActorName    string         `json:"actor_name,omitempty"`
+	ActorRole    string         `json:"actor_role,omitempty"`
 	Action       string         `json:"action"`
 	ResourceType string         `json:"resource_type"`
 	ResourceID   string         `json:"resource_id,omitempty"`
 	Payload      map[string]any `json:"payload,omitempty"`
+	PayloadDiff  map[string]any `json:"payload_diff,omitempty"`
+	PreviousHash string         `json:"previous_hash,omitempty"`
+	CurrentHash  string         `json:"current_hash,omitempty"`
 	IPAddress    string         `json:"ip_address,omitempty"`
 	CreatedAt    time.Time      `json:"created_at"`
 }

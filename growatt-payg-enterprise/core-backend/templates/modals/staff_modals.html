@@ -1,0 +1,274 @@
+{{define "modal_staff"}}
+  <!-- Modal: Staff Sign In (Opened when "Staff Apply" is clicked) -->
+  <div id="staffSignInModal" style="display: none;" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+    <div class="glass-card-dark rounded-3xl max-w-md w-full p-6 sm:p-8 border border-white/15 relative shadow-2xl">
+      <!-- Close Button -->
+      <button onclick="closeModal('staffSignInModal')" aria-label="Close Staff Sign In Modal" class="absolute top-5 right-5 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition focus:outline-none focus:ring-2 focus:ring-brand-teal cursor-pointer">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-emerald-500 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg">
+          👑
+        </div>
+        <div>
+          <h3 class="text-xl sm:text-2xl font-heading font-extrabold text-white">Staff &amp; Executive Sign In</h3>
+          <p class="text-xs text-brand-warm/75">Super Admin auto-login active for developer watchtower access.</p>
+        </div>
+      </div>
+
+      <!-- Developer Info Alert & 6-Tier Staff Role Switcher -->
+      <div class="p-3 rounded-2xl bg-purple-500/15 border border-purple-500/35 text-purple-200 text-xs mb-3 space-y-2">
+        <div class="flex items-center justify-between text-purple-200">
+          <p class="font-bold flex items-center gap-1.5 text-purple-300">
+            <span>🛡️</span>
+            <span>6-Tier Staff Role Switcher (1-Click Test Login):</span>
+          </p>
+          <span class="text-[10px] text-amber-300 font-mono px-1.5 py-0.5 rounded bg-black/40 border border-amber-500/30">2FA Verified</span>
+        </div>
+        <p class="text-[11px] text-purple-200/80 leading-relaxed">
+          Select any role to test its dedicated 4-page dashboard, permissions, and maker-checker audit stamps.
+        </p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 pt-1">
+          <button type="button" onclick="quickFillStaffDevAccount('admin@skytron.ng', 'Admin@SkyTron2026!', 'super_admin')" class="px-2 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] text-left transition cursor-pointer">
+            👑 Super Admin
+          </button>
+          <button type="button" onclick="quickFillStaffDevAccount('finance@skytron.ng', 'FinanceLead2026!', 'finance_officer')" class="px-2 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] text-left transition cursor-pointer">
+            💳 Finance Officer
+          </button>
+          <button type="button" onclick="quickFillStaffDevAccount('ops@skytron.ng', 'OpsManager2026!', 'operations_manager')" class="px-2 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] text-left transition cursor-pointer">
+            📋 Operations Mgr
+          </button>
+          <button type="button" onclick="quickFillStaffDevAccount('coren@skytron.ng', 'CORENInspector2026!', 'coren_inspector')" class="px-2 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] text-left transition cursor-pointer">
+            🛡️ COREN Inspector
+          </button>
+          <button type="button" onclick="quickFillStaffDevAccount('tech@skytron.ng', 'Technician2026!', 'technician')" class="px-2 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] text-left transition cursor-pointer">
+            🔧 Field Tech
+          </button>
+          <button type="button" onclick="quickFillStaffDevAccount('support@skytron.ng', 'CustomerSupport2026!', 'customer_support')" class="px-2 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] text-left transition cursor-pointer">
+            🎧 Support Rep
+          </button>
+        </div>
+      </div>
+
+      <form id="staffSignInForm" onsubmit="handleStaffSignIn(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block text-brand-warm/90 font-bold mb-1">Staff Corporate Email or ID</label>
+          <input type="text" id="staffLoginId" required value="admin@skytron.ng" placeholder="admin@skytron.ng" class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-brand-warm/40 focus:border-brand-teal focus:outline-none text-xs font-mono">
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block text-brand-warm/90 font-bold">Password</label>
+            <button type="button" onclick="closeModal('staffSignInModal'); openForgotPasswordModal('staffLoginId')" class="text-xs text-brand-teal hover:underline font-semibold cursor-pointer">Forgot Password?</button>
+          </div>
+          <input type="password" id="staffLoginPass" required value="Admin@SkyTron2026!" placeholder="••••••••••••" class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-brand-warm/40 focus:border-brand-teal focus:outline-none text-xs font-mono">
+        </div>
+
+        <div id="staffSignInStatusMsg" style="display: none;" class="p-2.5 rounded-xl text-xs font-mono"></div>
+
+        <button type="submit" id="staffSignInBtn" class="w-full py-3.5 rounded-xl text-xs font-bold text-slate-950 bg-gradient-to-r from-amber-400 via-emerald-400 to-teal-400 hover:from-amber-300 hover:to-teal-300 transition-all font-heading shadow-md shadow-brand-sky/20 flex items-center justify-center gap-2 cursor-pointer">
+          <span>🔐 Sign In to Enterprise Watchtower</span>
+        </button>
+
+        <div class="pt-2 text-center text-xs border-t border-white/10 flex items-center justify-between">
+          <button type="button" onclick="closeModal('staffSignInModal'); openModal('signInModal')" class="font-bold text-brand-amber hover:underline inline-flex items-center gap-1 cursor-pointer">
+            <span>☀️ Customer Portal Sign In</span> &rarr;
+          </button>
+          <button type="button" onclick="closeModal('staffSignInModal'); openModal('staffApplyModal')" class="font-bold text-brand-teal hover:underline inline-flex items-center gap-1 cursor-pointer">
+            <span>👷 Apply for Staff Onboarding</span> &rarr;
+          </button>
+        </div>
+      </form>
+
+      <!-- Prominent Callout Link for New Staff Applying for Activation -->
+      <div class="mt-5 p-4 rounded-2xl bg-brand-forest/60 border border-brand-amber/30 text-center space-y-2">
+        <span class="font-bold text-brand-amber block text-xs">New Engineering or Operations Staff?</span>
+        <p class="text-[11px] text-brand-warm/75 leading-relaxed">
+          Applying for account activation which the Super Admin must approve before onboarding to the staff portal.
+        </p>
+        <button type="button" onclick="closeModal('staffSignInModal'); openModal('staffApplyModal')" class="w-full py-2.5 rounded-xl bg-brand-amber hover:bg-amber-400 text-brand-dark font-bold text-xs transition cursor-pointer shadow-md">
+          Apply for Staff Onboarding &amp; Activation &rarr;
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Enterprise Staff Onboarding & COREN Application Portal (With Mandatory NIN Auto-Population) -->
+  <div id="staffApplyModal" style="display: none;" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+    <div class="glass-card-dark rounded-3xl max-w-xl w-full p-6 sm:p-8 border border-white/15 relative shadow-2xl my-8">
+      <!-- Close Button -->
+      <button onclick="closeModal('staffApplyModal')" aria-label="Close Staff Application Modal" class="absolute top-5 right-5 p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition focus:outline-none focus:ring-2 focus:ring-brand-teal cursor-pointer">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-emerald-500 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg">
+          👷
+        </div>
+        <div>
+          <h3 class="text-xl sm:text-2xl font-heading font-extrabold text-white">Engineering &amp; Staff Application</h3>
+          <p class="text-xs text-brand-warm/75">NIMC NIN identity verification required. Applications are reviewed and activated by the Super Admin.</p>
+        </div>
+      </div>
+
+      <form id="staffApplyForm" onsubmit="handleStaffApply(event)" class="space-y-4 text-xs">
+        <!-- Staff Biometric Passport Photo Space (Reflects in Admin/Staff Dashboard Far-Right Header) -->
+        <div class="flex flex-col sm:flex-row items-center gap-4 p-3.5 rounded-2xl bg-black/40 border border-white/20">
+          <div class="relative shrink-0 group cursor-pointer" onclick="document.getElementById('staffPassportInput').click()" title="Click to upload staff passport photo">
+            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full p-1 bg-gradient-to-tr from-brand-amber via-brand-teal to-brand-sky shadow-lg shadow-brand-amber/25">
+              <img id="staffPassportImg" 
+                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80" 
+                   alt="Staff Passport Photo" 
+                   class="w-full h-full rounded-full object-cover border-2 border-slate-900">
+            </div>
+            <!-- Camera badge -->
+            <div class="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-brand-amber text-slate-950 flex items-center justify-center font-bold text-xs shadow-md border-2 border-[#0B0F19] group-hover:scale-110 transition-transform">
+              📷
+            </div>
+            <div class="absolute inset-0 rounded-full bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white text-[9px] font-bold p-1 text-center pointer-events-none">
+              <span>Change Photo</span>
+            </div>
+          </div>
+          <input type="file" id="staffPassportInput" accept="image/*" onchange="handleStaffPassportUpload(event)" class="hidden">
+          <div class="space-y-1 text-center sm:text-left flex-1">
+            <div class="flex items-center gap-2 justify-center sm:justify-start">
+              <h5 class="text-white font-bold text-sm">Staff Biometric Passport Photo</h5>
+              <span class="text-[9px] px-2 py-0.5 rounded-full bg-brand-amber/20 text-brand-amber font-mono font-bold">Official ID</span>
+            </div>
+            <p class="text-[11px] text-brand-warm/75 leading-relaxed">
+              Upload an official front-facing circular passport photograph. This appears on your field credentials and synchronizes live to your Admin Watchtower header pane.
+            </p>
+            <div class="flex items-center gap-2 justify-center sm:justify-start pt-1">
+              <button type="button" onclick="document.getElementById('staffPassportInput').click()" class="px-3.5 py-1.5 rounded-xl bg-brand-amber/20 hover:bg-brand-amber/30 border border-brand-amber/40 text-brand-amber text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+                <i data-lucide="camera" class="w-3.5 h-3.5"></i>
+                <span>Upload Passport Photo</span>
+              </button>
+              <button type="button" onclick="resetStaffPassport()" class="px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-brand-warm/70 hover:text-white text-xs transition cursor-pointer">
+                Reset
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mandatory NIN Input Block -->
+        <div class="p-3.5 rounded-2xl bg-black/40 border border-white/20 space-y-2">
+          <label for="staffNIN" class="block text-brand-warm/90 font-bold">
+            National Identification Number (NIN) <span class="text-brand-amber">* (11 Digits)</span>
+          </label>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <div class="relative flex-1">
+              <input type="text" id="staffNIN" maxlength="11" required
+                placeholder="Enter 11-digit NIN (e.g. 11223344556)"
+                oninput="handleStaffNINInput(this.value)"
+                class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-brand-warm/40 focus:border-brand-teal focus:outline-none font-mono text-sm tracking-widest font-bold">
+              <span id="staffNinCharCount" class="absolute right-3 top-2.5 text-[10px] text-brand-warm/50 font-mono">0/11</span>
+            </div>
+            <button type="button" id="btnVerifyStaffNIN" onclick="verifyStaffNIN()"
+              class="px-4 py-2.5 rounded-xl bg-brand-teal hover:bg-emerald-400 text-brand-dark font-heading font-bold text-xs flex items-center justify-center gap-1.5 transition shadow-md shadow-brand-teal/20 shrink-0 cursor-pointer">
+              <i data-lucide="shield-check" id="verifyStaffBtnIcon" class="w-4 h-4"></i>
+              <span id="verifyStaffBtnText">Verify with NIMC</span>
+            </button>
+          </div>
+
+          <!-- Quick Demo 1-Click Verification Chips -->
+          <div class="pt-1 flex items-center gap-1.5 flex-wrap text-[10px] text-brand-warm/70">
+            <span class="font-medium text-brand-amber">⚡ Test NINs:</span>
+            <button type="button" onclick="quickFillStaffDemoNIN('11223344556')" class="px-2 py-0.5 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 text-brand-warm hover:text-white transition font-mono cursor-pointer">
+              Babatunde (11223344556)
+            </button>
+            <button type="button" onclick="quickFillStaffDemoNIN('99887766554')" class="px-2 py-0.5 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 text-brand-warm hover:text-white transition font-mono cursor-pointer">
+              Dr. Zainab (99887766554)
+            </button>
+            <button type="button" onclick="quickFillStaffDemoNIN('55443322110')" class="px-2 py-0.5 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 text-brand-warm hover:text-white transition font-mono cursor-pointer">
+              Chief Emeka (55443322110)
+            </button>
+          </div>
+
+          <div id="staffNINStatusBanner" class="p-2.5 rounded-xl bg-white/5 border border-white/10 text-[11px] text-brand-warm/75 flex items-center gap-2 transition-all">
+            <i data-lucide="info" class="w-3.5 h-3.5 text-brand-teal shrink-0"></i>
+            <span>Enter your 11-digit NIN above. Your full legal name, date of birth, and gender will be auto-populated from NIMC.</span>
+          </div>
+        </div>
+
+        <!-- Auto-Populated Identity Columns -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-brand-warm/90 font-bold mb-1 flex items-center justify-between">
+              <span>Full Legal Name</span>
+              <span id="badgeStaffName" class="text-[9px] text-brand-teal font-mono hidden">✓ NIMC</span>
+            </label>
+            <input type="text" id="staffName" required readonly placeholder="Auto-populated from NIN" class="w-full bg-black/40 border border-white/15 rounded-xl px-3.5 py-2 text-white placeholder-brand-warm/40 focus:outline-none text-xs font-semibold cursor-default">
+          </div>
+
+          <div>
+            <label class="block text-brand-warm/90 font-bold mb-1 flex items-center justify-between">
+              <span>Date of Birth</span>
+              <span id="badgeStaffDOB" class="text-[9px] text-brand-teal font-mono hidden">✓ NIMC</span>
+            </label>
+            <input type="date" id="staffDOB" required readonly class="w-full bg-black/40 border border-white/15 rounded-xl px-3.5 py-2 text-white focus:outline-none text-xs font-mono cursor-default">
+          </div>
+
+          <div>
+            <label class="block text-brand-warm/90 font-bold mb-1 flex items-center justify-between">
+              <span>Gender</span>
+              <span id="badgeStaffGender" class="text-[9px] text-brand-teal font-mono hidden">✓ NIMC</span>
+            </label>
+            <input type="text" id="staffGender" required readonly placeholder="Gender" class="w-full bg-black/40 border border-white/15 rounded-xl px-3.5 py-2 text-white placeholder-brand-warm/40 focus:outline-none text-xs cursor-default">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-brand-warm/90 font-bold mb-1">Official Email Address <span class="text-brand-amber">*</span></label>
+            <input type="email" id="staffEmail" required placeholder="engineer@skytron.ng" class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-brand-warm/40 focus:border-brand-teal focus:outline-none text-xs">
+          </div>
+          <div>
+            <label class="block text-brand-warm/90 font-bold mb-1">Phone Number <span class="text-brand-amber">*</span></label>
+            <input type="tel" id="staffPhone" required placeholder="+234 800 000 0000" class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-brand-warm/40 focus:border-brand-teal focus:outline-none text-xs font-mono">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-brand-warm/90 font-bold mb-1">Requested Department <span class="text-brand-amber">*</span></label>
+            <select id="staffDept" required class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white focus:border-brand-teal focus:outline-none text-xs">
+              <option value="ENGINEERING_COREN" class="bg-[#0B0F19] text-white">⚡ Engineering &amp; Earthing Audits (COREN)</option>
+              <option value="FIELD_OPERATIONS" class="bg-[#0B0F19] text-white">🛠️ Field Operations &amp; Installations</option>
+              <option value="FINANCE_RISK" class="bg-[#0B0F19] text-white">📊 Finance &amp; Lease Risk Underwriting</option>
+              <option value="CUSTOMER_EXPERIENCE" class="bg-[#0B0F19] text-white">💬 Customer Experience &amp; STS Support</option>
+              <option value="COMPLIANCE_AUDIT" class="bg-[#0B0F19] text-white">📜 Quality &amp; Regulatory Compliance (NEMSA)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-brand-warm/90 font-bold mb-1">COREN Registration Number <span class="text-brand-warm/50 font-normal">(Required for Engineers)</span></label>
+            <input type="text" id="staffCoren" placeholder="e.g. R.38491 / COREN / 2024" class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-brand-warm/40 focus:border-brand-teal focus:outline-none text-xs font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-brand-warm/90 font-bold mb-1">Account Password</label>
+          <input type="password" id="staffPassword" required placeholder="Choose a password (min 8 characters)" class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-brand-warm/40 focus:border-brand-teal focus:outline-none text-xs">
+        </div>
+
+        <div id="staffApplyStatus" class="hidden"></div>
+
+        <button type="submit" id="staffApplySubmitBtn" disabled aria-disabled="true" class="w-full py-3 rounded-xl text-xs font-bold text-slate-950 bg-gradient-to-r from-brand-sky to-brand-teal hover:from-sky-400 hover:to-teal-400 transition-all font-heading shadow-md shadow-brand-sky/20 flex items-center justify-center gap-2 cursor-pointer form-btn-unhighlighted">
+          <i data-lucide="send" class="w-4 h-4"></i>
+          <span>Submit Staff Application for Super Admin Activation &rarr;</span>
+        </button>
+      </form>
+
+      <div class="mt-4 pt-3 border-t border-white/10 text-center text-xs">
+        <span class="text-brand-warm/60">Already approved by Super Admin? </span>
+        <button type="button" onclick="closeModal('staffApplyModal'); openStaffSignInModal()" class="font-bold text-brand-teal hover:underline cursor-pointer">
+          Sign In to Staff Workspace
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+
+{{end}}
